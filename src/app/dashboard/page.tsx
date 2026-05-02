@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -23,6 +23,8 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     fetchTickets();
@@ -35,97 +37,152 @@ export default function DashboardPage() {
     setLoading(false);
   };
 
+  const stats = useMemo(() => {
+    return {
+      total: tickets.length,
+      open: tickets.filter(t => t.status === 'open').length,
+      inProgress: tickets.filter(t => t.status === 'in_progress').length,
+      resolved: tickets.filter(t => t.status === 'resolved').length,
+    };
+  }, [tickets]);
+
+  const filteredTickets = useMemo(() => {
+    return tickets.filter(t => {
+      const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
+                           t.id.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [tickets, search, statusFilter]);
+
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-subtle text-sm font-medium">Loading tickets...</p>
+      <div className="min-h-[40vh] flex flex-col items-center justify-center">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-subtle text-xs font-medium">Syncing data...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-12">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Your Tickets</h1>
-          <p className="text-subtle mt-1">Track and manage your active requests</p>
-        </div>
-        <Link href="/dashboard/create" className="btn-primary">
-          Create New Ticket
+    <div className="space-y-6">
+      {/* Dense Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white tracking-tight">Support Overview</h1>
+        <Link href="/dashboard/create" className="btn-primary py-2 px-4 text-xs">
+          + New Ticket
         </Link>
       </div>
 
-      <div className="space-y-6">
-        {tickets.map((ticket) => (
-          <Link 
-            key={ticket.id} 
-            href={`/dashboard/ticket/${ticket.id}`}
-            className="block group"
+      {/* Compact Stat Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: "All Tickets", value: stats.total, id: "all", color: "text-white" },
+          { label: "Open", value: stats.open, id: "open", color: "text-blue-400" },
+          { label: "In Progress", value: stats.inProgress, id: "in_progress", color: "text-amber-400" },
+          { label: "Resolved", value: stats.resolved, id: "resolved", color: "text-emerald-400" },
+        ].map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setStatusFilter(s.id)}
+            className={`card p-4 text-left transition-all ${
+              statusFilter === s.id ? "ring-1 ring-primary/50 bg-primary/5" : "hover:bg-white/[0.02]"
+            }`}
           >
-            <div className="card p-6 md:p-8 hover:border-primary/40 transition-all duration-300">
-              <div className="flex flex-col md:flex-row justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-4">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.label}</p>
+            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+          </button>
+        ))}
+      </div>
+
+      {/* Filters & Search */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Search tickets by title or ID..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input-field py-2 pl-10 text-xs"
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
+        </div>
+        <select 
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-xs font-bold text-white cursor-pointer"
+        >
+          <option value="all">All Status</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+
+      {/* Compact Ticket Table */}
+      <div className="card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-white/[0.01] border-b border-white/5">
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Ticket Detail</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Type</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.03]">
+              {filteredTickets.map((ticket) => (
+                <tr 
+                  key={ticket.id} 
+                  className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                  onClick={() => window.location.href = `/dashboard/ticket/${ticket.id}`}
+                >
+                  <td className="px-6 py-4">
+                    <p className="font-bold text-sm text-white group-hover:text-primary transition-colors">{ticket.title}</p>
+                    <p className="text-[10px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">{ticket.type}</span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className={`badge ${
-                      ticket.priority === 'urgent' ? 'badge-red' : 
-                      ticket.priority === 'high' ? 'badge-red' : 
-                      'badge-blue'
-                    }`}>
-                      {ticket.priority}
-                    </span>
-                    <span className={`badge ${
-                      ticket.status === 'resolved' ? 'badge-green' : 'badge-gray'
-                    }`}>
+                       ticket.status === 'resolved' ? 'badge-green' : 'badge-blue'
+                    } text-[10px] py-0.5 px-2`}>
                       {ticket.status.replace("_", " ")}
                     </span>
-                    <span className="text-xs font-medium text-slate-600">ID: {ticket.id.slice(0, 8)}</span>
-                  </div>
-
-                  <h2 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">{ticket.title}</h2>
-                  <p className="text-subtle text-sm leading-relaxed mb-6 line-clamp-2">
-                    {ticket.description}
-                  </p>
-
-                  <div className="flex items-center gap-6 text-[12px] font-medium text-slate-500">
-                     <span>Opened on {new Date(ticket.createdAt).toLocaleDateString()}</span>
-                     <div className="w-1 h-1 bg-slate-800 rounded-full" />
-                     <span>Type: {ticket.type}</span>
-                  </div>
-                </div>
-
-                <div className="md:w-72">
-                  {ticket.status === "resolved" && (
-                    <div className="p-5 rounded-xl bg-green-500/5 border border-green-500/10">
-                      <h3 className="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Resolution</h3>
-                      <p className="text-sm text-slate-300 italic mb-2 line-clamp-2">"{ticket.solution}"</p>
-                      
-                      {ticket.feedback ? (
-                        <div className="flex items-center gap-2">
-                          <div className="flex text-yellow-500 text-[10px]">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i} className={i < ticket.feedback!.rating ? "opacity-100" : "opacity-20"}>★</span>
-                            ))}
-                          </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`badge ${
+                      ticket.priority === 'urgent' ? 'badge-red' : 'badge-gray'
+                    } text-[10px] py-0.5 px-2`}>
+                      {ticket.priority}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex flex-col items-end">
+                      <span className="text-[10px] font-medium text-slate-400">
+                        {new Date(ticket.createdAt).toLocaleDateString()}
+                      </span>
+                      {ticket.status === 'resolved' && (
+                        <div className="flex text-yellow-500 text-[8px] mt-1">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={ticket.feedback && i < ticket.feedback.rating ? "opacity-100" : "opacity-10"}>★</span>
+                          ))}
                         </div>
-                      ) : (
-                        <span className="text-[10px] font-bold text-primary uppercase">Needs Feedback</span>
                       )}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        {tickets.length === 0 && (
-          <div className="card p-20 text-center">
-            <div className="text-4xl mb-4">📋</div>
-            <p className="text-subtle font-medium">You haven't created any tickets yet.</p>
-            <Link href="/dashboard/create" className="text-primary hover:underline mt-2 inline-block font-bold">
-              Create your first ticket
-            </Link>
+        {filteredTickets.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-subtle text-sm font-medium">No tickets found.</p>
           </div>
         )}
       </div>

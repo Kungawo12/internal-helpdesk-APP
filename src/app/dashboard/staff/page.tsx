@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 
 type Ticket = {
@@ -11,16 +11,15 @@ type Ticket = {
   type: string;
   status: string;
   priority: string;
-  solution: string | null;
   createdAt: string;
   creator: { name: string; email: string };
-  feedback: { rating: number; comment: string | null } | null;
 };
 
 export default function StaffDashboard() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchTickets();
@@ -33,119 +32,131 @@ export default function StaffDashboard() {
     setLoading(false);
   };
 
-  const openTickets = tickets.filter((t) => t.status === "open" || t.status === "in_progress");
-  const resolvedTickets = tickets.filter((t) => t.status === "resolved" || t.status === "closed");
+  const openTickets = useMemo(() => 
+    tickets.filter((t) => (t.status === "open" || t.status === "in_progress") && 
+    (t.title.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase())))
+  , [tickets, search]);
+
+  const resolvedTickets = useMemo(() => 
+    tickets.filter((t) => t.status === "resolved" || t.status === "closed")
+  , [tickets]);
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-subtle text-sm font-medium">Loading ticket queue...</p>
+      <div className="min-h-[40vh] flex flex-col items-center justify-center">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-subtle text-xs font-medium">Syncing queue...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto">
-      <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Active Ticket Queue</h1>
-          <p className="text-subtle mt-1">Manage and resolve incoming employee requests</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Support Queue</h1>
+          <p className="text-xs text-subtle mt-1">Manage and resolve incoming employee requests</p>
         </div>
         
-        <div className="flex gap-4">
-           <div className="card px-8 py-4 border-white/5 bg-white/[0.02] flex flex-col items-center">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Open Tickets</span>
-              <span className="text-3xl font-bold text-white">{openTickets.length}</span>
+        <div className="flex gap-2">
+           <div className="card px-5 py-2 border-white/5 bg-white/[0.02] flex flex-col items-center min-w-[100px]">
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Active</span>
+              <span className="text-xl font-bold text-white">{openTickets.length}</span>
            </div>
-           <div className="card px-8 py-4 border-white/5 bg-white/[0.02] flex flex-col items-center">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Resolved Today</span>
-              <span className="text-3xl font-bold text-emerald-400">{resolvedTickets.length}</span>
+           <div className="card px-5 py-2 border-white/5 bg-white/[0.02] flex flex-col items-center min-w-[100px]">
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Done</span>
+              <span className="text-xl font-bold text-emerald-400">{resolvedTickets.length}</span>
            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Active Queue */}
-        <section className="lg:col-span-8 space-y-6">
-          <h2 className="text-sm font-bold text-primary uppercase tracking-[0.2em] mb-6">Active Queue</h2>
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Filter queue by title or ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-field py-2 pl-10 text-xs"
+        />
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
+      </div>
 
-          {openTickets.length === 0 ? (
-            <div className="card p-20 text-center border-dashed border-white/10 bg-transparent">
-               <p className="text-subtle font-medium italic">All caught up! The queue is currently empty.</p>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Active Queue Manifest */}
+        <section className="lg:col-span-8 space-y-4">
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white/[0.01] border-b border-white/5">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Subject</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Requestor</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Age</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.03]">
+                  {openTickets.map((ticket) => (
+                    <tr 
+                      key={ticket.id} 
+                      className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                      onClick={() => window.location.href = `/dashboard/ticket/${ticket.id}`}
+                    >
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-sm text-white group-hover:text-primary transition-colors">{ticket.title}</p>
+                        <p className="text-[10px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-xs font-medium text-slate-300">{ticket.creator.name}</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-bold">{ticket.type}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="badge badge-gray text-[10px] py-0.5 px-2">
+                          {ticket.status.replace("_", " ")}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`badge ${
+                          ticket.priority === 'urgent' ? 'badge-red' : 'badge-blue'
+                        } text-[10px] py-0.5 px-2`}>
+                          {ticket.priority}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-[10px] font-medium text-slate-500">
+                        {new Date(ticket.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ) : (
-            <div className="space-y-6">
-              {openTickets.map((ticket) => (
-                <Link 
-                  key={ticket.id} 
-                  href={`/dashboard/ticket/${ticket.id}`}
-                  className="block group"
-                >
-                  <div className="card p-8 border-white/5 hover:border-primary/40 transition-all duration-300">
-                    <div className="flex flex-col xl:flex-row justify-between gap-10">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-4 mb-6">
-                          <span className={`badge ${
-                            ticket.priority === 'urgent' ? 'badge-red' : 'badge-blue'
-                          }`}>
-                            {ticket.priority}
-                          </span>
-                          <span className="badge badge-gray">{ticket.status.replace("_", " ")}</span>
-                          <span className="text-[11px] font-mono text-slate-700">#{ticket.id.slice(0, 8)}</span>
-                        </div>
 
-                        <h3 className="text-2xl font-bold text-white mb-4 leading-tight group-hover:text-primary transition-colors">{ticket.title}</h3>
-                        <p className="text-subtle text-sm leading-relaxed mb-8 line-clamp-2">{ticket.description}</p>
-
-                        <div className="flex items-center gap-8 pt-6 border-t border-white/5">
-                          <div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Requested By</p>
-                            <p className="text-sm font-bold text-white">{ticket.creator.name}</p>
-                          </div>
-                          <div className="h-8 w-[1px] bg-white/5" />
-                          <div>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Submitted</p>
-                            <p className="text-sm font-medium text-slate-400">{new Date(ticket.createdAt).toLocaleString()}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="xl:w-48 flex flex-col justify-center">
-                        <span className="btn-primary w-full text-center">View & Resolve</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+            {openTickets.length === 0 && (
+              <div className="text-center py-20">
+                 <p className="text-subtle text-sm font-medium italic">All caught up! The queue is clear.</p>
+              </div>
+            )}
+          </div>
         </section>
 
-        {/* Resolved Sidebar */}
-        <aside className="lg:col-span-4 space-y-8">
-          <h2 className="text-sm font-bold text-subtle uppercase tracking-[0.2em] mb-6">Recently Resolved</h2>
-          <div className="space-y-4">
+        {/* Dense Archive Sidebar */}
+        <aside className="lg:col-span-4 space-y-4">
+          <h2 className="text-[10px] font-bold text-subtle uppercase tracking-[0.2em]">Recently Resolved</h2>
+          <div className="space-y-2">
             {resolvedTickets.slice(0, 10).map((ticket) => (
               <Link key={ticket.id} href={`/dashboard/ticket/${ticket.id}`} className="block group">
-                <div className="card p-5 border-white/5 bg-white/[0.01] hover:border-emerald-500/30 transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold text-white text-sm truncate pr-4 group-hover:text-emerald-400">{ticket.title}</h3>
-                    {ticket.feedback && (
-                      <div className="flex text-[10px] text-yellow-500">
-                        ★ {ticket.feedback.rating}
-                      </div>
-                    )}
+                <div className="card p-4 border-white/5 bg-white/[0.01] hover:border-emerald-500/30 transition-all flex justify-between items-center">
+                  <div>
+                    <h3 className="font-bold text-white text-xs truncate max-w-[150px] group-hover:text-emerald-400">{ticket.title}</h3>
+                    <p className="text-[9px] font-bold text-slate-600 uppercase mt-0.5">{ticket.creator.name}</p>
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-bold text-slate-600 uppercase">
-                    <span>{ticket.creator.name}</span>
-                    <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
-                  </div>
+                  <span className="text-[9px] font-mono text-slate-700">#{ticket.id.slice(0, 8)}</span>
                 </div>
               </Link>
             ))}
             {resolvedTickets.length === 0 && (
-              <p className="text-xs text-slate-700 italic">No tickets resolved today.</p>
+              <p className="text-[10px] text-slate-700 italic">No tickets resolved today.</p>
             )}
           </div>
         </aside>
