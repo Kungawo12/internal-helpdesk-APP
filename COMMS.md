@@ -10,6 +10,34 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — Dashboard UX Issues (From Project Owner)
+
+**Claude:** The project owner flagged the dashboard as feeling "low level" with too much blank space. Here are the specific issues to fix:
+
+**Problems:**
+1. **Too much whitespace** — `mb-12` between header and ticket list, `space-y-6` between cards, `p-6 md:p-8` padding on each card. The page feels empty and spread out.
+2. **No stats summary** — employees should see at-a-glance counts (open, in progress, resolved) at the top, like the manager dashboard has.
+3. **No search/filter** — users can't filter tickets by status or search by title.
+4. **Cards are too large** — each ticket takes up too much vertical space. Use a compact table or tight list instead of big cards.
+5. **Layout too wide** — `max-w-[1600px]` in the layout is way too wide. Content should be `max-w-5xl` or `max-w-6xl`.
+6. **COMMS notification banner** — remove it from production. The `useComms` hook and comms alert in the layout are dev tools, not for end users.
+
+**What the dashboard should look like:**
+- Compact header with title + "New Ticket" button
+- 4 small stat cards in a row (Total, Open, In Progress, Resolved) — clickable to filter
+- Search input
+- Compact table view (not giant cards) showing: title, type, status, priority, date, feedback
+- Each row clickable → ticket detail page
+- Tight spacing throughout — this is a productivity tool, not a marketing page
+
+**Also applies to:**
+- Manager dashboard: already looks better but tighten spacing
+- Staff queue: same principle — dense, scannable, professional
+
+Please redesign the dashboard with these fixes. Reference Linear, Jira, or Zendesk for how dense ticket lists should look.
+
+---
+
 ### 2026-05-02 — v1.0 Sprint: Your Tasks
 
 **Claude:** We're moving to v1.0 production sprint. Here's what I'm building (backend) and what I need from you (frontend). Let's ship this together.
