@@ -7,31 +7,42 @@ import gsap from "gsap";
 type Ticket = {
   id: string;
   title: string;
+  description: string;
+  type: string;
   status: string;
   priority: string;
+  solution: string | null;
   createdAt: string;
+  feedback?: {
+    rating: number;
+    comment: string | null;
+  } | null;
 };
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [feedbackForm, setFeedbackForm] = useState<{ ticketId: string; rating: number; comment: string } | null>(null);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/tickets")
-      .then((res) => res.json())
-      .then((data) => {
-        setTickets(data);
-        setLoading(false);
-      });
+    fetchTickets();
   }, []);
+
+  const fetchTickets = async () => {
+    const res = await fetch("/api/tickets");
+    const data = await res.json();
+    setTickets(data);
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (!loading) {
       gsap.from(".data-pane", {
         opacity: 0,
-        scale: 0.9,
+        y: 20,
         duration: 1,
         stagger: 0.1,
         ease: "expo.out",
@@ -39,163 +50,166 @@ export default function DashboardPage() {
     }
   }, [loading]);
 
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackForm) return;
+    setSubmittingFeedback(true);
+
+    await fetch(`/api/tickets/${feedbackForm.ticketId}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating: feedbackForm.rating, comment: feedbackForm.comment }),
+    });
+
+    setSubmittingFeedback(false);
+    setFeedbackForm(null);
+    fetchTickets();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-bg-dark overflow-hidden">
-        <div className="scanlines" />
+      <div className="min-h-screen flex flex-col items-center justify-center overflow-hidden">
         <div className="w-64 loading-bar mb-6" />
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Synchronizing_Neural_Nodes</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Syncing_Nodes...</p>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="relative min-h-screen pb-40">
-      <div className="hud-bg" />
-      <div className="scanlines" />
-      
-      {/* HUD Header Branding */}
-      <div className="mb-20 pt-10">
-        <div className="inline-block hud-frame px-6 py-2 border-primary/20 transform skew-x-[-12deg] mb-6">
-          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white transform skew-x-[12deg]">
-            Mission_<span className="text-primary">Control</span>
-          </h1>
-        </div>
-        <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">Operator: {session?.user?.name} | Security_Level: ALPHA_7</p>
+    <div ref={containerRef} className="pb-40">
+      <div className="mb-20">
+        <h1 className="text-5xl font-black italic uppercase tracking-tighter text-white mb-2">Operational_Stream</h1>
+        <p className="text-slate-500 font-mono text-[10px] uppercase tracking-[0.4em]">Active_Data_Nodes_For_{session?.user?.name}</p>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
-        {/* Central Intelligence Console */}
-        <div className="col-span-12 lg:col-span-8 space-y-8">
-          <div className="data-pane hud-frame p-1 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
-            <div className="bg-hud-bg/20 p-8 backdrop-blur-3xl">
-               <div className="flex items-center justify-between mb-10">
-                  <div>
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-primary mb-2">Operational_Queue</h2>
-                    <p className="text-[9px] font-mono text-slate-500">REALTIME_INPUT_STREAM_V4.2</p>
+      <div className="grid grid-cols-1 gap-8">
+        {tickets.map((ticket) => (
+          <div key={ticket.id} className="data-pane group">
+            <div className="hud-frame p-8 bg-hud-bg/10 backdrop-blur-3xl border-white/5 hover:border-primary/40 transition-all duration-500 scan-effect">
+              <div className="flex flex-col lg:flex-row gap-10">
+                {/* Basic Info */}
+                <div className="flex-1 space-y-6">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <span className={`px-3 py-1 rounded-none text-[9px] font-black uppercase tracking-widest border ${
+                      ticket.priority === 'urgent' ? 'border-accent bg-accent/10 text-accent' : 'border-primary/30 bg-primary/5 text-primary'
+                    }`}>
+                      PRIORITY_{ticket.priority}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">STATUS_{ticket.status}</span>
+                    <span className="text-[9px] font-mono text-slate-700">NODE_{ticket.id.slice(0, 8)}</span>
                   </div>
-                  <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-black text-emerald-500 uppercase">Live_Feed</span>
-                  </div>
-               </div>
 
-               <div className="space-y-4">
-                  {tickets.map((ticket) => (
-                    <div key={ticket.id} className="group/item relative">
-                       <div className="hud-frame p-6 hover:bg-primary/10 transition-all duration-300 flex items-center justify-between cursor-pointer border-white/5 hover:border-primary/40 scan-effect">
-                          <div className="flex items-center gap-6">
-                             <div className={`w-3 h-3 rounded-none transform rotate-45 border ${
-                               ticket.priority === 'urgent' ? 'bg-accent border-accent shadow-[0_0_15px_rgba(255,0,85,0.4)]' :
-                               ticket.priority === 'high' ? 'bg-primary border-primary' : 'bg-transparent border-white/20'
-                             }`} />
-                             <div>
-                               <p className="text-[9px] font-mono text-slate-600 uppercase mb-1">NODE_{ticket.id.slice(0, 8)}</p>
-                               <h3 className="text-lg font-black italic uppercase tracking-tight text-white group-hover/item:text-primary transition-colors">{ticket.title}</h3>
-                             </div>
+                  <div>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white group-hover:text-primary transition-colors mb-4 leading-none">
+                      {ticket.title}
+                    </h2>
+                    <p className="text-slate-400 text-sm leading-relaxed max-w-3xl">
+                      {ticket.description}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-6 pt-4 opacity-50">
+                     <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">INITIATED: {new Date(ticket.createdAt).toLocaleString()}</p>
+                     <div className="w-1 h-1 bg-slate-800 rounded-full" />
+                     <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">SECTOR: {ticket.type}</p>
+                  </div>
+                </div>
+
+                {/* Resolution & Feedback */}
+                <div className="lg:w-96 space-y-6">
+                  {ticket.status === "resolved" && (
+                    <div className="hud-frame p-6 bg-emerald-500/5 border-emerald-500/20">
+                      <p className="text-[10px] font-black uppercase text-emerald-400 tracking-[0.3em] mb-4 italic">Verification_Result</p>
+                      <p className="text-xs text-slate-300 italic mb-6">"{ticket.solution}"</p>
+                      
+                      {!ticket.feedback ? (
+                        <button 
+                          onClick={() => setFeedbackForm({ ticketId: ticket.id, rating: 5, comment: "" })}
+                          className="w-full py-3 bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all"
+                        >
+                          Provide_Neural_Feedback
+                        </button>
+                      ) : (
+                        <div className="border-t border-emerald-500/10 pt-4">
+                          <div className="flex gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`text-sm ${i < ticket.feedback!.rating ? "text-yellow-500" : "text-white/5"}`}>★</span>
+                            ))}
                           </div>
-                          
-                          <div className="flex items-center gap-10">
-                             <div className="text-right hidden sm:block">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
-                                <p className="text-xs font-black uppercase tracking-widest text-primary italic">{ticket.status}</p>
-                             </div>
-                             <div className="text-right hidden md:block">
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Timestamp</p>
-                                <p className="text-xs font-mono text-slate-400">{new Date(ticket.createdAt).toLocaleTimeString()}</p>
-                             </div>
-                             <button className="w-10 h-10 hud-frame flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all">
-                                →
-                             </button>
-                          </div>
-                       </div>
+                          <p className="text-[10px] text-slate-500 uppercase font-bold italic tracking-wider">Feedback_Stored_Successfully</p>
+                        </div>
+                      )}
                     </div>
-                  ))}
-               </div>
+                  )}
+
+                  {ticket.status !== "resolved" && (
+                    <div className="h-full flex items-center justify-center opacity-10">
+                       <span className="text-5xl">⚡</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Feedback Overlay Form */}
+              {feedbackForm?.ticketId === ticket.id && (
+                <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Operational_Rating</h3>
+                  <div className="flex gap-4">
+                    {[1, 2, 3, 4, 5].map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => setFeedbackForm({ ...feedbackForm, rating: r })}
+                        className={`w-12 h-12 hud-frame flex items-center justify-center text-lg transition-all ${
+                          feedbackForm.rating === r ? "bg-primary text-black border-primary" : "text-slate-500 hover:text-white"
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={feedbackForm.comment}
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
+                    className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-primary/50 font-mono text-xs h-24 resize-none"
+                    placeholder="Enter analytical comments (optional)..."
+                  />
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleFeedbackSubmit}
+                      disabled={submittingFeedback}
+                      className="flex-1 py-4 bg-primary text-black font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all"
+                    >
+                      {submittingFeedback ? "Transmitting..." : "Submit_Feedback_Protocol"}
+                    </button>
+                    <button
+                      onClick={() => setFeedbackForm(null)}
+                      className="px-8 py-4 hud-frame border-white/10 text-slate-500 text-[10px] font-black uppercase tracking-widest"
+                    >
+                      Abort
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* Tactical Overview Sidebar */}
-        <div className="col-span-12 lg:col-span-4 space-y-8">
-           <div className="data-pane hud-frame p-6 bg-hud-bg/10 backdrop-blur-3xl relative overflow-hidden group">
-              <div className="scan-effect absolute inset-0 pointer-events-none opacity-20" />
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-8">Tactical_Metrics</h2>
-              
-              <div className="space-y-10">
-                 <div>
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-3">
-                       <span className="text-slate-500">Neural_Load</span>
-                       <span className="text-primary">82%</span>
-                    </div>
-                    <div className="h-1 bg-white/5 relative overflow-hidden">
-                       <div className="absolute top-0 left-0 h-full bg-primary w-[82%] node-glow" />
-                    </div>
-                 </div>
-                 
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="hud-frame p-4 bg-white/5 border-white/5">
-                       <p className="text-[8px] font-black text-slate-500 uppercase mb-2">Sync_Rate</p>
-                       <p className="text-2xl font-black italic text-white">94.8%</p>
-                    </div>
-                    <div className="hud-frame p-4 bg-white/5 border-white/5">
-                       <p className="text-[8px] font-black text-slate-500 uppercase mb-2">Uptime</p>
-                       <p className="text-2xl font-black italic text-white">99.9h</p>
-                    </div>
-                 </div>
-
-                 <div className="hud-frame p-6 border-primary/20 bg-primary/5">
-                    <p className="text-[10px] font-black text-primary uppercase mb-4">Core_Protocol_X</p>
-                    <div className="space-y-2">
-                       <div className="flex items-center gap-3">
-                          <div className="w-1 h-1 bg-primary rounded-full" />
-                          <p className="text-[9px] font-mono text-slate-400">DATA_ENCRYPTION: ACTIVE</p>
-                       </div>
-                       <div className="flex items-center gap-3">
-                          <div className="w-1 h-1 bg-primary rounded-full" />
-                          <p className="text-[9px] font-mono text-slate-400">NEURAL_ROUTING: OPTIMIZED</p>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-
-           {/* Direct Protocol Terminal */}
-           <div className="data-pane hud-frame p-4 bg-black/40 border-primary/10">
-              <div className="flex items-center gap-3 mb-4 text-primary">
-                 <span className="text-xs">⌨</span>
-                 <p className="text-[10px] font-black uppercase tracking-[0.3em]">Command_Terminal</p>
-              </div>
-              <div className="bg-black/60 p-4 rounded border border-white/5 font-mono text-[10px] text-primary/80 leading-relaxed">
-                 <p>{'>'} initialize --core-sync</p>
-                 <p className="text-slate-600 italic">Core synchronized in 12ms</p>
-                 <p>{'>'} fetch --all-nodes</p>
-                 <p className="text-emerald-500/60">Success: 24 nodes online</p>
-                 <div className="flex items-center gap-1 mt-2">
-                    <p>{'>'}</p>
-                    <div className="w-2 h-4 bg-primary animate-pulse" />
-                 </div>
-              </div>
-           </div>
-        </div>
+        {tickets.length === 0 && (
+          <div className="py-40 text-center">
+            <p className="text-xs font-black uppercase tracking-[0.5em] text-slate-600">No_Active_Nodes_Found</p>
+          </div>
+        )}
       </div>
 
       {/* Floating Action HUD */}
-      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[2000]">
-         <div className="hud-frame p-3 border-primary/40 backdrop-blur-2xl bg-primary/10 flex items-center gap-4">
-            <button className="px-8 py-3 bg-primary text-black font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
-               Initialize_New_Thread
-            </button>
-            <div className="w-[1px] h-8 bg-white/10" />
-            <div className="flex gap-2">
-               {['⎋', '⌥', '⌘'].map(key => (
-                 <button key={key} className="w-10 h-10 hud-frame flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
-                    {key}
-                 </button>
-               ))}
-            </div>
-         </div>
+      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000]">
+         <a 
+           href="/dashboard/create" 
+           className="hud-frame px-10 py-4 bg-primary/10 border-primary/40 backdrop-blur-2xl flex items-center gap-4 group hover:bg-primary hover:scale-105 transition-all cursor-pointer"
+         >
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-white group-hover:text-black">Execute_New_Protocol</span>
+            <span className="text-xl group-hover:text-black">+</span>
+         </a>
       </div>
     </div>
   );

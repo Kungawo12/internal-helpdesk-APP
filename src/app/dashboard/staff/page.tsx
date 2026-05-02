@@ -14,7 +14,6 @@ type Ticket = {
   solution: string | null;
   createdAt: string;
   creator: { name: string; email: string };
-  assignee: { name: string; email: string } | null;
   feedback: { rating: number; comment: string | null } | null;
 };
 
@@ -23,13 +22,6 @@ const priorityOrder: Record<string, number> = {
   high: 1,
   medium: 2,
   low: 3,
-};
-
-const statusColors: Record<string, string> = {
-  open: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  in_progress: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  resolved: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  closed: "text-slate-500 bg-white/5 border-white/10",
 };
 
 export default function StaffDashboard() {
@@ -61,12 +53,12 @@ export default function StaffDashboard() {
 
   useEffect(() => {
     if (!loading) {
-      gsap.from(".ticket-row", {
+      gsap.from(".ticket-node", {
         opacity: 0,
-        x: -20,
-        stagger: 0.05,
-        duration: 0.6,
-        ease: "power2.out",
+        x: -40,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: "power3.out",
       });
     }
   }, [loading]);
@@ -100,9 +92,9 @@ export default function StaffDashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Synchronizing Queue...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div className="w-64 loading-bar mb-6" />
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Syncing_Active_Queue...</p>
       </div>
     );
   }
@@ -110,177 +102,156 @@ export default function StaffDashboard() {
   const ticketType = session?.user.role === "it_staff" ? "IT" : "HR";
 
   return (
-    <div ref={containerRef}>
-      <div className="mb-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+    <div ref={containerRef} className="pb-40">
+      <div className="mb-20 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
         <div>
-          <h1 className="text-4xl font-black tracking-tight mb-2">{ticketType} Command Center</h1>
-          <p className="text-slate-500 font-medium tracking-tight">
-            Prioritized operational stream for resolution engineers.
-          </p>
+          <div className="inline-block hud-frame px-4 py-1 border-primary/20 mb-4">
+             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Operational_Stream</span>
+          </div>
+          <h1 className="text-6xl font-black italic uppercase tracking-tighter text-white">{ticketType}_Command_Center</h1>
+          <p className="text-slate-500 font-mono text-[10px] uppercase tracking-[0.4em] mt-2">Managing_Queue_Intensity_{openTickets.length}</p>
         </div>
+        
         <div className="flex gap-4">
-          <div className="glass px-6 py-3 rounded-2xl border-white/5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Open Threads</p>
-            <p className="text-xl font-black text-white">{openTickets.length}</p>
-          </div>
-          <div className="glass px-6 py-3 rounded-2xl border-white/5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Total Resolved</p>
-            <p className="text-xl font-black text-emerald-400">{resolvedTickets.length}</p>
-          </div>
+           <div className="hud-frame p-6 border-white/5 bg-hud-bg/10 backdrop-blur-3xl min-w-[160px]">
+              <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2">ACTIVE_THREADS</p>
+              <p className="text-4xl font-black italic text-white tracking-tighter">{openTickets.length}</p>
+           </div>
+           <div className="hud-frame p-6 border-emerald-500/10 bg-emerald-500/5 backdrop-blur-3xl min-w-[160px]">
+              <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500 mb-2">COMPLETED_OPS</p>
+              <p className="text-4xl font-black italic text-emerald-400 tracking-tighter">{resolvedTickets.length}</p>
+           </div>
         </div>
       </div>
 
-      {/* Active Queue */}
-      <div className="mb-16">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">High-Priority Queue</h2>
-        </div>
+      <div className="grid grid-cols-1 gap-20">
+        {/* SPEC REQUIREMENT: Open/In Progress View */}
+        <section className="space-y-10">
+          <h2 className="text-[12px] font-black uppercase tracking-[0.6em] text-primary flex items-center gap-4">
+             <span className="w-4 h-[1px] bg-primary" /> ACTIVE_QUEUE <span className="w-4 h-[1px] bg-primary" />
+          </h2>
 
-        {openTickets.length === 0 ? (
-          <div className="glass rounded-[40px] border-white/5 p-20 text-center flex flex-col items-center">
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center text-3xl mb-6 grayscale opacity-30">
-              ☕
+          {openTickets.length === 0 ? (
+            <div className="hud-frame p-20 text-center border-white/5 opacity-30 italic">
+               <p className="text-xs font-black uppercase tracking-[0.4em]">Queue_Stability_Confirmed (0 Nodes)</p>
             </div>
-            <h2 className="text-xl font-bold mb-2 text-slate-300">Queue Depleted</h2>
-            <p className="text-slate-500 text-sm max-w-xs">All operational requests have been fulfilled. Stand by for new incoming data.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {openTickets.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="ticket-row group glass rounded-[32px] p-8 border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-500"
-              >
-                <div className="flex flex-col lg:flex-row items-start justify-between gap-8">
-                  <div className="flex-1 space-y-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className={`px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.15em] border ${
-                        ticket.priority === 'urgent' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
-                        ticket.priority === 'high' ? 'bg-orange-500/10 border-orange-500/20 text-orange-400' :
-                        'bg-white/5 border-white/10 text-slate-500'
-                      }`}>
-                        {ticket.priority}
-                      </span>
-                      <span className={`px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.15em] border ${statusColors[ticket.status]}`}>
-                        {ticket.status.replace("_", " ")}
-                      </span>
-                      <span className="text-[10px] font-mono text-slate-600 uppercase">Ref: {ticket.id.slice(0, 8)}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors leading-tight">
-                        {ticket.title}
-                      </h3>
-                      <p className="text-slate-400 leading-relaxed text-sm">
-                        {ticket.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-4 pt-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">
-                          {ticket.creator.name.charAt(0)}
-                        </div>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{ticket.creator.name}</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              {openTickets.map((ticket) => (
+                <div key={ticket.id} className="ticket-node hud-frame p-10 bg-hud-bg/10 backdrop-blur-3xl border-white/5 hover:border-primary/40 transition-all duration-500 scan-effect relative group">
+                  <div className="flex flex-col xl:flex-row gap-12">
+                    <div className="flex-1 space-y-6">
+                      <div className="flex flex-wrap items-center gap-6">
+                        <span className={`px-4 py-1.5 rounded-none text-[10px] font-black uppercase tracking-[0.2em] border ${
+                          ticket.priority === 'urgent' ? 'bg-accent/10 border-accent/40 text-accent' : 'bg-primary/5 border-primary/20 text-primary'
+                        }`}>
+                          SEVERITY_{ticket.priority}
+                        </span>
+                        <span className="text-[10px] font-black uppercase text-slate-500 italic tracking-[0.3em]">{ticket.status}</span>
+                        <span className="text-[9px] font-mono text-slate-700">NODE_ID: {ticket.id}</span>
                       </div>
-                      <span className="w-1 h-1 rounded-full bg-slate-800" />
-                      <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-                        {new Date(ticket.createdAt).toLocaleString()}
-                      </p>
+
+                      <div>
+                        <h3 className="text-4xl font-black italic uppercase tracking-tighter text-white group-hover:text-primary transition-colors mb-4">{ticket.title}</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-4xl">{ticket.description}</p>
+                      </div>
+
+                      <div className="pt-6 flex items-center gap-8 border-t border-white/5">
+                        <div>
+                          <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Originator</p>
+                          <p className="text-xs font-black text-white uppercase tracking-tight">{ticket.creator.name} ({ticket.creator.email})</p>
+                        </div>
+                        <div className="h-8 w-[1px] bg-white/5" />
+                        <div>
+                          <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Temporal_Stamp</p>
+                          <p className="text-xs font-mono text-slate-400 uppercase">{new Date(ticket.createdAt).toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="xl:w-64 flex flex-col gap-4">
+                      {/* SPEC REQUIREMENT: Start Working Button */}
+                      {ticket.status === "open" && (
+                        <button
+                          onClick={() => handleStatusChange(ticket.id, "in_progress")}
+                          className="w-full py-5 hud-frame border-primary/40 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all transform skew-x-[-12deg]"
+                        >
+                          <span className="inline-block transform skew-x-[12deg]">Engage_Thread</span>
+                        </button>
+                      )}
+                      
+                      {/* SPEC REQUIREMENT: Resolve Button */}
+                      <button
+                        onClick={() => setResolveForm({ ticketId: ticket.id, solution: "" })}
+                        className="w-full py-5 bg-emerald-500 text-black font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all transform skew-x-[-12deg]"
+                      >
+                         <span className="inline-block transform skew-x-[12deg]">Initialize_Resolution</span>
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex lg:flex-col gap-3 w-full lg:w-48">
-                    {ticket.status === "open" && (
-                      <button
-                        onClick={() => handleStatusChange(ticket.id, "in_progress")}
-                        className="flex-1 py-3 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500/10 hover:text-yellow-400 hover:border-yellow-500/20 transition-all"
-                      >
-                        Engage Thread
-                      </button>
-                    )}
-                    <button
-                      onClick={() => setResolveForm({ ticketId: ticket.id, solution: "" })}
-                      className="flex-1 py-3 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/10 hover:brightness-110 transition-all"
-                    >
-                      Verify Solution
-                    </button>
-                  </div>
-                </div>
-
-                {/* Sophisticated Resolve Form */}
-                {resolveForm?.ticketId === ticket.id && (
-                  <div className="mt-8 p-8 glass border-emerald-500/20 rounded-[24px] space-y-6 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-emerald-500/[0.02] pointer-events-none" />
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 block mb-4">
-                        Resolution Synthesis
-                      </label>
+                  {/* SPEC REQUIREMENT: Resolve Flow (Textarea) */}
+                  {resolveForm?.ticketId === ticket.id && (
+                    <div className="mt-12 pt-12 border-t border-emerald-500/20 space-y-8 animate-reveal">
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Neural_Synthesis_Analysis</h4>
                       <textarea
                         value={resolveForm.solution}
                         onChange={(e) => setResolveForm({ ...resolveForm, solution: e.target.value })}
-                        className="w-full px-6 py-4 glass border-white/10 rounded-2xl text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[120px] resize-none"
-                        placeholder="Document the technical steps taken and the verified outcome..."
+                        className="w-full px-8 py-6 bg-black/40 border border-emerald-500/10 text-white placeholder-slate-700 focus:outline-none focus:border-emerald-500/50 font-mono text-sm h-48 resize-none leading-relaxed"
+                        placeholder="Document the resolution sequence for enterprise archival..."
                         required
                       />
+                      <div className="flex gap-6">
+                        <button
+                          onClick={handleResolve}
+                          disabled={!resolveForm.solution || resolving}
+                          className="flex-1 py-5 bg-emerald-500 text-black font-black text-[10px] uppercase tracking-widest hover:brightness-110 disabled:opacity-50 transition-all"
+                        >
+                          {resolving ? "Transmitting..." : "Commit_Resolved_Status"}
+                        </button>
+                        <button
+                          onClick={() => setResolveForm(null)}
+                          className="px-10 py-5 hud-frame border-white/10 text-slate-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all"
+                        >
+                          Abort
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-4">
-                      <button
-                        onClick={handleResolve}
-                        disabled={!resolveForm.solution || resolving}
-                        className="flex-1 py-3.5 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-50 transition-all"
-                      >
-                        {resolving ? "Transmitting..." : "Commit Resolution"}
-                      </button>
-                      <button
-                        onClick={() => setResolveForm(null)}
-                        className="px-8 py-3.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all"
-                      >
-                        Abort
-                      </button>
-                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* SPEC REQUIREMENT: Resolved View */}
+        {resolvedTickets.length > 0 && (
+          <section className="space-y-10 pt-20 border-t border-white/5">
+            <h2 className="text-[12px] font-black uppercase tracking-[0.6em] text-emerald-500 flex items-center gap-4">
+               <span className="w-4 h-[1px] bg-emerald-500/30" /> ARCHIVED_RESOLUTIONS <span className="w-4 h-[1px] bg-emerald-500/30" />
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {resolvedTickets.map((ticket) => (
+                <div key={ticket.id} className="hud-frame p-6 bg-emerald-500/[0.02] border-emerald-500/5 group hover:border-emerald-500/20 transition-all duration-500">
+                  <div className="flex justify-between items-start mb-4">
+                    <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">REF_{ticket.id.slice(0, 8)}</p>
+                    {ticket.feedback && (
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <span key={s} className={`text-xs ${s <= ticket.feedback!.rating ? "text-yellow-500" : "text-white/5"}`}>★</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  <h3 className="text-xl font-black italic uppercase tracking-tighter text-slate-300 group-hover:text-emerald-400 transition-colors mb-2 truncate">{ticket.title}</h3>
+                  <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">Initiator: {ticket.creator.name}</p>
+                  <p className="text-[9px] font-mono text-slate-700 uppercase">{new Date(ticket.createdAt).toLocaleDateString()}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
       </div>
-
-      {/* Archive / Resolved Section */}
-      {resolvedTickets.length > 0 && (
-        <div className="pt-10 border-t border-white/5">
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-600 mb-8 flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-500/30" />
-            Fulfilled Operations
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {resolvedTickets.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="glass rounded-2xl p-6 border-white/5 flex items-center justify-between group hover:border-white/10 transition-all"
-              >
-                <div className="min-w-0">
-                  <p className="font-bold text-sm text-slate-400 truncate group-hover:text-slate-200 transition-colors">
-                    {ticket.title}
-                  </p>
-                  <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold tracking-widest">
-                    {ticket.creator.name} • {new Date(ticket.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                {ticket.feedback && (
-                  <div className="flex gap-0.5 ml-4 flex-shrink-0">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <span key={s} className={`text-xs ${s <= ticket.feedback!.rating ? "text-yellow-500" : "text-white/5"}`}>★</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

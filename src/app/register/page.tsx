@@ -18,11 +18,11 @@ export default function RegisterPage() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".register-card", {
+      gsap.from(".register-frame", {
         opacity: 0,
-        y: 40,
+        scale: 0.9,
         duration: 1.2,
-        ease: "power4.out",
+        ease: "expo.out",
       });
       gsap.from(".register-item", {
         opacity: 0,
@@ -30,7 +30,7 @@ export default function RegisterPage() {
         duration: 0.8,
         stagger: 0.1,
         ease: "power3.out",
-        delay: 0.4,
+        delay: 0.5,
       });
     }, containerRef);
     return () => ctx.revert();
@@ -41,7 +41,7 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    // Determine role based on department
+    // SPEC REQUIREMENT: Role mapping logic
     let role = "employee";
     if (form.department === "IT Department") role = "it_staff";
     else if (form.department === "HR Department") role = "hr_staff";
@@ -62,7 +62,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error);
+      setError(data.error || "Registry Conflict Detected");
       return;
     }
 
@@ -70,123 +70,105 @@ export default function RegisterPage() {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen flex items-center justify-center px-4 py-20 overflow-hidden">
-      {/* Premium Background */}
-      <div className="mesh-gradient" />
-      <div className="noise" />
-      <div className="absolute inset-0 grid-pattern opacity-30" />
-      <div className="glow-blob w-[500px] h-[500px] bg-secondary/10 top-[-10%] left-[-10%]" />
-      <div className="glow-blob w-[400px] h-[400px] bg-primary/20 bottom-[-10%] right-[-10%]" />
+    <div ref={containerRef} className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
+      <div className="hud-bg" />
+      <div className="scanlines" />
+      <div className="cyber-grid absolute inset-0" />
 
-      <div className="register-card relative z-10 w-full max-w-md">
-        {/* Branding */}
-        <div className="text-center mb-10">
-          <a href="/" className="register-item inline-flex items-center gap-3 mb-6 group">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-xl font-black shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-transform group-hover:scale-110">
+      <div className="register-frame w-full max-w-lg relative z-10">
+        <div className="text-center mb-12">
+          <div className="register-item inline-flex items-center gap-4 mb-6 group cursor-pointer">
+            <div className="w-14 h-14 bg-primary/10 border border-primary/50 flex items-center justify-center text-3xl font-black chromatic-glow group-hover:scale-110 transition-transform">
               H
             </div>
-            <span className="text-2xl font-bold tracking-tighter">
-              Helpdesk<span className="text-primary">.</span>
-            </span>
-          </a>
-          <h1 className="register-item text-3xl font-black tracking-tight mb-2">Create Identity</h1>
-          <p className="register-item text-slate-400 font-medium tracking-tight">Join the internal operations network</p>
+            <div className="text-left">
+              <p className="text-[14px] font-black tracking-[0.5em] text-white">NEURAL_DESK</p>
+              <p className="text-[10px] font-mono text-primary uppercase">REGISTRY_TERMINAL_V1</p>
+            </div>
+          </div>
+          <h1 className="register-item text-4xl font-black italic uppercase tracking-tighter text-white">New_Identity_Initialization</h1>
         </div>
 
-        {/* Form Container */}
-        <div className="glass rounded-[40px] p-10 border-white/5 shadow-2xl overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+        <div className="hud-frame p-10 bg-hud-bg/20 backdrop-blur-3xl relative overflow-hidden group">
+          <div className="scan-effect absolute inset-0 pointer-events-none opacity-20" />
           
-          <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             {error && (
-              <div className="register-item p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs font-bold uppercase tracking-widest text-center">
+              <div className="register-item p-4 hud-frame border-accent/40 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest text-center animate-glitch">
                 {error}
               </div>
             )}
 
-            <div className="register-item">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-5 py-4 glass border-white/5 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
-                placeholder="John Doe"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="register-item space-y-2">
+                <label className="block text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Identity_Name</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-700 focus:outline-none focus:border-primary/50 transition-all font-mono text-xs"
+                  placeholder="NOMINAL_IDENTIFIER"
+                  required
+                />
+              </div>
+
+              <div className="register-item space-y-2">
+                <label className="block text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Core_Email</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-700 focus:outline-none focus:border-primary/50 transition-all font-mono text-xs"
+                  placeholder="ID@CORE.NET"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="register-item">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">
-                Work Email
-              </label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-5 py-4 glass border-white/5 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
-                placeholder="you@company.com"
-                required
-              />
-            </div>
-
-            <div className="register-item">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">
-                Security Password
-              </label>
+            <div className="register-item space-y-2">
+              <label className="block text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Security_Sequence</label>
               <input
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-5 py-4 glass border-white/5 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
-                placeholder="••••••••"
+                className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-700 focus:outline-none focus:border-primary/50 transition-all font-mono text-xs"
+                placeholder="••••••••••••"
                 minLength={6}
                 required
               />
             </div>
 
-            <div className="register-item">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">
-                Assignment Department
-              </label>
-              <div className="relative">
-                <select
-                  value={form.department}
-                  onChange={(e) => setForm({ ...form, department: e.target.value })}
-                  className="w-full px-5 py-4 glass border-white/5 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium appearance-none"
-                  required
-                >
-                  <option value="" disabled className="bg-gray-900">Select department</option>
-                  <option value="Engineering" className="bg-gray-900">Engineering</option>
-                  <option value="Marketing" className="bg-gray-900">Marketing</option>
-                  <option value="IT Department" className="bg-gray-900">IT Department</option>
-                  <option value="HR Department" className="bg-gray-900">HR Department</option>
-                  <option value="Management" className="bg-gray-900">Management</option>
-                </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                  ↓
-                </div>
-              </div>
+            <div className="register-item space-y-2">
+              <label className="block text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Department_Assignment</label>
+              <select
+                value={form.department}
+                onChange={(e) => setForm({ ...form, department: e.target.value })}
+                className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white focus:outline-none focus:border-primary/50 transition-all font-mono text-xs appearance-none cursor-pointer"
+                required
+              >
+                <option value="" disabled className="bg-bg-dark">SELECT_SECTOR</option>
+                <option value="Engineering" className="bg-bg-dark">Engineering</option>
+                <option value="Marketing" className="bg-bg-dark">Marketing</option>
+                <option value="IT Department" className="bg-bg-dark">IT Department (STAFF)</option>
+                <option value="HR Department" className="bg-bg-dark">HR Department (STAFF)</option>
+                <option value="Management" className="bg-bg-dark">Management (MANAGER)</option>
+              </select>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="register-item w-full py-4 bg-primary rounded-2xl font-black text-sm tracking-widest uppercase transition-all hover:shadow-[0_0_40px_rgba(59,130,246,0.4)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50"
+              className="register-item w-full py-5 bg-primary text-black font-black text-xs uppercase tracking-[0.4em] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 relative overflow-hidden group/btn"
             >
-              {loading ? "Registering..." : "Create Identity"}
+              <span className="relative z-10">{loading ? "Synchronizing_Nexus..." : "Execute_Registration"}</span>
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-white/50 animate-glitch" />
             </button>
 
-            <div className="register-item pt-4 text-center">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                Already registered?{" "}
-                <a
-                  href="/login"
-                  className="text-primary hover:text-white transition-colors ml-1"
-                >
-                  Sign In
+            <div className="register-item pt-6 text-center border-t border-white/5">
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                Already established?{" "}
+                <a href="/login" className="text-primary hover:text-white transition-colors ml-2 italic underline underline-offset-4">
+                  Access_Portal
                 </a>
               </p>
             </div>

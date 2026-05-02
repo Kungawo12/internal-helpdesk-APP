@@ -11,15 +11,6 @@ type Ticket = {
   priority: string;
   createdAt: string;
   creator: { name: string; email: string };
-  assignee: { name: string; email: string } | null;
-  feedback: { rating: number } | null;
-};
-
-const statusColors: Record<string, string> = {
-  open: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  in_progress: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  resolved: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  closed: "text-slate-500 bg-white/5 border-white/10",
 };
 
 export default function ManagerDashboard() {
@@ -41,14 +32,22 @@ export default function ManagerDashboard() {
     if (!loading) {
       gsap.from(".stat-card", {
         opacity: 0,
-        y: 20,
+        x: -20,
         stagger: 0.05,
         duration: 0.8,
         ease: "power3.out",
       });
+      gsap.from(".table-frame", {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: "expo.out",
+        delay: 0.4
+      });
     }
   }, [loading]);
 
+  // SPEC REQUIREMENT: Specific stats summary
   const stats = {
     total: tickets.length,
     open: tickets.filter((t) => t.status === "open").length,
@@ -66,130 +65,122 @@ export default function ManagerDashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Compiling Analytics...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div className="w-64 loading-bar mb-6" />
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Compiling_Enterprise_Data...</p>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef}>
-      <div className="mb-12">
-        <h1 className="text-4xl font-black tracking-tight mb-2">Enterprise Intelligence</h1>
-        <p className="text-slate-500 font-medium tracking-tight">
-          Real-time oversight across all operational verticals.
-        </p>
+    <div ref={containerRef} className="pb-40">
+      <div className="mb-20">
+        <div className="inline-block hud-frame px-4 py-1 border-accent/20 mb-4">
+           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Strategic_Oversight</span>
+        </div>
+        <h1 className="text-6xl font-black italic uppercase tracking-tighter text-white">Enterprise_Intelligence</h1>
+        <p className="text-slate-500 font-mono text-[10px] uppercase tracking-[0.4em] mt-2">Realtime_Infrastructure_Manifest</p>
       </div>
 
-      {/* Stats Grid - Bento Style */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
+      {/* Stats Grid - SPEC REQUIREMENT */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-20">
         {[
-          { label: "Aggregate", value: stats.total, color: "text-white", icon: "📊" },
-          { label: "Active", value: stats.open, color: "text-blue-400", icon: "⚡" },
-          { label: "Processing", value: stats.inProgress, color: "text-yellow-400", icon: "⚙️" },
-          { label: "Fulfilled", value: stats.resolved, color: "text-emerald-400", icon: "✅" },
-          { label: "IT Vertical", value: stats.it, color: "text-cyan-400", icon: "🖥️" },
-          { label: "HR Vertical", value: stats.hr, color: "text-purple-400", icon: "👥" },
+          { label: "Aggregate_Total", value: stats.total, color: "text-white" },
+          { label: "Active_Nodes", value: stats.open, color: "text-primary" },
+          { label: "Processing_Flow", value: stats.inProgress, color: "text-yellow-500" },
+          { label: "Protocol_Resolved", value: stats.resolved, color: "text-emerald-500" },
+          { label: "IT_Infrastructure", value: stats.it, color: "text-cyan-400" },
+          { label: "Human_Logistics", value: stats.hr, color: "text-accent" },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="stat-card glass rounded-[24px] p-6 border-white/5 relative overflow-hidden group"
+            className="stat-card hud-frame p-6 bg-hud-bg/10 backdrop-blur-3xl border-white/5 group relative overflow-hidden"
           >
-            <span className="text-xl mb-4 block opacity-50 group-hover:opacity-100 transition-opacity">{stat.icon}</span>
-            <p className={`text-3xl font-black ${stat.color} tracking-tighter`}>{stat.value}</p>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{stat.label}</p>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity animate-glitch" />
+            <p className={`text-4xl font-black italic tracking-tighter ${stat.color} mb-2`}>{stat.value}</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">{stat.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Filters & Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
-        <div className="flex items-center gap-3">
-          <select
-            value={filter.status}
-            onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-            className="px-5 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
-          >
-            <option value="all">Global Status</option>
-            <option value="open">Open</option>
-            <option value="in_progress">In Progress</option>
-            <option value="resolved">Resolved</option>
-            <option value="closed">Closed</option>
-          </select>
-          <select
-            value={filter.type}
-            onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-            className="px-5 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
-          >
-            <option value="all">Global Type</option>
-            <option value="IT">IT Infrastructure</option>
-            <option value="HR">Human Resources</option>
-          </select>
+      {/* Filters - SPEC REQUIREMENT */}
+      <div className="flex flex-wrap gap-4 mb-10">
+        <div className="hud-frame p-1 border-primary/20 bg-white/5 transform skew-x-[-12deg]">
+           <div className="flex items-center transform skew-x-[12deg]">
+              <span className="px-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">Filter_Status</span>
+              <select
+                value={filter.status}
+                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                className="px-6 py-2.5 bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-primary focus:outline-none appearance-none cursor-pointer"
+              >
+                <option value="all" className="bg-bg-dark">GLOBAL</option>
+                <option value="open" className="bg-bg-dark">OPEN</option>
+                <option value="in_progress" className="bg-bg-dark">IN_PROGRESS</option>
+                <option value="resolved" className="bg-bg-dark">RESOLVED</option>
+                <option value="closed" className="bg-bg-dark">CLOSED</option>
+              </select>
+           </div>
         </div>
-        
-        <button className="px-6 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
-          Export Manifest (CSV)
-        </button>
+
+        <div className="hud-frame p-1 border-primary/20 bg-white/5 transform skew-x-[-12deg]">
+           <div className="flex items-center transform skew-x-[12deg]">
+              <span className="px-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">Filter_Vertical</span>
+              <select
+                value={filter.type}
+                onChange={(e) => setFilter({ ...filter, type: e.target.value })}
+                className="px-6 py-2.5 bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-primary focus:outline-none appearance-none cursor-pointer"
+              >
+                <option value="all" className="bg-bg-dark">GLOBAL</option>
+                <option value="IT" className="bg-bg-dark">IT_OPERATIONS</option>
+                <option value="HR" className="bg-bg-dark">HUMAN_LOGISTICS</option>
+              </select>
+           </div>
+        </div>
       </div>
 
-      {/* Ticket Table */}
-      <div className="glass rounded-[32px] border-white/5 overflow-hidden shadow-2xl">
+      {/* Ticket Table - SPEC REQUIREMENT */}
+      <div className="table-frame hud-frame border-white/5 bg-hud-bg/10 backdrop-blur-3xl overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Subject / Intent</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden md:table-cell">Initiator</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Vertical</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Status</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden md:table-cell">Severity</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden lg:table-cell text-right">Timestamp</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Node_Identity</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic hidden md:table-cell">Initiator</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Sector</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Status_Flag</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic hidden md:table-cell">Urgency</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic hidden lg:table-cell text-right">Timestamp</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.04]">
               {filteredTickets.map((ticket) => (
-                <tr
-                  key={ticket.id}
-                  className="group hover:bg-white/[0.02] transition-colors"
-                >
-                  <td className="px-8 py-5">
-                    <p className="font-bold text-sm text-slate-200 group-hover:text-primary transition-colors">{ticket.title}</p>
-                    <p className="text-[10px] font-mono text-slate-600 mt-1 uppercase">{ticket.id.slice(0, 8)}</p>
+                <tr key={ticket.id} className="group hover:bg-primary/[0.03] transition-all duration-300 scan-effect cursor-pointer">
+                  <td className="px-8 py-6">
+                    <p className="font-black text-sm text-white group-hover:text-primary transition-colors italic uppercase">{ticket.title}</p>
+                    <p className="text-[9px] font-mono text-slate-700 mt-1">REF_{ticket.id.slice(0, 8)}</p>
                   </td>
-                  <td className="px-8 py-5 hidden md:table-cell">
-                    <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">
-                        {ticket.creator.name.charAt(0)}
-                      </div>
-                      <p className="text-xs font-bold text-slate-400">{ticket.creator.name}</p>
-                    </div>
+                  <td className="px-8 py-6 hidden md:table-cell">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{ticket.creator.name}</p>
                   </td>
-                  <td className="px-8 py-5">
-                    <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-white/5 border border-white/10 text-slate-500">
-                      {ticket.type}
-                    </span>
+                  <td className="px-8 py-6">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{ticket.type}</span>
                   </td>
-                  <td className="px-8 py-5">
-                    <span
-                      className={`text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1 rounded-md border ${statusColors[ticket.status]}`}
-                    >
+                  <td className="px-8 py-6">
+                    <span className={`text-[9px] font-black uppercase tracking-widest italic ${
+                       ticket.status === 'resolved' ? 'text-emerald-500' : 'text-primary'
+                    }`}>
                       {ticket.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-8 py-5 hidden md:table-cell">
-                    <span className={`text-xs font-bold capitalize ${
-                      ticket.priority === 'urgent' ? 'text-red-500' : 
-                      ticket.priority === 'high' ? 'text-orange-500' : 'text-slate-500'
+                  <td className="px-8 py-6 hidden md:table-cell">
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${
+                      ticket.priority === 'urgent' ? 'text-accent' : 'text-slate-600'
                     }`}>
                       {ticket.priority}
                     </span>
                   </td>
-                  <td className="px-8 py-5 hidden lg:table-cell text-right">
-                    <span className="text-[10px] font-bold text-slate-600 tabular-nums uppercase tracking-widest">
-                      {new Date(ticket.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })}
-                    </span>
+                  <td className="px-8 py-6 hidden lg:table-cell text-right font-mono text-[10px] text-slate-500">
+                    {new Date(ticket.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
@@ -198,8 +189,8 @@ export default function ManagerDashboard() {
         </div>
 
         {filteredTickets.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-600">No matching operational data</p>
+          <div className="text-center py-32">
+            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-700 animate-pulse">NO_OPERATIONAL_DATA_IN_CURRENT_VIEW</p>
           </div>
         )}
       </div>

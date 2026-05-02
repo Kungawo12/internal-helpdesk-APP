@@ -2,14 +2,14 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const roleLabels: Record<string, string> = {
-  employee: "Staff Member",
-  manager: "Fleet Manager",
-  it_staff: "Systems Engineer",
-  hr_staff: "Human Capital",
+  employee: "OPERATIVE",
+  manager: "CORE_MANAGER",
+  it_staff: "SYS_ENGINEER",
+  hr_staff: "HUMAN_LOGISTICS",
 };
 
 export default function DashboardLayout({
@@ -19,110 +19,108 @@ export default function DashboardLayout({
 }) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const headerRef = useRef<HTMLElement>(null);
+  const [time, setTime] = useState("");
 
   useEffect(() => {
-    gsap.from(headerRef.current, {
-      y: -20,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
-    });
+    const timer = setInterval(() => {
+      setTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   if (!session) return null;
 
   const role = session.user.role;
 
+  // SPEC REQUIREMENT: Navigation items based on role
   const navItems = [
-    { href: "/dashboard", label: "My Hub", roles: ["employee", "manager", "it_staff", "hr_staff"], icon: "🏠" },
-    { href: "/dashboard/create", label: "Initialize Ticket", roles: ["employee", "manager"], icon: "➕" },
-    { href: "/dashboard/manager", label: "Enterprise View", roles: ["manager"], icon: "📊" },
-    { href: "/dashboard/staff", label: "Active Queue", roles: ["it_staff", "hr_staff"], icon: "⚡" },
+    { href: "/dashboard", label: "My_Threads", roles: ["employee", "manager", "it_staff", "hr_staff"] },
+    { href: "/dashboard/create", label: "New_Protocol", roles: ["employee", "manager"] },
+    { href: "/dashboard/manager", label: "Enterprise_HUD", roles: ["manager"] },
+    { href: "/dashboard/staff", label: "Operational_Queue", roles: ["it_staff", "hr_staff"] },
   ];
 
   const visibleNav = navItems.filter((item) => item.roles.includes(role));
 
   return (
-    <div className="relative min-h-screen bg-[#030712] text-slate-200 overflow-x-hidden">
-      {/* Global Aesthetics */}
-      <div className="mesh-gradient opacity-30" />
-      <div className="noise" />
+    <div className="relative min-h-screen bg-bg-dark text-slate-200 overflow-x-hidden">
+      <div className="hud-bg" />
+      <div className="scanlines" />
       
-      {/* Premium Header */}
-      <header 
-        ref={headerRef}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-6xl"
-      >
-        <div className="glass rounded-[28px] border-white/5 p-2 px-6 flex items-center justify-between shadow-2xl backdrop-blur-2xl">
-          <div className="flex items-center gap-10">
-            <a href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-lg font-black shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-transform group-hover:scale-110">
-                H
+      {/* Hyper-HUD Header */}
+      <header className="fixed top-0 left-0 w-full z-[100] px-8 py-4 pointer-events-none">
+        <div className="max-w-[1800px] mx-auto flex items-start justify-between pointer-events-auto">
+           {/* Left Branding */}
+           <div className="hud-frame p-3 border-primary/20 bg-hud-bg/10 backdrop-blur-3xl transform skew-x-[-12deg]">
+              <div className="flex items-center gap-6 transform skew-x-[12deg]">
+                 <a href="/" className="flex items-center gap-4 group">
+                    <div className="w-8 h-8 bg-primary/10 border border-primary/50 flex items-center justify-center text-lg font-black chromatic-glow group-hover:scale-110 transition-transform">
+                       H
+                    </div>
+                    <div className="hidden sm:block">
+                       <p className="text-[10px] font-black tracking-[0.4em] text-white">NEURAL_DESK</p>
+                    </div>
+                 </a>
+                 <div className="h-6 w-[1px] bg-white/10" />
+                 <div className="flex gap-6">
+                    {visibleNav.map((item) => (
+                       <a
+                          key={item.href}
+                          href={item.href}
+                          className={`text-[9px] font-black uppercase tracking-[0.3em] transition-all italic ${
+                             pathname === item.href ? "text-primary" : "text-slate-500 hover:text-slate-200"
+                          }`}
+                       >
+                          {item.label}
+                       </a>
+                    ))}
+                 </div>
               </div>
-              <span className="font-black tracking-tighter text-xl hidden md:block">
-                Helpdesk<span className="text-primary">.</span>
-              </span>
-            </a>
+           </div>
 
-            <nav className="hidden lg:flex items-center gap-2">
-              {visibleNav.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className={`group relative px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
-                    pathname === item.href
-                      ? "text-primary"
-                      : "text-slate-500 hover:text-slate-200"
-                  }`}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <span className="text-sm opacity-50 group-hover:opacity-100 transition-opacity">{item.icon}</span>
-                    {item.label}
-                  </span>
-                  {pathname === item.href && (
-                    <div className="absolute inset-0 bg-primary/10 rounded-xl" />
-                  )}
-                </a>
-              ))}
-            </nav>
-          </div>
+           {/* Right Profile & Actions */}
+           <div className="flex items-center gap-4">
+              <div className="hud-frame px-5 py-3 border-primary/10 bg-white/5 hidden lg:block transform skew-x-[12deg]">
+                 <div className="transform skew-x-[-12deg] flex items-center gap-6">
+                    <div className="text-right">
+                       <p className="text-[10px] font-black text-white uppercase tracking-tight">{session.user.name}</p>
+                       <p className="text-[8px] font-mono text-primary uppercase">{roleLabels[role] || role}</p>
+                    </div>
+                    <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center text-[10px] font-black bg-primary/10">
+                       {session.user.name?.charAt(0)}
+                    </div>
+                 </div>
+              </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 text-right">
-              <div className="hidden sm:block">
-                <p className="text-xs font-black tracking-tight text-white">{session.user.name}</p>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/70">
-                  {roleLabels[role] || role}
-                </p>
+              <div className="hud-frame p-2 border-accent/20 transform skew-x-[-12deg]">
+                 <div className="flex items-center gap-4 transform skew-x-[12deg]">
+                    <div className="px-4 py-2 text-[12px] font-mono text-accent tracking-widest hidden md:block">
+                       {time}
+                    </div>
+                    <button
+                       onClick={() => signOut({ callbackUrl: "/" })}
+                       className="px-6 py-2 bg-accent/10 border border-accent/30 text-accent text-[9px] font-black uppercase tracking-widest hover:bg-accent hover:text-black transition-all"
+                    >
+                       Term_Session
+                    </button>
+                 </div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary p-[1px]">
-                <div className="w-full h-full rounded-full bg-[#030712] flex items-center justify-center text-[10px] font-black">
-                  {session.user.name?.charAt(0)}
-                </div>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="px-4 py-2 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all"
-            >
-              Sign Out
-            </button>
-          </div>
+           </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="relative pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto">
+      {/* Main Content */}
+      <main className="relative pt-32 pb-20 px-8">
+        <div className="max-w-[1600px] mx-auto">
           {children}
         </div>
       </main>
 
-      {/* Background Glows */}
-      <div className="glow-blob w-[600px] h-[600px] bg-primary/5 top-0 left-[-10%] opacity-50" />
-      <div className="glow-blob w-[400px] h-[400px] bg-secondary/5 bottom-0 right-[-10%] opacity-30" />
+      {/* Bottom Status Bar Decor */}
+      <div className="fixed bottom-0 left-0 w-full p-4 flex justify-between items-center opacity-30 pointer-events-none z-50">
+         <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Core_Load: 42% | Thread_Efficiency: 98.2%</div>
+         <div className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Protocol: HYPER_HUD_ENABLED_V1.0.4</div>
+      </div>
     </div>
   );
 }
