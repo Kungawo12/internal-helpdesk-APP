@@ -3,20 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const roles = [
-  { value: "employee", label: "Employee", desc: "Submit and track tickets" },
-  { value: "manager", label: "Manager", desc: "Oversee all company tickets" },
-  { value: "it_staff", label: "IT Staff", desc: "Resolve IT tickets" },
-  { value: "hr_staff", label: "HR Staff", desc: "Resolve HR tickets" },
-];
-
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "employee",
+    department: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,10 +19,21 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
+    // Determine role based on department
+    let role = "employee";
+    if (form.department === "IT Department") role = "it_staff";
+    else if (form.department === "HR Department") role = "hr_staff";
+    else if (form.department === "Management") role = "manager";
+
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role,
+      }),
     });
 
     const data = await res.json();
@@ -85,7 +89,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Email
+              Work Email
             </label>
             <input
               type="email"
@@ -113,26 +117,27 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Role
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              Department
             </label>
-            <div className="grid grid-cols-2 gap-3">
-              {roles.map((r) => (
-                <button
-                  key={r.value}
-                  type="button"
-                  onClick={() => setForm({ ...form, role: r.value })}
-                  className={`p-3 rounded-xl border text-left transition-all ${
-                    form.role === r.value
-                      ? "bg-blue-600/20 border-blue-500/50 text-white"
-                      : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <div className="text-sm font-medium">{r.label}</div>
-                  <div className="text-xs mt-0.5 opacity-70">{r.desc}</div>
-                </button>
-              ))}
-            </div>
+            <select
+              value={form.department}
+              onChange={(e) => setForm({ ...form, department: e.target.value })}
+              className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all appearance-none"
+              required
+            >
+              <option value="" disabled className="bg-gray-900">
+                Select your department
+              </option>
+              <option value="Engineering" className="bg-gray-900">Engineering</option>
+              <option value="Marketing" className="bg-gray-900">Marketing</option>
+              <option value="Sales" className="bg-gray-900">Sales</option>
+              <option value="Finance" className="bg-gray-900">Finance</option>
+              <option value="Operations" className="bg-gray-900">Operations</option>
+              <option value="IT Department" className="bg-gray-900">IT Department</option>
+              <option value="HR Department" className="bg-gray-900">HR Department</option>
+              <option value="Management" className="bg-gray-900">Management</option>
+            </select>
           </div>
 
           <button

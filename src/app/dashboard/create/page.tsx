@@ -66,8 +66,8 @@ export default function CreateTicketPage() {
               onClick={() => setForm({ ...form, type: "IT" })}
               className={`p-4 rounded-xl border text-center transition-all ${
                 form.type === "IT"
-                  ? "bg-blue-600/20 border-blue-500/50"
-                  : "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06]"
+                  ? "bg-blue-600/20 border-blue-500/50 text-white"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
               }`}
             >
               <span className="text-2xl block mb-1">🖥️</span>
@@ -81,8 +81,8 @@ export default function CreateTicketPage() {
               onClick={() => setForm({ ...form, type: "HR" })}
               className={`p-4 rounded-xl border text-center transition-all ${
                 form.type === "HR"
-                  ? "bg-purple-600/20 border-purple-500/50"
-                  : "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.06]"
+                  ? "bg-purple-600/20 border-purple-500/50 text-white"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
               }`}
             >
               <span className="text-2xl block mb-1">👥</span>
@@ -130,25 +130,50 @@ export default function CreateTicketPage() {
             Priority
           </label>
           <div className="grid grid-cols-4 gap-3">
-            {[
-              { value: "low", label: "Low", color: "slate" },
-              { value: "medium", label: "Medium", color: "blue" },
-              { value: "high", label: "High", color: "orange" },
-              { value: "urgent", label: "Urgent", color: "red" },
-            ].map((p) => (
-              <button
-                key={p.value}
-                type="button"
-                onClick={() => setForm({ ...form, priority: p.value })}
-                className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
-                  form.priority === p.value
-                    ? `bg-${p.color}-600/20 border-${p.color}-500/50 text-${p.color}-400`
-                    : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, priority: "low" })}
+              className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                form.priority === "low"
+                  ? "bg-slate-600/20 border-slate-500/50 text-slate-300"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
+              }`}
+            >
+              Low
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, priority: "medium" })}
+              className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                form.priority === "medium"
+                  ? "bg-blue-600/20 border-blue-500/50 text-blue-400"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
+              }`}
+            >
+              Medium
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, priority: "high" })}
+              className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                form.priority === "high"
+                  ? "bg-orange-600/20 border-orange-500/50 text-orange-400"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
+              }`}
+            >
+              High
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, priority: "urgent" })}
+              className={`py-2 px-3 rounded-xl border text-sm font-medium transition-all ${
+                form.priority === "urgent"
+                  ? "bg-red-600/20 border-red-500/50 text-red-400"
+                  : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:bg-white/[0.06]"
+              }`}
+            >
+              Urgent
+            </button>
           </div>
         </div>
 
