@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import gsap from "gsap";
 
 type Ticket = {
   id: string;
@@ -14,10 +15,18 @@ type Ticket = {
   feedback: { rating: number } | null;
 };
 
+const statusColors: Record<string, string> = {
+  open: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+  in_progress: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+  resolved: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  closed: "text-slate-500 bg-white/5 border-white/10",
+};
+
 export default function ManagerDashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ status: "all", type: "all" });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/tickets")
@@ -27,6 +36,18 @@ export default function ManagerDashboard() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      gsap.from(".stat-card", {
+        opacity: 0,
+        y: 20,
+        stagger: 0.05,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    }
+  }, [loading]);
 
   const stats = {
     total: tickets.length,
@@ -45,142 +66,140 @@ export default function ManagerDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="text-slate-400">Loading dashboard...</div>
+      <div className="flex flex-col items-center justify-center py-40 gap-4">
+        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Compiling Analytics...</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Manager Overview</h1>
-        <p className="text-slate-400 mt-1">
-          Company-wide ticket status and metrics
+    <div ref={containerRef}>
+      <div className="mb-12">
+        <h1 className="text-4xl font-black tracking-tight mb-2">Enterprise Intelligence</h1>
+        <p className="text-slate-500 font-medium tracking-tight">
+          Real-time oversight across all operational verticals.
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      {/* Stats Grid - Bento Style */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
         {[
-          { label: "Total", value: stats.total, color: "text-white" },
-          { label: "Open", value: stats.open, color: "text-blue-400" },
-          { label: "In Progress", value: stats.inProgress, color: "text-yellow-400" },
-          { label: "Resolved", value: stats.resolved, color: "text-emerald-400" },
-          { label: "IT Tickets", value: stats.it, color: "text-cyan-400" },
-          { label: "HR Tickets", value: stats.hr, color: "text-purple-400" },
+          { label: "Aggregate", value: stats.total, color: "text-white", icon: "📊" },
+          { label: "Active", value: stats.open, color: "text-blue-400", icon: "⚡" },
+          { label: "Processing", value: stats.inProgress, color: "text-yellow-400", icon: "⚙️" },
+          { label: "Fulfilled", value: stats.resolved, color: "text-emerald-400", icon: "✅" },
+          { label: "IT Vertical", value: stats.it, color: "text-cyan-400", icon: "🖥️" },
+          { label: "HR Vertical", value: stats.hr, color: "text-purple-400", icon: "👥" },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 text-center"
+            className="stat-card glass rounded-[24px] p-6 border-white/5 relative overflow-hidden group"
           >
-            <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-            <p className="text-xs text-slate-500 mt-1">{stat.label}</p>
+            <span className="text-xl mb-4 block opacity-50 group-hover:opacity-100 transition-opacity">{stat.icon}</span>
+            <p className={`text-3xl font-black ${stat.color} tracking-tighter`}>{stat.value}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-2">{stat.label}</p>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         ))}
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-3 mb-6">
-        <select
-          value={filter.status}
-          onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-          className="px-3 py-2 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-        >
-          <option value="all">All Status</option>
-          <option value="open">Open</option>
-          <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-          <option value="closed">Closed</option>
-        </select>
-        <select
-          value={filter.type}
-          onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-          className="px-3 py-2 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-        >
-          <option value="all">All Types</option>
-          <option value="IT">IT</option>
-          <option value="HR">HR</option>
-        </select>
+      {/* Filters & Actions */}
+      <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
+        <div className="flex items-center gap-3">
+          <select
+            value={filter.status}
+            onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+            className="px-5 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
+          >
+            <option value="all">Global Status</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+          <select
+            value={filter.type}
+            onChange={(e) => setFilter({ ...filter, type: e.target.value })}
+            className="px-5 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
+          >
+            <option value="all">Global Type</option>
+            <option value="IT">IT Infrastructure</option>
+            <option value="HR">Human Resources</option>
+          </select>
+        </div>
+        
+        <button className="px-6 py-2.5 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
+          Export Manifest (CSV)
+        </button>
       </div>
 
       {/* Ticket Table */}
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-white/[0.06]">
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase">
-                Ticket
-              </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase hidden md:table-cell">
-                Submitted By
-              </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase">
-                Type
-              </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase">
-                Status
-              </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase hidden md:table-cell">
-                Priority
-              </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase hidden lg:table-cell">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTickets.map((ticket) => (
-              <tr
-                key={ticket.id}
-                className="border-b border-white/[0.04] hover:bg-white/[0.02]"
-              >
-                <td className="px-6 py-4">
-                  <p className="font-medium text-sm">{ticket.title}</p>
-                </td>
-                <td className="px-6 py-4 hidden md:table-cell">
-                  <p className="text-sm text-slate-400">
-                    {ticket.creator.name}
-                  </p>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/[0.06]">
-                    {ticket.type}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      ticket.status === "open"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : ticket.status === "in_progress"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : ticket.status === "resolved"
-                        ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-slate-500/20 text-slate-400"
-                    }`}
-                  >
-                    {ticket.status.replace("_", " ")}
-                  </span>
-                </td>
-                <td className="px-6 py-4 hidden md:table-cell">
-                  <span className="text-xs text-slate-400 capitalize">
-                    {ticket.priority}
-                  </span>
-                </td>
-                <td className="px-6 py-4 hidden lg:table-cell">
-                  <span className="text-xs text-slate-500">
-                    {new Date(ticket.createdAt).toLocaleDateString()}
-                  </span>
-                </td>
+      <div className="glass rounded-[32px] border-white/5 overflow-hidden shadow-2xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/5 bg-white/[0.02]">
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Subject / Intent</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden md:table-cell">Initiator</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Vertical</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Status</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden md:table-cell">Severity</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 hidden lg:table-cell text-right">Timestamp</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/[0.04]">
+              {filteredTickets.map((ticket) => (
+                <tr
+                  key={ticket.id}
+                  className="group hover:bg-white/[0.02] transition-colors"
+                >
+                  <td className="px-8 py-5">
+                    <p className="font-bold text-sm text-slate-200 group-hover:text-primary transition-colors">{ticket.title}</p>
+                    <p className="text-[10px] font-mono text-slate-600 mt-1 uppercase">{ticket.id.slice(0, 8)}</p>
+                  </td>
+                  <td className="px-8 py-5 hidden md:table-cell">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold">
+                        {ticket.creator.name.charAt(0)}
+                      </div>
+                      <p className="text-xs font-bold text-slate-400">{ticket.creator.name}</p>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-white/5 border border-white/10 text-slate-500">
+                      {ticket.type}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span
+                      className={`text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1 rounded-md border ${statusColors[ticket.status]}`}
+                    >
+                      {ticket.status.replace("_", " ")}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5 hidden md:table-cell">
+                    <span className={`text-xs font-bold capitalize ${
+                      ticket.priority === 'urgent' ? 'text-red-500' : 
+                      ticket.priority === 'high' ? 'text-orange-500' : 'text-slate-500'
+                    }`}>
+                      {ticket.priority}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5 hidden lg:table-cell text-right">
+                    <span className="text-[10px] font-bold text-slate-600 tabular-nums uppercase tracking-widest">
+                      {new Date(ticket.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: '2-digit' })}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredTickets.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
-            No tickets match the current filters
+          <div className="text-center py-20">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-600">No matching operational data</p>
           </div>
         )}
       </div>
