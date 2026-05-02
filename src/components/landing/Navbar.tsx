@@ -1,83 +1,80 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import gsap from "gsap";
 
 export default function Navbar() {
-  const navRef = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [time, setTime] = useState("");
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".nav-item", {
-        opacity: 0,
-        y: -10,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
-    }, navRef);
+    const timer = setInterval(() => {
+      setTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    }, 1000);
 
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    gsap.from(".nav-hud", {
+      y: -50,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
+    });
 
-    return () => {
-      ctx.revert();
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <nav
-      ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-6 pointer-events-none"
-    >
-      <div 
-        className={`nav-content max-w-5xl w-full flex items-center justify-between px-8 py-3 rounded-2xl transition-all duration-500 pointer-events-auto ${
-          scrolled 
-            ? "glass-dark border-white/10 shadow-2xl py-3 scale-[0.98]" 
-            : "bg-transparent border-transparent py-5"
-        }`}
-      >
-        {/* Logo */}
-        <a href="/" className="nav-item flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-lg font-black shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-transform group-hover:scale-110">
-            H
-          </div>
-          <span className="text-xl font-bold tracking-tighter">
-            Helpdesk<span className="text-primary">.</span>
-          </span>
-        </a>
-
-        {/* Nav Links */}
-        <div className="hidden md:flex items-center gap-10">
-          {["How it works", "Features", "Pricing"].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-              className="nav-item text-sm font-medium text-slate-400 hover:text-white transition-all hover:tracking-widest"
-            >
-              {item}
+    <nav className="fixed top-0 left-0 w-full z-[1000] p-6 pointer-events-none">
+      <div className="max-w-[1800px] mx-auto flex items-start justify-between pointer-events-auto">
+        {/* Left HUD Bracket */}
+        <div className="nav-hud hud-frame p-4 bg-transparent border-primary/20 backdrop-blur-md transform skew-x-[-12deg]">
+          <div className="flex items-center gap-6 transform skew-x-[12deg]">
+            <a href="/" className="flex items-center gap-4 group">
+              <div className="w-10 h-10 bg-primary/10 border border-primary/50 flex items-center justify-center text-xl font-black chromatic-glow group-hover:scale-110 transition-transform">
+                H
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[12px] font-black tracking-[0.4em] text-white">NEURAL_DESK</p>
+                <p className="text-[8px] font-mono text-primary uppercase">v1.0.4_STABLE</p>
+              </div>
             </a>
-          ))}
+            
+            <div className="h-8 w-[1px] bg-white/10 hidden md:block" />
+            
+            <div className="hidden md:flex gap-8">
+              {['Features', 'Specs', 'Pricing'].map(item => (
+                <a key={item} href={`#${item.toLowerCase()}`} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-primary transition-colors italic">
+                  {item}
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Auth Buttons */}
-        <div className="nav-item flex items-center gap-4">
-          <a
-            href="/login"
-            className="text-sm font-bold text-slate-300 hover:text-white transition-colors px-2"
-          >
-            Login
-          </a>
-          <a
-            href="/register"
-            className="group relative px-6 py-2.5 bg-white text-black rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95"
-          >
-            Join Now
-          </a>
+        {/* Right HUD Bracket */}
+        <div className="nav-hud flex items-center gap-4">
+          {/* System Time Overlay */}
+          <div className="hud-frame px-6 py-4 border-accent/20 hidden lg:block transform skew-x-[12deg]">
+            <div className="transform skew-x-[-12deg]">
+              <p className="text-[8px] font-black uppercase tracking-widest text-accent mb-1">Local_Node_Time</p>
+              <p className="text-xl font-mono text-white tracking-widest">{time || "00:00:00"}</p>
+            </div>
+          </div>
+
+          {/* Auth Portal */}
+          <div className="hud-frame p-2 border-primary/30 transform skew-x-[-12deg]">
+            <div className="flex gap-2 transform skew-x-[12deg]">
+              <a href="/login" className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all">
+                Login
+              </a>
+              <a href="/register" className="px-8 py-2 bg-primary text-black font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all">
+                Register
+              </a>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Decorative Top Line */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
     </nav>
   );
 }

@@ -1,247 +1,201 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import gsap from "gsap";
 
 type Ticket = {
   id: string;
   title: string;
-  description: string;
-  type: string;
   status: string;
   priority: string;
-  solution: string | null;
   createdAt: string;
-  creator?: { name: string; email: string };
-  assignee?: { name: string; email: string } | null;
-  feedback?: { rating: number; comment: string | null } | null;
-};
-
-const statusColors: Record<string, string> = {
-  open: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  in_progress: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
-  resolved: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  closed: "text-slate-500 bg-white/5 border-white/10",
-};
-
-const priorityIcons: Record<string, string> = {
-  low: "○",
-  medium: "◔",
-  high: "◕",
-  urgent: "●",
-};
-
-const priorityColors: Record<string, string> = {
-  low: "text-slate-500",
-  medium: "text-blue-400",
-  high: "text-orange-400",
-  urgent: "text-red-500",
 };
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [feedbackForm, setFeedbackForm] = useState<{
-    ticketId: string;
-    rating: number;
-    comment: string;
-  } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetchTickets();
+    fetch("/api/tickets")
+      .then((res) => res.json())
+      .then((data) => {
+        setTickets(data);
+        setLoading(false);
+      });
   }, []);
 
-  const fetchTickets = async () => {
-    const res = await fetch("/api/tickets");
-    const data = await res.json();
-    setTickets(data);
-    setLoading(false);
-  };
-
-  const submitFeedback = async () => {
-    if (!feedbackForm) return;
-    await fetch(`/api/tickets/${feedbackForm.ticketId}/feedback`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rating: feedbackForm.rating,
-        comment: feedbackForm.comment || null,
-      }),
-    });
-    setFeedbackForm(null);
-    fetchTickets();
-  };
-
-  const filteredTickets = tickets.filter(t => 
-    t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (!loading) {
+      gsap.from(".data-pane", {
+        opacity: 0,
+        scale: 0.9,
+        duration: 1,
+        stagger: 0.1,
+        ease: "expo.out",
+      });
+    }
+  }, [loading]);
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 gap-4">
-        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-500">Initializing Workspace...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-bg-dark overflow-hidden">
+        <div className="scanlines" />
+        <div className="w-64 loading-bar mb-6" />
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Synchronizing_Neural_Nodes</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-6">
-      {/* Header & Command Bar */}
-      <div className="flex flex-col gap-10 mb-16">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-              {session?.user.role === "employee" ? "Employee Portal" : "Operations Hub"}
-            </h1>
-            <p className="text-slate-500 text-sm font-medium">
-              Logged in as <span className="text-slate-300">{session?.user.name}</span> • {session?.user.role.replace('_', ' ')}
-            </p>
-          </div>
-          <a
-            href="/dashboard/create"
-            className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-          >
-            + Create Ticket
-          </a>
+    <div ref={containerRef} className="relative min-h-screen pb-40">
+      <div className="hud-bg" />
+      <div className="scanlines" />
+      
+      {/* HUD Header Branding */}
+      <div className="mb-20 pt-10">
+        <div className="inline-block hud-frame px-6 py-2 border-primary/20 transform skew-x-[-12deg] mb-6">
+          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white transform skew-x-[12deg]">
+            Mission_<span className="text-primary">Control</span>
+          </h1>
         </div>
-
-        {/* Bento Summary Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <div className="md:col-span-2 lg:col-span-2 p-8 glass rounded-[32px] border-white/5 relative overflow-hidden group">
-            <div className="relative z-10">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Search & Command</p>
-              <div className="relative">
-                <input 
-                  type="text"
-                  placeholder="Find a ticket, article, or team member..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-600"
-                />
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">🔍</span>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1">
-                  <kbd className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">⌘</kbd>
-                  <kbd className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">K</kbd>
-                </div>
-              </div>
-            </div>
-            <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 blur-[80px] rounded-full group-hover:bg-primary/10 transition-all duration-700" />
-          </div>
-
-          <div className="p-8 glass rounded-[32px] border-white/5 flex flex-col justify-between">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Tickets</p>
-            <div>
-              <p className="text-4xl font-black text-white">{tickets.filter(t => t.status !== 'closed').length}</p>
-              <p className="text-xs text-emerald-500 mt-1">↑ 12% from last week</p>
-            </div>
-          </div>
-
-          <div className="p-8 glass rounded-[32px] border-white/5 flex flex-col justify-between bg-gradient-to-br from-primary/10 to-transparent">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Avg Resolution</p>
-            <div>
-              <p className="text-4xl font-black text-white">1.8h</p>
-              <p className="text-xs text-slate-500 mt-1">Global average: 2.4h</p>
-            </div>
-          </div>
-        </div>
+        <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">Operator: {session?.user?.name} | Security_Level: ALPHA_7</p>
       </div>
 
-      {/* Ticket List - Linear Style */}
-      <div className="glass rounded-[32px] border-white/5 overflow-hidden">
-        <div className="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-          <div className="flex gap-6">
-            <button className="text-sm font-bold text-white relative py-1">
-              All Tickets
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-            </button>
-            <button className="text-sm font-bold text-slate-500 hover:text-slate-300 transition-colors py-1">Recent</button>
-            <button className="text-sm font-bold text-slate-500 hover:text-slate-300 transition-colors py-1">Resolved</button>
-          </div>
-          <div className="flex gap-2">
-            <button className="w-8 h-8 flex items-center justify-center glass border-white/10 rounded-lg text-xs hover:bg-white/5">⌥</button>
-            <button className="w-8 h-8 flex items-center justify-center glass border-white/10 rounded-lg text-xs hover:bg-white/5">⌘</button>
-          </div>
-        </div>
-
-        {filteredTickets.length === 0 ? (
-          <div className="py-20 text-center flex flex-col items-center">
-            <p className="text-slate-600 font-medium mb-1">No tickets match your filter</p>
-            <button onClick={() => setSearchQuery("")} className="text-xs text-primary font-bold">Clear search</button>
-          </div>
-        ) : (
-          <div className="divide-y divide-white/[0.04]">
-            {filteredTickets.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="group flex flex-col md:flex-row items-start md:items-center px-8 py-5 hover:bg-white/[0.03] transition-all gap-4 md:gap-8"
-              >
-                {/* Meta Icons */}
-                <div className="flex items-center gap-4 min-w-[100px]">
-                  <span className={`text-sm font-bold ${priorityColors[ticket.priority]}`}>
-                    {priorityIcons[ticket.priority]}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter tabular-nums">
-                    {ticket.id.slice(0, 7).toUpperCase()}
-                  </span>
-                </div>
-
-                {/* Title & Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-sm font-bold text-slate-200 truncate group-hover:text-primary transition-colors">
-                      {ticket.title}
-                    </h3>
-                    {ticket.type === "HR" && (
-                      <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[9px] font-black uppercase tracking-widest border border-purple-500/20">HR</span>
-                    )}
+      <div className="grid grid-cols-12 gap-8">
+        {/* Central Intelligence Console */}
+        <div className="col-span-12 lg:col-span-8 space-y-8">
+          <div className="data-pane hud-frame p-1 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-primary/5 opacity-50 pointer-events-none" />
+            <div className="bg-hud-bg/20 p-8 backdrop-blur-3xl">
+               <div className="flex items-center justify-between mb-10">
+                  <div>
+                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-primary mb-2">Operational_Queue</h2>
+                    <p className="text-[9px] font-mono text-slate-500">REALTIME_INPUT_STREAM_V4.2</p>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-1 leading-relaxed">
-                    {ticket.description}
-                  </p>
-                </div>
-
-                {/* Status & Assignment */}
-                <div className="flex items-center gap-6 ml-auto">
-                  <div className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${statusColors[ticket.status]}`}>
-                    {ticket.status.replace('_', ' ')}
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-black text-emerald-500 uppercase">Live_Feed</span>
                   </div>
-                  
-                  <div className="flex items-center -space-x-2">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-[#030712] flex items-center justify-center text-[10px] font-bold" title={`Created by ${ticket.creator?.name}`}>
-                      {ticket.creator?.name.charAt(0)}
+               </div>
+
+               <div className="space-y-4">
+                  {tickets.map((ticket) => (
+                    <div key={ticket.id} className="group/item relative">
+                       <div className="hud-frame p-6 hover:bg-primary/10 transition-all duration-300 flex items-center justify-between cursor-pointer border-white/5 hover:border-primary/40 scan-effect">
+                          <div className="flex items-center gap-6">
+                             <div className={`w-3 h-3 rounded-none transform rotate-45 border ${
+                               ticket.priority === 'urgent' ? 'bg-accent border-accent shadow-[0_0_15px_rgba(255,0,85,0.4)]' :
+                               ticket.priority === 'high' ? 'bg-primary border-primary' : 'bg-transparent border-white/20'
+                             }`} />
+                             <div>
+                               <p className="text-[9px] font-mono text-slate-600 uppercase mb-1">NODE_{ticket.id.slice(0, 8)}</p>
+                               <h3 className="text-lg font-black italic uppercase tracking-tight text-white group-hover/item:text-primary transition-colors">{ticket.title}</h3>
+                             </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-10">
+                             <div className="text-right hidden sm:block">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-primary italic">{ticket.status}</p>
+                             </div>
+                             <div className="text-right hidden md:block">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Timestamp</p>
+                                <p className="text-xs font-mono text-slate-400">{new Date(ticket.createdAt).toLocaleTimeString()}</p>
+                             </div>
+                             <button className="w-10 h-10 hud-frame flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all">
+                                →
+                             </button>
+                          </div>
+                       </div>
                     </div>
-                    {ticket.assignee && (
-                      <div className="w-7 h-7 rounded-full bg-slate-800 border-2 border-[#030712] flex items-center justify-center text-[10px] font-bold text-slate-400" title={`Assigned to ${ticket.assignee.name}`}>
-                        {ticket.assignee.name.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest tabular-nums w-20 text-right">
-                    {new Date(ticket.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                  </div>
-                </div>
-              </div>
-            ))}
+                  ))}
+               </div>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* Tactical Overview Sidebar */}
+        <div className="col-span-12 lg:col-span-4 space-y-8">
+           <div className="data-pane hud-frame p-6 bg-hud-bg/10 backdrop-blur-3xl relative overflow-hidden group">
+              <div className="scan-effect absolute inset-0 pointer-events-none opacity-20" />
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-8">Tactical_Metrics</h2>
+              
+              <div className="space-y-10">
+                 <div>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-3">
+                       <span className="text-slate-500">Neural_Load</span>
+                       <span className="text-primary">82%</span>
+                    </div>
+                    <div className="h-1 bg-white/5 relative overflow-hidden">
+                       <div className="absolute top-0 left-0 h-full bg-primary w-[82%] node-glow" />
+                    </div>
+                 </div>
+                 
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="hud-frame p-4 bg-white/5 border-white/5">
+                       <p className="text-[8px] font-black text-slate-500 uppercase mb-2">Sync_Rate</p>
+                       <p className="text-2xl font-black italic text-white">94.8%</p>
+                    </div>
+                    <div className="hud-frame p-4 bg-white/5 border-white/5">
+                       <p className="text-[8px] font-black text-slate-500 uppercase mb-2">Uptime</p>
+                       <p className="text-2xl font-black italic text-white">99.9h</p>
+                    </div>
+                 </div>
+
+                 <div className="hud-frame p-6 border-primary/20 bg-primary/5">
+                    <p className="text-[10px] font-black text-primary uppercase mb-4">Core_Protocol_X</p>
+                    <div className="space-y-2">
+                       <div className="flex items-center gap-3">
+                          <div className="w-1 h-1 bg-primary rounded-full" />
+                          <p className="text-[9px] font-mono text-slate-400">DATA_ENCRYPTION: ACTIVE</p>
+                       </div>
+                       <div className="flex items-center gap-3">
+                          <div className="w-1 h-1 bg-primary rounded-full" />
+                          <p className="text-[9px] font-mono text-slate-400">NEURAL_ROUTING: OPTIMIZED</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           {/* Direct Protocol Terminal */}
+           <div className="data-pane hud-frame p-4 bg-black/40 border-primary/10">
+              <div className="flex items-center gap-3 mb-4 text-primary">
+                 <span className="text-xs">⌨</span>
+                 <p className="text-[10px] font-black uppercase tracking-[0.3em]">Command_Terminal</p>
+              </div>
+              <div className="bg-black/60 p-4 rounded border border-white/5 font-mono text-[10px] text-primary/80 leading-relaxed">
+                 <p>{'>'} initialize --core-sync</p>
+                 <p className="text-slate-600 italic">Core synchronized in 12ms</p>
+                 <p>{'>'} fetch --all-nodes</p>
+                 <p className="text-emerald-500/60">Success: 24 nodes online</p>
+                 <div className="flex items-center gap-1 mt-2">
+                    <p>{'>'}</p>
+                    <div className="w-2 h-4 bg-primary animate-pulse" />
+                 </div>
+              </div>
+           </div>
+        </div>
       </div>
 
-      {/* Quick Actions Footer */}
-      <div className="mt-10 flex items-center justify-center gap-10">
-        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
-          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">N</kbd> New Ticket
-        </div>
-        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
-          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">/</kbd> Focus Search
-        </div>
-        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
-          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">ESC</kbd> Close View
-        </div>
+      {/* Floating Action HUD */}
+      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[2000]">
+         <div className="hud-frame p-3 border-primary/40 backdrop-blur-2xl bg-primary/10 flex items-center gap-4">
+            <button className="px-8 py-3 bg-primary text-black font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+               Initialize_New_Thread
+            </button>
+            <div className="w-[1px] h-8 bg-white/10" />
+            <div className="flex gap-2">
+               {['⎋', '⌥', '⌘'].map(key => (
+                 <button key={key} className="w-10 h-10 hud-frame flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
+                    {key}
+                 </button>
+               ))}
+            </div>
+         </div>
       </div>
     </div>
   );

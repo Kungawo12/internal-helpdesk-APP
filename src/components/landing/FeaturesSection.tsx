@@ -2,178 +2,109 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   {
-    icon: "🎫",
-    title: "Smart Ticket Engine",
-    description:
-      "Intelligent routing and categorization. Submit IT or HR requests with a few clicks and let our engine handle the rest.",
-    color: "blue",
-  },
-  {
-    icon: "⚡",
-    title: "Instant Triage",
-    description:
-      "Automated priority assignment ensures that critical blockers are addressed immediately by the right team members.",
-    color: "purple",
-  },
-  {
-    icon: "💬",
-    title: "Seamless Comms",
-    description:
-      "Built-in notification system keeps everyone in the loop via email and dashboard alerts at every step of the process.",
-    color: "emerald",
-  },
-  {
-    icon: "🛡️",
-    title: "Role-Based Security",
-    description:
-      "Enterprise-grade permission system. Data is strictly siloed and accessible only to authorized personnel.",
-    color: "amber",
-  },
-  {
+    title: "Neural_Triage",
+    desc: "Autonomous categorization of incoming threads using advanced cognitive mapping.",
     icon: "🧠",
-    title: "Knowledge Base",
-    description:
-      "Every resolution contributes to an ever-growing library of solutions, reducing repeat issues and saving time.",
-    color: "rose",
+    coords: "top-0 left-0"
   },
   {
-    icon: "📈",
-    title: "Performance Data",
-    description:
-      "Comprehensive metrics for managers to track resolution times, team workload, and employee satisfaction.",
-    color: "cyan",
+    title: "Quantum_SLA",
+    desc: "Time-dilation protocols that prioritize critical operational failures in real-time.",
+    icon: "⏳",
+    coords: "top-20 right-20"
   },
+  {
+    title: "Core_Analytics",
+    desc: "Multi-dimensional data visualization for enterprise-scale decision making.",
+    icon: "📊",
+    coords: "bottom-10 left-20"
+  },
+  {
+    title: "Sync_Protocols",
+    desc: "Seamless inter-departmental data transmission with zero latency.",
+    icon: "📡",
+    coords: "bottom-0 right-10"
+  }
 ];
-
-const colorMap: Record<string, { bg: string; border: string; text: string; glow: string }> = {
-  blue: {
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/20",
-    text: "text-blue-400",
-    glow: "shadow-blue-500/20",
-  },
-  purple: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/20",
-    text: "text-purple-400",
-    glow: "shadow-purple-500/20",
-  },
-  emerald: {
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/20",
-    text: "text-emerald-400",
-    glow: "shadow-emerald-500/20",
-  },
-  amber: {
-    bg: "bg-amber-500/10",
-    border: "border-amber-500/20",
-    text: "text-amber-400",
-    glow: "shadow-amber-500/20",
-  },
-  rose: {
-    bg: "bg-rose-500/10",
-    border: "border-rose-500/20",
-    text: "text-rose-400",
-    glow: "shadow-rose-500/20",
-  },
-  cyan: {
-    bg: "bg-cyan-500/10",
-    border: "border-cyan-500/20",
-    text: "text-cyan-400",
-    glow: "shadow-cyan-500/20",
-  },
-};
 
 export default function FeaturesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".feature-heading", {
-        scrollTrigger: {
-          trigger: ".feature-heading",
-          start: "top 85%",
-        },
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: "power4.out",
-      });
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const xPos = (clientX / innerWidth - 0.5) * 10;
+      const yPos = (clientY / innerHeight - 0.5) * 10;
 
-      gsap.from(".feature-card", {
-        scrollTrigger: {
-          trigger: ".feature-grid",
-          start: "top 80%",
-        },
-        opacity: 0,
-        y: 60,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
+      gsap.to(".features-grid", {
+        rotateY: xPos,
+        rotateX: -yPos,
+        duration: 0.5,
+        ease: "power2.out",
       });
-    }, sectionRef);
+    };
 
-    return () => ctx.revert();
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <section ref={sectionRef} id="features" className="relative py-40 px-6 overflow-hidden">
-      {/* Background Accent */}
-      <div className="absolute top-[20%] right-[-10%] glow-blob w-[400px] h-[400px] bg-blue-600/10" />
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="feature-heading text-center mb-24">
-          <span className="inline-block px-5 py-2 rounded-full glass border-white/10 text-primary text-xs font-bold uppercase tracking-widest mb-6">
-            Capabilities
-          </span>
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-            Engineered for <span className="text-gradient">Efficiency</span>
+    <section ref={sectionRef} className="py-40 relative overflow-hidden perspective-2000">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-32">
+          <div className="inline-block hud-frame px-4 py-1 border-accent/20 mb-6">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Feature_Protocols</span>
+          </div>
+          <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter text-cyber">
+            Operational<br /><span className="text-primary">Infrastructures</span>
           </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            A powerful suite of tools designed to streamline your internal operations and keep your workforce focused on what matters.
-          </p>
         </div>
 
-        <div className="feature-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature) => {
-            const colors = colorMap[feature.color];
-            return (
-              <div
-                key={feature.title}
-                className="feature-card group relative glass rounded-[32px] p-10 border-white/5 hover:border-white/20 transition-all duration-500 overflow-hidden"
-              >
-                {/* Hover Glow */}
-                <div className={`absolute -inset-20 bg-gradient-to-br from-transparent via-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rotate-12`} />
-                
-                <div
-                  className={`relative z-10 w-16 h-16 ${colors.bg} border ${colors.border} rounded-2xl flex items-center justify-center text-3xl mb-8 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 ${colors.glow}`}
-                >
-                  {feature.icon}
-                </div>
-                
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-bold mb-4 tracking-tight group-hover:text-white transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-400 leading-relaxed text-base group-hover:text-slate-300 transition-colors">
-                    {feature.description}
-                  </p>
-                </div>
+        <div className="features-grid grid grid-cols-1 md:grid-cols-2 gap-12 relative">
+          {/* Central Connecting Lines (Visual Decor) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+            <div className="w-full h-[1px] bg-primary/40" />
+            <div className="h-full w-[1px] bg-primary/40" />
+            <div className="absolute w-40 h-40 border border-primary/40 rounded-full animate-ping" />
+          </div>
 
-                {/* Subtle bottom accent */}
-                <div className={`absolute bottom-0 left-10 right-10 h-[2px] bg-gradient-to-r from-transparent via-white/10 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700`} />
+          {features.map((f, i) => (
+            <div 
+              key={i} 
+              className="hud-frame p-10 group relative transition-all duration-500 hover:bg-primary/[0.03] hover:border-primary/40 scan-effect cursor-pointer"
+            >
+              <div className="absolute -top-4 -left-4 text-xs font-mono text-primary/40">NODE_0{i + 1}</div>
+              
+              <div className="flex items-start gap-8 mb-6">
+                <div className="text-5xl opacity-80 group-hover:scale-125 transition-transform group-hover:rotate-12">{f.icon}</div>
+                <div>
+                  <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2 group-hover:text-primary transition-colors">
+                    {f.title}
+                  </h3>
+                  <div className="h-[2px] w-12 bg-primary/20 group-hover:w-full transition-all duration-700" />
+                </div>
               </div>
-            );
-          })}
+
+              <p className="text-slate-400 font-medium leading-relaxed tracking-tight group-hover:text-slate-200 transition-colors">
+                {f.desc}
+              </p>
+
+              {/* HUD Deco corner */}
+              <div className="absolute bottom-4 right-4 flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
+                {[1,2,3].map(j => <div key={j} className="w-1 h-3 bg-primary" />)}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* Decorative Overlays */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-accent/5 to-transparent pointer-events-none" />
     </section>
   );
 }
