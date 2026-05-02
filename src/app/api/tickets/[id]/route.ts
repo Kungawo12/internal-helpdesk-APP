@@ -1,0 +1,44 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  const ticket = await prisma.ticket.findUnique({
+    where: { id },
+    include: {
+      creator: { select: { name: true, email: true } },
+      assignee: { select: { name: true, email: true } },
+      feedback: true,
+    },
+  });
+
+  if (!ticket) {
+    return Response.json({ error: "Ticket not found" }, { status: 404 });
+  }
+
+  // Access control: employees can only view their own tickets
+  const { role, id: userId } = session.user;
+  if (role === "employee" && ticket.creatorId !== userId) {
+    return Response.json({ error: "Access denied" }, { status: 403 });
+  }
+
+  // IT staff can only see IT tickets, HR staff can only see HR tickets
+  if (role === "it_staff" && ticket.type !== "IT") {
+    return Response.json({ error: "Access denied" }, { status: 403 });
+  }
+  if (role === "hr_staff" && ticket.type !== "HR") {
+    return Response.json({ error: "Access denied" }, { status: 403 });
+  }
+
+  return Response.json(ticket);
+}

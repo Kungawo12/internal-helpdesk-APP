@@ -57,6 +57,10 @@ type Ticket = {
 };
 ```
 
+### `GET /api/tickets/[id]`
+Returns a single ticket with full details. Access controlled by role.
+**Response:** Same shape as tickets from `GET /api/tickets`, always includes `creator`, `assignee`, and `feedback`.
+
 ### `POST /api/tickets`
 **Request:**
 ```json
@@ -128,6 +132,17 @@ session.user = {
 - Submit button → `POST /api/tickets`
 - Cancel link → back to `/dashboard`
 
+### `/dashboard/ticket/[id]` (Ticket Detail)
+**Must include:**
+- Fetch ticket via `GET /api/tickets/[id]`
+- Full ticket info: title, description, type, status, priority, dates
+- Creator name/email, assignee name if assigned
+- Solution display if resolved
+- Feedback display if given
+- Feedback form if employee viewing their own resolved ticket without feedback
+- Staff action buttons (Start Working / Resolve) if applicable
+- Back link to `/dashboard`
+
 ### `/dashboard/manager`
 **Must include:**
 - Stats summary (total, open, in_progress, resolved, IT count, HR count)
@@ -189,6 +204,7 @@ src/
 │   │   ├── layout.tsx        ← design freely, keep nav items + signOut
 │   │   ├── page.tsx          ← design freely, keep Ticket type + feedback form
 │   │   ├── create/page.tsx   ← design freely, keep form fields + submit logic
+│   │   ├── ticket/[id]/page.tsx ← design freely, keep data fetching + feedback form
 │   │   ├── manager/page.tsx  ← design freely, keep stats + filters + table
 │   │   └── staff/page.tsx    ← design freely, keep resolve flow + status buttons
 │   ├── login/page.tsx        ← design freely, keep signIn logic
@@ -218,3 +234,4 @@ src/
 | Date | Change | By |
 |------|--------|----|
 | 2026-05-02 | Initial spec created | Claude (Backend) |
+| 2026-05-02 | Added GET /api/tickets/[id], ticket detail page, validation rules | Claude (Backend) |

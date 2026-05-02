@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Ticket = {
   id: string;
@@ -13,6 +14,7 @@ type Ticket = {
 };
 
 export default function ManagerDashboard() {
+  const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ status: "all", type: "all" });
@@ -111,14 +113,18 @@ export default function ManagerDashboard() {
                 <th className="px-8 py-5 text-[11px] font-bold uppercase tracking-wider text-slate-500">Department</th>
                 <th className="px-8 py-5 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
                 <th className="px-8 py-5 text-[11px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
-                <th className="px-8 py-5 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Created</th>
+                <th className="px-8 py-5 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.03]">
               {filteredTickets.map((ticket) => (
-                <tr key={ticket.id} className="hover:bg-white/[0.02] transition-colors">
+                <tr 
+                  key={ticket.id} 
+                  className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                  onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
+                >
                   <td className="px-8 py-5">
-                    <p className="font-bold text-sm text-white">{ticket.title}</p>
+                    <p className="font-bold text-sm text-white group-hover:text-primary transition-colors">{ticket.title}</p>
                     <p className="text-[10px] font-mono text-slate-600 mt-1">#{ticket.id.slice(0, 8)}</p>
                   </td>
                   <td className="px-8 py-5">
@@ -141,8 +147,8 @@ export default function ManagerDashboard() {
                       {ticket.priority}
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-right font-mono text-xs text-slate-500">
-                    {new Date(ticket.createdAt).toLocaleDateString()}
+                  <td className="px-8 py-5 text-right">
+                    <span className="text-primary text-xs font-bold group-hover:underline">View Detail →</span>
                   </td>
                 </tr>
               ))}

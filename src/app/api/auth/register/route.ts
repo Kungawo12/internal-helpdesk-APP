@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+const validRoles = ["employee", "manager", "it_staff", "hr_staff"];
+
 export async function POST(req: Request) {
   const { name, email, password, role } = await req.json();
 
@@ -8,11 +10,26 @@ export async function POST(req: Request) {
     return Response.json({ error: "All fields are required" }, { status: 400 });
   }
 
+  if (name.trim().length < 2) {
+    return Response.json({ error: "Name must be at least 2 characters" }, { status: 400 });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return Response.json({ error: "Please enter a valid email address" }, { status: 400 });
+  }
+
+  if (password.length < 6) {
+    return Response.json({ error: "Password must be at least 6 characters" }, { status: 400 });
+  }
+
+  const userRole = validRoles.includes(role) ? role : "employee";
+
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
     return Response.json(
-      { error: "User with this email already exists" },
+      { error: "An account with this email already exists" },
       { status: 409 }
     );
   }
@@ -21,10 +38,10 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.create({
     data: {
-      name,
-      email,
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
       password: hashedPassword,
-      role: role || "employee",
+      role: userRole,
     },
   });
 
