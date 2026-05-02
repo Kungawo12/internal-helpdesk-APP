@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import gsap from "gsap";
+import Link from "next/link";
 
 type Ticket = {
   id: string;
@@ -25,7 +25,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [feedbackForm, setFeedbackForm] = useState<{ ticketId: string; rating: number; comment: string } | null>(null);
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchTickets();
@@ -37,18 +36,6 @@ export default function DashboardPage() {
     setTickets(data);
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (!loading) {
-      gsap.from(".data-pane", {
-        opacity: 0,
-        y: 20,
-        duration: 1,
-        stagger: 0.1,
-        ease: "expo.out",
-      });
-    }
-  }, [loading]);
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,148 +55,138 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        <div className="w-64 loading-bar mb-6" />
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary animate-pulse">Syncing_Nodes...</p>
+      <div className="min-h-[60vh] flex flex-col items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-subtle text-sm font-medium">Loading tickets...</p>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="pb-40">
-      <div className="mb-20">
-        <h1 className="text-5xl font-black italic uppercase tracking-tighter text-white mb-2">Operational_Stream</h1>
-        <p className="text-slate-500 font-mono text-[10px] uppercase tracking-[0.4em]">Active_Data_Nodes_For_{session?.user?.name}</p>
+    <div className="max-w-5xl mx-auto">
+      <div className="flex items-center justify-between mb-12">
+        <div>
+          <h1 className="text-3xl font-bold text-white tracking-tight">Your Tickets</h1>
+          <p className="text-subtle mt-1">Track and manage your active requests</p>
+        </div>
+        <Link href="/dashboard/create" className="btn-primary">
+          Create New Ticket
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-8">
+      <div className="space-y-6">
         {tickets.map((ticket) => (
-          <div key={ticket.id} className="data-pane group">
-            <div className="hud-frame p-8 bg-hud-bg/10 backdrop-blur-3xl border-white/5 hover:border-primary/40 transition-all duration-500 scan-effect">
-              <div className="flex flex-col lg:flex-row gap-10">
-                {/* Basic Info */}
-                <div className="flex-1 space-y-6">
-                  <div className="flex flex-wrap items-center gap-4">
-                    <span className={`px-3 py-1 rounded-none text-[9px] font-black uppercase tracking-widest border ${
-                      ticket.priority === 'urgent' ? 'border-accent bg-accent/10 text-accent' : 'border-primary/30 bg-primary/5 text-primary'
-                    }`}>
-                      PRIORITY_{ticket.priority}
-                    </span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">STATUS_{ticket.status}</span>
-                    <span className="text-[9px] font-mono text-slate-700">NODE_{ticket.id.slice(0, 8)}</span>
-                  </div>
-
-                  <div>
-                    <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white group-hover:text-primary transition-colors mb-4 leading-none">
-                      {ticket.title}
-                    </h2>
-                    <p className="text-slate-400 text-sm leading-relaxed max-w-3xl">
-                      {ticket.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-6 pt-4 opacity-50">
-                     <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">INITIATED: {new Date(ticket.createdAt).toLocaleString()}</p>
-                     <div className="w-1 h-1 bg-slate-800 rounded-full" />
-                     <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">SECTOR: {ticket.type}</p>
-                  </div>
+          <div key={ticket.id} className="card p-6 md:p-8">
+            <div className="flex flex-col md:flex-row justify-between gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className={`badge ${
+                    ticket.priority === 'urgent' ? 'badge-red' : 
+                    ticket.priority === 'high' ? 'badge-red' : 
+                    'badge-blue'
+                  }`}>
+                    {ticket.priority}
+                  </span>
+                  <span className={`badge ${
+                    ticket.status === 'resolved' ? 'badge-green' : 'badge-gray'
+                  }`}>
+                    {ticket.status.replace("_", " ")}
+                  </span>
+                  <span className="text-xs font-medium text-slate-600">ID: {ticket.id.slice(0, 8)}</span>
                 </div>
 
-                {/* Resolution & Feedback */}
-                <div className="lg:w-96 space-y-6">
-                  {ticket.status === "resolved" && (
-                    <div className="hud-frame p-6 bg-emerald-500/5 border-emerald-500/20">
-                      <p className="text-[10px] font-black uppercase text-emerald-400 tracking-[0.3em] mb-4 italic">Verification_Result</p>
-                      <p className="text-xs text-slate-300 italic mb-6">"{ticket.solution}"</p>
-                      
-                      {!ticket.feedback ? (
-                        <button 
-                          onClick={() => setFeedbackForm({ ticketId: ticket.id, rating: 5, comment: "" })}
-                          className="w-full py-3 bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all"
-                        >
-                          Provide_Neural_Feedback
-                        </button>
-                      ) : (
-                        <div className="border-t border-emerald-500/10 pt-4">
-                          <div className="flex gap-1 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i} className={`text-sm ${i < ticket.feedback!.rating ? "text-yellow-500" : "text-white/5"}`}>★</span>
-                            ))}
-                          </div>
-                          <p className="text-[10px] text-slate-500 uppercase font-bold italic tracking-wider">Feedback_Stored_Successfully</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                <h2 className="text-xl font-bold text-white mb-3">{ticket.title}</h2>
+                <p className="text-subtle text-sm leading-relaxed mb-6">
+                  {ticket.description}
+                </p>
 
-                  {ticket.status !== "resolved" && (
-                    <div className="h-full flex items-center justify-center opacity-10">
-                       <span className="text-5xl">⚡</span>
-                    </div>
-                  )}
+                <div className="flex items-center gap-6 text-[12px] font-medium text-slate-500">
+                   <span>Opened on {new Date(ticket.createdAt).toLocaleDateString()}</span>
+                   <div className="w-1 h-1 bg-slate-800 rounded-full" />
+                   <span>Type: {ticket.type}</span>
                 </div>
               </div>
 
-              {/* Feedback Overlay Form */}
-              {feedbackForm?.ticketId === ticket.id && (
-                <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Operational_Rating</h3>
-                  <div className="flex gap-4">
-                    {[1, 2, 3, 4, 5].map((r) => (
-                      <button
-                        key={r}
-                        onClick={() => setFeedbackForm({ ...feedbackForm, rating: r })}
-                        className={`w-12 h-12 hud-frame flex items-center justify-center text-lg transition-all ${
-                          feedbackForm.rating === r ? "bg-primary text-black border-primary" : "text-slate-500 hover:text-white"
-                        }`}
+              <div className="md:w-72">
+                {ticket.status === "resolved" && (
+                  <div className="p-5 rounded-xl bg-green-500/5 border border-green-500/10">
+                    <h3 className="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Resolution</h3>
+                    <p className="text-sm text-slate-300 italic mb-4">"{ticket.solution}"</p>
+                    
+                    {!ticket.feedback ? (
+                      <button 
+                        onClick={() => setFeedbackForm({ ticketId: ticket.id, rating: 5, comment: "" })}
+                        className="w-full py-2.5 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold rounded-lg hover:bg-green-500 hover:text-white transition-all"
                       >
-                        {r}
+                        Rate Resolution
                       </button>
-                    ))}
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-yellow-500">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={i < ticket.feedback!.rating ? "opacity-100" : "opacity-20"}>★</span>
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-600 uppercase">Rated</span>
+                      </div>
+                    )}
                   </div>
-                  <textarea
-                    value={feedbackForm.comment}
-                    onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
-                    className="w-full px-5 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-primary/50 font-mono text-xs h-24 resize-none"
-                    placeholder="Enter analytical comments (optional)..."
-                  />
-                  <div className="flex gap-4">
-                    <button
-                      onClick={handleFeedbackSubmit}
-                      disabled={submittingFeedback}
-                      className="flex-1 py-4 bg-primary text-black font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all"
-                    >
-                      {submittingFeedback ? "Transmitting..." : "Submit_Feedback_Protocol"}
-                    </button>
-                    <button
-                      onClick={() => setFeedbackForm(null)}
-                      className="px-8 py-4 hud-frame border-white/10 text-slate-500 text-[10px] font-black uppercase tracking-widest"
-                    >
-                      Abort
-                    </button>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
+
+            {/* Feedback Modal-like Form */}
+            {feedbackForm?.ticketId === ticket.id && (
+              <div className="mt-8 pt-8 border-t border-white/5 animate-in fade-in slide-in-from-top-4 duration-300">
+                <h3 className="text-sm font-bold text-white mb-6">How was the resolution?</h3>
+                <div className="flex gap-3 mb-6">
+                  {[1, 2, 3, 4, 5].map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setFeedbackForm({ ...feedbackForm, rating: r })}
+                      className={`w-10 h-10 rounded-lg font-bold transition-all ${
+                        feedbackForm.rating === r ? "bg-primary text-white" : "bg-white/5 text-subtle hover:text-white"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={feedbackForm.comment}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
+                  className="input-field h-24 mb-6"
+                  placeholder="Additional comments (optional)"
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleFeedbackSubmit}
+                    disabled={submittingFeedback}
+                    className="btn-primary py-2.5 px-6"
+                  >
+                    {submittingFeedback ? "Submitting..." : "Submit Feedback"}
+                  </button>
+                  <button
+                    onClick={() => setFeedbackForm(null)}
+                    className="btn-secondary py-2.5 px-6"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ))}
 
         {tickets.length === 0 && (
-          <div className="py-40 text-center">
-            <p className="text-xs font-black uppercase tracking-[0.5em] text-slate-600">No_Active_Nodes_Found</p>
+          <div className="card p-20 text-center">
+            <div className="text-4xl mb-4">📋</div>
+            <p className="text-subtle font-medium">You haven't created any tickets yet.</p>
+            <Link href="/dashboard/create" className="text-primary hover:underline mt-2 inline-block font-bold">
+              Create your first ticket
+            </Link>
           </div>
         )}
-      </div>
-
-      {/* Floating Action HUD */}
-      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000]">
-         <a 
-           href="/dashboard/create" 
-           className="hud-frame px-10 py-4 bg-primary/10 border-primary/40 backdrop-blur-2xl flex items-center gap-4 group hover:bg-primary hover:scale-105 transition-all cursor-pointer"
-         >
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-white group-hover:text-black">Execute_New_Protocol</span>
-            <span className="text-xl group-hover:text-black">+</span>
-         </a>
       </div>
     </div>
   );

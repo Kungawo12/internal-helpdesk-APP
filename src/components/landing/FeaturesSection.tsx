@@ -1,110 +1,62 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-
 const features = [
   {
-    title: "Neural_Triage",
-    desc: "Autonomous categorization of incoming threads using advanced cognitive mapping.",
-    icon: "🧠",
-    coords: "top-0 left-0"
+    title: "Smart Triage",
+    desc: "Automatically categorize and route incoming tickets to the right department using built-in logic.",
+    icon: "🧠"
   },
   {
-    title: "Quantum_SLA",
-    desc: "Time-dilation protocols that prioritize critical operational failures in real-time.",
-    icon: "⏳",
-    coords: "top-20 right-20"
+    title: "SLA Tracking",
+    desc: "Keep your response times fast with visual priority indicators and service level monitoring.",
+    icon: "⏳"
   },
   {
-    title: "Core_Analytics",
-    desc: "Multi-dimensional data visualization for enterprise-scale decision making.",
-    icon: "📊",
-    coords: "bottom-10 left-20"
+    title: "Manager Insights",
+    desc: "Get a bird's-eye view of your company's operational health with real-time analytics.",
+    icon: "📊"
   },
   {
-    title: "Sync_Protocols",
-    desc: "Seamless inter-departmental data transmission with zero latency.",
-    icon: "📡",
-    coords: "bottom-0 right-10"
+    title: "Role-Based Access",
+    desc: "Seamless experience for employees, managers, and support staff with tailored interfaces.",
+    icon: "📡"
   }
 ];
 
 export default function FeaturesSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      const xPos = (clientX / innerWidth - 0.5) * 10;
-      const yPos = (clientY / innerHeight - 0.5) * 10;
-
-      gsap.to(".features-grid", {
-        rotateY: xPos,
-        rotateX: -yPos,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   return (
-    <section ref={sectionRef} className="py-40 relative overflow-hidden perspective-2000">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center mb-32">
-          <div className="inline-block hud-frame px-4 py-1 border-accent/20 mb-6">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Feature_Protocols</span>
-          </div>
-          <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter text-cyber">
-            Operational<br /><span className="text-primary">Infrastructures</span>
+    <section id="features" className="py-32 relative bg-bg-dark">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-24">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+            Everything you need to <br />
+            <span className="text-primary">manage internal requests.</span>
           </h2>
+          <p className="text-lg text-subtle max-w-2xl mx-auto">
+            A powerful set of tools designed to help IT and HR departments 
+            handle employee needs without the complexity of traditional software.
+          </p>
         </div>
 
-        <div className="features-grid grid grid-cols-1 md:grid-cols-2 gap-12 relative">
-          {/* Central Connecting Lines (Visual Decor) */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-            <div className="w-full h-[1px] bg-primary/40" />
-            <div className="h-full w-[1px] bg-primary/40" />
-            <div className="absolute w-40 h-40 border border-primary/40 rounded-full animate-ping" />
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((f, i) => (
             <div 
               key={i} 
-              className="hud-frame p-10 group relative transition-all duration-500 hover:bg-primary/[0.03] hover:border-primary/40 scan-effect cursor-pointer"
+              className="card p-8 group hover:translate-y-[-4px]"
             >
-              <div className="absolute -top-4 -left-4 text-xs font-mono text-primary/40">NODE_0{i + 1}</div>
-              
-              <div className="flex items-start gap-8 mb-6">
-                <div className="text-5xl opacity-80 group-hover:scale-125 transition-transform group-hover:rotate-12">{f.icon}</div>
-                <div>
-                  <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2 group-hover:text-primary transition-colors">
-                    {f.title}
-                  </h3>
-                  <div className="h-[2px] w-12 bg-primary/20 group-hover:w-full transition-all duration-700" />
-                </div>
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-primary/20 transition-colors">
+                {f.icon}
               </div>
-
-              <p className="text-slate-400 font-medium leading-relaxed tracking-tight group-hover:text-slate-200 transition-colors">
+              <h3 className="text-xl font-bold mb-3 text-white">
+                {f.title}
+              </h3>
+              <p className="text-subtle text-sm leading-relaxed">
                 {f.desc}
               </p>
-
-              {/* HUD Deco corner */}
-              <div className="absolute bottom-4 right-4 flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                {[1,2,3].map(j => <div key={j} className="w-1 h-3 bg-primary" />)}
-              </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* Decorative Overlays */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-accent/5 to-transparent pointer-events-none" />
     </section>
   );
 }

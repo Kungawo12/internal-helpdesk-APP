@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import gsap from "gsap";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,27 +11,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".login-frame", {
-        opacity: 0,
-        scale: 0.9,
-        duration: 1.2,
-        ease: "expo.out",
-      });
-      gsap.from(".login-item", {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-        delay: 0.5,
-      });
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +26,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid Protocol Credentials");
+      setError("Invalid email or password. Please try again.");
       return;
     }
 
@@ -55,55 +34,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div ref={containerRef} className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
-      <div className="hud-bg" />
-      <div className="scanlines" />
-      <div className="cyber-grid absolute inset-0" />
-
-      <div className="login-frame w-full max-w-md relative z-10">
-        <div className="text-center mb-12">
-          <div className="login-item inline-flex items-center gap-4 mb-6 group cursor-pointer">
-            <div className="w-14 h-14 bg-primary/10 border border-primary/50 flex items-center justify-center text-3xl font-black chromatic-glow group-hover:scale-110 transition-transform">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-bg-dark grid-subtle">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-2 mb-8">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-xl">
               H
             </div>
-            <div className="text-left">
-              <p className="text-[14px] font-black tracking-[0.5em] text-white">NEURAL_DESK</p>
-              <p className="text-[10px] font-mono text-primary uppercase">SECURITY_PORTAL_V1</p>
-            </div>
-          </div>
-          <h1 className="login-item text-4xl font-black italic uppercase tracking-tighter text-white">Verify_Access</h1>
+            <span className="font-bold text-2xl tracking-tight">Helpdesk</span>
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back</h1>
+          <p className="text-subtle mt-2">Sign in to manage your tickets</p>
         </div>
 
-        <div className="hud-frame p-10 bg-hud-bg/20 backdrop-blur-3xl relative overflow-hidden group">
-          <div className="scan-effect absolute inset-0 pointer-events-none opacity-20" />
-          
-          <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+        <div className="card p-8 shadow-xl">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="login-item p-4 hud-frame border-accent/40 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest text-center animate-glitch">
+              <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
                 {error}
               </div>
             )}
 
-            <div className="login-item space-y-3">
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Neural_Identity (Email)</label>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-300">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-6 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-700 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
-                placeholder="ID_SEQUENCE@CORE.SYS"
+                className="input-field"
+                placeholder="name@company.com"
                 required
               />
             </div>
 
-            <div className="login-item space-y-3">
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Access_Key (Password)</label>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-slate-300">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-6 py-4 bg-black/40 border border-white/10 text-white placeholder-slate-700 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
-                placeholder="••••••••••••"
+                className="input-field"
+                placeholder="••••••••"
                 required
               />
             </div>
@@ -111,29 +82,20 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="login-item w-full py-5 bg-primary text-black font-black text-xs uppercase tracking-[0.4em] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 relative overflow-hidden group/btn"
+              className="btn-primary w-full py-3.5 text-base"
             >
-              <span className="relative z-10">{loading ? "Establishing_Connection..." : "Authorize_Protocol"}</span>
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-white/50 animate-glitch" />
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
-            <div className="login-item pt-6 text-center border-t border-white/5">
-              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                Identity not established?{" "}
-                <a href="/register" className="text-primary hover:text-white transition-colors ml-2 italic underline underline-offset-4">
-                  Initialize_Registration
-                </a>
+            <div className="pt-4 text-center border-t border-white/5">
+              <p className="text-sm text-subtle">
+                Don't have an account?{" "}
+                <Link href="/register" className="text-primary hover:underline font-semibold">
+                  Create an account
+                </Link>
               </p>
             </div>
           </form>
-        </div>
-
-        {/* Technical Deco */}
-        <div className="login-item mt-8 flex justify-between items-center opacity-30">
-          <div className="text-[8px] font-mono text-slate-500">AES-256_ENCRYPTED_STREAM</div>
-          <div className="flex gap-1">
-             {[1,2,3,4,5].map(i => <div key={i} className="w-1 h-3 bg-primary/40" />)}
-          </div>
         </div>
       </div>
     </div>
