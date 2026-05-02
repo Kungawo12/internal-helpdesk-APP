@@ -38,117 +38,144 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white tracking-tight">Create a New Ticket</h1>
-        <p className="text-subtle mt-1">Please provide the details of your request</p>
+    <div className="max-w-4xl mx-auto pb-24 animate-fade-in">
+      <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-2">
+            Initiate Protocol
+          </h1>
+          <p className="text-subtle text-lg font-medium">Define the parameters of your support request.</p>
+        </div>
+        <Link href="/dashboard" className="btn-secondary flex items-center gap-2 group">
+          <span className="transition-transform group-hover:-translate-x-1">←</span> 
+          Return to Dashboard
+        </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-10">
         {error && (
-          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
-            {error}
+          <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 text-danger text-sm font-bold flex items-center gap-3">
+            <span className="text-xl">⚠️</span> {error}
           </div>
         )}
 
-        <div className="card p-8 space-y-8 shadow-xl">
-          {/* Ticket Type */}
-          <div className="space-y-4">
-            <label className="text-sm font-bold text-slate-300">Ticket Type</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-10">
+            {/* Primary Details Card */}
+            <div className="card p-10 md:p-14 space-y-10 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32" />
+               
+               <div className="relative z-10 space-y-10">
+                  <div className="space-y-4">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Request Title</label>
+                    <input
+                      type="text"
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      className="input-field py-4 text-lg font-bold"
+                      placeholder="What needs attention?"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Detailed Intelligence</label>
+                    <textarea
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      className="input-field h-64 resize-none leading-relaxed font-medium"
+                      placeholder="Provide all relevant context, logs, or steps to reproduce..."
+                      required
+                    />
+                  </div>
+               </div>
+            </div>
+
+            {/* Actions Grid */}
+            <div className="flex flex-col sm:flex-row items-center gap-4">
               <button
-                type="button"
-                onClick={() => setForm({ ...form, type: "IT" })}
-                className={`p-6 rounded-2xl border text-left transition-all ${
-                  form.type === "IT" 
-                    ? "bg-primary/10 border-primary text-white" 
-                    : "bg-white/5 border-white/5 text-subtle hover:bg-white/10"
-                }`}
+                type="submit"
+                disabled={loading}
+                className="btn-primary flex-1 py-5 text-lg w-full"
               >
-                <div className="text-2xl mb-2">🖥️</div>
-                <div className="font-bold">IT Support</div>
-                <div className="text-xs text-slate-500 mt-1">Hardware, Software, VPN</div>
+                {loading ? "Transmitting..." : "Initialize Ticket Protocol"}
               </button>
-              
-              <button
-                type="button"
-                onClick={() => setForm({ ...form, type: "HR" })}
-                className={`p-6 rounded-2xl border text-left transition-all ${
-                  form.type === "HR" 
-                    ? "bg-primary/10 border-primary text-white" 
-                    : "bg-white/5 border-white/5 text-subtle hover:bg-white/10"
-                }`}
+              <Link
+                href="/dashboard"
+                className="btn-secondary py-5 px-10 text-lg w-full sm:w-auto text-center"
               >
-                <div className="text-2xl mb-2">👥</div>
-                <div className="font-bold">Human Resources</div>
-                <div className="text-xs text-slate-500 mt-1">Payroll, Holidays, Benefits</div>
-              </button>
+                Abort
+              </Link>
             </div>
           </div>
 
-          {/* Title & Description */}
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-300">Title</label>
-              <input
-                type="text"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="input-field"
-                placeholder="Briefly describe the issue"
-                required
-              />
-            </div>
+          <div className="space-y-8">
+             {/* Department Selection */}
+             <div className="card p-8 space-y-6">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Target Dept</h3>
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, type: "IT" })}
+                    className={`w-full p-6 rounded-2xl border text-left transition-all relative group ${
+                      form.type === "IT" 
+                        ? "bg-primary/10 border-primary text-white shadow-lg shadow-primary/10" 
+                        : "bg-white/5 border-white/5 text-subtle hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-3xl transition-transform group-hover:scale-110">🖥️</div>
+                      {form.type === "IT" && <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
+                    </div>
+                    <div className="font-black text-lg">IT Operations</div>
+                    <div className="text-xs text-slate-500 mt-1 font-bold">Systems & Technical Support</div>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, type: "HR" })}
+                    className={`w-full p-6 rounded-2xl border text-left transition-all relative group ${
+                      form.type === "HR" 
+                        ? "bg-primary/10 border-primary text-white shadow-lg shadow-primary/10" 
+                        : "bg-white/5 border-white/5 text-subtle hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-3xl transition-transform group-hover:scale-110">👥</div>
+                      {form.type === "HR" && <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
+                    </div>
+                    <div className="font-black text-lg">People Ops</div>
+                    <div className="text-xs text-slate-500 mt-1 font-bold">Human Resources & Admin</div>
+                  </button>
+                </div>
+             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-300">Description</label>
-              <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="input-field h-40"
-                placeholder="Provide more details about your request..."
-                required
-              />
-            </div>
+             {/* Urgency Selection */}
+             <div className="card p-8 space-y-6">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Priority Matrix</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {["low", "medium", "high", "urgent"].map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setForm({ ...form, priority: p })}
+                      className={`py-3 rounded-xl text-[11px] font-black uppercase tracking-widest border transition-all ${
+                        form.priority === p 
+                          ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
+                          : "bg-white/5 border-white/5 text-slate-500 hover:text-white"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                   <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
+                     Higher urgency requires justification and may undergo additional triage.
+                   </p>
+                </div>
+             </div>
           </div>
-
-          {/* Priority */}
-          <div className="space-y-4">
-            <label className="text-sm font-bold text-slate-300">Urgency</label>
-            <div className="flex flex-wrap gap-3">
-              {["low", "medium", "high", "urgent"].map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setForm({ ...form, priority: p })}
-                  className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider border transition-all ${
-                    form.priority === p 
-                      ? "bg-white text-black border-white" 
-                      : "bg-white/5 border-white/5 text-subtle hover:text-white"
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary flex-1 py-4 text-base"
-          >
-            {loading ? "Creating Ticket..." : "Create Ticket"}
-          </button>
-          <Link
-            href="/dashboard"
-            className="btn-secondary py-4 px-8 text-base"
-          >
-            Cancel
-          </Link>
         </div>
       </form>
     </div>

@@ -26,7 +26,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Invalid email or password. Please try again.");
+      setError("Access denied. Please verify your credentials.");
       return;
     }
 
@@ -34,46 +34,55 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-bg-dark grid-subtle">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-xl">
+    <div className="min-h-screen flex items-center justify-center p-8 grid-subtle relative overflow-hidden">
+      {/* Decorative Blobs */}
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/10 rounded-full blur-[120px] -z-10" />
+
+      <div className="w-full max-w-lg animate-fade-in">
+        <div className="text-center mb-12">
+          <Link href="/" className="inline-flex items-center gap-4 mb-10 group">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-2xl shadow-xl shadow-primary/20 group-hover:scale-110 transition-transform">
               H
             </div>
-            <span className="font-bold text-2xl tracking-tight">Helpdesk</span>
+            <div className="text-left">
+              <span className="block font-black text-2xl tracking-tighter text-white uppercase">Helpdesk</span>
+              <span className="block text-[10px] font-black text-primary uppercase tracking-[0.4em]">Enterprise</span>
+            </div>
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back</h1>
-          <p className="text-subtle mt-2">Sign in to manage your tickets</p>
+          <h1 className="text-4xl font-black tracking-tight text-white mb-3">Portal Authentication</h1>
+          <p className="text-subtle text-lg font-medium">Secure access to the helpdesk ecosystem.</p>
         </div>
 
-        <div className="card p-8 shadow-xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="card p-10 md:p-14 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-primary to-accent opacity-50" />
+          
+          <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
             {error && (
-              <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
-                {error}
+              <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 text-danger text-sm font-bold flex items-center gap-3">
+                <span className="text-xl">⚠️</span> {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-300">Email Address</label>
+            <div className="space-y-3">
+              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Email Identity</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-field"
-                placeholder="name@company.com"
+                className="input-field py-4"
+                placeholder="name@enterprise.com"
                 required
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-300">Password</label>
+            <div className="space-y-3">
+              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Secret Key</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input-field"
+                className="input-field py-4"
                 placeholder="••••••••"
                 required
               />
@@ -82,21 +91,25 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3.5 text-base"
+              className="btn-primary w-full py-5 text-lg font-black uppercase tracking-widest"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Authenticating..." : "Establish Session"}
             </button>
 
-            <div className="pt-4 text-center border-t border-white/5">
-              <p className="text-sm text-subtle">
-                Don't have an account?{" "}
-                <Link href="/register" className="text-primary hover:underline font-semibold">
-                  Create an account
+            <div className="pt-8 text-center border-t border-white/5">
+              <p className="text-sm text-subtle font-medium">
+                New to the platform?{" "}
+                <Link href="/register" className="text-primary hover:text-primary-light transition-colors font-black uppercase tracking-widest text-xs">
+                  Request Access
                 </Link>
               </p>
             </div>
           </form>
         </div>
+        
+        <p className="mt-12 text-center text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
+          &copy; 2026 Helpdesk Systems International. All Rights Reserved.
+        </p>
       </div>
     </div>
   );

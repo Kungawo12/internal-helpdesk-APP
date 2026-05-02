@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Ticket = {
@@ -11,15 +11,28 @@ type Ticket = {
   type: string;
   status: string;
   priority: string;
+  solution: string | null;
   createdAt: string;
   creator: { name: string; email: string };
+  feedback: { rating: number; comment: string | null } | null;
+};
+
+const priorityOrder: Record<string, number> = {
+  urgent: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
 };
 
 export default function StaffDashboard() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [resolveForm, setResolveForm] = useState<{
+    ticketId: string;
+    solution: string;
+  } | null>(null);
+  const [resolving, setResolving] = useState(false);
 
   useEffect(() => {
     fetchTickets();
@@ -28,139 +41,192 @@ export default function StaffDashboard() {
   const fetchTickets = async () => {
     const res = await fetch("/api/tickets");
     const data = await res.json();
+    data.sort((a: Ticket, b: Ticket) => {
+      const pDiff = (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2);
+      if (pDiff !== 0) return pDiff;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
     setTickets(data);
     setLoading(false);
   };
 
-  const openTickets = useMemo(() => 
-    tickets.filter((t) => (t.status === "open" || t.status === "in_progress") && 
-    (t.title.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase())))
-  , [tickets, search]);
+  const handleStatusChange = async (ticketId: string, status: string) => {
+    await fetch(`/api/tickets/${ticketId}/resolve`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    fetchTickets();
+  };
 
-  const resolvedTickets = useMemo(() => 
-    tickets.filter((t) => t.status === "resolved" || t.status === "closed")
-  , [tickets]);
+  const handleResolve = async () => {
+    if (!resolveForm || !resolveForm.solution.trim()) return;
+    setResolving(true);
+
+    await fetch(`/api/tickets/${resolveForm.ticketId}/resolve`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ solution: resolveForm.solution, status: "resolved" }),
+    });
+
+    setResolving(false);
+    setResolveForm(null);
+    fetchTickets();
+  };
+
+  const openTickets = tickets.filter((t) => t.status === "open" || t.status === "in_progress");
+  const resolvedTickets = tickets.filter((t) => t.status === "resolved" || t.status === "closed");
+
+  const ticketType = session?.user.role === "it_staff" ? "IT" : "HR";
 
   if (loading) {
     return (
       <div className="min-h-[40vh] flex flex-col items-center justify-center">
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-subtle text-xs font-medium">Syncing queue...</p>
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-subtle text-sm">Loading queue...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Support Queue</h1>
-          <p className="text-xs text-subtle mt-1">Manage and resolve incoming employee requests</p>
-        </div>
-        
-        <div className="flex gap-2">
-           <div className="card px-5 py-2 border-white/5 bg-white/[0.02] flex flex-col items-center min-w-[100px]">
-              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Active</span>
-              <span className="text-xl font-bold text-white">{openTickets.length}</span>
-           </div>
-           <div className="card px-5 py-2 border-white/5 bg-white/[0.02] flex flex-col items-center min-w-[100px]">
-              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Done</span>
-              <span className="text-xl font-bold text-emerald-400">{resolvedTickets.length}</span>
-           </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{ticketType} Ticket Queue</h1>
+          <p className="text-subtle text-sm mt-1">
+            {openTickets.length} active &middot; {resolvedTickets.length} resolved
+          </p>
         </div>
       </div>
 
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Filter queue by title or ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input-field py-2 pl-10 text-xs"
-        />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
-      </div>
+      {/* Active Tickets */}
+      <div>
+        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 bg-blue-400 rounded-full" />
+          Active Tickets
+        </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Active Queue Manifest */}
-        <section className="lg:col-span-8 space-y-4">
-          <div className="card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-white/[0.01] border-b border-white/5">
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Subject</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Requestor</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
-                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Age</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.03]">
-                  {openTickets.map((ticket) => (
-                    <tr 
-                      key={ticket.id} 
-                      className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
-                      onClick={() => window.location.href = `/dashboard/ticket/${ticket.id}`}
-                    >
-                      <td className="px-6 py-4">
-                        <p className="font-bold text-sm text-white group-hover:text-primary transition-colors">{ticket.title}</p>
-                        <p className="text-[10px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-xs font-medium text-slate-300">{ticket.creator.name}</p>
-                        <p className="text-[10px] text-slate-600 uppercase font-bold">{ticket.type}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="badge badge-gray text-[10px] py-0.5 px-2">
-                          {ticket.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`badge ${
-                          ticket.priority === 'urgent' ? 'badge-red' : 'badge-blue'
-                        } text-[10px] py-0.5 px-2`}>
-                          {ticket.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right text-[10px] font-medium text-slate-500">
-                        {new Date(ticket.createdAt).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {openTickets.length === 0 && (
-              <div className="text-center py-20">
-                 <p className="text-subtle text-sm font-medium italic">All caught up! The queue is clear.</p>
-              </div>
-            )}
+        {openTickets.length === 0 ? (
+          <div className="card p-12 text-center">
+            <p className="text-2xl mb-2">🎉</p>
+            <p className="text-subtle font-medium">All caught up — no open tickets!</p>
           </div>
-        </section>
+        ) : (
+          <div className="space-y-3">
+            {openTickets.map((ticket) => (
+              <div key={ticket.id} className="card p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`badge text-[11px] ${
+                        ticket.priority === "urgent" ? "badge-red" :
+                        ticket.priority === "high" ? "badge-red" :
+                        ticket.priority === "medium" ? "badge-amber" : "badge-gray"
+                      }`}>
+                        {ticket.priority}
+                      </span>
+                      <span className={`badge text-[11px] ${
+                        ticket.status === "in_progress" ? "badge-amber" : "badge-blue"
+                      }`}>
+                        {ticket.status.replace("_", " ")}
+                      </span>
+                    </div>
 
-        {/* Dense Archive Sidebar */}
-        <aside className="lg:col-span-4 space-y-4">
-          <h2 className="text-[10px] font-bold text-subtle uppercase tracking-[0.2em]">Recently Resolved</h2>
-          <div className="space-y-2">
-            {resolvedTickets.slice(0, 10).map((ticket) => (
-              <Link key={ticket.id} href={`/dashboard/ticket/${ticket.id}`} className="block group">
-                <div className="card p-4 border-white/5 bg-white/[0.01] hover:border-emerald-500/30 transition-all flex justify-between items-center">
-                  <div>
-                    <h3 className="font-bold text-white text-xs truncate max-w-[150px] group-hover:text-emerald-400">{ticket.title}</h3>
-                    <p className="text-[9px] font-bold text-slate-600 uppercase mt-0.5">{ticket.creator.name}</p>
+                    <Link href={`/dashboard/ticket/${ticket.id}`} className="hover:text-primary transition-colors">
+                      <h3 className="text-base font-semibold text-white">{ticket.title}</h3>
+                    </Link>
+                    <p className="text-sm text-slate-400 mt-1 line-clamp-2">{ticket.description}</p>
+                    <p className="text-xs text-slate-500 mt-2">
+                      {ticket.creator.name} ({ticket.creator.email}) &middot; {new Date(ticket.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                  <span className="text-[9px] font-mono text-slate-700">#{ticket.id.slice(0, 8)}</span>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-2 flex-shrink-0">
+                    {ticket.status === "open" && (
+                      <button
+                        onClick={() => handleStatusChange(ticket.id, "in_progress")}
+                        className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-400 rounded-lg text-xs font-medium transition-colors"
+                      >
+                        Start Working
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setResolveForm({ ticketId: ticket.id, solution: "" })}
+                      className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-medium transition-colors"
+                    >
+                      Resolve
+                    </button>
+                  </div>
+                </div>
+
+                {/* Resolve Form */}
+                {resolveForm?.ticketId === ticket.id && (
+                  <div className="mt-4 p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl space-y-3">
+                    <label className="text-sm font-medium text-slate-300 block">
+                      Solution
+                    </label>
+                    <textarea
+                      value={resolveForm.solution}
+                      onChange={(e) => setResolveForm({ ...resolveForm, solution: e.target.value })}
+                      className="input-field text-sm"
+                      rows={3}
+                      placeholder="Describe what you did to resolve this issue..."
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleResolve}
+                        disabled={!resolveForm.solution.trim() || resolving}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        {resolving ? "Resolving..." : "Mark as Resolved"}
+                      </button>
+                      <button
+                        onClick={() => setResolveForm(null)}
+                        className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Resolved Tickets */}
+      {resolvedTickets.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full" />
+            Resolved ({resolvedTickets.length})
+          </h2>
+          <div className="space-y-2">
+            {resolvedTickets.map((ticket) => (
+              <Link key={ticket.id} href={`/dashboard/ticket/${ticket.id}`} className="block group">
+                <div className="card p-4 flex items-center justify-between hover:border-emerald-500/30">
+                  <div>
+                    <p className="font-medium text-sm text-slate-300 group-hover:text-emerald-400 transition-colors">
+                      {ticket.title}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {ticket.creator.name} &middot; {new Date(ticket.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  {ticket.feedback && (
+                    <span className="text-yellow-400 text-sm">
+                      {"★".repeat(ticket.feedback.rating)}{"☆".repeat(5 - ticket.feedback.rating)}
+                    </span>
+                  )}
                 </div>
               </Link>
             ))}
-            {resolvedTickets.length === 0 && (
-              <p className="text-[10px] text-slate-700 italic">No tickets resolved today.</p>
-            )}
           </div>
-        </aside>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

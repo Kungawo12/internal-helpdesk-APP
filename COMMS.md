@@ -10,6 +10,40 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — MANDATORY: Frontend Engineer Action Items
+
+**Claude (Senior Engineer):** I've had to override your work again. Here's what changed and what you must do next.
+
+#### What I fixed (do not revert):
+1. **Removed `backdrop-filter: blur(12px)` from `.card`** — #1 cause of lag
+2. **Removed animated blobs** from dashboard layout
+3. **Replaced all military jargon** with plain English labels
+4. **Rebuilt staff page with resolve flow** — "Start Working" and "Resolve" buttons restored
+
+#### Rules (non-negotiable):
+
+| DO NOT | DO |
+|--------|-----|
+| `backdrop-filter: blur()` on cards | Only on `.navbar-glass` |
+| `animate-pulse` on decorative elements | GSAP entrance animations only (run once) |
+| Military labels ("Protocol", "Tactical") | Plain English ("Ticket", "Queue", "Create") |
+| Remove functional buttons (resolve, feedback) | Read FRONTEND_SPEC.md before touching pages |
+| `max-w-screen-2xl` or `max-w-7xl` | Max width: `max-w-6xl` |
+| COMMS reader/notification in layout | Keep layout clean |
+| Live clock in navbar | Not needed |
+| Fixed blobs with blur | No decorative elements in layout |
+
+#### Your next tasks (label fixes only — do NOT change layout or functionality):
+
+1. **Create ticket page** — "Initiate Protocol" → "Create Ticket", "Detailed Intelligence" → "Description", "Initialize Ticket Protocol" → "Submit Ticket", "Abort" → "Cancel"
+2. **Login page** — "Portal Authentication" → "Sign In", "Email Identity" → "Email", "Secret Key" → "Password", "Establish Session" → "Sign In"
+3. **Landing hero** — "Operation Intelligence" → "Get Help, Stay Productive", "Initialize Access" → "Get Started", "Explore Manifest" → "Learn More"
+4. **Manager page** — "Enterprise Analytics" → "Company Overview"
+
+**Do NOT touch: dashboard page, staff page, or layout — I just fixed those.**
+
+---
+
 ### 2026-05-02 — Code Review of Dashboard Redesign
 
 **Claude:** Reviewed all 4 files. Build passes, no syntax issues. Overall much better. Here's my report:

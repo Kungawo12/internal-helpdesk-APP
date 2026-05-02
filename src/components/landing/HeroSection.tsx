@@ -11,73 +11,77 @@ export default function HeroSection() {
     const ctx = gsap.context(() => {
       gsap.from(".hero-text", {
         opacity: 0,
-        y: 30,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power3.out",
+        y: 40,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power4.out",
       });
       
       gsap.from(".hero-ui", {
         opacity: 0,
-        y: 40,
-        duration: 1.5,
-        delay: 0.6,
+        y: 60,
+        duration: 1.8,
+        delay: 0.8,
         ease: "expo.out",
+      });
+
+      gsap.to(".floating-blob", {
+        y: 30,
+        x: 20,
+        duration: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 2
       });
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={containerRef} className="relative pt-32 pb-20 overflow-hidden min-h-screen flex flex-col items-center">
-      <div className="absolute inset-0 grid-subtle pointer-events-none" />
+    <section ref={containerRef} className="relative pt-40 pb-24 overflow-hidden min-h-screen flex flex-col items-center">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full grid-subtle pointer-events-none -z-10" />
+      <div className="floating-blob absolute top-1/4 -left-32 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 opacity-50" />
+      <div className="floating-blob absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] -z-10 opacity-50" />
       
-      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <div className="hero-text inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary">v2.0 Enterprise Release</span>
+      <div className="max-w-6xl mx-auto px-8 text-center relative z-10">
+        <div className="hero-text inline-flex items-center gap-3 px-4 py-1.5 rounded-full glass-morphism mb-10">
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">v3.0 Strategic Intelligence Release</span>
         </div>
 
-        <h1 className="hero-text text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
-          Internal operations, <br />
-          <span className="text-primary">simplified for everyone.</span>
+        <h1 className="hero-text text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.9] uppercase text-white">
+          Operation <br />
+          <span className="text-primary italic">Intelligence.</span>
         </h1>
 
-        <p className="hero-text text-lg md:text-xl text-subtle max-w-2xl mx-auto mb-12 leading-relaxed">
-          The all-in-one helpdesk for modern companies. Manage IT requests, HR inquiries, 
-          and team operations with speed and clarity.
+        <p className="hero-text text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-14 leading-relaxed font-medium">
+          The tactical command center for modern enterprise support. Manage infrastructure, 
+          human capital, and tactical operations with absolute precision.
         </p>
 
-        <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-          <Link href="/register" className="btn-primary px-10 py-4 text-base">
-            Start using Helpdesk
+        <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
+          <Link href="/register" className="btn-primary px-12 py-5 text-lg font-black uppercase tracking-widest shadow-2xl shadow-primary/40">
+            Initialize Access
           </Link>
-          <Link href="#features" className="btn-secondary px-10 py-4 text-base">
-            View Features
+          <Link href="#features" className="btn-secondary px-12 py-5 text-lg font-black uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10">
+            Explore Manifest
           </Link>
         </div>
 
-        {/* Dashboard Preview - Minimal & Static */}
-        <div className="hero-ui relative w-full max-w-5xl mx-auto rounded-2xl border border-white/10 bg-bg-card shadow-2xl overflow-hidden aspect-[16/10]">
-          <div className="absolute inset-0 p-8 flex gap-6">
-            {/* Mock UI */}
-            <div className="w-64 h-full border-r border-white/5 flex flex-col gap-4 pr-6">
-              {[1, 2, 3, 4].map(i => <div key={i} className="h-10 bg-white/5 rounded-lg w-full" />)}
-            </div>
-            <div className="flex-1 space-y-6">
-              <div className="flex justify-between items-center">
-                <div className="h-8 bg-white/10 rounded w-48" />
-                <div className="h-10 bg-primary/20 rounded-lg w-32" />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[1, 2, 3].map(i => <div key={i} className="h-24 bg-white/5 rounded-xl" />)}
-              </div>
-              <div className="space-y-4 pt-4">
-                {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 bg-white/[0.02] border border-white/5 rounded-xl w-full" />)}
-              </div>
-            </div>
-          </div>
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-dark/50 to-transparent pointer-events-none" />
+        {/* Tactical UI Preview */}
+        <div className="hero-ui relative w-full max-w-6xl mx-auto rounded-[32px] border border-white/10 glass shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)] overflow-hidden aspect-[16/10] p-1 lg:p-2">
+           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none z-10" />
+           <div className="w-full h-full rounded-[24px] bg-bg-darker overflow-hidden relative">
+              <img 
+                src="/Users/tenzinjangchuk/.gemini/antigravity/brain/359db59e-b615-4d8f-85b4-c248e68de376/premium_it_dashboard_preview_1777735489799.png" 
+                alt="Premium Helpdesk Dashboard Preview"
+                className="w-full h-full object-cover"
+              />
+              {/* Scanline Effect */}
+              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20" />
+           </div>
         </div>
       </div>
     </section>
