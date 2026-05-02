@@ -9,15 +9,16 @@ export default function Navbar() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".nav-content", {
+      gsap.from(".nav-item", {
         opacity: 0,
-        y: -20,
-        duration: 0.6,
+        y: -10,
+        duration: 0.8,
+        stagger: 0.1,
         ease: "power3.out",
       });
     }, navRef);
 
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -29,52 +30,51 @@ export default function Navbar() {
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-gray-950/80 backdrop-blur-xl border-b border-white/[0.06]"
-          : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-6 pointer-events-none"
     >
-      <div className="nav-content max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div 
+        className={`nav-content max-w-5xl w-full flex items-center justify-between px-8 py-3 rounded-2xl transition-all duration-500 pointer-events-auto ${
+          scrolled 
+            ? "glass-dark border-white/10 shadow-2xl py-3 scale-[0.98]" 
+            : "bg-transparent border-transparent py-5"
+        }`}
+      >
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-sm font-bold">
+        <a href="/" className="nav-item flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-lg font-black shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-transform group-hover:scale-110">
             H
           </div>
-          <span className="text-lg font-semibold tracking-tight">
-            Helpdesk
+          <span className="text-xl font-bold tracking-tighter">
+            Helpdesk<span className="text-primary">.</span>
           </span>
         </a>
 
         {/* Nav Links */}
-        <div className="hidden md:flex items-center gap-8">
-          <a
-            href="#how-it-works"
-            className="text-sm text-slate-400 hover:text-white transition-colors"
-          >
-            How It Works
-          </a>
-          <a
-            href="#features"
-            className="text-sm text-slate-400 hover:text-white transition-colors"
-          >
-            Features
-          </a>
+        <div className="hidden md:flex items-center gap-10">
+          {["How it works", "Features", "Pricing"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+              className="nav-item text-sm font-medium text-slate-400 hover:text-white transition-all hover:tracking-widest"
+            >
+              {item}
+            </a>
+          ))}
         </div>
 
         {/* Auth Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="nav-item flex items-center gap-4">
           <a
             href="/login"
-            className="text-sm text-slate-300 hover:text-white transition-colors px-4 py-2"
+            className="text-sm font-bold text-slate-300 hover:text-white transition-colors px-2"
           >
-            Sign In
+            Login
           </a>
           <a
             href="/register"
-            className="text-sm bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-lg font-medium transition-colors"
+            className="group relative px-6 py-2.5 bg-white text-black rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95"
           >
-            Get Started
+            Join Now
           </a>
         </div>
       </div>

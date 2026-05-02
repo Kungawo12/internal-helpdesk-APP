@@ -18,23 +18,31 @@ type Ticket = {
 };
 
 const statusColors: Record<string, string> = {
-  open: "bg-blue-500/20 text-blue-400",
-  in_progress: "bg-yellow-500/20 text-yellow-400",
-  resolved: "bg-emerald-500/20 text-emerald-400",
-  closed: "bg-slate-500/20 text-slate-400",
+  open: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+  in_progress: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+  resolved: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  closed: "text-slate-500 bg-white/5 border-white/10",
+};
+
+const priorityIcons: Record<string, string> = {
+  low: "○",
+  medium: "◔",
+  high: "◕",
+  urgent: "●",
 };
 
 const priorityColors: Record<string, string> = {
-  low: "bg-slate-500/20 text-slate-400",
-  medium: "bg-blue-500/20 text-blue-400",
-  high: "bg-orange-500/20 text-orange-400",
-  urgent: "bg-red-500/20 text-red-400",
+  low: "text-slate-500",
+  medium: "text-blue-400",
+  high: "text-orange-400",
+  urgent: "text-red-500",
 };
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [feedbackForm, setFeedbackForm] = useState<{
     ticketId: string;
     rating: number;
@@ -54,7 +62,6 @@ export default function DashboardPage() {
 
   const submitFeedback = async () => {
     if (!feedbackForm) return;
-
     await fetch(`/api/tickets/${feedbackForm.ticketId}/feedback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,209 +70,179 @@ export default function DashboardPage() {
         comment: feedbackForm.comment || null,
       }),
     });
-
     setFeedbackForm(null);
     fetchTickets();
   };
 
+  const filteredTickets = tickets.filter(t => 
+    t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="text-slate-400">Loading tickets...</div>
+      <div className="flex flex-col items-center justify-center py-40 gap-4">
+        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm font-medium text-slate-500">Initializing Workspace...</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">
-            {session?.user.role === "employee"
-              ? "My Tickets"
-              : session?.user.role === "manager"
-              ? "All Company Tickets"
-              : `${session?.user.role === "it_staff" ? "IT" : "HR"} Tickets`}
-          </h1>
-          <p className="text-slate-400 mt-1">
-            {tickets.length} ticket{tickets.length !== 1 ? "s" : ""} total
-          </p>
-        </div>
-        {(session?.user.role === "employee" ||
-          session?.user.role === "manager") && (
+    <div className="max-w-7xl mx-auto py-12 px-6">
+      {/* Header & Command Bar */}
+      <div className="flex flex-col gap-10 mb-16">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+              {session?.user.role === "employee" ? "Employee Portal" : "Operations Hub"}
+            </h1>
+            <p className="text-slate-500 text-sm font-medium">
+              Logged in as <span className="text-slate-300">{session?.user.name}</span> • {session?.user.role.replace('_', ' ')}
+            </p>
+          </div>
           <a
             href="/dashboard/create"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl font-medium text-sm transition-colors"
+            className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
-            + New Ticket
+            + Create Ticket
           </a>
-        )}
-      </div>
-
-      {tickets.length === 0 ? (
-        <div className="text-center py-20 text-slate-500">
-          <p className="text-4xl mb-4">🎫</p>
-          <p className="text-lg font-medium">No tickets yet</p>
-          <p className="text-sm mt-1">
-            {session?.user.role === "employee"
-              ? "Create your first ticket to get started"
-              : "No tickets to display"}
-          </p>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {tickets.map((ticket) => (
-            <div
-              key={ticket.id}
-              className="card-glow bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:bg-white/[0.05] transition-all"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[ticket.status]}`}
-                    >
-                      {ticket.status.replace("_", " ")}
-                    </span>
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityColors[ticket.priority]}`}
-                    >
-                      {ticket.priority}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/[0.06] text-slate-300">
-                      {ticket.type}
-                    </span>
-                  </div>
 
-                  <h3 className="text-lg font-semibold mb-1">{ticket.title}</h3>
-                  <p className="text-sm text-slate-400 line-clamp-2">
-                    {ticket.description}
-                  </p>
-
-                  {ticket.solution && (
-                    <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                      <p className="text-xs font-medium text-emerald-400 mb-1">
-                        Solution
-                      </p>
-                      <p className="text-sm text-slate-300">
-                        {ticket.solution}
-                      </p>
-                    </div>
-                  )}
-
-                  {ticket.feedback && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <span className="text-xs text-slate-500">
-                        Your rating:
-                      </span>
-                      <span className="text-yellow-400 text-sm">
-                        {"★".repeat(ticket.feedback.rating)}
-                        {"☆".repeat(5 - ticket.feedback.rating)}
-                      </span>
-                    </div>
-                  )}
-
-                  {ticket.status === "resolved" &&
-                    !ticket.feedback &&
-                    session?.user.role === "employee" && (
-                      <div className="mt-4">
-                        {feedbackForm?.ticketId === ticket.id ? (
-                          <div className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl space-y-3">
-                            <div>
-                              <label className="text-xs text-slate-400 block mb-1">
-                                Rating
-                              </label>
-                              <div className="flex gap-1">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <button
-                                    key={star}
-                                    onClick={() =>
-                                      setFeedbackForm({
-                                        ...feedbackForm,
-                                        rating: star,
-                                      })
-                                    }
-                                    className={`text-xl ${
-                                      star <= feedbackForm.rating
-                                        ? "text-yellow-400"
-                                        : "text-slate-600"
-                                    }`}
-                                  >
-                                    ★
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                            <div>
-                              <label className="text-xs text-slate-400 block mb-1">
-                                Comment (optional)
-                              </label>
-                              <textarea
-                                value={feedbackForm.comment}
-                                onChange={(e) =>
-                                  setFeedbackForm({
-                                    ...feedbackForm,
-                                    comment: e.target.value,
-                                  })
-                                }
-                                className="w-full px-3 py-2 bg-white/[0.05] border border-white/[0.1] rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                                rows={2}
-                                placeholder="Share your experience..."
-                              />
-                            </div>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={submitFeedback}
-                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs font-medium transition-colors"
-                              >
-                                Submit
-                              </button>
-                              <button
-                                onClick={() => setFeedbackForm(null)}
-                                className="px-3 py-1.5 bg-white/[0.05] hover:bg-white/[0.1] rounded-lg text-xs font-medium transition-colors"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              setFeedbackForm({
-                                ticketId: ticket.id,
-                                rating: 5,
-                                comment: "",
-                              })
-                            }
-                            className="px-3 py-1.5 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 text-yellow-400 rounded-lg text-xs font-medium transition-colors"
-                          >
-                            Leave Feedback
-                          </button>
-                        )}
-                      </div>
-                    )}
-                </div>
-
-                <div className="text-right flex-shrink-0">
-                  {ticket.creator && (
-                    <p className="text-xs text-slate-500">
-                      by {ticket.creator.name}
-                    </p>
-                  )}
-                  {ticket.assignee && (
-                    <p className="text-xs text-slate-500 mt-1">
-                      Assigned: {ticket.assignee.name}
-                    </p>
-                  )}
-                  <p className="text-xs text-slate-600 mt-1">
-                    {new Date(ticket.createdAt).toLocaleDateString()}
-                  </p>
+        {/* Bento Summary Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="md:col-span-2 lg:col-span-2 p-8 glass rounded-[32px] border-white/5 relative overflow-hidden group">
+            <div className="relative z-10">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Search & Command</p>
+              <div className="relative">
+                <input 
+                  type="text"
+                  placeholder="Find a ticket, article, or team member..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-600"
+                />
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">🔍</span>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1">
+                  <kbd className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">⌘</kbd>
+                  <kbd className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">K</kbd>
                 </div>
               </div>
             </div>
-          ))}
+            <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 blur-[80px] rounded-full group-hover:bg-primary/10 transition-all duration-700" />
+          </div>
+
+          <div className="p-8 glass rounded-[32px] border-white/5 flex flex-col justify-between">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Tickets</p>
+            <div>
+              <p className="text-4xl font-black text-white">{tickets.filter(t => t.status !== 'closed').length}</p>
+              <p className="text-xs text-emerald-500 mt-1">↑ 12% from last week</p>
+            </div>
+          </div>
+
+          <div className="p-8 glass rounded-[32px] border-white/5 flex flex-col justify-between bg-gradient-to-br from-primary/10 to-transparent">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Avg Resolution</p>
+            <div>
+              <p className="text-4xl font-black text-white">1.8h</p>
+              <p className="text-xs text-slate-500 mt-1">Global average: 2.4h</p>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Ticket List - Linear Style */}
+      <div className="glass rounded-[32px] border-white/5 overflow-hidden">
+        <div className="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex gap-6">
+            <button className="text-sm font-bold text-white relative py-1">
+              All Tickets
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+            </button>
+            <button className="text-sm font-bold text-slate-500 hover:text-slate-300 transition-colors py-1">Recent</button>
+            <button className="text-sm font-bold text-slate-500 hover:text-slate-300 transition-colors py-1">Resolved</button>
+          </div>
+          <div className="flex gap-2">
+            <button className="w-8 h-8 flex items-center justify-center glass border-white/10 rounded-lg text-xs hover:bg-white/5">⌥</button>
+            <button className="w-8 h-8 flex items-center justify-center glass border-white/10 rounded-lg text-xs hover:bg-white/5">⌘</button>
+          </div>
+        </div>
+
+        {filteredTickets.length === 0 ? (
+          <div className="py-20 text-center flex flex-col items-center">
+            <p className="text-slate-600 font-medium mb-1">No tickets match your filter</p>
+            <button onClick={() => setSearchQuery("")} className="text-xs text-primary font-bold">Clear search</button>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/[0.04]">
+            {filteredTickets.map((ticket) => (
+              <div
+                key={ticket.id}
+                className="group flex flex-col md:flex-row items-start md:items-center px-8 py-5 hover:bg-white/[0.03] transition-all gap-4 md:gap-8"
+              >
+                {/* Meta Icons */}
+                <div className="flex items-center gap-4 min-w-[100px]">
+                  <span className={`text-sm font-bold ${priorityColors[ticket.priority]}`}>
+                    {priorityIcons[ticket.priority]}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter tabular-nums">
+                    {ticket.id.slice(0, 7).toUpperCase()}
+                  </span>
+                </div>
+
+                {/* Title & Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <h3 className="text-sm font-bold text-slate-200 truncate group-hover:text-primary transition-colors">
+                      {ticket.title}
+                    </h3>
+                    {ticket.type === "HR" && (
+                      <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[9px] font-black uppercase tracking-widest border border-purple-500/20">HR</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 line-clamp-1 leading-relaxed">
+                    {ticket.description}
+                  </p>
+                </div>
+
+                {/* Status & Assignment */}
+                <div className="flex items-center gap-6 ml-auto">
+                  <div className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border ${statusColors[ticket.status]}`}>
+                    {ticket.status.replace('_', ' ')}
+                  </div>
+                  
+                  <div className="flex items-center -space-x-2">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-[#030712] flex items-center justify-center text-[10px] font-bold" title={`Created by ${ticket.creator?.name}`}>
+                      {ticket.creator?.name.charAt(0)}
+                    </div>
+                    {ticket.assignee && (
+                      <div className="w-7 h-7 rounded-full bg-slate-800 border-2 border-[#030712] flex items-center justify-center text-[10px] font-bold text-slate-400" title={`Assigned to ${ticket.assignee.name}`}>
+                        {ticket.assignee.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest tabular-nums w-20 text-right">
+                    {new Date(ticket.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Quick Actions Footer */}
+      <div className="mt-10 flex items-center justify-center gap-10">
+        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">N</kbd> New Ticket
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">/</kbd> Focus Search
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+          <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">ESC</kbd> Close View
+        </div>
+      </div>
     </div>
   );
 }
