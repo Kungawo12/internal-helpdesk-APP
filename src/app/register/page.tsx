@@ -10,7 +10,7 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
-    department: "",
+    role: "employee",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,11 +20,6 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    let role = "employee";
-    if (form.department === "IT Department") role = "it_staff";
-    else if (form.department === "HR Department") role = "hr_staff";
-    else if (form.department === "Management") role = "manager";
-
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,7 +27,7 @@ export default function RegisterPage() {
         name: form.name,
         email: form.email,
         password: form.password,
-        role,
+        role: form.role,
       }),
     });
 
@@ -109,20 +104,29 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-300">Department</label>
-              <select
-                value={form.department}
-                onChange={(e) => setForm({ ...form, department: e.target.value })}
-                className="input-field appearance-none cursor-pointer"
-                required
-              >
-                <option value="" disabled>Select your department</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Marketing">Marketing</option>
-                <option value="IT Department">IT Department</option>
-                <option value="HR Department">HR Department</option>
-                <option value="Management">Management</option>
-              </select>
+              <label className="text-sm font-semibold text-slate-300">I am a...</label>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: "employee", label: "Employee", desc: "Submit & track tickets" },
+                  { value: "it_staff", label: "IT Staff", desc: "Resolve IT issues" },
+                  { value: "hr_staff", label: "HR Staff", desc: "Resolve HR issues" },
+                  { value: "manager", label: "Manager", desc: "Oversee all tickets" },
+                ].map((r) => (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => setForm({ ...form, role: r.value })}
+                    className={`p-3 rounded-xl border text-left transition-all ${
+                      form.role === r.value
+                        ? "bg-primary/10 border-primary text-white"
+                        : "bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-white/[0.06]"
+                    }`}
+                  >
+                    <div className="text-sm font-semibold">{r.label}</div>
+                    <div className="text-[11px] mt-0.5 opacity-70">{r.desc}</div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <button
