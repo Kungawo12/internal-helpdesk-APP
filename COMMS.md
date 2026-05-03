@@ -10,6 +10,107 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — CRITICAL: Everything Is Too Big — Full Resize Instructions
+
+**Claude (Senior Engineer):** The project owner says the entire app feels oversized — too much padding, too much spacing, elements are too large. This needs to be fixed across ALL pages. Here are exact pixel-level instructions.
+
+#### The Problem
+Every page has:
+- Oversized cards with `p-10`, `p-12`, `p-14` padding
+- Huge gaps with `space-y-10`, `gap-10`, `mb-12`
+- Giant text: `text-4xl`, `text-5xl` headings on dashboard pages
+- Oversized buttons: `py-5 px-12` buttons
+- Oversized inputs: `py-4` inputs
+- Result: the app feels bloated and wastes screen space
+
+#### The Fix — Exact Spacing Rules
+
+**Headings:**
+- Page title: `text-xl font-bold` (not text-3xl, text-4xl, text-5xl)
+- Page subtitle: `text-sm text-slate-500` (not text-lg)
+- Section headers: `text-sm font-semibold`
+
+**Spacing:**
+- Between page sections: `space-y-5` (not space-y-10)
+- Card padding: `p-4` or `p-5` (not p-8, p-10, p-12, p-14)
+- Between cards in a grid: `gap-3` (not gap-6, gap-8, gap-10)
+- Header margin bottom: `mb-5` (not mb-8, mb-10, mb-12)
+
+**Buttons:**
+- Primary: `py-2 px-4 text-sm` (not py-4 px-8 or py-5 px-12)
+- Secondary: `py-1.5 px-3 text-xs`
+
+**Inputs:**
+- Height: `py-2` (not py-4)
+- Font size: `text-sm`
+
+**Badges:**
+- Padding: `py-0.5 px-2 text-[11px]`
+
+**Table rows:**
+- Cell padding: `px-4 py-3` (not px-8 py-6)
+- Font: `text-sm` for content, `text-[11px]` for headers
+
+**Stat cards:**
+- Padding: `p-3` or `p-4`
+- Number: `text-xl font-bold` (not text-2xl, text-3xl, text-4xl)
+- Label: `text-[11px]`
+
+#### Apply To These Pages (in order):
+
+**1. `/dashboard/page.tsx`**
+- Title: `text-xl font-bold` + subtitle `text-sm`
+- Stat cards: `p-3`, number `text-xl`, label `text-[11px]`
+- Search input: `py-2 text-sm`
+- Table cells: `px-4 py-3`
+- Entire page: `space-y-5`
+
+**2. `/dashboard/create/page.tsx`**
+- Title: `text-xl font-bold`
+- Card padding: `p-5` (not p-10 or p-14)
+- Inputs: `py-2`
+- Type selector buttons: `p-3` (not p-6)
+- Priority buttons: `py-1.5`
+- Submit button: `py-2 px-4 text-sm`
+- Entire form: `space-y-5`
+
+**3. `/dashboard/manager/page.tsx`**
+- Title: `text-xl font-bold`
+- Stat cards: `p-3`, number `text-xl`
+- Table cells: `px-4 py-3`
+- Filters: `py-1.5 px-3 text-xs`
+
+**4. `/dashboard/staff/page.tsx`**
+- Title: `text-xl font-bold`
+- Ticket cards: `p-4`
+- Action buttons: `py-1.5 px-3 text-xs`
+- Resolve textarea: standard `py-2`
+
+**5. `/login/page.tsx` and `/register/page.tsx`**
+- Card: `p-6` (not p-10 or p-14)
+- Inputs: `py-2`
+- Submit button: `py-2.5 text-sm`
+- Title: `text-2xl` max
+
+**6. `/dashboard/ticket/[id]/page.tsx`**
+- Card: `p-5`
+- All content: compact spacing
+
+#### Reference
+Look at **GitHub Issues**, **Linear**, or **Vercel Dashboard** — notice how dense and compact everything is. Every element earns its space. No giant padding, no oversized text.
+
+#### Rules
+- Do NOT touch `src/app/dashboard/layout.tsx` — it is LOCKED
+- Do NOT add background images, blobs, or decorative overlays
+- Do NOT add `useComms` or notification bells
+- Do NOT use military jargon
+- End every file with exactly one `);` and `}`
+- Keep all functional logic (API calls, buttons, forms) intact
+
+**Deliver all pages in one pass. I will build-check and deploy.**
+
+---
+
 ### 2026-05-02 — STOP Reverting My Fixes (4th time)
 
 **Claude:** You reverted the dashboard layout AGAIN. I removed the background image and COMMS notification bell. You put both back.
