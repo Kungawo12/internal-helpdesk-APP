@@ -26,7 +26,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Access denied. Please verify your credentials.");
+      setError("Sign in failed. Please check your credentials.");
       return;
     }
 
@@ -34,52 +34,46 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 grid-subtle relative overflow-hidden">
-
-      <div className="w-full max-w-lg animate-fade-in">
-        <div className="text-center mb-12">
-          <Link href="/" className="inline-flex items-center gap-4 mb-10 group">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center font-black text-white text-2xl shadow-xl shadow-primary/20 group-hover:scale-110 transition-transform">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-bg-darker grid-subtle relative overflow-hidden">
+      <div className="w-full max-w-md animate-fade-in">
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-3 mb-8 group">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-xl">
               H
             </div>
-            <div className="text-left">
-              <span className="block font-black text-2xl tracking-tighter text-white uppercase">Helpdesk</span>
-              <span className="block text-[10px] font-black text-primary uppercase tracking-[0.4em]">Enterprise</span>
-            </div>
+            <span className="font-bold text-2xl tracking-tight text-white">Helpdesk</span>
           </Link>
-          <h1 className="text-4xl font-bold tracking-tight text-white mb-3">Sign In</h1>
-          <p className="text-slate-400 text-lg font-medium">Access your employee helpdesk.</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Sign In</h1>
+          <p className="text-slate-500 text-sm font-medium">Sign in to your account</p>
         </div>
 
-        <div className="card p-10 md:p-14 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-right from-primary to-accent opacity-50" />
-          
-          <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+        <div className="card p-8 md:p-10 shadow-2xl">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 text-danger text-sm font-bold flex items-center gap-3">
-                <span className="text-xl">⚠️</span> {error}
+              <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-bold">
+                ⚠️ {error}
               </div>
             )}
 
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-field py-4"
-                placeholder="name@enterprise.com"
+                className="input-field py-2 text-sm"
+                placeholder="name@company.com"
                 required
               />
             </div>
 
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input-field py-4"
+                className="input-field py-2 text-sm"
                 placeholder="••••••••"
                 required
               />
@@ -88,15 +82,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-5 text-lg font-bold uppercase tracking-wider"
+              className="btn-primary w-full py-3 text-sm font-bold uppercase tracking-wider"
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
 
-            <div className="pt-8 text-center border-t border-white/5">
-              <p className="text-sm text-subtle font-medium">
+            <div className="pt-6 text-center border-t border-white/5">
+              <p className="text-xs text-slate-500 font-medium">
                 New to the platform?{" "}
-                <Link href="/register" className="text-primary hover:text-primary-light transition-colors font-black uppercase tracking-widest text-xs">
+                <Link href="/register" className="text-primary hover:underline font-bold">
                   Request Access
                 </Link>
               </p>
@@ -104,8 +98,8 @@ export default function LoginPage() {
           </form>
         </div>
         
-        <p className="mt-12 text-center text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
-          &copy; 2026 Helpdesk Systems International. All Rights Reserved.
+        <p className="mt-10 text-center text-[10px] font-medium text-slate-600 uppercase tracking-widest">
+          &copy; 2026 Helpdesk. All Rights Reserved.
         </p>
       </div>
     </div>

@@ -66,7 +66,7 @@ export default function StatsSection() {
               className="card p-12 flex flex-col group relative overflow-hidden"
             >
                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
-              <h3 className="text-3xl font-black mb-6 text-white uppercase tracking-tight">{role.title}</h3>
+              <h3 className="text-3xl font-bold mb-6 text-white tracking-tight">{role.title}</h3>
               <p className="text-slate-400 mb-10 text-lg leading-relaxed font-medium">
                 {role.description}
               </p>
@@ -75,7 +75,7 @@ export default function StatsSection() {
                 {role.capabilities.map((cap) => (
                   <li
                     key={cap}
-                    className="flex items-center gap-4 text-sm font-black text-slate-500 uppercase tracking-widest group/item"
+                    className="flex items-center gap-4 text-sm font-bold text-slate-500 uppercase tracking-widest group/item"
                   >
                     <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover/item:scale-150 transition-transform" />
                     {cap}

@@ -1,33 +1,14 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-
-type Ticket = {
-  id: string;
-  title: string;
-  type: string;
-  status: string;
-  priority: string;
-  createdAt: string;
-  creator: { name: string; email: string };
-};
+import { useTickets } from "@/hooks/useTickets";
 
 export default function ManagerDashboard() {
   const router = useRouter();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tickets, loading, error } = useTickets();
   const [filter, setFilter] = useState({ status: "all", type: "all" });
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    fetch("/api/tickets")
-      .then((res) => res.json())
-      .then((data) => {
-        setTickets(data);
-        setLoading(false);
-      });
-  }, []);
 
   const stats = useMemo(() => ({
     total: tickets.length,
@@ -50,43 +31,40 @@ export default function ManagerDashboard() {
     return (
       <div className="min-h-[40vh] flex flex-col items-center justify-center">
         <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-subtle text-xs font-medium">Compiling analytics...</p>
+        <p className="text-slate-500 text-xs font-medium">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Enterprise Analytics</h1>
-        <p className="text-xs text-subtle mt-1">High-level oversight of global support health</p>
+        <h1 className="text-2xl font-bold text-white tracking-tight">Company Overview</h1>
+        <p className="text-xs text-slate-500 mt-1">Real-time overview of all support tickets</p>
       </div>
 
-      {/* Dense Stats Summary */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
-          { label: "Total", value: stats.total, sub: "All time" },
-          { label: "Open", value: stats.open, sub: "Waiting" },
-          { label: "Working", value: stats.inProgress, sub: "Active" },
-          { label: "Resolved", value: stats.resolved, sub: "Finished" },
-          { label: "IT Dept", value: stats.it, sub: "Technical" },
-          { label: "HR Dept", value: stats.hr, sub: "People" },
+          { label: "Total", value: stats.total },
+          { label: "Open", value: stats.open },
+          { label: "In Progress", value: stats.inProgress },
+          { label: "Resolved", value: stats.resolved },
+          { label: "IT Dept", value: stats.it },
+          { label: "HR Dept", value: stats.hr },
         ].map((stat) => (
-          <div key={stat.label} className="card p-4 border-white/5 bg-white/[0.01]">
-            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
-            <p className="text-xl font-bold text-white mb-0.5">{stat.value}</p>
-            <p className="text-[8px] font-bold text-slate-700 uppercase">{stat.sub}</p>
+          <div key={stat.label} className="card p-4 bg-white/[0.01]">
+            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
+            <p className="text-xl font-bold text-white">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Filters & Table */}
       <div className="card overflow-hidden">
         <div className="p-4 border-b border-white/5 bg-white/[0.02] flex flex-wrap gap-4 items-center justify-between">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"
-              placeholder="Search all records..."
+              placeholder="Search by title or ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="input-field py-1.5 pl-9 text-xs"
@@ -97,7 +75,7 @@ export default function ManagerDashboard() {
             <select
               value={filter.status}
               onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white cursor-pointer"
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-white cursor-pointer hover:bg-white/10 outline-none"
             >
               <option value="all">All Status</option>
               <option value="open">Open</option>
@@ -107,7 +85,7 @@ export default function ManagerDashboard() {
             <select
               value={filter.type}
               onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white cursor-pointer"
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-white cursor-pointer hover:bg-white/10 outline-none"
             >
               <option value="all">All Types</option>
               <option value="IT">IT Support</option>
@@ -120,12 +98,11 @@ export default function ManagerDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/[0.01] border-b border-white/5">
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Requestor</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
-                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Age</th>
+                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
+                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Creator</th>
+                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
+                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.03]">
@@ -136,26 +113,22 @@ export default function ManagerDashboard() {
                   onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
                 >
                   <td className="px-6 py-4">
-                    <p className="font-bold text-xs text-white group-hover:text-primary transition-colors">{ticket.title}</p>
-                    <p className="text-[9px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</p>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-white text-xs group-hover:text-primary transition-colors">{ticket.title}</span>
+                      <span className="text-[11px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</span>
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-xs text-slate-300 font-medium">{ticket.creator.name}</td>
-                  <td className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase">{ticket.type}</td>
+                  <td className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase">{ticket.type}</td>
                   <td className="px-6 py-4">
                     <span className={`badge ${
-                       ticket.status === 'resolved' ? 'badge-green' : 'badge-blue'
-                    } text-[9px] py-0.5 px-2`}>
+                       ticket.status === 'resolved' ? 'badge-green' : 
+                       ticket.status === 'in_progress' ? 'badge-blue' : 'badge-gray'
+                    } text-[11px] py-0.5 px-2`}>
                       {ticket.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`badge ${
-                      ticket.priority === 'urgent' ? 'badge-red' : 'badge-gray'
-                    } text-[9px] py-0.5 px-2`}>
-                      {ticket.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right font-medium text-[10px] text-slate-500">
+                  <td className="px-6 py-4 text-right font-medium text-[11px] text-slate-500">
                     {new Date(ticket.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
@@ -166,7 +139,7 @@ export default function ManagerDashboard() {
 
         {filteredTickets.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-subtle text-xs font-medium">No results found.</p>
+            <p className="text-slate-500 text-xs font-medium">No results found.</p>
           </div>
         )}
       </div>
