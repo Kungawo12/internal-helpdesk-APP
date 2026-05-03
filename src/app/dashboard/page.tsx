@@ -115,7 +115,7 @@ export default function DashboardPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white/5 border-b border-white/5">
-                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Service Manifest</th>
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
@@ -193,8 +193,15 @@ export default function DashboardPage() {
           </div>
 
           {filteredTickets.length === 0 && (
-            <div className="text-center py-12 opacity-30">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-white">No Matching Tickets</p>
+            <div className="text-center py-20 animate-fade-in">
+              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5 text-2xl">
+                📝
+              </div>
+              <p className="text-sm font-bold text-white mb-1">No tickets yet</p>
+              <p className="text-xs text-slate-500 mb-6">Create your first ticket to get started with our support team.</p>
+              <Link href="/dashboard/create" className="btn-primary inline-flex">
+                + Create Your First Ticket
+              </Link>
             </div>
           )}
         </div>

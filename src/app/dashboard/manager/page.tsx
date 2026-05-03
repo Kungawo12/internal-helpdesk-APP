@@ -37,7 +37,16 @@ export default function ManagerDashboard() {
     return (
       <div className="min-h-[40vh] flex flex-col items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Loading Analytics...</p>
+        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-[40vh] flex flex-col items-center justify-center">
+        <p className="text-red-400 text-sm mb-3">Failed to load data</p>
+        <button onClick={() => window.location.reload()} className="btn-primary py-2 px-4 text-xs">Try Again</button>
       </div>
     );
   }
@@ -149,6 +158,12 @@ export default function ManagerDashboard() {
               </tbody>
             </table>
           </div>
+          {filteredTickets.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-sm font-bold text-white mb-1">No tickets in the system yet.</p>
+              <p className="text-xs text-slate-500">Tickets will appear here once employees create them.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -52,7 +52,7 @@ export default function HeroSection() {
 
         <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
           <Link href="/register" className="btn-primary px-14 py-5 text-lg font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(56,189,248,0.3)]">
-            Initialize Access
+            Get Started
           </Link>
           <Link href="#features" className="btn-secondary px-14 py-5 text-lg font-black uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10 backdrop-blur-3xl">
             Explore Features

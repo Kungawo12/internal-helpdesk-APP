@@ -58,8 +58,10 @@ export default function StaffQueuePage() {
 
         <div className="space-y-4">
           {activeTickets.length === 0 ? (
-            <div className="card p-12 text-center bg-white/5 opacity-50">
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Queue Clear</p>
+            <div className="card p-16 text-center bg-white/5 opacity-50 border-dashed">
+              <div className="text-4xl mb-4">✨</div>
+              <p className="text-sm font-bold text-white mb-1 uppercase tracking-widest">No open tickets — all caught up!</p>
+              <p className="text-xs text-slate-500">The service queue is currently clear.</p>
             </div>
           ) : (
             activeTickets.map((ticket) => (
