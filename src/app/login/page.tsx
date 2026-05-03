@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const justRegistered = searchParams.get("registered") === "true";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +52,11 @@ export default function LoginPage() {
 
         <div className="card p-8 md:p-10 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {justRegistered && (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
+                Account created successfully! Sign in below.
+              </div>
+            )}
             {error && (
               <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-bold">
                 ⚠️ {error}
@@ -103,5 +111,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

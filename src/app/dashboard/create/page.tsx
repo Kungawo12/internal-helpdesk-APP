@@ -38,20 +38,20 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="max-w-4xl mx-auto animate-fade-in space-y-5">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create New Ticket</h1>
-          <p className="text-slate-500 text-xs mt-1">Please provide the details of your request.</p>
+          <h1 className="text-xl font-bold text-white tracking-tight">Create New Ticket</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Please provide the details of your request.</p>
         </div>
         <Link href="/dashboard" className="text-xs font-bold text-slate-500 hover:text-white transition-colors">
           ← Back to Dashboard
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="card p-6 md:p-8 space-y-6">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2 space-y-5">
+          <div className="card p-5 space-y-5">
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Title</label>
               <input
@@ -69,7 +69,7 @@ export default function CreateTicketPage() {
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="input-field h-48 resize-none text-sm leading-relaxed"
+                className="input-field h-40 resize-none text-sm leading-relaxed"
                 placeholder="Provide all relevant details..."
                 required
               />
@@ -80,21 +80,21 @@ export default function CreateTicketPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary flex-1 py-3 text-xs font-bold"
+              className="btn-primary flex-1 py-2 text-sm font-bold"
             >
               {loading ? "Submitting..." : "Submit Ticket"}
             </button>
             <Link
               href="/dashboard"
-              className="btn-secondary py-3 px-8 text-xs font-bold"
+              className="btn-secondary py-2 px-6 text-sm font-bold"
             >
               Cancel
             </Link>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="card p-6 space-y-4">
+        <div className="space-y-5">
+          <div className="card p-5 space-y-4">
             <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Department</h3>
             <div className="grid grid-cols-1 gap-2">
               {[
@@ -111,14 +111,14 @@ export default function CreateTicketPage() {
                       : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
                   }`}
                 >
-                  <span className="text-xl">{dept.icon}</span>
+                  <span className="text-lg">{dept.icon}</span>
                   <span className="text-xs font-bold">{dept.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="card p-6 space-y-4">
+          <div className="card p-5 space-y-4">
             <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Priority</h3>
             <div className="grid grid-cols-2 gap-2">
               {["low", "medium", "high", "urgent"].map((p) => (
@@ -126,7 +126,7 @@ export default function CreateTicketPage() {
                   key={p}
                   type="button"
                   onClick={() => setForm({ ...form, priority: p })}
-                  className={`py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider border transition-all ${
+                  className={`py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider border transition-all ${
                     form.priority === p 
                       ? "bg-primary border-primary text-white" 
                       : "bg-white/5 border-white/5 text-slate-500 hover:text-white"

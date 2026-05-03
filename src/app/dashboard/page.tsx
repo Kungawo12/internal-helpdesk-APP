@@ -52,13 +52,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">My Tickets</h1>
-          <p className="text-slate-500 text-xs mt-1">Track and manage your support requests</p>
+          <h1 className="text-xl font-bold text-white tracking-tight">My Tickets</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Track and manage your support requests</p>
         </div>
-        <Link href="/dashboard/create" className="btn-primary py-2 px-4 text-xs">
+        <Link href="/dashboard/create" className="btn-primary py-2 px-4 text-sm font-bold">
           + Create Ticket
         </Link>
       </div>
@@ -73,14 +73,14 @@ export default function DashboardPage() {
           <button
             key={s.id}
             onClick={() => setStatusFilter(s.id)}
-            className={`card p-4 text-left transition-all ${
+            className={`card p-3 text-left transition-all ${
               statusFilter === s.id 
-                ? "bg-white/[0.06] border-white/20" 
-                : "bg-white/[0.01] border-white/5 hover:bg-white/[0.04]"
+                ? "bg-white/[0.08] border-white/20" 
+                : "bg-white/[0.02] border-white/5 hover:bg-white/[0.06]"
             }`}
           >
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
           </button>
         ))}
       </div>
@@ -93,14 +93,14 @@ export default function DashboardPage() {
               placeholder="Search by title or ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field py-1.5 pl-9 text-xs"
+              className="input-field py-2 pl-9 text-sm"
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 text-xs">🔍</span>
           </div>
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-white cursor-pointer hover:bg-white/10 outline-none w-full sm:w-auto"
+            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white cursor-pointer hover:bg-white/10 outline-none w-full sm:w-auto transition-colors"
           >
             <option value="all">All Status</option>
             <option value="open">Open</option>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
+                  <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
                   <th className="px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Type</th>
                   <th className="px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
                   <th className="px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
@@ -128,9 +128,9 @@ export default function DashboardPage() {
                     className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex flex-col">
-                        <span className="font-bold text-white text-xs group-hover:text-primary transition-colors">
+                        <span className="font-bold text-white text-sm group-hover:text-primary transition-colors">
                           {ticket.title}
                         </span>
                         <span className="text-[11px] font-mono text-slate-600 mt-0.5">
@@ -138,30 +138,30 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3">
                       <span className="text-[11px] font-bold text-slate-400 bg-white/5 px-2 py-0.5 rounded border border-white/5">
                         {ticket.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3">
                       <span className={`badge ${
                          ticket.status === 'resolved' ? 'badge-green' : 
                          ticket.status === 'in_progress' ? 'badge-blue' : 'badge-gray'
-                      } text-[11px] py-0.5 px-2`}>
+                      } text-[11px] py-0.5 px-2 font-bold`}>
                         {ticket.status.replace("_", " ")}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3">
                       <span className={`badge ${
                         ticket.priority === 'urgent' ? 'badge-red' : 
                         ticket.priority === 'high' ? 'badge-red' :
                         ticket.priority === 'medium' ? 'badge-amber' : 'badge-blue'
-                      } text-[11px] py-0.5 px-2`}>
+                      } text-[11px] py-0.5 px-2 font-bold`}>
                         {ticket.priority}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-[11px] font-medium text-slate-500">
+                    <td className="px-6 py-3 text-right">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </span>
                     </td>
@@ -172,8 +172,8 @@ export default function DashboardPage() {
           </div>
 
           {filteredTickets.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-slate-500 text-xs font-medium">No tickets found matching your search.</p>
+            <div className="text-center py-12">
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">No tickets found</p>
             </div>
           )}
         </div>
