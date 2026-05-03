@@ -37,10 +37,10 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Company Overview</h1>
-        <p className="text-xs text-slate-500 mt-1">Real-time overview of all support tickets</p>
+        <h1 className="text-xl font-bold text-white tracking-tight">Company Overview</h1>
+        <p className="text-sm text-slate-500 mt-1 font-medium">Real-time overview of all support tickets</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
@@ -52,7 +52,7 @@ export default function ManagerDashboard() {
           { label: "IT Dept", value: stats.it },
           { label: "HR Dept", value: stats.hr },
         ].map((stat) => (
-          <div key={stat.label} className="card p-4 bg-white/[0.01]">
+          <div key={stat.label} className="card p-3 bg-white/[0.02] border-white/5">
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
             <p className="text-xl font-bold text-white">{stat.value}</p>
           </div>
@@ -60,14 +60,14 @@ export default function ManagerDashboard() {
       </div>
 
       <div className="card overflow-hidden">
-        <div className="p-4 border-b border-white/5 bg-white/[0.02] flex flex-wrap gap-4 items-center justify-between">
+        <div className="p-3 border-b border-white/5 bg-white/[0.02] flex flex-wrap gap-3 items-center justify-between">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"
               placeholder="Search by title or ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field py-1.5 pl-9 text-xs"
+              className="input-field py-2 pl-9 text-sm"
             />
             <span className="absolute left-3 top-1/2 -translate-y-1/2 opacity-30 text-xs">🔍</span>
           </div>
@@ -75,7 +75,7 @@ export default function ManagerDashboard() {
             <select
               value={filter.status}
               onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-white cursor-pointer hover:bg-white/10 outline-none"
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white cursor-pointer hover:bg-white/10 outline-none transition-colors"
             >
               <option value="all">All Status</option>
               <option value="open">Open</option>
@@ -85,7 +85,7 @@ export default function ManagerDashboard() {
             <select
               value={filter.type}
               onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-medium text-white cursor-pointer hover:bg-white/10 outline-none"
+              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white cursor-pointer hover:bg-white/10 outline-none transition-colors"
             >
               <option value="all">All Types</option>
               <option value="IT">IT Support</option>
@@ -98,11 +98,11 @@ export default function ManagerDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/[0.01] border-b border-white/5">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Creator</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Date</th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Ticket</th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Creator</th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.03]">
@@ -112,24 +112,35 @@ export default function ManagerDashboard() {
                   className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                   onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <div className="flex flex-col">
-                      <span className="font-bold text-white text-xs group-hover:text-primary transition-colors">{ticket.title}</span>
+                      <span className="font-bold text-white text-sm group-hover:text-primary transition-colors">{ticket.title}</span>
                       <span className="text-[11px] font-mono text-slate-600 mt-0.5">#{ticket.id.slice(0, 8)}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-xs text-slate-300 font-medium">{ticket.creator.name}</td>
-                  <td className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase">{ticket.type}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-white">{ticket.creator.name}</span>
+                      <span className="text-[10px] text-slate-500">{ticket.creator.email.split('@')[0]}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-[11px] font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/5 uppercase">
+                      {ticket.type}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
                     <span className={`badge ${
                        ticket.status === 'resolved' ? 'badge-green' : 
                        ticket.status === 'in_progress' ? 'badge-blue' : 'badge-gray'
-                    } text-[11px] py-0.5 px-2`}>
+                    } text-[11px] py-0.5 px-2 font-bold`}>
                       {ticket.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right font-medium text-[11px] text-slate-500">
-                    {new Date(ticket.createdAt).toLocaleDateString()}
+                  <td className="px-4 py-3 text-right">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                      {new Date(ticket.createdAt).toLocaleDateString()}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -138,8 +149,8 @@ export default function ManagerDashboard() {
         </div>
 
         {filteredTickets.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-slate-500 text-xs font-medium">No results found.</p>
+          <div className="text-center py-12">
+            <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">No results found</p>
           </div>
         )}
       </div>

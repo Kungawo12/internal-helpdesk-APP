@@ -37,34 +37,34 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-bg-darker grid-subtle relative overflow-hidden">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="text-center mb-10">
-          <Link href="/" className="inline-flex items-center gap-3 mb-8 group">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-bold text-white text-xl">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-bg-dark grid-subtle relative overflow-hidden">
+      <div className="w-full max-w-sm animate-fade-in">
+        <div className="text-center mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
+            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold text-white text-base">
               H
             </div>
-            <span className="font-bold text-2xl tracking-tight text-white">Helpdesk</span>
+            <span className="font-bold text-xl tracking-tight text-white">Helpdesk</span>
           </Link>
-          <h1 className="text-2xl font-bold text-white mb-2">Sign In</h1>
-          <p className="text-slate-500 text-sm font-medium">Sign in to your account</p>
+          <h1 className="text-xl font-bold text-white mb-1">Sign In</h1>
+          <p className="text-slate-500 text-sm font-medium">Access your enterprise support account</p>
         </div>
 
-        <div className="card p-8 md:p-10 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="card p-6 shadow-2xl border-white/5 bg-white/[0.02]">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {justRegistered && (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-                Account created successfully! Sign in below.
+              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider text-center">
+                Registration Complete
               </div>
             )}
             {error && (
-              <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-bold">
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold">
                 ⚠️ {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Email</label>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
               <input
                 type="email"
                 value={email}
@@ -75,8 +75,8 @@ function LoginForm() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
               <input
                 type="password"
                 value={password}
@@ -90,15 +90,15 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 text-sm font-bold uppercase tracking-wider"
+              className="btn-primary w-full py-2.5 text-sm font-bold uppercase tracking-widest"
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
 
-            <div className="pt-6 text-center border-t border-white/5">
-              <p className="text-xs text-slate-500 font-medium">
+            <div className="pt-4 text-center border-t border-white/5">
+              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">
                 New to the platform?{" "}
-                <Link href="/register" className="text-primary hover:underline font-bold">
+                <Link href="/register" className="text-primary hover:text-primary-light transition-colors">
                   Request Access
                 </Link>
               </p>
@@ -106,8 +106,8 @@ function LoginForm() {
           </form>
         </div>
         
-        <p className="mt-10 text-center text-[10px] font-medium text-slate-600 uppercase tracking-widest">
-          &copy; 2026 Helpdesk. All Rights Reserved.
+        <p className="mt-8 text-center text-[10px] font-bold text-slate-600 uppercase tracking-widest opacity-50">
+          &copy; 2026 Helpdesk System
         </p>
       </div>
     </div>
