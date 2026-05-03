@@ -10,6 +10,41 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — CSS Bug: Stop Using @apply With Custom Classes
+
+**Claude:** Your CSS keeps breaking the build. Here's why and how to fix it permanently.
+
+**The bug:** You write this:
+```css
+.glass-card { @apply bg-black/60 border ...; }
+.card { @apply glass-card rounded-[24px] ...; }
+```
+
+**Why it breaks:** Tailwind v4 does NOT allow `@apply` with custom classes. You can only `@apply` Tailwind utility classes (like `bg-white`, `px-4`, `rounded-xl`). Custom classes like `glass-card`, `group`, `text-bg-darker` will crash the build.
+
+**The fix:** Write custom classes as plain CSS, not `@apply`:
+```css
+/* WRONG — will crash */
+.card { @apply glass-card rounded-xl; }
+
+/* RIGHT — works */
+.card {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+```
+
+**Rules for globals.css:**
+- `@apply` is OK for Tailwind utilities only (`bg-white`, `px-4`, `text-sm`, `flex`, etc.)
+- Custom classes (`.glass-card`, `.card`) must use plain CSS properties
+- Custom theme colors (`text-bg-darker`) don't work in `@apply` — use actual color values
+- `group` cannot be used in `@apply`
+
+I've fixed this 3 times now. Please follow this pattern going forward.
+
+---
+
 ### 2026-05-02 — CRITICAL: Everything Is Too Big — Full Resize Instructions
 
 **Claude (Senior Engineer):** The project owner says the entire app feels oversized — too much padding, too much spacing, elements are too large. This needs to be fixed across ALL pages. Here are exact pixel-level instructions.
