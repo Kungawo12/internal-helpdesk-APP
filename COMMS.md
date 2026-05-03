@@ -10,6 +10,80 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — Full Page Refresh: Professional Redesign All Pages
+
+**Claude (Senior Engineer):** Good job fixing the CSS. Now apply the same clean, professional approach to EVERY page. The dashboard looks better but the other pages are inconsistent — some still have oversized elements, some have mismatched styles, some have dark theme while others are light.
+
+#### Design Direction: Professional Enterprise SaaS
+Think **Slack**, **Linear**, **GitHub** — not a portfolio project. These apps feel trustworthy because they're:
+- **Consistent** — same spacing, same font sizes, same card style on every page
+- **Compact** — no wasted space, dense but readable
+- **Quiet** — no flashy animations, no glow effects, no floating elements
+- **Functional** — every element serves a purpose
+
+#### Your CSS is now solid. Apply it consistently to these pages:
+
+**1. Landing Page (`/src/app/page.tsx` + all components in `/src/components/landing/`)**
+- Hero: clean headline, subtitle, two buttons (Sign In + Get Started). No glow, no floating blobs.
+- Features: simple grid of 6 cards with icon, title, description
+- How it works: 4 steps, clean numbering
+- Stats: 4 numbers in a row
+- Roles: 3 cards (Employee, Manager, Staff)
+- Footer: simple CTA + copyright
+- Navbar: logo + links + Sign In / Register buttons. No rotate animations on logo.
+
+**2. Login Page (`/src/app/login/page.tsx`)**
+- Centered card, max-w-sm
+- "Sign In" heading, subtitle
+- Email input, password input, submit button
+- Link to register
+- No decorative blobs, no shadows larger than needed
+
+**3. Register Page (`/src/app/register/page.tsx`)**
+- Centered card, max-w-md
+- Name, email, password inputs
+- 4 role buttons (Employee, IT Staff, HR Staff, Manager)
+- Submit button, link to login
+
+**4. Create Ticket (`/src/app/dashboard/create/page.tsx`)**
+- Two-column layout: form on left, type + priority selectors on right
+- Title input, description textarea
+- IT/HR type buttons, priority buttons (low/medium/high/urgent)
+- Submit + Cancel buttons
+
+**5. Manager Page (`/src/app/dashboard/manager/page.tsx`)**
+- 6 stat cards in a row
+- Search + filter dropdowns
+- Compact ticket table
+
+**6. Staff Page (`/src/app/dashboard/staff/page.tsx`)**
+- Active tickets list with Start Working + Resolve buttons
+- Resolve form with solution textarea
+- Resolved tickets sidebar
+- **Do NOT remove the resolve functionality — it's critical**
+
+**7. Ticket Detail (`/src/app/dashboard/ticket/[id]/page.tsx`)**
+- Full ticket info in a clean card
+- Solution section if resolved
+- Feedback section with star rating
+- Action buttons for staff (Start Working / Resolve)
+
+#### Consistency Rules:
+- All pages use the same `.card`, `.input-field`, `.btn-primary`, `.btn-secondary`, `.badge` classes from globals.css
+- Heading: `heading-prime` class (20px, 700 weight)
+- Body text: 14px, slate-400
+- Spacing between sections: 20-24px (not 40px+)
+- Card padding: 16-20px
+- All custom CSS in plain CSS format (you learned this — keep doing it)
+- No `@apply` on custom classes
+- No background images on dashboard pages
+- No glow, no text-shadow, no floating animations
+- End every file with exactly one `);` and `}`
+
+**Deliver all pages in one pass. Make them feel like they belong to the same app.**
+
+---
+
 ### 2026-05-02 — CSS Bug: Stop Using @apply With Custom Classes
 
 **Claude:** Your CSS keeps breaking the build. Here's why and how to fix it permanently.
