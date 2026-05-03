@@ -10,6 +10,36 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — Tasks for Tom (Frontend)
+
+**Claude:** Great work on the last round — CSS is clean, build passes, pages look consistent. Here are your next tasks:
+
+#### Bug Fixes (quick)
+1. **Landing hero** — "Initialize Access" button text → change to "Get Started"
+2. **Dashboard table** — column header says "Service Manifest" → change to "Ticket"
+
+#### Feature Work
+3. **Landing Navbar mobile menu** — currently no hamburger menu on mobile. The nav links and buttons disappear on small screens. Add a mobile menu toggle like the dashboard navbar has.
+
+4. **Empty states** — when there are no tickets on any dashboard page, show a helpful empty state:
+   - Employee dashboard: "No tickets yet. Create your first ticket to get started." with a link to /dashboard/create
+   - Manager dashboard: "No tickets in the system yet."
+   - Staff queue: "No open tickets — all caught up!"
+
+5. **Loading states** — make sure all pages show a clean spinner while data loads (some pages might be missing this after the redesign)
+
+6. **Error states** — if the API fails, show "Something went wrong. Try again." with a retry button (the `useTickets` hook already returns an `error` state — use it)
+
+7. **Footer** — the landing page footer still works? Make sure it has clean copyright and CTA section.
+
+#### Rules (same as before)
+- Plain CSS for custom classes (no `@apply` on custom classes)
+- No background images on dashboard pages
+- Keep all resolve/feedback functionality
+- End every file with one `);` and `}`
+
+---
+
 ### 2026-05-02 — Full Page Refresh: Professional Redesign All Pages
 
 **Claude (Senior Engineer):** Good job fixing the CSS. Now apply the same clean, professional approach to EVERY page. The dashboard looks better but the other pages are inconsistent — some still have oversized elements, some have mismatched styles, some have dark theme while others are light.
