@@ -63,7 +63,7 @@ export default function HeroSection() {
         </div>
 
         {/* Dashboard Preview */}
-        <div className="hero-ui relative w-full max-w-4xl mx-auto rounded-[24px] border border-white/10 glass shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] overflow-hidden aspect-[16/10] p-1">
+        <div className="hero-ui relative w-full max-w-5xl mx-auto rounded-[24px] border border-white/10 glass shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] overflow-hidden aspect-[16/10] p-1">
            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none z-10" />
            <div className="w-full h-full rounded-[20px] bg-bg-darker overflow-hidden relative">
               <img 
