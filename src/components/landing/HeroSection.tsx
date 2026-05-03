@@ -24,16 +24,6 @@ export default function HeroSection() {
         delay: 0.8,
         ease: "expo.out",
       });
-
-      gsap.to(".floating-blob", {
-        y: 30,
-        x: 20,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 2
-      });
     }, containerRef);
     return () => ctx.revert();
   }, []);
@@ -42,31 +32,29 @@ export default function HeroSection() {
     <section ref={containerRef} className="relative pt-40 pb-24 overflow-hidden min-h-screen flex flex-col items-center">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full grid-subtle pointer-events-none -z-10" />
-      <div className="floating-blob absolute top-1/4 -left-32 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 opacity-50" />
-      <div className="floating-blob absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] -z-10 opacity-50" />
       
       <div className="max-w-6xl mx-auto px-8 text-center relative z-10">
-        <div className="hero-text inline-flex items-center gap-3 px-4 py-1.5 rounded-full glass-morphism mb-10">
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">v3.0 Strategic Intelligence Release</span>
+        <div className="hero-text inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-10">
+          <span className="w-2 h-2 rounded-full bg-primary" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-white">v1.0 Production Release</span>
         </div>
 
-        <h1 className="hero-text text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.9] uppercase text-white">
-          Operation <br />
-          <span className="text-primary italic">Intelligence.</span>
+        <h1 className="hero-text text-6xl md:text-8xl font-bold tracking-tighter mb-10 leading-[1.1] text-white">
+          Get Help, <br />
+          <span className="text-primary">Stay Productive.</span>
         </h1>
 
         <p className="hero-text text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-14 leading-relaxed font-medium">
-          The tactical command center for modern enterprise support. Manage infrastructure, 
-          human capital, and tactical operations with absolute precision.
+          The modern helpdesk for your entire team. Manage IT requests, 
+          HR questions, and office operations with ease and clarity.
         </p>
 
         <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
-          <Link href="/register" className="btn-primary px-12 py-5 text-lg font-black uppercase tracking-widest shadow-2xl shadow-primary/40">
-            Initialize Access
+          <Link href="/register" className="btn-primary px-12 py-5 text-lg font-bold uppercase tracking-wider shadow-2xl shadow-primary/40">
+            Get Started
           </Link>
-          <Link href="#features" className="btn-secondary px-12 py-5 text-lg font-black uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10">
-            Explore Manifest
+          <Link href="#features" className="btn-secondary px-12 py-5 text-lg font-bold uppercase tracking-wider bg-white/5 border-white/10 hover:bg-white/10">
+            Learn More
           </Link>
         </div>
 

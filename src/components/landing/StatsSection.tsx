@@ -10,29 +10,27 @@ const stats = [
 const roles = [
   {
     title: "Employees",
-    description: "Submit request protocols and track progress through a tactical unified portal.",
-    capabilities: ["Protocol Initiation", "Live Status Tracking", "Intelligent Archives"],
+    description: "Submit help requests and track progress through a simple, unified portal.",
+    capabilities: ["Create Tickets", "Track Status", "View Resolution"],
   },
   {
     title: "Managers",
-    description: "Full oversight of team metrics and departmental strategic performance.",
-    capabilities: ["Global Insight Hub", "Domain Filtering", "SLA Monitoring"],
+    description: "Full oversight of team performance and company-wide helpdesk metrics.",
+    capabilities: ["Team Dashboard", "Department Filtering", "SLA Reports"],
   },
   {
-    title: "Support Ops",
-    description: "Powerful tools for technical experts to resolve high-priority requests fast.",
-    capabilities: ["Tactical Queue Control", "Resolution Logging", "System Alerts"],
+    title: "Support Staff",
+    description: "Powerful tools for technical teams to resolve requests fast and efficiently.",
+    capabilities: ["Ticket Queue", "Solution Logging", "Email Alerts"],
   },
 ];
 
 export default function StatsSection() {
   return (
     <section id="enterprise" className="py-40 relative overflow-hidden">
-      {/* Background Decorative Blob */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -z-10" />
 
-      {/* Strategic Metrics */}
-      <div className="max-w-7xl mx-auto px-8 mb-40">
+      {/* Metrics */}
+      <div className="max-w-6xl mx-auto px-8 mb-40">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center group">
@@ -46,18 +44,18 @@ export default function StatsSection() {
         </div>
       </div>
 
-      {/* Role Ecosystem */}
-      <div className="max-w-7xl mx-auto px-8">
+      {/* Roles */}
+      <div className="max-w-6xl mx-auto px-8">
         <div className="text-center mb-24">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full glass-morphism mb-6">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Operational Ecosystem</span>
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Simple & Powerful</span>
           </div>
-          <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tighter uppercase text-white leading-tight">
-            Tailored for the <br />
-            <span className="text-primary italic">Entire Infrastructure.</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tighter text-white leading-tight">
+            Designed for your <br />
+            <span className="text-primary">Entire Team.</span>
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium">
-            One platform, three specialized operational interfaces designed for specific mission objectives.
+            One platform, three specialized interfaces designed for specific user needs.
           </p>
         </div>
 

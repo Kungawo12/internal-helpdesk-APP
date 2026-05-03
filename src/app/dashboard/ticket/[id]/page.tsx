@@ -1,8 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTicket } from "@/hooks/useTicket";
 import Link from "next/link";
 
 type TicketDetail = {
@@ -24,9 +25,7 @@ export default function TicketDetailPage() {
   const { id } = useParams();
   const { data: session } = useSession();
   const router = useRouter();
-  const [ticket, setTicket] = useState<TicketDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { ticket, loading, error, refresh } = useTicket(id as string);
   
   // Feedback state
   const [rating, setRating] = useState(5);
@@ -38,23 +37,6 @@ export default function TicketDetailPage() {
   const [showResolveForm, setShowResolveForm] = useState(false);
   const [resolving, setResolving] = useState(false);
 
-  useEffect(() => {
-    fetchTicket();
-  }, [id]);
-
-  const fetchTicket = async () => {
-    try {
-      const res = await fetch(`/api/tickets/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch ticket protocols");
-      const data = await res.json();
-      setTicket(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmittingFeedback(true);
@@ -64,7 +46,7 @@ export default function TicketDetailPage() {
       body: JSON.stringify({ rating, comment }),
     });
     setSubmittingFeedback(false);
-    fetchTicket();
+    refresh();
   };
 
   const handleStatusChange = async (status: string) => {
@@ -73,7 +55,7 @@ export default function TicketDetailPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchTicket();
+    refresh();
   };
 
   const handleResolve = async (e: React.FormEvent) => {
@@ -86,7 +68,7 @@ export default function TicketDetailPage() {
     });
     setResolving(false);
     setShowResolveForm(false);
-    fetchTicket();
+    refresh();
   };
 
   if (loading) return (
@@ -100,8 +82,8 @@ export default function TicketDetailPage() {
     <div className="max-w-2xl mx-auto py-20 text-center animate-fade-in">
       <div className="text-6xl mb-6">⚠️</div>
       <h1 className="text-2xl font-bold text-white mb-2">Ticket Not Found</h1>
-      <p className="text-subtle mb-8">{error || "The requested ticket could not be located."}</p>
-      <Link href="/dashboard" className="btn-primary">Return to Dashboard</Link>
+      <p className="text-slate-400 mb-8">{error || "The requested ticket could not be located."}</p>
+      <Link href="/dashboard" className="btn-primary px-8">Return to Dashboard</Link>
     </div>
   );
 
@@ -116,7 +98,7 @@ export default function TicketDetailPage() {
           Back to Overview
         </Link>
         <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-slate-400">
-          TICKET_ID: {ticket.id}
+          ID: {ticket.id}
         </div>
       </div>
 
@@ -141,7 +123,7 @@ export default function TicketDetailPage() {
                 }`}>
                   {ticket.status.replace("_", " ")}
                 </span>
-                <span className="badge badge-gray">{ticket.type} Support</span>
+                <span className="badge badge-gray">{ticket.type}</span>
               </div>
 
               <h1 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tight leading-tight">
@@ -156,7 +138,7 @@ export default function TicketDetailPage() {
 
               <div className="mt-16 pt-10 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-12">
                 <div className="space-y-4">
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em]">Submitted By</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Submitted By</p>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-bold text-primary text-xl border border-primary/20">
                       {ticket.creator.name.charAt(0)}
@@ -169,7 +151,7 @@ export default function TicketDetailPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em]">Assigned Technician</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Assigned To</p>
                   {ticket.assignee ? (
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center font-bold text-emerald-400 text-xl border border-emerald-500/20">
@@ -200,7 +182,7 @@ export default function TicketDetailPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-black text-white">Resolution Archive</h2>
+                <h2 className="text-2xl font-bold text-white">Resolution</h2>
               </div>
               <div className="bg-black/20 p-8 rounded-2xl border border-white/5">
                 <p className="text-slate-200 leading-relaxed text-lg font-medium italic">
@@ -266,7 +248,7 @@ export default function TicketDetailPage() {
                     disabled={resolving}
                     className="btn-primary w-full"
                   >
-                    {resolving ? "Finalizing..." : "Confirm & Close Ticket"}
+                    {resolving ? "Resolving..." : "Resolve Ticket"}
                   </button>
                 </form>
               )}

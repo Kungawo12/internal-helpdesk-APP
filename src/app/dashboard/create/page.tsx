@@ -41,10 +41,10 @@ export default function CreateTicketPage() {
     <div className="max-w-4xl mx-auto pb-24 animate-fade-in">
       <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-2">
-            Initiate Protocol
+          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-2">
+            Create Ticket
           </h1>
-          <p className="text-subtle text-lg font-medium">Define the parameters of your support request.</p>
+          <p className="text-slate-400 text-lg font-medium">Please provide the details of your request.</p>
         </div>
         <Link href="/dashboard" className="btn-secondary flex items-center gap-2 group">
           <span className="transition-transform group-hover:-translate-x-1">←</span> 
@@ -67,7 +67,7 @@ export default function CreateTicketPage() {
                
                <div className="relative z-10 space-y-10">
                   <div className="space-y-4">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Request Title</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title</label>
                     <input
                       type="text"
                       value={form.title}
@@ -79,7 +79,7 @@ export default function CreateTicketPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Detailed Intelligence</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
                     <textarea
                       value={form.description}
                       onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -98,13 +98,13 @@ export default function CreateTicketPage() {
                 disabled={loading}
                 className="btn-primary flex-1 py-5 text-lg w-full"
               >
-                {loading ? "Transmitting..." : "Initialize Ticket Protocol"}
+                {loading ? "Submitting..." : "Submit Ticket"}
               </button>
               <Link
                 href="/dashboard"
                 className="btn-secondary py-5 px-10 text-lg w-full sm:w-auto text-center"
               >
-                Abort
+                Cancel
               </Link>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function CreateTicketPage() {
           <div className="space-y-8">
              {/* Department Selection */}
              <div className="card p-8 space-y-6">
-                <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Target Dept</h3>
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Department</h3>
                 <div className="space-y-3">
                   <button
                     type="button"
@@ -127,7 +127,7 @@ export default function CreateTicketPage() {
                       <div className="text-3xl transition-transform group-hover:scale-110">🖥️</div>
                       {form.type === "IT" && <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
                     </div>
-                    <div className="font-black text-lg">IT Operations</div>
+                    <div className="font-bold text-lg">IT Operations</div>
                     <div className="text-xs text-slate-500 mt-1 font-bold">Systems & Technical Support</div>
                   </button>
                   
@@ -144,7 +144,7 @@ export default function CreateTicketPage() {
                       <div className="text-3xl transition-transform group-hover:scale-110">👥</div>
                       {form.type === "HR" && <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
                     </div>
-                    <div className="font-black text-lg">People Ops</div>
+                    <div className="font-bold text-lg">People Ops</div>
                     <div className="text-xs text-slate-500 mt-1 font-bold">Human Resources & Admin</div>
                   </button>
                 </div>
@@ -152,14 +152,14 @@ export default function CreateTicketPage() {
 
              {/* Urgency Selection */}
              <div className="card p-8 space-y-6">
-                <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Priority Matrix</h3>
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Priority</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {["low", "medium", "high", "urgent"].map((p) => (
                     <button
                       key={p}
                       type="button"
                       onClick={() => setForm({ ...form, priority: p })}
-                      className={`py-3 rounded-xl text-[11px] font-black uppercase tracking-widest border transition-all ${
+                      className={`py-3 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all ${
                         form.priority === p 
                           ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
                           : "bg-white/5 border-white/5 text-slate-500 hover:text-white"

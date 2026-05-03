@@ -35,9 +35,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8 grid-subtle relative overflow-hidden">
-      {/* Decorative Blobs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/10 rounded-full blur-[120px] -z-10" />
 
       <div className="w-full max-w-lg animate-fade-in">
         <div className="text-center mb-12">
@@ -50,8 +47,8 @@ export default function LoginPage() {
               <span className="block text-[10px] font-black text-primary uppercase tracking-[0.4em]">Enterprise</span>
             </div>
           </Link>
-          <h1 className="text-4xl font-black tracking-tight text-white mb-3">Portal Authentication</h1>
-          <p className="text-subtle text-lg font-medium">Secure access to the helpdesk ecosystem.</p>
+          <h1 className="text-4xl font-bold tracking-tight text-white mb-3">Sign In</h1>
+          <p className="text-slate-400 text-lg font-medium">Access your employee helpdesk.</p>
         </div>
 
         <div className="card p-10 md:p-14 shadow-2xl relative overflow-hidden">
@@ -65,7 +62,7 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-3">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Email Identity</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
               <input
                 type="email"
                 value={email}
@@ -77,7 +74,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Secret Key</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
               <input
                 type="password"
                 value={password}
@@ -91,9 +88,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-5 text-lg font-black uppercase tracking-widest"
+              className="btn-primary w-full py-5 text-lg font-bold uppercase tracking-wider"
             >
-              {loading ? "Authenticating..." : "Establish Session"}
+              {loading ? "Signing In..." : "Sign In"}
             </button>
 
             <div className="pt-8 text-center border-t border-white/5">

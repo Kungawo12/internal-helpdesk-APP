@@ -1,21 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-
-type Ticket = {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  status: string;
-  priority: string;
-  solution: string | null;
-  createdAt: string;
-  creator: { name: string; email: string };
-  feedback: { rating: number; comment: string | null } | null;
-};
+import { useTickets } from "@/hooks/useTickets";
 
 const priorityOrder: Record<string, number> = {
   urgent: 0,
@@ -26,29 +14,20 @@ const priorityOrder: Record<string, number> = {
 
 export default function StaffDashboard() {
   const { data: session } = useSession();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tickets, loading, error, refresh } = useTickets();
   const [resolveForm, setResolveForm] = useState<{
     ticketId: string;
     solution: string;
   } | null>(null);
   const [resolving, setResolving] = useState(false);
 
-  useEffect(() => {
-    fetchTickets();
-  }, []);
-
-  const fetchTickets = async () => {
-    const res = await fetch("/api/tickets");
-    const data = await res.json();
-    data.sort((a: Ticket, b: Ticket) => {
+  const sortedTickets = useMemo(() => {
+    return [...tickets].sort((a, b) => {
       const pDiff = (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2);
       if (pDiff !== 0) return pDiff;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-    setTickets(data);
-    setLoading(false);
-  };
+  }, [tickets]);
 
   const handleStatusChange = async (ticketId: string, status: string) => {
     await fetch(`/api/tickets/${ticketId}/resolve`, {
@@ -56,7 +35,7 @@ export default function StaffDashboard() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    fetchTickets();
+    refresh();
   };
 
   const handleResolve = async () => {
@@ -71,11 +50,11 @@ export default function StaffDashboard() {
 
     setResolving(false);
     setResolveForm(null);
-    fetchTickets();
+    refresh();
   };
 
-  const openTickets = tickets.filter((t) => t.status === "open" || t.status === "in_progress");
-  const resolvedTickets = tickets.filter((t) => t.status === "resolved" || t.status === "closed");
+  const openTickets = sortedTickets.filter((t) => t.status === "open" || t.status === "in_progress");
+  const resolvedTickets = sortedTickets.filter((t) => t.status === "resolved" || t.status === "closed");
 
   const ticketType = session?.user.role === "it_staff" ? "IT" : "HR";
 

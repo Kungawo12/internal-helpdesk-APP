@@ -3,39 +3,17 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-
-type Ticket = {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  status: string;
-  priority: string;
-  solution: string | null;
-  createdAt: string;
-  feedback?: {
-    rating: number;
-    comment: string | null;
-  } | null;
-};
+import { useTickets } from "@/hooks/useTickets";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tickets, loading, error, refresh } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
-    fetchTickets();
+    // Optional: add any side effects here if needed
   }, []);
-
-  const fetchTickets = async () => {
-    const res = await fetch("/api/tickets");
-    const data = await res.json();
-    setTickets(data);
-    setLoading(false);
-  };
 
   const stats = useMemo(() => {
     return {

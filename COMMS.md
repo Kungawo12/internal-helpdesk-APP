@@ -10,6 +10,94 @@
 
 ## Backend → Frontend
 
+### 2026-05-02 — Full Frontend Ownership Brief
+
+**Claude (Senior Engineer):** You now have full ownership of the frontend. I will not touch UI code anymore — only APIs, database, and build verification. But the project owner has flagged serious quality issues. This is your chance to deliver.
+
+#### Current Problems (from project owner):
+1. **Dashboard has large blank spaces** — empty areas with no content, looks unfinished
+2. **Not interactive** — buttons and cards don't feel clickable, no hover feedback, no active states
+3. **Not responsive** — breaks on mobile, elements overflow or stack badly
+4. **Looks unprofessional** — doesn't look like a real product someone would use at work
+5. **Labels still have jargon** — some pages still say "Protocol", "Tactical", "Initialize"
+
+#### What "Good" Looks Like:
+Reference: **Linear.app**, **Notion**, **Zendesk**, **Vercel Dashboard**
+
+These tools share:
+- **Dense information** — no wasted space, every pixel has purpose
+- **Responsive** — works on desktop, tablet, and phone
+- **Subtle interactions** — hover states, smooth transitions, clear active/selected states
+- **Professional language** — "Create Ticket", "My Tickets", "Sign In" — not sci-fi jargon
+- **Consistent spacing** — 4px/8px/12px/16px grid, not random gaps
+
+#### Specific Deliverables:
+
+**1. Dashboard (`/dashboard/page.tsx`)** — REDESIGN
+- Remove all blank space
+- Stats cards should be compact (not oversized)
+- Ticket table should be dense and scannable
+- Each row must have: title, type badge, status badge, priority badge, date
+- Hover state on rows (subtle background change)
+- Mobile: stack cards, make table scroll horizontally
+- Error state if API fails
+- Empty state if no tickets
+
+**2. Create Ticket (`/dashboard/create/page.tsx`)** — FIX LABELS
+- "Initiate Protocol" → "Create New Ticket"
+- "Detailed Intelligence" → "Description"  
+- "Initialize Ticket Protocol" → "Submit Ticket"
+- "Abort" → "Cancel"
+- "Target Dept" → "Department"
+- "Priority Matrix" → "Priority"
+- Form should be compact (not oversized inputs/cards)
+
+**3. Login (`/login/page.tsx`)** — FIX LABELS
+- "Portal Authentication" → "Sign In"
+- "Email Identity" → "Email"
+- "Secret Key" → "Password"
+- "Establish Session" → "Sign In"
+- "Secure access to the helpdesk ecosystem" → "Sign in to your account"
+
+**4. Landing Hero** — FIX LABELS
+- "Operation Intelligence" → "Get Help, Stay Productive"
+- "Initialize Access" → "Get Started"
+- "Explore Manifest" → "Learn More"
+- "v3.0 Strategic Intelligence Release" → "Internal Support Platform"
+- "Tactical command center" → "Submit and track IT & HR tickets"
+
+**5. Manager (`/dashboard/manager/page.tsx`)** — FIX LABELS
+- "Enterprise Analytics" → "Company Overview"
+- "Compiling analytics" → "Loading..."
+
+**6. Mobile Responsiveness** — ALL PAGES
+- Test every page at 375px width (iPhone SE)
+- Nav should collapse to hamburger on mobile
+- Tables should scroll horizontally on small screens
+- Forms should be single column on mobile
+- No text overflow or horizontal scroll on the page itself
+
+#### Technical Rules:
+- Max width: `max-w-6xl` everywhere
+- No `backdrop-filter: blur()` on cards
+- No infinite animations on visible elements  
+- No fixed decorative blobs with blur
+- No live clock, no COMMS reader in the layout
+- Keep the `useTickets` and `useTicket` hooks — they're good
+- Keep all resolve/feedback functionality intact
+- End every file with exactly one `);` and one `}`
+
+#### Files you can modify:
+All files in `src/app/` and `src/components/landing/` EXCEPT:
+- `src/app/api/**` — backend routes, do not touch
+- `src/app/layout.tsx` — root layout, do not touch
+- `src/lib/**` — backend libraries, do not touch
+- `src/middleware.ts` — auth middleware, do not touch
+
+**Deliver all of this in one pass. I will review, build-check, and deploy.**
+
+---
+
 ### 2026-05-02 — MANDATORY: Frontend Engineer Action Items
 
 **Claude (Senior Engineer):** I've had to override your work again. Here's what changed and what you must do next.
