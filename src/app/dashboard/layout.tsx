@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -14,14 +14,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const roleLabels: Record<string, string> = {
-    employee: "Employee",
-    manager: "Manager",
-    it_staff: "IT Staff",
-    hr_staff: "HR Staff",
-  };
-  const roleLabel = roleLabels[session?.user?.role || ""] || "Employee";
-
   const role = session?.user?.role;
   const navItems = [
     { label: "Overview", path: "/dashboard", icon: "📊" },
@@ -31,48 +23,50 @@ export default function DashboardLayout({
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen relative selection:bg-primary selection:text-bg-darker">
-      {/* Cinematic Background Layer */}
+    <div className="min-h-screen relative selection:bg-primary/30">
+      {/* Visual Foundation */}
       <div className="app-bg" />
       <div className="app-overlay" />
       
-      {/* Sidebar - Pro Glass */}
-      <aside className="fixed top-6 left-6 bottom-6 w-64 hidden lg:flex flex-col glass-card rounded-[32px] z-40 p-6">
-        <div className="mb-10 px-2">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center font-black text-bg-darker text-xl shadow-[0_0_20px_rgba(56,189,248,0.4)] group-hover:scale-110 transition-transform">
+      {/* Compact Sidebar */}
+      <aside className="fixed top-0 left-0 bottom-0 w-56 hidden lg:flex flex-col bg-black/40 border-r border-white/5 backdrop-blur-2xl z-40">
+        <div className="p-5 mb-4">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white text-base shadow-lg shadow-primary/20">
               H
             </div>
-            <span className="font-black text-xl tracking-tighter text-white">Helpdesk</span>
+            <span className="font-bold text-lg tracking-tight text-white">Helpdesk</span>
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 px-3 space-y-1">
           {navItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
               className={`sidebar-item ${pathname === item.path ? "sidebar-item-active" : ""}`}
             >
-              <span className="text-lg">{item.icon}</span>
+              <span className="text-base">{item.icon}</span>
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-white/10">
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary font-black text-sm">
+        <div className="p-4 border-t border-white/5 mt-auto bg-black/20">
+          <div className="flex items-center gap-3 mb-4 px-1">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
               {session?.user?.name?.charAt(0)}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-white truncate">{session?.user?.name}</span>
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest">{roleLabel}</span>
+              <span className="text-xs font-bold text-white truncate">{session?.user?.name}</span>
+              <span className="text-[10px] font-bold text-primary/80 uppercase tracking-wider">
+                {role?.replace("_", " ")}
+              </span>
             </div>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="w-full btn-secondary py-2.5 text-xs border-danger/20 text-danger hover:bg-danger hover:text-white"
+            className="w-full btn-secondary py-1.5 text-[11px] border-white/5 hover:bg-white/5"
           >
             Sign Out
           </button>
@@ -80,16 +74,16 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="lg:pl-80 flex flex-col min-h-screen">
-        {/* Mobile Header */}
-        <header className="lg:hidden fixed top-4 left-4 right-4 h-16 z-50 glass-card rounded-2xl flex items-center justify-between px-6">
+      <div className="lg:pl-56 flex flex-col min-h-screen">
+        {/* Compact Mobile Header */}
+        <header className="lg:hidden fixed top-0 left-0 right-0 h-14 z-50 bg-black/60 border-b border-white/5 backdrop-blur-xl flex items-center justify-between px-4">
            <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-black text-bg-darker text-xs">H</div>
-            <span className="font-black text-lg tracking-tighter text-white">Helpdesk</span>
+            <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center font-bold text-white text-xs">H</div>
+            <span className="font-bold text-base tracking-tight text-white">Helpdesk</span>
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-white bg-white/10 rounded-xl"
+            className="p-1.5 text-white/70 hover:text-white"
           >
             {isMobileMenuOpen ? "✕" : "☰"}
           </button>
@@ -97,15 +91,15 @@ export default function DashboardLayout({
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-black/90 backdrop-blur-3xl pt-24 px-6 animate-fade-in">
-             <nav className="space-y-3">
+          <div className="lg:hidden fixed inset-0 z-40 bg-bg-darker/95 backdrop-blur-3xl pt-20 px-4 animate-fade-in">
+             <nav className="space-y-1">
                 {navItems.map((item) => (
                   <Link
                     key={item.path}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-5 rounded-[24px] text-lg font-black transition-all ${
-                      pathname === item.path ? "bg-primary text-bg-darker shadow-xl shadow-primary/30" : "text-slate-400 bg-white/5"
+                    className={`flex items-center gap-4 px-5 py-3 rounded-xl text-sm font-bold ${
+                      pathname === item.path ? "bg-primary text-white" : "text-slate-400 hover:bg-white/5"
                     }`}
                   >
                     <span>{item.icon}</span>
@@ -114,7 +108,7 @@ export default function DashboardLayout({
                 ))}
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full flex items-center gap-4 px-6 py-5 rounded-[24px] text-lg font-black text-danger bg-danger/10 mt-10"
+                  className="w-full flex items-center gap-4 px-5 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-400/5 mt-6"
                 >
                   <span>🚪</span> Sign Out
                 </button>
@@ -122,8 +116,8 @@ export default function DashboardLayout({
           </div>
         )}
 
-        <main className="flex-1 p-6 lg:p-12 lg:pt-16 animate-fade-in">
-          <div className="max-w-5xl mx-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 mt-14 lg:mt-0 animate-fade-in">
+          <div className="max-w-6xl mx-auto">
             {children}
           </div>
         </main>
