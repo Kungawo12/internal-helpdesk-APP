@@ -107,3 +107,34 @@
 .navbar-glass {
   @apply bg-bg-dark/40 border-b border-white/[0.08] backdrop-blur-xl;
 }
+
+.dashboard-bg {
+  @apply fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-bg-dark;
+}
+
+.dashboard-bg::after {
+  content: "";
+  @apply absolute inset-0 bg-gradient-to-b from-bg-dark/40 via-bg-dark/60 to-bg-dark/95;
+}
+
+.dashboard-bg-img {
+  @apply absolute inset-0 opacity-40 mix-blend-overlay scale-110;
+  background-image: url('/images/dashboard_premium.png');
+  background-size: cover;
+  background-position: center;
+  animation: drift 60s linear infinite;
+}
+
+@keyframes drift {
+  0% { transform: scale(1.1) translate(0, 0); }
+  25% { transform: scale(1.15) translate(1%, 1%); }
+  50% { transform: scale(1.1) translate(2%, 0); }
+  75% { transform: scale(1.15) translate(1%, -1%); }
+  100% { transform: scale(1.1) translate(0, 0); }
+}
+
+.grid-overlay {
+  @apply absolute inset-0 opacity-[0.03] pointer-events-none;
+  background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0);
+  background-size: 32px 32px;
+}

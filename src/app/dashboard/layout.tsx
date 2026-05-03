@@ -31,7 +31,11 @@ export default function DashboardLayout({
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen bg-bg-dark">
+    <div className="min-h-screen bg-bg-dark relative">
+      <div className="dashboard-bg">
+        <div className="dashboard-bg-img" />
+        <div className="grid-overlay" />
+      </div>
       <nav className="fixed top-0 left-0 w-full h-14 navbar-glass z-50 px-4 md:px-6 border-b border-white/5">
         <div className="max-w-6xl mx-auto h-full flex items-center justify-between">
           <div className="flex items-center gap-6">
