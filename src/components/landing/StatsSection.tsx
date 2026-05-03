@@ -59,13 +59,13 @@ export default function StatsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-32">
           {roles.map((role) => (
             <div
               key={role.title}
               className="card p-12 flex flex-col group relative overflow-hidden"
             >
-               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full opacity-50" />
               <h3 className="text-3xl font-bold mb-6 text-white tracking-tight">{role.title}</h3>
               <p className="text-slate-400 mb-10 text-lg leading-relaxed font-medium">
                 {role.description}
@@ -84,6 +84,18 @@ export default function StatsSection() {
               </ul>
             </div>
           ))}
+        </div>
+
+        {/* Roles Visual */}
+        <div className="relative rounded-[32px] border border-white/10 glass p-1 overflow-hidden animate-fade-in group">
+           <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+           <div className="rounded-[28px] overflow-hidden aspect-[21/9]">
+              <img 
+                src="/images/roles_visuals.png" 
+                alt="Internal Roles Workflow" 
+                className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
+              />
+           </div>
         </div>
       </div>
     </section>

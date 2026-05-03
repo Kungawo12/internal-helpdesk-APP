@@ -63,7 +63,7 @@ export default function HeroSection() {
            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none z-10" />
            <div className="w-full h-full rounded-[20px] bg-bg-darker overflow-hidden relative">
               <img 
-                src="/Users/tenzinjangchuk/.gemini/antigravity/brain/359db59e-b615-4d8f-85b4-c248e68de376/premium_it_dashboard_preview_1777735489799.png" 
+                src="/images/dashboard_preview.png" 
                 alt="Helpdesk Dashboard Preview"
                 className="w-full h-full object-cover"
               />
