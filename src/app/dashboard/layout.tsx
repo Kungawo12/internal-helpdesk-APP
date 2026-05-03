@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DashboardLayout({
   children,
@@ -13,6 +13,13 @@ export default function DashboardLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const roleLabels: Record<string, string> = {
     employee: "Employee",
@@ -31,30 +38,32 @@ export default function DashboardLayout({
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen bg-bg-dark relative">
-      <div className="dashboard-bg">
-        <div className="dashboard-bg-img" />
-        <div className="grid-overlay" />
-      </div>
-      <nav className="fixed top-0 left-0 w-full h-14 navbar-glass z-50 px-4 md:px-6 border-b border-white/5">
-        <div className="max-w-6xl mx-auto h-full flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-primary rounded flex items-center justify-center font-bold text-white text-xs">
+    <div className="min-h-screen relative">
+      {/* Cinematic Background */}
+      <div className="main-bg" />
+      
+      {/* Floating Navbar */}
+      <nav className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 transition-all duration-500 rounded-[24px] ${
+        scrolled ? "navbar-glass py-3 px-6 shadow-2xl" : "bg-transparent py-5 px-4"
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <Link href="/dashboard" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center font-bold text-bg-darker text-sm shadow-[0_0_20px_rgba(56,189,248,0.5)] group-hover:scale-110 transition-transform">
                 H
               </div>
-              <span className="font-bold text-sm tracking-tight hidden sm:block">Helpdesk</span>
+              <span className="font-bold text-lg tracking-tight text-white hidden sm:block">Helpdesk</span>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                     pathname === item.path
-                      ? "bg-primary/10 text-primary"
-                      : "text-slate-500 hover:text-white hover:bg-white/5"
+                      ? "bg-primary text-bg-darker shadow-lg shadow-primary/20"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {item.label}
@@ -63,37 +72,38 @@ export default function DashboardLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex flex-col items-end border-r border-white/10 pr-4">
-              <span className="text-xs font-bold text-white">{session?.user?.name}</span>
-              <span className="text-[11px] text-slate-500 font-medium">{roleLabel}</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex flex-col items-end border-r border-white/10 pr-6">
+              <span className="text-sm font-bold text-white tracking-tight">{session?.user?.name}</span>
+              <span className="text-[10px] text-primary font-bold uppercase tracking-widest">{roleLabel}</span>
             </div>
 
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="text-[11px] font-bold text-slate-500 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1 rounded-lg transition-colors hidden sm:block"
+              className="text-[11px] font-bold text-white bg-white/5 hover:bg-danger border border-white/10 hover:border-danger px-4 py-2 rounded-xl transition-all hidden sm:block active:scale-95"
             >
               Sign Out
             </button>
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-400 hover:text-white"
+              className="lg:hidden p-2 text-white bg-white/5 rounded-xl border border-white/10"
             >
               {isMobileMenuOpen ? "✕" : "☰"}
             </button>
           </div>
         </div>
 
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-14 left-0 w-full bg-bg-dark border-b border-white/10 p-4 space-y-2 shadow-2xl">
+          <div className="lg:hidden absolute top-full left-0 w-full mt-4 glass p-6 rounded-[24px] space-y-3 animate-fade-in shadow-2xl">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 py-3 rounded-xl text-sm font-bold ${
-                  pathname === item.path ? "bg-primary text-white" : "text-slate-400 hover:bg-white/5"
+                className={`block px-5 py-4 rounded-2xl text-sm font-bold transition-all ${
+                  pathname === item.path ? "bg-primary text-bg-darker" : "text-slate-400 hover:bg-white/5"
                 }`}
               >
                 {item.label}
@@ -101,7 +111,7 @@ export default function DashboardLayout({
             ))}
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full text-left px-4 py-3 rounded-xl text-sm font-bold text-red-400 hover:bg-red-500/5"
+              className="w-full text-left px-5 py-4 rounded-2xl text-sm font-bold text-danger hover:bg-danger/10"
             >
               Sign Out
             </button>
@@ -109,11 +119,14 @@ export default function DashboardLayout({
         )}
       </nav>
 
-      <main className="pt-20 pb-12 px-4 md:px-6">
+      <main className="pt-32 pb-20 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>
       </main>
+
+      {/* Aesthetic Footer Glow */}
+      <div className="fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none z-[-1]" />
     </div>
   );
 }
