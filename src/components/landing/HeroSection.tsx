@@ -30,8 +30,12 @@ export default function HeroSection() {
 
   return (
     <section ref={containerRef} className="relative pt-32 pb-24 overflow-hidden min-h-screen flex flex-col items-center">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full grid-subtle pointer-events-none -z-10" />
+      {/* Professional Landing Background */}
+      <div 
+        className="absolute inset-0 z-0 opacity-30 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{ backgroundImage: 'url("/images/landing_bg.png")' }}
+      />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-bg-dark via-transparent to-bg-dark pointer-events-none" />
       
       <div className="max-w-6xl mx-auto px-8 text-center relative z-10">
         <div className="hero-text inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-8">
