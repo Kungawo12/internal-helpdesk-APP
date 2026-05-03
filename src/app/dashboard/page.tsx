@@ -75,7 +75,13 @@ export default function DashboardPage() {
             }`}
           >
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{s.label}</p>
-            <p className={`stat-value ${s.color}`}>{s.value}</p>
+            <p className={`stat-value ${s.color} mb-2`}>{s.value}</p>
+            <div className="progress-bar-container">
+              <div 
+                className={`progress-bar-fill ${s.color.replace("text-", "bg-")}`} 
+                style={{ width: `${Math.min((s.value / (stats.total || 1)) * 100, 100)}%` }} 
+              />
+            </div>
           </button>
         ))}
       </div>
@@ -113,7 +119,8 @@ export default function DashboardPage() {
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Dept</th>
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</th>
                   <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Priority</th>
-                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Created</th>
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">SLA Health</th>
+                  <th className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 text-right">Timestamp</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -147,7 +154,7 @@ export default function DashboardPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-1">
                          <div className={`w-1.5 h-1.5 rounded-full ${
                            ticket.priority === 'urgent' || ticket.priority === 'high' ? 'bg-red-500' :
                            ticket.priority === 'medium' ? 'bg-amber-500' : 'bg-primary'
@@ -155,6 +162,23 @@ export default function DashboardPage() {
                         <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">
                           {ticket.priority}
                         </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 min-w-[100px]">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[9px] font-bold text-slate-500">
+                          <span>SLA</span>
+                          <span>{ticket.status === 'resolved' ? '100%' : '65%'}</span>
+                        </div>
+                        <div className="progress-bar-container">
+                          <div 
+                            className={`progress-bar-fill ${
+                              ticket.status === 'resolved' ? 'bg-emerald-500' : 
+                              ticket.priority === 'urgent' ? 'bg-red-500' : 'bg-primary'
+                            }`} 
+                            style={{ width: ticket.status === 'resolved' ? '100%' : '65%' }} 
+                          />
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
