@@ -12,6 +12,7 @@ export type Ticket = {
   solution: string | null;
   createdAt: string;
   updatedAt: string;
+  creatorId: string;
   creator: { name: string; email: string };
   assignee: { name: string; email: string } | null;
   feedback?: {

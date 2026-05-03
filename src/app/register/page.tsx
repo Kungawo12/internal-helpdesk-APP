@@ -5,157 +5,144 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "employee",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("employee");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-          role: form.role,
-        }),
+        body: JSON.stringify({ name, email, password, role }),
       });
 
-      const data = await res.json();
-      setLoading(false);
-
-      if (!res.ok) {
-        setError(data.error || "Failed to create account. Please try again.");
-        return;
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        const data = await res.json();
+        setError(data.error || "Registration failed. Please try again.");
       }
-
-      router.push("/login?registered=true");
-    } catch {
+    } catch (err) {
+      setError("An unexpected error occurred.");
+    } finally {
       setLoading(false);
-      setError("Network error. Please check your connection and try again.");
     }
   };
 
+  const roles = [
+    { id: "employee", label: "Employee", icon: "👤" },
+    { id: "it_staff", label: "IT Staff", icon: "🛠️" },
+    { id: "hr_staff", label: "HR Staff", icon: "📋" },
+    { id: "manager", label: "Manager", icon: "💼" },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-bg-dark grid-subtle relative overflow-hidden">
-      <div className="w-full max-w-lg animate-fade-in">
-        <div className="text-center mb-6">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold text-white text-base">
+    <div className="min-h-screen relative flex items-center justify-center p-6 selection:bg-primary/30">
+      {/* Visual Foundation */}
+      <div className="app-bg" />
+      <div className="app-overlay" />
+
+      <div className="w-full max-w-md animate-fade-in">
+        <div className="card p-8 bg-black/60 backdrop-blur-3xl shadow-2xl border-white/5">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-xl font-bold text-white text-xl mb-4 shadow-lg shadow-primary/20">
               H
-            </div>
-            <span className="font-bold text-xl tracking-tight text-white">Helpdesk</span>
-          </Link>
-          <h1 className="text-xl font-bold tracking-tight text-white">Create Account</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Join our internal support platform</p>
-        </div>
+            </Link>
+            <h1 className="heading-prime text-2xl mb-1">Create Account</h1>
+            <p className="text-sm text-slate-400">Join the enterprise helpdesk platform</p>
+          </div>
 
-        <div className="card p-6 shadow-xl border-white/5 bg-white/[0.02]">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold">
-                ⚠️ {error}
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Full Name</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="input-field py-2 text-sm"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Work Email</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="input-field py-2 text-sm"
-                  placeholder="name@company.com"
-                  required
-                />
-              </div>
-            </div>
-
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Full Name</label>
               <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="input-field py-2 text-sm"
-                placeholder="At least 6 characters"
-                minLength={6}
+                type="text"
                 required
+                className="input-field"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Account Type</label>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Email Address</label>
+              <input
+                type="email"
+                required
+                className="input-field"
+                placeholder="name@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Password</label>
+              <input
+                type="password"
+                required
+                className="input-field"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Select Your Role</label>
               <div className="grid grid-cols-2 gap-2">
-                {[
-                  { value: "employee", label: "Employee", desc: "Submit tickets" },
-                  { value: "it_staff", label: "IT Staff", desc: "Resolve IT issues" },
-                  { value: "hr_staff", label: "HR Staff", desc: "Resolve HR issues" },
-                  { value: "manager", label: "Manager", desc: "Oversee all" },
-                ].map((r) => (
+                {roles.map((r) => (
                   <button
-                    key={r.value}
+                    key={r.id}
                     type="button"
-                    onClick={() => setForm({ ...form, role: r.value })}
-                    className={`p-2 rounded border text-left transition-all ${
-                      form.role === r.value
-                        ? "bg-primary/10 border-primary text-white"
-                        : "bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-white/[0.06]"
+                    onClick={() => setRole(r.id)}
+                    className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                      role === r.id 
+                        ? "bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10" 
+                        : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
                     }`}
                   >
-                    <div className="text-[11px] font-bold uppercase">{r.label}</div>
-                    <div className="text-[10px] font-medium opacity-50">{r.desc}</div>
+                    <span>{r.icon}</span>
+                    {r.label}
                   </button>
                 ))}
               </div>
             </div>
 
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-[11px] text-red-400 font-bold text-center">{error}</p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-2.5 text-sm font-bold uppercase tracking-widest"
+              className="btn-primary w-full py-3 mt-4"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "Creating Account..." : "Register Now"}
             </button>
-
-            <div className="pt-4 text-center border-t border-white/5">
-              <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">
-                Already have an account?{" "}
-                <Link href="/login" className="text-primary hover:text-primary-light transition-colors">
-                  Sign In
-                </Link>
-              </p>
-            </div>
           </form>
-        </div>
 
-        <p className="mt-8 text-center text-[10px] font-bold text-slate-600 uppercase tracking-widest opacity-50">
-          &copy; 2026 Helpdesk System
-        </p>
+          <div className="mt-8 text-center pt-6 border-t border-white/5">
+            <p className="text-xs text-slate-500">
+              Already have an account?{" "}
+              <Link href="/login" className="text-primary font-bold hover:underline">
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

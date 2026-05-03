@@ -1,38 +1,25 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useTickets } from "@/hooks/useTickets";
 
-const priorityOrder: Record<string, number> = {
-  urgent: 0,
-  high: 1,
-  medium: 2,
-  low: 3,
-};
-
-export default function StaffDashboard() {
+export default function StaffQueuePage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const { tickets, loading, error, refresh } = useTickets();
-  const [resolveForm, setResolveForm] = useState<{
-    ticketId: string;
-    solution: string;
-  } | null>(null);
-  const [resolving, setResolving] = useState(false);
+  const [solution, setSolution] = useState("");
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
 
-  const sortedTickets = useMemo(() => {
-    return [...tickets].sort((a, b) => {
-      const pDiff = (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2);
-      if (pDiff !== 0) return pDiff;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
-  }, [tickets]);
+  const activeTickets = useMemo(() => 
+    tickets.filter(t => t.status === 'open' || t.status === 'in_progress'), 
+  [tickets]);
 
-  const handleStatusChange = async (ticketId: string, status: string) => {
-    await fetch(`/api/tickets/${ticketId}/resolve`, {
+  const resolvedTickets = useMemo(() => 
+    tickets.filter(t => t.status === 'resolved'), 
+  [tickets]);
+
+  const handleStatusChange = async (id: string, status: string) => {
+    await fetch(`/api/tickets/${id}/resolve`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -40,172 +27,143 @@ export default function StaffDashboard() {
     refresh();
   };
 
-  const handleResolve = async () => {
-    if (!resolveForm || !resolveForm.solution.trim()) return;
-    setResolving(true);
-
-    await fetch(`/api/tickets/${resolveForm.ticketId}/resolve`, {
+  const handleResolve = async (e: React.FormEvent, id: string) => {
+    e.preventDefault();
+    await fetch(`/api/tickets/${id}/resolve`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ solution: resolveForm.solution, status: "resolved" }),
+      body: JSON.stringify({ status: "resolved", solution }),
     });
-
-    setResolving(false);
-    setResolveForm(null);
+    setSolution("");
+    setResolvingId(null);
     refresh();
   };
 
-  const openTickets = sortedTickets.filter((t) => t.status === "open" || t.status === "in_progress");
-  const resolvedTickets = sortedTickets.filter((t) => t.status === "resolved" || t.status === "closed");
-
-  const ticketType = session?.user.role === "it_staff" ? "IT" : "HR";
-
-  if (loading) {
-    return (
-      <div className="min-h-[40vh] flex flex-col items-center justify-center">
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-slate-500 text-xs font-medium">Loading queue...</p>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-[40vh] flex flex-col items-center justify-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
+      <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Syncing Queue...</p>
+    </div>
+  );
 
   return (
-    <div className="space-y-5 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">{ticketType} Ticket Queue</h1>
-          <p className="text-sm text-slate-500 mt-1 font-medium">
-            {openTickets.length} active &middot; {resolvedTickets.length} resolved
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full" />
-            Active Tickets
-          </h2>
-
-          {openTickets.length === 0 ? (
-            <div className="card p-6 text-center bg-white/[0.01]">
-              <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">No open tickets</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {openTickets.map((ticket) => (
-                <div key={ticket.id} className="card p-4 hover:bg-white/[0.02] transition-colors border-white/5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`badge text-[11px] py-0.5 px-2 font-bold ${
-                          ticket.priority === "urgent" || ticket.priority === "high" ? "badge-red" :
-                          ticket.priority === "medium" ? "badge-amber" : "badge-blue"
-                        }`}>
-                          {ticket.priority}
-                        </span>
-                        <span className={`badge text-[11px] py-0.5 px-2 font-bold ${
-                          ticket.status === "in_progress" ? "badge-amber" : "badge-blue"
-                        }`}>
-                          {ticket.status.replace("_", " ")}
-                        </span>
-                      </div>
-
-                      <Link href={`/dashboard/ticket/${ticket.id}`} className="hover:text-primary transition-colors">
-                        <h3 className="text-sm font-bold text-white">{ticket.title}</h3>
-                      </Link>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-1 font-medium">{ticket.description}</p>
-                      <div className="flex items-center gap-2 mt-3">
-                         <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
-                          {ticket.creator.name[0]}
-                        </div>
-                        <p className="text-[11px] text-slate-500 font-bold">
-                          {ticket.creator.name} &middot; {new Date(ticket.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {ticket.status === "open" && (
-                        <button
-                          onClick={() => handleStatusChange(ticket.id, "in_progress")}
-                          className="btn-primary py-1.5 px-3 text-xs font-bold"
-                        >
-                          Start
-                        </button>
-                      )}
-                      <button
-                        onClick={() => setResolveForm({ ticketId: ticket.id, solution: "" })}
-                        className="btn-secondary py-1.5 px-3 text-xs font-bold"
-                      >
-                        Resolve
-                      </button>
-                    </div>
-                  </div>
-
-                  {resolveForm?.ticketId === ticket.id && (
-                    <div className="mt-4 p-4 bg-white/[0.03] border border-white/[0.08] rounded-lg space-y-3">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">
-                        Resolution Details
-                      </label>
-                      <textarea
-                        value={resolveForm.solution}
-                        onChange={(e) => setResolveForm({ ...resolveForm, solution: e.target.value })}
-                        className="input-field text-xs h-24 py-2"
-                        placeholder="What was the fix?"
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleResolve}
-                          disabled={!resolveForm.solution.trim() || resolving}
-                          className="btn-primary py-2 px-4 text-xs font-bold uppercase tracking-widest"
-                        >
-                          {resolving ? "Resolving..." : "Save Resolution"}
-                        </button>
-                        <button
-                          onClick={() => setResolveForm(null)}
-                          className="btn-secondary py-2 px-4 text-xs font-bold uppercase tracking-widest"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in">
+      <div className="lg:col-span-3 space-y-6">
+        <div className="flex items-center justify-between border-b border-white/5 pb-6">
+          <div className="space-y-1">
+            <h1 className="heading-prime text-2xl">Active Service Queue</h1>
+            <p className="text-sm text-slate-400">Assigned service requests awaiting resolution</p>
+          </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-            Recently Resolved
-          </h2>
-          <div className="space-y-2">
-            {resolvedTickets.slice(0, 10).map((ticket) => (
-              <Link key={ticket.id} href={`/dashboard/ticket/${ticket.id}`} className="block group">
-                <div className="card p-3 flex items-center justify-between hover:border-emerald-500/30 bg-white/[0.01] border-white/5">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-[11px] text-slate-400 group-hover:text-emerald-400 transition-colors truncate">
-                      {ticket.title}
-                    </p>
-                    <p className="text-[10px] text-slate-600 mt-0.5 font-bold uppercase tracking-widest">
-                      {ticket.creator.name.split(' ')[0]} &middot; {new Date(ticket.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  {ticket.feedback && (
-                    <div className="flex text-yellow-500 text-[10px] ml-2">
-                      {"★".repeat(ticket.feedback.rating)}
+          {activeTickets.length === 0 ? (
+            <div className="card p-12 text-center bg-white/5 opacity-50">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Queue Clear</p>
+            </div>
+          ) : (
+            activeTickets.map((ticket) => (
+              <div key={ticket.id} className="card p-5 bg-black/40 group hover:border-primary/30">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className={`badge ${ticket.type === 'IT' ? 'badge-blue' : 'badge-amber'}`}>
+                        {ticket.type}
+                      </span>
+                      <span className={`badge ${ticket.status === 'in_progress' ? 'badge-blue' : 'badge-gray'}`}>
+                        {ticket.status.replace("_", " ")}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-600 font-mono">#{ticket.id.slice(0, 8)}</span>
                     </div>
-                  )}
+                    <div>
+                      <h3 className="text-base font-bold text-white mb-1 group-hover:text-primary transition-colors cursor-pointer" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                        {ticket.title}
+                      </h3>
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        {ticket.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      <span>👤 {ticket.creator?.name}</span>
+                      <span>📅 {new Date(ticket.createdAt).toLocaleDateString()}</span>
+                      <span className={ticket.priority === 'urgent' ? 'text-red-400' : ''}>⚠️ {ticket.priority}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex md:flex-col gap-2 min-w-[140px]">
+                    {ticket.status === 'open' && (
+                      <button 
+                        onClick={() => handleStatusChange(ticket.id, "in_progress")}
+                        className="btn-primary py-2 text-[11px]"
+                      >
+                        Start Working
+                      </button>
+                    )}
+                    {ticket.status === 'in_progress' && resolvingId !== ticket.id && (
+                      <button 
+                        onClick={() => setResolvingId(ticket.id)}
+                        className="btn-primary bg-emerald-600 hover:bg-emerald-700 py-2 text-[11px]"
+                      >
+                        Resolve Ticket
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
+                      className="btn-secondary py-2 text-[11px]"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
-              </Link>
+
+                {resolvingId === ticket.id && (
+                  <form onSubmit={(e) => handleResolve(e, ticket.id)} className="mt-6 pt-6 border-t border-white/10 space-y-4 animate-fade-in">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Resolution Solution</label>
+                      <textarea
+                        required
+                        className="input-field min-h-[100px]"
+                        placeholder="Explain how the issue was resolved..."
+                        value={solution}
+                        onChange={(e) => setSolution(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <button type="submit" className="btn-primary flex-1 py-2 text-[11px]">Submit Resolution</button>
+                      <button type="button" onClick={() => setResolvingId(null)} className="btn-secondary py-2 text-[11px]">Cancel</button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        <div className="card p-5 bg-black/60 border-white/5 h-fit">
+          <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-white/5 pb-3">Recently Resolved</h2>
+          <div className="space-y-3">
+            {resolvedTickets.slice(0, 5).map((ticket) => (
+              <div key={ticket.id} className="p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                <p className="text-xs font-bold text-white truncate mb-1">{ticket.title}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Resolved</span>
+                  <span className="text-[9px] text-slate-500 uppercase tracking-wider">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
             ))}
             {resolvedTickets.length === 0 && (
-              <p className="text-slate-600 text-[11px] font-bold uppercase tracking-widest italic opacity-40">Empty</p>
+              <p className="text-center py-4 text-[11px] text-slate-600 font-bold uppercase tracking-wider">No Resolved History</p>
             )}
           </div>
+        </div>
+
+        <div className="card p-5 bg-emerald-500/5 border-emerald-500/10">
+          <h3 className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider mb-2">Queue Policy</h3>
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Ensure all urgent priority tickets are addressed within 1 hour of assignment.
+          </p>
         </div>
       </div>
     </div>

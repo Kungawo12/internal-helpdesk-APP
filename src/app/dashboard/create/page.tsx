@@ -2,148 +2,153 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function CreateTicketPage() {
+  const { data: session } = useSession();
   const router = useRouter();
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    type: "IT",
-    priority: "medium",
-  });
+  
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState<"IT" | "HR">("IT");
+  const [priority, setPriority] = useState<"low" | "medium" | "high" | "urgent">("medium");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
 
-    const res = await fetch("/api/tickets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("/api/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description, type, priority }),
+      });
 
-    setLoading(false);
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || "Failed to create ticket. Please try again.");
-      return;
+      if (res.ok) {
+        router.push("/dashboard");
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to create ticket.");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/dashboard");
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in space-y-5">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Create New Ticket</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Please provide the details of your request.</p>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between border-b border-white/5 pb-6">
+        <div className="space-y-1">
+          <h1 className="heading-prime text-2xl">Create New Ticket</h1>
+          <p className="text-sm text-slate-400">Submit a new service request to IT or HR</p>
         </div>
-        <Link href="/dashboard" className="text-xs font-bold text-slate-500 hover:text-white transition-colors">
-          ← Back to Dashboard
+        <Link href="/dashboard" className="btn-secondary">
+          Cancel
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">
-          <div className="card p-5 space-y-5">
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Title</label>
-              <input
-                type="text"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="input-field py-2 text-sm"
-                placeholder="What needs attention?"
-                required
-              />
-            </div>
+          <div className="card p-6 bg-black/40">
+            <div className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ticket Title</label>
+                <input
+                  type="text"
+                  required
+                  className="input-field"
+                  placeholder="Briefly describe the issue..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Description</label>
-              <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="input-field h-40 resize-none text-sm leading-relaxed"
-                placeholder="Provide all relevant details..."
-                required
-              />
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Detailed Description</label>
+                <textarea
+                  required
+                  rows={8}
+                  className="input-field resize-none"
+                  placeholder="Provide all relevant details to help us resolve this quickly..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
+        <div className="space-y-6">
+          <div className="card p-6 bg-black/40 space-y-6">
+            <div className="space-y-3">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Department</label>
+              <div className="grid grid-cols-2 gap-2">
+                {(["IT", "HR"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setType(t)}
+                    className={`py-3 rounded-xl border text-xs font-bold transition-all ${
+                      type === t 
+                        ? "bg-primary/20 border-primary text-primary" 
+                        : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
+                    }`}
+                  >
+                    {t} Support
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Priority Level</label>
+              <div className="grid grid-cols-2 gap-2">
+                {(["low", "medium", "high", "urgent"] as const).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPriority(p)}
+                    className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                      priority === p 
+                        ? "bg-primary/20 border-primary text-primary" 
+                        : "bg-white/5 border-white/5 text-slate-500 hover:bg-white/10"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-[11px] text-red-400 font-bold text-center">{error}</p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary flex-1 py-2 text-sm font-bold"
+              className="btn-primary w-full py-3.5 shadow-xl shadow-primary/20"
             >
               {loading ? "Submitting..." : "Submit Ticket"}
             </button>
-            <Link
-              href="/dashboard"
-              className="btn-secondary py-2 px-6 text-sm font-bold"
-            >
-              Cancel
-            </Link>
-          </div>
-        </div>
-
-        <div className="space-y-5">
-          <div className="card p-5 space-y-4">
-            <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Department</h3>
-            <div className="grid grid-cols-1 gap-2">
-              {[
-                { id: "IT", label: "IT Support", icon: "🖥️" },
-                { id: "HR", label: "People & HR", icon: "👥" },
-              ].map((dept) => (
-                <button
-                  key={dept.id}
-                  type="button"
-                  onClick={() => setForm({ ...form, type: dept.id })}
-                  className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
-                    form.type === dept.id 
-                      ? "bg-primary/10 border-primary/50 text-white" 
-                      : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
-                  }`}
-                >
-                  <span className="text-lg">{dept.icon}</span>
-                  <span className="text-xs font-bold">{dept.label}</span>
-                </button>
-              ))}
-            </div>
           </div>
 
-          <div className="card p-5 space-y-4">
-            <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Priority</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {["low", "medium", "high", "urgent"].map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setForm({ ...form, priority: p })}
-                  className={`py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider border transition-all ${
-                    form.priority === p 
-                      ? "bg-primary border-primary text-white" 
-                      : "bg-white/5 border-white/5 text-slate-500 hover:text-white"
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
+          <div className="card p-5 bg-blue-500/5 border-blue-500/10">
+            <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2">Notice</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              For urgent hardware issues, please visit the IT desk directly after submitting this ticket.
+            </p>
           </div>
         </div>
       </form>
-      {error && (
-        <div className="mt-6 p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-xs font-bold">
-          ⚠️ {error}
-        </div>
-      )}
     </div>
   );
 }
