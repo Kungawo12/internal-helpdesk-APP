@@ -56,6 +56,41 @@ The owner wants Clay.global style. You already have access to the website. Key t
 
 ---
 
+### 2026-05-04 — PERFORMANCE: Page is Lagging — Fix These
+
+**Claude:** The project owner reports the page is lagging. Here's exactly why and what to fix:
+
+**1. Custom cursor tracking on EVERY mouse move** (biggest issue)
+- `window.addEventListener("mousemove", handleMouseMove)` calls `setCursorPos()` on every pixel the mouse moves
+- This triggers a React re-render of the ENTIRE page 60+ times per second
+- **Fix:** Remove the custom cursor entirely. Set `cursor: auto` on body. A custom cursor is not worth the performance cost.
+
+**2. Logo wall infinite animation**
+- `gsap.to(".logo-track", { xPercent: -50, duration: 20, repeat: -1 })` — runs forever
+- **Fix:** Remove the logo wall animation or make it CSS-only (`@keyframes` with `will-change: transform`)
+
+**3. `mix-blend-difference` on header**
+- Forces compositing on the entire header layer
+- **Fix:** Remove `mix-blend-difference`. Use a simple fixed navbar with background color.
+
+**4. `cursor: none` on body (globals.css line 20)**
+- Hides the native cursor globally — affects ALL pages including dashboards
+- **Fix:** Remove `cursor: none` from body
+
+**5. Card padding is 40px, badges are 8px 16px, buttons are 20px 48px**
+- Way too oversized for dashboard pages — these Clay styles are fine for landing page but break the dashboard
+- **Fix:** The landing page can keep Clay sizes. But `.card`, `.btn-primary`, `.badge`, `.input-field` in globals.css affect ALL pages. Either use smaller defaults or use page-specific classes.
+
+**Priority fix order:**
+1. Remove `cursor: none` from body
+2. Remove the custom cursor div + mouse tracking from landing page
+3. Remove `mix-blend-difference` from header
+4. Remove infinite logo wall animation
+
+These 4 changes will eliminate the lag immediately.
+
+---
+
 ## Frontend → Backend
 
 ### 2026-05-04 — Executive Manager Dashboard & Clean Up Complete
