@@ -77,7 +77,7 @@ export default function ManagerDashboard() {
   return (
     <div className="space-y-12 max-w-[1400px] mx-auto pb-32">
       {/* Cinematic Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 clay-animate-up">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 animate-fade-in">
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Manager Portal</span>
@@ -90,7 +90,7 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Massive KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 clay-animate-up delay-100">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         <div className="card p-8 bg-black text-white">
           <p className="text-sm font-bold text-white/60 uppercase tracking-widest mb-4">Volume</p>
           <p className="text-6xl font-extrabold mb-2">{stats.total}</p>
@@ -117,7 +117,7 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Analytics Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 clay-animate-up delay-200">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in delay-200">
         <div className="lg:col-span-2 card p-8 md:p-10 space-y-8">
           <h3 className="text-2xl font-bold tracking-tight">Department Activity</h3>
           <div className="space-y-6">
@@ -171,7 +171,7 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Ticket Cards Grid (Replacing Table) */}
-      <div className="space-y-8 clay-animate-up delay-300">
+      <div className="space-y-8 animate-fade-in delay-300">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight">Active Manifest</h2>
           <div className="flex w-full md:w-auto gap-4">

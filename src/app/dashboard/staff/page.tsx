@@ -47,7 +47,7 @@ export default function StaffQueuePage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in">
       <div className="lg:col-span-3 space-y-5">
         <div className="flex items-center justify-between">
           <div>

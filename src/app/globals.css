@@ -2,72 +2,71 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #000000;
-  --color-bg-light: #f5f5f7;
-  --color-bg-white: #ffffff;
-  --color-text-main: #000000;
-  --color-text-muted: #6e6e73;
-  --color-border-light: rgba(0,0,0,0.05);
+  --color-primary: #2563eb;
+  --color-bg-main: #ffffff;
+  --color-bg-dark: #0f172a;
+  --color-bg-light: #f8fafc;
+  --color-text-heading: #0f172a;
+  --color-text-body: #475569;
+  --color-text-muted: #94a3b8;
 }
 
 @layer base {
   body {
-    background: #f5f5f7;
-    color: #000000;
+    background: #f8fafc;
+    color: #475569;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.04em;
+    color: #0f172a;
+    letter-spacing: -0.03em;
   }
 }
 
 @layer utilities {
   .card {
     background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, box-shadow;
-    border: 1px solid rgba(0,0,0,0.03);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.04);
+    padding: 24px;
+    transition: all 0.3s ease;
   }
   
   .card:hover {
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.08), 0 18px 36px -18px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 12px 48px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
   }
 
   .btn-primary {
-    background: #000000;
-    color: #ffffff;
-    padding: 16px 32px;
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: -0.02em;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: #0f172a;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .btn-primary:hover {
-    background: #1d1d1f;
-    transform: scale(1.03);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   }
   
   .btn-secondary {
     background: rgba(0,0,0,0.05);
-    color: #000000;
-    padding: 16px 32px;
-    border-radius: 9999px;
+    color: #0f172a;
+    padding: 12px 28px;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 16px;
-    letter-spacing: -0.02em;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 15px;
+    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -75,25 +74,24 @@
   
   .btn-secondary:hover {
     background: rgba(0,0,0,0.1);
-    transform: scale(1.03);
+    transform: translateY(-1px);
   }
 
   .input-field {
     background: #ffffff;
-    border: 2px solid rgba(0,0,0,0.05);
-    border-radius: 16px;
-    padding: 16px 20px;
-    color: #000000;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #0f172a;
     width: 100%;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    font-size: 16px;
-    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 14px;
   }
   
   .input-field:focus {
     outline: none;
-    border-color: #000000;
-    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
   }
 
   /* Badges */
@@ -101,32 +99,30 @@
     padding: 4px 12px;
     font-size: 12px;
     border-radius: 9999px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.01em;
     display: inline-flex;
     align-items: center;
   }
-  .badge-blue { background: rgba(0, 122, 255, 0.1); color: #007aff; }
-  .badge-green { background: rgba(52, 199, 89, 0.1); color: #34c759; }
-  .badge-amber { background: rgba(255, 149, 0, 0.1); color: #ff9500; }
-  .badge-red { background: rgba(255, 59, 48, 0.1); color: #ff3b30; }
-  .badge-slate { background: rgba(0, 0, 0, 0.05); color: #6e6e73; }
+  .badge-blue { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .badge-amber { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+  .badge-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .badge-slate { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
   
   /* Typography utilities */
   .heading-hero {
-    font-size: clamp(40px, 8vw, 96px);
+    font-size: clamp(48px, 6vw, 64px);
     font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    color: #000000;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
   }
   
   .heading-section {
-    font-size: clamp(32px, 5vw, 64px);
+    font-size: clamp(32px, 4vw, 48px);
     font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-    color: #000000;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
   }
 }
 
@@ -137,14 +133,17 @@
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Fluid Entrance Animations */
-.clay-animate-up {
+/* Dashboard Fade Animations */
+.animate-fade-in {
   opacity: 0;
-  transform: translateY(40px);
-  animation: clay-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in 0.8s ease forwards;
 }
 
-@keyframes clay-up {
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);

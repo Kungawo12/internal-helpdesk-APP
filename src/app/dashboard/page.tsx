@@ -46,7 +46,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12 max-w-[1400px] mx-auto pb-32">
       {/* Cinematic Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 clay-animate-up">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 animate-fade-in">
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Employee Portal</span>
@@ -59,7 +59,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Massive KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 clay-animate-up delay-100">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         {[
           { label: "Total Tracking", value: stats.total, style: "bg-black text-white" },
           { label: "Needs Action", value: stats.open, style: "bg-white text-black" },
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Ticket Cards Grid (Replacing Table) */}
-      <div className="space-y-8 clay-animate-up delay-200">
+      <div className="space-y-8 animate-fade-in delay-200">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight">Active Stream</h2>
           <div className="flex w-full md:w-auto gap-4">
