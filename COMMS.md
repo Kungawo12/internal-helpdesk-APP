@@ -10,6 +10,185 @@
 
 ## Backend → Frontend
 
+### 2026-05-04 — ONBOARDING: Tom, Read This First (Full Project Brief)
+
+**Claude (Senior Engineer):** Tom, you're reconnecting to the project. Here's everything you need to know. Read this entire message before writing any code.
+
+---
+
+## Who We Are
+
+- **Project Owner:** Tenzin — makes all final decisions
+- **Senior Engineer (Backend):** Claude — APIs, database, deployment, code review, build verification
+- **Frontend Engineer (UX/Design):** You, Tom — all UI pages, styling, layout, interactions
+
+---
+
+## What We're Building
+
+An **Internal Company Helpdesk** — a web app where employees submit IT and HR support tickets, staff resolves them, and managers oversee everything.
+
+**Users:**
+- **Employees** — create tickets when they have IT issues (broken laptop, VPN not working) or HR issues (payslip missing, holiday balance wrong). They track status and give feedback after resolution.
+- **IT Staff** — receive IT tickets, work on them, post solutions
+- **HR Staff** — receive HR tickets, work on them, post solutions
+- **Managers** — see all tickets company-wide, view stats/charts, monitor performance. They do NOT create tickets.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 + custom CSS in globals.css |
+| Animations | GSAP (use sparingly) |
+| Auth | NextAuth (credentials, JWT) |
+| Database | PostgreSQL (Neon) |
+| ORM | Prisma 5 |
+| Deployment | Vercel (auto-deploys on push to main) |
+
+---
+
+## What's Built and Working
+
+### Backend (Claude's work — DO NOT MODIFY)
+- `POST /api/auth/register` — register with name, email, password, role
+- `POST /api/auth/[...nextauth]` — login with email/password
+- `GET /api/tickets` — returns tickets based on user role
+- `POST /api/tickets` — create a ticket (employees only)
+- `GET /api/tickets/[id]` — single ticket detail
+- `PATCH /api/tickets/[id]/resolve` — staff resolves a ticket
+- `POST /api/tickets/[id]/feedback` — employee rates a resolution
+- `GET /api/health` — diagnostic endpoint
+- Email notifications (on ticket create → staff, on resolve → employee)
+
+### Frontend (Your work)
+All pages in `src/app/` and `src/components/landing/`
+
+### Hooks Available
+- `useTickets()` — returns `{ tickets, loading, error, refresh }`
+- `useTicket(id)` — returns `{ ticket, loading, error, refresh }`
+- Both return the full Ticket type (see below)
+
+### Ticket Type
+```typescript
+{
+  id: string;
+  title: string;
+  description: string;
+  type: "IT" | "HR";
+  status: "open" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
+  solution: string | null;
+  createdAt: string;
+  updatedAt: string;
+  creatorId: string;
+  creator: { name: string; email: string };
+  assignee: { name: string; email: string } | null;
+  feedback: { id: string; rating: number; comment: string | null } | null;
+}
+```
+
+---
+
+## Pages and What Each Does
+
+| Route | Purpose | Who sees it |
+|-------|---------|------------|
+| `/` | Landing page | Everyone |
+| `/login` | Sign in | Everyone |
+| `/register` | Create account (4 roles) | Everyone |
+| `/dashboard` | My tickets list | All logged-in users |
+| `/dashboard/create` | Create new ticket | Employees ONLY |
+| `/dashboard/manager` | Company overview with stats/charts | Managers ONLY |
+| `/dashboard/staff` | Ticket queue with resolve flow | IT/HR Staff ONLY |
+| `/dashboard/ticket/[id]` | Full ticket detail | Role-based |
+
+---
+
+## Navigation Rules
+
+| Role | Sees in nav |
+|------|------------|
+| Employee | Dashboard, New Ticket |
+| Manager | Dashboard, Company Overview |
+| IT Staff | Dashboard, Ticket Queue |
+| HR Staff | Dashboard, Ticket Queue |
+
+**Managers and staff do NOT see "New Ticket".**
+
+---
+
+## Critical Functionality You Must NEVER Break
+
+1. **Staff resolve flow** (`/dashboard/staff/page.tsx`):
+   - "Start Working" button → changes status to `in_progress`
+   - "Resolve" button → opens solution textarea → submits to `PATCH /api/tickets/[id]/resolve`
+   - Uses direct `fetch()` calls, NOT hook methods
+
+2. **Ticket detail resolve** (`/dashboard/ticket/[id]/page.tsx`):
+   - Same resolve flow as staff page
+   - Feedback form for employees (star rating + comment)
+   - Uses direct `fetch()` calls
+
+3. **Register page** (`/register/page.tsx`):
+   - Must POST to `/api/auth/register` (NOT `/api/register`)
+   - 4 role buttons: Employee, IT Staff, HR Staff, Manager
+
+---
+
+## Your Recurring Bugs (Learn From These)
+
+1. **`@apply` with custom classes** — Tailwind v4 does NOT allow `@apply glass-card` or `@apply group`. Write custom classes as plain CSS.
+2. **Duplicate `className`** — You write `className="..." className={...}` on the same element. JSX only allows one.
+3. **Wrong API URLs** — The register endpoint is `/api/auth/register`, not `/api/register`.
+4. **Renaming nav labels to jargon** — "Command", "Initialize", "Executive Analytics", "Service Queue" → Use plain English: "Dashboard", "New Ticket", "Company Overview", "Ticket Queue".
+5. **Adding background images to dashboard layout** — Don't. The layout is clean — nav + content, nothing else.
+6. **Using hook methods that don't exist** — `resolveTicket()` and `submitFeedback()` don't exist in `useTicket`. Use direct `fetch()` calls.
+
+---
+
+## Current Design Direction
+
+The project owner wants **clean, professional, light-mode design**:
+- Light backgrounds (`#f8fafc`), white cards, dark text
+- Reference: **Slack, Linear, GitHub, Zendesk**
+- No glass morphism, no backdrop-blur on cards, no background images on dashboards
+- No glow effects, no floating animations
+- Plain English labels everywhere
+- Compact spacing — this is a productivity tool
+
+---
+
+## Files You Can Modify
+
+All files in `src/app/` (pages) and `src/components/landing/` (landing components) and `src/app/globals.css`
+
+## Files You CANNOT Modify
+
+- `src/app/api/**` — all backend routes
+- `src/app/layout.tsx` — root layout
+- `src/lib/**` — prisma, auth, email
+- `src/middleware.ts` — auth middleware
+- `src/types/**` — type definitions
+
+---
+
+## Your Current Tasks
+
+1. **Landing page** — redesign with light theme (see previous COMMS for full spec)
+2. **Manager dashboard** — KPI cards, CSS bar charts, department stats, monthly trends, ticket table (see previous COMMS for full spec)
+3. **All pages** — consistent light theme, compact spacing
+4. **Fix jargon** — "Intelligence_System_Active" → "Internal Support Platform", "Access your manifest" → "Sign in to your account", etc.
+
+**Read `FRONTEND_SPEC.md` for all API contracts and page requirements.**
+
+**Start by reading your previous work, then improve it. Don't start from scratch every time.**
+
+---
+
 ### 2026-05-04 — Landing Page: Owner Wants a Complete Redo
 
 **Claude:** Tom, the owner specifically doesn't like the front/landing page design. Here's exactly what they want.
