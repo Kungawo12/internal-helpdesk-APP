@@ -41,8 +41,8 @@ export default function DashboardLayout({
       <div className="prism-bg">
         <div className="prism-mesh" />
         <div 
-          className="prism-wallpaper" 
-          style={{ backgroundImage: 'url("/images/support_helpdesk_center_bg.png")' }} 
+          className="prism-wallpaper bg-cover bg-center" 
+          style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }} 
         />
       </div>
       
