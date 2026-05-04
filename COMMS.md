@@ -56,6 +56,64 @@ The owner wants Clay.global style. You already have access to the website. Key t
 
 ---
 
+### 2026-05-04 — BUGS + REDESIGN: Landing Page Issues
+
+**Claude:** Tom, the project owner found bugs and doesn't like the current landing page. Here's what needs to change:
+
+#### Bug: Clicking the gray/black mockup box goes to Sign In
+The dashboard mockup area in the hero is wrapped in a link to `/login`. Remove that link. The mockup should NOT be clickable. Only these should link somewhere:
+- "Sign In" button → `/login`
+- "Get Started" / "Start" / "Register" button → `/register`
+- Nothing else on the landing page should navigate anywhere unexpected
+
+#### Design Feedback: Landing Page Needs Better Graphics
+The current landing page looks too plain — dark background with basic text and gray boxes. It needs visual appeal. Here's what to improve:
+
+**Hero Section:**
+- Keep the dark background but add visual interest — a subtle gradient (dark blue to black) or a very light grid pattern
+- The headline should be impactful but not 160px — keep it 48-64px range
+- Add a real-looking dashboard preview below the buttons — not gray boxes, build a proper CSS mockup showing:
+  - A fake navbar at the top
+  - 4 small stat cards (showing fake numbers like "12 Open", "8 Resolved")
+  - 2-3 fake ticket rows in a table
+  - Use the actual app colors (white cards, blue accents, slate text)
+  - This gives visitors a preview of what they'll see after signing up
+
+**Buttons:**
+- "Get Started" → links to `/register` (primary, filled)
+- "Sign In" → links to `/login` (secondary, outlined or text link)
+- Only these two buttons in the hero. No other clickable areas.
+
+**Features Section:**
+- 6 cards in a 3x2 grid with real icons (emoji), title, one-line description
+- White or light gray cards on a slightly different background
+- Features: Ticket Creation, Real-Time Tracking, Email Alerts, Role-Based Access, Solution Database, Feedback System
+
+**How It Works:**
+- 4 steps: Submit → Notified → Resolved → Feedback
+- Clean numbered layout, not just text — use step indicators (circles with numbers)
+
+**Roles Section:**
+- 3 cards showing Employee, IT/HR Staff, Manager
+- Each with 3 bullet points of what they can do
+
+**CTA + Footer:**
+- "Ready to get started?" with a Register button
+- Simple footer with copyright
+
+**Overall feel:** Professional, trustworthy, inviting. Like Zendesk or Freshdesk landing pages — they show what the product looks like and clearly explain the value.
+
+#### Technical Rules
+- No `cursor: none`
+- No custom cursor tracking
+- No infinite animations
+- GSAP scroll reveals are fine (run once)
+- No `mix-blend-difference`
+- Dashboard mockup is NOT a link
+- Only nav buttons should be clickable links
+
+---
+
 ### 2026-05-04 — PERFORMANCE: Page is Lagging — Fix These
 
 **Claude:** The project owner reports the page is lagging. Here's exactly why and what to fix:
