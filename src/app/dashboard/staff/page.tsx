@@ -47,55 +47,54 @@ export default function StaffQueuePage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in">
-      <div className="lg:col-span-3 space-y-5">
-        <div className="flex items-center justify-between">
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8 animate-fade-in pb-32">
+      <div className="lg:col-span-3 space-y-8">
+        <div className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Ticket Queue</h1>
-            <p className="text-sm text-slate-500">Assigned service requests awaiting resolution</p>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Staff Operations</h1>
+            <p className="text-xl text-[#6e6e73] font-medium">Assigned service requests awaiting resolution</p>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {activeTickets.length === 0 ? (
-            <div className="card p-12 text-center bg-slate-50 border-dashed border-slate-200">
-              <div className="text-4xl mb-4 text-slate-300">✨</div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-1">All caught up!</h3>
-              <p className="text-sm text-slate-500">No open tickets in your queue.</p>
+            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 shadow-none">
+              <h3 className="text-2xl font-bold mb-2">All caught up!</h3>
+              <p className="text-[#6e6e73]">No open tickets in your queue.</p>
             </div>
           ) : (
             activeTickets.map((ticket) => (
-              <div key={ticket.id} className="card p-4 hover:border-blue-200 transition-colors">
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="badge badge-slate">{ticket.type}</span>
-                      <span className={`badge ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'}`}>
+              <div key={ticket.id} className="card p-8 group hover:bg-[#fafafa]">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                  <div className="space-y-4 flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="badge badge-slate !px-3 !py-1">{ticket.type}</span>
+                      <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'}`}>
                         {ticket.status.replace("_", " ")}
                       </span>
-                      <span className="text-xs text-slate-400 font-mono">#{ticket.id.slice(0, 8)}</span>
+                      <span className="text-sm text-[#6e6e73] font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
                     </div>
                     <div>
-                      <h3 className="text-base font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                      <h3 className="text-2xl font-bold cursor-pointer group-hover:text-blue-600 transition-colors" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                         {ticket.title}
                       </h3>
-                      <p className="text-sm text-slate-600 mt-1 line-clamp-2">
+                      <p className="text-lg text-[#6e6e73] mt-2 line-clamp-2">
                         {ticket.description}
                       </p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 pt-1">
-                      <span>👤 {ticket.creator?.name}</span>
-                      <span>📅 {new Date(ticket.createdAt).toLocaleDateString()}</span>
-                      {ticket.priority === 'urgent' && <span className="text-red-600 font-semibold">⚠️ Urgent</span>}
-                      {ticket.priority === 'high' && <span className="text-amber-600">High Priority</span>}
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-semibold text-black/60 pt-2">
+                      <span className="flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold">{ticket.creator?.name?.charAt(0) || '?'}</div> {ticket.creator?.name}</span>
+                      <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                      {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold flex items-center gap-1"><span className="text-xl leading-none">!</span> URGENT</span>}
+                      {ticket.priority === 'high' && <span className="text-amber-600 font-extrabold">HIGH PRIORITY</span>}
                     </div>
                   </div>
 
-                  <div className="flex md:flex-col gap-2 min-w-[120px]">
+                  <div className="flex md:flex-col gap-3 min-w-[140px] mt-6 md:mt-0">
                     {ticket.status === 'open' && (
                       <button 
                         onClick={() => handleStatusChange(ticket.id, "in_progress")}
-                        className="btn-primary w-full py-1.5 text-xs"
+                        className="btn-primary w-full py-3 text-sm"
                       >
                         Start Working
                       </button>
@@ -103,14 +102,14 @@ export default function StaffQueuePage() {
                     {ticket.status === 'in_progress' && resolvingId !== ticket.id && (
                       <button 
                         onClick={() => setResolvingId(ticket.id)}
-                        className="btn-primary bg-green-600 hover:bg-green-700 w-full py-1.5 text-xs"
+                        className="btn-primary bg-green-600 hover:bg-green-700 hover:scale-105 w-full py-3 text-sm"
                       >
-                        Resolve
+                        Resolve Issue
                       </button>
                     )}
                     <button 
                       onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                      className="btn-secondary w-full py-1.5 text-xs"
+                      className="btn-secondary w-full py-3 text-sm"
                     >
                       View Details
                     </button>
@@ -118,20 +117,20 @@ export default function StaffQueuePage() {
                 </div>
 
                 {resolvingId === ticket.id && (
-                  <form onSubmit={(e) => handleResolve(e, ticket.id)} className="mt-4 pt-4 border-t border-slate-100 space-y-3">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-700">Resolution Solution</label>
+                  <form onSubmit={(e) => handleResolve(e, ticket.id)} className="mt-8 pt-8 border-t border-black/10 space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold tracking-tight">Resolution Solution</label>
                       <textarea
                         required
-                        className="input-field min-h-[80px] text-sm"
+                        className="input-field min-h-[120px] text-lg"
                         placeholder="Explain how the issue was resolved..."
                         value={solution}
                         onChange={(e) => setSolution(e.target.value)}
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <button type="submit" className="btn-primary py-1.5 px-4 text-xs">Submit</button>
-                      <button type="button" onClick={() => setResolvingId(null)} className="btn-secondary py-1.5 px-4 text-xs">Cancel</button>
+                    <div className="flex gap-3">
+                      <button type="submit" className="btn-primary py-3 px-8 text-sm">Submit Resolution</button>
+                      <button type="button" onClick={() => setResolvingId(null)} className="btn-secondary py-3 px-8 text-sm">Cancel</button>
                     </div>
                   </form>
                 )}
@@ -141,21 +140,21 @@ export default function StaffQueuePage() {
         </div>
       </div>
 
-      <div className="space-y-5">
-        <div className="card p-4 h-fit">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3 pb-2 border-b border-slate-100">Recently Resolved</h2>
-          <div className="space-y-2">
+      <div className="space-y-8 mt-12 lg:mt-0">
+        <div className="card p-8 h-fit bg-[#f4f4f4]">
+          <h2 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-black/10">Recently Resolved</h2>
+          <div className="space-y-4">
             {resolvedTickets.slice(0, 5).map((ticket) => (
-              <div key={ticket.id} className="p-2 rounded hover:bg-slate-50 cursor-pointer border border-transparent hover:border-slate-100 transition-colors" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
-                <p className="text-xs font-medium text-slate-900 truncate mb-1">{ticket.title}</p>
-                <div className="flex items-center justify-between text-[10px]">
-                  <span className="text-green-600 font-medium">Resolved</span>
-                  <span className="text-slate-500">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+              <div key={ticket.id} className="p-4 rounded-xl bg-white hover:bg-slate-50 cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                <p className="text-sm font-bold truncate mb-2">{ticket.title}</p>
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span className="text-green-600">Resolved</span>
+                  <span className="text-[#6e6e73]">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}
             {resolvedTickets.length === 0 && (
-              <p className="text-center py-4 text-xs text-slate-500">No recent resolutions</p>
+              <p className="text-center py-8 text-[#6e6e73] font-medium">No recent resolutions</p>
             )}
           </div>
         </div>

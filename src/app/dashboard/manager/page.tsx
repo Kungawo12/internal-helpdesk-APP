@@ -196,42 +196,59 @@ export default function ManagerDashboard() {
         </div>
 
         {filteredTickets.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTickets.map((ticket) => (
-              <div 
-                key={ticket.id} 
-                onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                className="card p-8 cursor-pointer group hover:bg-[#fafafa]"
-              >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex gap-2">
-                    <span className="badge badge-slate !px-3 !py-1">{ticket.type}</span>
-                    <span className={`badge !px-3 !py-1 ${
-                        ticket.status === 'resolved' ? 'badge-green' : 
-                        ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'
-                    }`}>
-                      {ticket.status.replace("_", " ")}
-                    </span>
-                  </div>
-                  {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold text-xl">!</span>}
-                </div>
-                
-                <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">{ticket.title}</h3>
-                <p className="text-[#6e6e73] text-sm mb-6 line-clamp-2">{ticket.description}</p>
-                
-                <div className="flex items-center justify-between border-t border-black/5 pt-6 mt-auto">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
-                      {ticket.creator?.name?.charAt(0) || '?'}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold">{ticket.creator?.name}</span>
-                      <span className="text-xs text-[#6e6e73] font-medium">{new Date(ticket.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white rounded-[40px] border border-black/10 overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-black/10 text-xs uppercase tracking-widest text-[#6e6e73]">
+                  <th className="p-6 font-bold">Ticket</th>
+                  <th className="p-6 font-bold hidden md:table-cell">Creator</th>
+                  <th className="p-6 font-bold">Status</th>
+                  <th className="p-6 font-bold hidden lg:table-cell">Date</th>
+                  <th className="p-6 font-bold text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-lg font-medium">
+                {filteredTickets.map((ticket) => (
+                  <tr 
+                    key={ticket.id} 
+                    onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
+                    className="border-b border-black/5 hover:bg-[#f4f4f4] cursor-pointer transition-colors group"
+                  >
+                    <td className="p-6">
+                      <div className="flex items-center gap-4">
+                        {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
+                        <div>
+                          <p className="font-bold group-hover:text-blue-600 transition-colors">{ticket.title}</p>
+                          <p className="text-sm text-[#6e6e73]">{ticket.type}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-6 hidden md:table-cell">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                          {ticket.creator?.name?.charAt(0) || '?'}
+                        </div>
+                        <span className="text-sm font-bold">{ticket.creator?.name}</span>
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      <span className={`badge !px-3 !py-1 ${
+                          ticket.status === 'resolved' ? 'badge-green' : 
+                          ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'
+                      }`}>
+                        {ticket.status.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="p-6 hidden lg:table-cell text-sm text-[#6e6e73] font-semibold">
+                      {new Date(ticket.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-6 text-right">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 inline-block text-black/20 group-hover:text-black transition-colors transform group-hover:translate-x-1"><path d="M16.6075 11.8572L13.255 8.40897L14.1388 7.5L19 12.5L14.1388 17.5L13.255 16.591L16.6075 13.1428H5V11.8572H16.6075Z"></path></svg>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 shadow-none">

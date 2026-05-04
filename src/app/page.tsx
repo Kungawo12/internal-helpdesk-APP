@@ -13,6 +13,7 @@ export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -27,41 +28,44 @@ export default function LandingPage() {
     if (!containerRef.current) return;
     
     const ctx = gsap.context(() => {
-      // Hero text reveal
-      gsap.from(".hero-line", {
-        y: "120%",
-        opacity: 0,
-        rotationZ: 2,
-        duration: 1.5,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.2
+      // Hero word-by-word reveal matching Clay's LineByLine_Splitted_fadePosition__fy8PX
+      gsap.fromTo(
+        ".str-word",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power4.out",
+          delay: 0.2
+        }
+      );
+
+      // Section fades
+      gsap.utils.toArray<HTMLElement>("section").forEach((sec) => {
+        gsap.fromTo(
+          sec,
+          { opacity: 0, y: 40 },
+          {
+            scrollTrigger: {
+              trigger: sec,
+              start: "top 80%",
+            },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out"
+          }
+        );
       });
 
-      // Scroll-triggered image reveals
-      gsap.utils.toArray<HTMLElement>(".reveal-wrapper").forEach((wrapper) => {
-        gsap.to(wrapper, {
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top 80%",
-            toggleClass: "is-revealed",
-            once: true
-          },
-          clipPath: "inset(0 0 0 0)",
-          duration: 1.5,
-          ease: "power4.inOut"
-        });
-      });
-
-      // Parallax text
-      gsap.to(".parallax-text", {
-        scrollTrigger: {
-          trigger: ".parallax-section",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1
-        },
-        y: -150
+      // Horizontal Logo Wall Scroll
+      gsap.to(".logo-track", {
+        xPercent: -50,
+        ease: "none",
+        duration: 20,
+        repeat: -1
       });
 
     }, containerRef);
@@ -69,8 +73,10 @@ export default function LandingPage() {
     return () => ctx.revert();
   }, []);
 
+  const heroText = "Helpdesk is a unified internal support and ticketing platform";
+
   return (
-    <div ref={containerRef} className="min-h-screen bg-white text-black font-sans overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-[#050411] text-white font-sans overflow-hidden">
       
       {/* Custom Cursor */}
       <div 
@@ -78,125 +84,167 @@ export default function LandingPage() {
         style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
       />
 
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-8 mix-blend-difference text-white pointer-events-none">
+      {/* Header_Header__wKE8N */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-8 mix-blend-difference text-white pointer-events-none">
         <div className="font-bold tracking-tighter text-2xl pointer-events-auto">
           <Link href="/">HELPDESK®</Link>
         </div>
-        <div className="flex gap-8 font-semibold tracking-tight text-lg pointer-events-auto">
+        <nav className="hidden md:flex gap-8 font-semibold tracking-tight text-lg pointer-events-auto">
+          <Link href="/dashboard" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Platform</Link>
           <Link href="/login" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Sign In</Link>
-          <Link href="/register" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start</Link>
-        </div>
-      </nav>
+          <Link href="/register" className="px-6 py-2 bg-white text-black rounded-full hover:scale-105 transition-transform" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start</Link>
+        </nav>
+      </header>
 
-      <main>
-        {/* Massive Hero Section */}
-        <section className="h-screen flex flex-col justify-end px-4 md:px-8 pb-16 md:pb-24">
-          <div className="overflow-hidden">
-            <h1 className="clay-massive-heading hero-line tracking-tighter">DIGITAL</h1>
-          </div>
-          <div className="overflow-hidden flex items-center gap-4 md:gap-12">
-            <h1 className="clay-massive-heading hero-line tracking-tighter">SUPPORT</h1>
-            <div className="hidden md:block flex-1 h-[2px] bg-black hero-line mt-4" />
-            <p className="hidden lg:block max-w-xs text-xl font-medium tracking-tight hero-line leading-tight">
-              An internal service platform designed like a premium agency experience. No friction, pure aesthetics.
-            </p>
-          </div>
-        </section>
-
-        {/* Abstract Video/Image Showcase (Case Study Style) */}
-        <section className="px-4 md:px-8 py-16">
-          <div 
-            className="reveal-wrapper w-full aspect-[4/5] md:aspect-[21/9] bg-[#f4f4f4] rounded-[40px] overflow-hidden relative cursor-pointer"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
-            <div className="reveal-image absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-100 flex items-center justify-center">
-              {/* Abstract Mockup inside the frame */}
-              <div className="w-3/4 h-3/4 bg-white rounded-[32px] shadow-2xl rotate-[-2deg] transition-transform duration-700 hover:rotate-0 flex flex-col overflow-hidden border border-black/5">
-                 <div className="h-16 border-b border-black/5 bg-[#fcfcfc] flex items-center px-8 gap-3">
-                    <div className="w-3 h-3 rounded-full bg-black/20" />
-                    <div className="w-3 h-3 rounded-full bg-black/20" />
-                 </div>
-                 <div className="p-12 flex-1">
-                    <div className="h-12 bg-black w-3/4 mb-8" />
-                    <div className="h-4 bg-black/10 w-full mb-4" />
-                    <div className="h-4 bg-black/10 w-5/6 mb-4" />
-                    <div className="h-4 bg-black/10 w-4/5" />
-                 </div>
-              </div>
-            </div>
-            <div className="absolute bottom-8 left-8 mix-blend-difference text-white">
-              <p className="text-2xl font-bold tracking-tight">Fluid Workflow System</p>
-              <p className="text-lg font-medium opacity-80">Enterprise Dashboard</p>
-            </div>
+      <main className="Main_Main___hAS2 pt-32 md:pt-48 pb-24">
+        
+        {/* HomeHero_HomeHero__0ywvx */}
+        <section className="px-6 md:px-12 mb-32 md:mb-64">
+          <div className="max-w-[1400px] mx-auto">
+            <h1 className="text-[12vw] md:text-[8vw] font-bold leading-[0.9] tracking-tighter text-white">
+              <span className="relative block">
+                {heroText.split(" ").map((word, i) => (
+                  <span key={i} className="inline-block relative mr-[2vw] md:mr-[1.5vw]">
+                    <span className="str-word inline-block">{word}</span>
+                  </span>
+                ))}
+              </span>
+            </h1>
           </div>
         </section>
 
-        {/* Massive Typography Divider / Parallax */}
-        <section className="py-40 overflow-hidden parallax-section bg-black text-white px-4 md:px-8 my-32">
-          <div className="flex flex-col items-center text-center">
-            <h2 className="text-[8vw] font-black leading-none tracking-tighter parallax-text whitespace-nowrap">
-              NOT ANOTHER
-            </h2>
-            <h2 className="text-[8vw] font-black leading-none tracking-tighter parallax-text whitespace-nowrap text-white/50">
-              BORING TICKETING
-            </h2>
-            <h2 className="text-[8vw] font-black leading-none tracking-tighter parallax-text whitespace-nowrap">
-              PLATFORM.
-            </h2>
-          </div>
-        </section>
+        <div className="bg-white text-black rounded-t-[40px] pt-12 md:pt-24">
 
-        {/* Asymmetric Grid (Replacing traditional Features) */}
-        <section className="px-4 md:px-8 py-32">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-5 flex flex-col justify-between p-8">
-              <h2 className="clay-sub-heading mb-8">Elevating internal communication.</h2>
-              <p className="text-2xl font-medium tracking-tight text-[#666666]">
-                Every pixel considered. We removed the visual clutter to focus on what matters: resolving your issues fast.
+        {/* CapabilitiesTop_CapabilitiesTop__NI0UP */}
+        <section className="px-6 md:px-12 py-24 bg-white border-t border-black/10">
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-32">
+            <div>
+              <p className="text-[2rem] md:text-[3rem] font-medium leading-tight tracking-tight text-[#050411]">
+                We resolve critical blockers for the world's leading teams by blending intelligent routing, automation, and design.
               </p>
             </div>
             
-            <div className="md:col-span-7 space-y-8">
-              <div className="card-clay aspect-square md:aspect-[4/3] bg-[#f4f4f4] flex flex-col justify-end" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
-                <div className="text-[120px] font-black tracking-tighter mb-auto">01</div>
-                <h3 className="text-4xl font-bold tracking-tight mb-4">Frictionless Submission</h3>
-                <p className="text-xl font-medium text-[#666666]">One simple form. Instantly routed to the right expert.</p>
-              </div>
-            </div>
-
-            <div className="md:col-span-8 space-y-8 mt-0 md:mt-[-100px]">
-              <div className="card-clay aspect-square md:aspect-[16/10] bg-black text-white flex flex-col justify-end" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
-                <div className="text-[120px] font-black tracking-tighter mb-auto text-white/20">02</div>
-                <h3 className="text-4xl font-bold tracking-tight mb-4 text-white">Real-time Visibility</h3>
-                <p className="text-xl font-medium text-white/70">Watch your request move from open to resolved without refreshing.</p>
-              </div>
-            </div>
-            
-            <div className="md:col-span-4 flex flex-col justify-end pb-8">
-              <Link href="/register" className="text-4xl font-bold tracking-tight hover:underline" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
-                Experience it now →
-              </Link>
+            <div className="space-y-2 border-t border-black/10">
+              {['Hardware Support', 'Software Access', 'Security Operations', 'Infrastructure'].map((item, i) => (
+                <div key={i} className="border-b border-black/10">
+                  <button 
+                    className="w-full py-8 flex justify-between items-center text-left"
+                    onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
+                    onMouseEnter={() => setIsHovering(true)} 
+                    onMouseLeave={() => setIsHovering(false)}
+                  >
+                    <span className="text-3xl md:text-5xl font-semibold tracking-tight">{item}</span>
+                    <svg width="24" height="24" viewBox="0 0 21 13" fill="none" className={`transform transition-transform duration-500 ${activeAccordion === i ? 'rotate-180' : ''}`}>
+                      <path d="m1.467 1.732 9.018 8.852 8.684-8.524" stroke="currentColor" strokeWidth="2.5"></path>
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${activeAccordion === i ? 'max-h-[500px] opacity-100 pb-8' : 'max-h-0 opacity-0'}`}>
+                    <p className="text-xl text-black/60 max-w-lg">
+                      Streamline your requests and eliminate bottlenecks. Our automated routing ensures your {item.toLowerCase()} tickets reach the right expert instantly.
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Minimalist Footer */}
-        <footer className="px-4 md:px-8 py-16 flex flex-col md:flex-row justify-between items-end border-t border-black/10">
-          <div>
-            <h1 className="text-[6vw] font-black tracking-tighter leading-none mb-8">HELPDESK®</h1>
-            <div className="flex gap-4">
-              <Link href="/register" className="btn-primary" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start Trial</Link>
-              <Link href="/login" className="btn-secondary" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Sign In</Link>
+        {/* LogoWall_Section_bright__i1pll */}
+        <section className="py-24 overflow-hidden bg-[#f4f4f4]">
+          <div className="flex w-[200%] logo-track">
+            <div className="flex w-1/2 justify-around items-center">
+              {['Engineering', 'Design', 'Finance', 'HR', 'Operations', 'Marketing'].map((dept, i) => (
+                <span key={i} className="text-4xl md:text-6xl font-bold text-black/20 tracking-tighter uppercase px-8">{dept}</span>
+              ))}
+            </div>
+            <div className="flex w-1/2 justify-around items-center">
+              {['Engineering', 'Design', 'Finance', 'HR', 'Operations', 'Marketing'].map((dept, i) => (
+                <span key={`dup-${i}`} className="text-4xl md:text-6xl font-bold text-black/20 tracking-tighter uppercase px-8">{dept}</span>
+              ))}
             </div>
           </div>
-          <div className="text-right mt-12 md:mt-0 font-medium">
-            <p className="text-xl">© 2026</p>
-            <p className="text-xl text-[#666666]">Internal Platform</p>
+        </section>
+
+        {/* WorkHome_Section__7d4QS */}
+        <section className="px-6 md:px-12 py-32 bg-white">
+          <div className="max-w-[1600px] mx-auto">
+            <h2 className="text-[3rem] font-medium tracking-tight mb-16">Core Modules</h2>
+            
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-24">
+              
+              {/* Item 1 - Small Wrapper */}
+              <li className="col-span-1 md:col-span-1 md:pr-12">
+                <Link href="/dashboard" className="block group cursor-pointer" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                  <article>
+                    <div className="aspect-square bg-[#f4f4f4] rounded-[40px] mb-8 overflow-hidden relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center transition-transform duration-700 group-hover:scale-105">
+                         <div className="text-8xl font-black text-black/5 tracking-tighter">01</div>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-4xl font-bold tracking-tight mb-4">Enterprise Dashboard</h3>
+                      <p className="text-xl text-black/60 mb-6">Real-time visibility into organization-wide analytics.</p>
+                      <ul className="flex flex-wrap gap-3 mb-8">
+                        <li className="px-4 py-2 border border-black/10 rounded-full text-sm font-semibold tracking-tight">Manager</li>
+                        <li className="px-4 py-2 border border-black/10 rounded-full text-sm font-semibold tracking-tight">Staff</li>
+                      </ul>
+                      <div className="flex items-center gap-2 font-semibold text-lg border-b border-black/20 pb-1 w-fit group-hover:border-black transition-colors">
+                        <span>View platform</span>
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M16.6075 11.8572L13.255 8.40897L14.1388 7.5L19 12.5L14.1388 17.5L13.255 16.591L16.6075 13.1428H5V11.8572H16.6075Z"></path></svg>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              </li>
+
+              {/* Item 2 - Large Wrapper */}
+              <li className="col-span-1 md:col-span-1 md:pt-32">
+                <Link href="/dashboard/create" className="block group cursor-pointer" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                  <article>
+                    <div className="aspect-[4/5] bg-[#000000] rounded-[40px] mb-8 overflow-hidden relative">
+                       <div className="absolute inset-0 bg-gradient-to-t from-black to-slate-900 flex items-center justify-center transition-transform duration-700 group-hover:scale-105">
+                         <div className="text-8xl font-black text-white/5 tracking-tighter">02</div>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-4xl font-bold tracking-tight mb-4">Frictionless Submission</h3>
+                      <p className="text-xl text-black/60 mb-6">One simple form, instantly routed to the right expert.</p>
+                      <ul className="flex flex-wrap gap-3 mb-8">
+                        <li className="px-4 py-2 border border-black/10 rounded-full text-sm font-semibold tracking-tight">Employee</li>
+                        <li className="px-4 py-2 border border-black/10 rounded-full text-sm font-semibold tracking-tight">UX</li>
+                      </ul>
+                      <div className="flex items-center gap-2 font-semibold text-lg border-b border-black/20 pb-1 w-fit group-hover:border-black transition-colors">
+                        <span>Create ticket</span>
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M16.6075 11.8572L13.255 8.40897L14.1388 7.5L19 12.5L14.1388 17.5L13.255 16.591L16.6075 13.1428H5V11.8572H16.6075Z"></path></svg>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              </li>
+
+            </ul>
           </div>
-        </footer>
+        </section>
+        </div>
+
       </main>
+      
+      {/* Footer */}
+      <footer className="bg-black text-white px-6 md:px-12 py-24 md:py-32">
+        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-end gap-16">
+          <div className="w-full md:w-1/2">
+             <h2 className="text-[10vw] md:text-[6vw] font-black leading-none tracking-tighter mb-8">HELPDESK®</h2>
+             <div className="flex gap-4">
+               <Link href="/register" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start Trial</Link>
+               <Link href="/login" className="px-8 py-4 border-2 border-white/20 rounded-full font-bold text-lg hover:border-white transition-colors" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Sign In</Link>
+             </div>
+          </div>
+          <div className="w-full md:w-auto text-left md:text-right text-white/60 font-medium text-lg">
+             <p>© 2026 Internal Support Platform</p>
+             <p>Designed for frictionless operations.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
