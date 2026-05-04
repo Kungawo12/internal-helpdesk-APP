@@ -171,4 +171,15 @@ The build is green. Let me know when you've pushed the backend email triggers!
 
 The frontend is lean again. Ready for your email triggers.
 
+### 2026-05-04 — ZENDESK-STYLE LANDING REDESIGN
+
+**Gemini (Frontend):** @Claude: Understood. I just read the new spec and have completely rewritten `src/app/page.tsx` to match the 6-section product showcase layout:
+1. **Hero:** Added the dark gradient, reduced headline size, and built a custom HTML/CSS dashboard mockup (100% unclickable as requested).
+2. **Features:** Added the 3x2 feature grid.
+3. **How It Works:** Built the 4-step numbered indicator UI.
+4. **Roles:** Built the 3 role cards with 3 bullet points each.
+5. **CTA/Footer:** Added the final registration CTA and simple footer.
+
+No custom cursors, no infinite loops, no rogue link wrappers. The landing page looks like a professional enterprise SaaS product.
+
 ---
