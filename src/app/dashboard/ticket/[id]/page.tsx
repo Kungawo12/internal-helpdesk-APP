@@ -3,9 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { useTicket } from "@/hooks/useTicket";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import gsap from "gsap";
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -18,18 +17,6 @@ export default function TicketDetailPage() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (!loading && ticket) {
-      gsap.from(".prism-reveal", {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-      });
-    }
-  }, [loading, ticket]);
 
   const handleResolve = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,21 +65,19 @@ export default function TicketDetailPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] space-y-4">
-        <div className="w-12 h-12 border-[3px] border-blue-600/10 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Accessing Data Stream</p>
+        <div className="w-8 h-8 border-[3px] border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">Loading ticket details...</p>
       </div>
     );
   }
 
   if (error || !ticket) {
     return (
-      <div className="max-w-2xl mx-auto py-20 text-center">
-        <div className="glass-panel p-12 space-y-6">
-           <div className="text-6xl">⚠️</div>
-           <h2 className="text-3xl font-extrabold text-[#0f172a]">Access Denied</h2>
-           <p className="text-slate-500 font-medium">The requested record could not be retrieved from the manifest.</p>
-           <button onClick={() => router.back()} className="btn-prism">Return to Manifest</button>
-        </div>
+      <div className="max-w-2xl mx-auto py-20 text-center space-y-4">
+        <div className="text-4xl">⚠️</div>
+        <h2 className="text-xl font-bold text-slate-900">Ticket Not Found</h2>
+        <p className="text-sm text-slate-500">The requested ticket could not be retrieved.</p>
+        <button onClick={() => router.back()} className="btn-secondary">Return to Dashboard</button>
       </div>
     );
   }
@@ -102,45 +87,44 @@ export default function TicketDetailPage() {
   const isStaff = role === 'it_staff' || role === 'hr_staff';
 
   return (
-    <div className="space-y-10 pb-20">
-      {/* Prism Navigation */}
-      <div className="prism-reveal flex items-center justify-between">
+    <div className="space-y-6 max-w-6xl mx-auto pb-20">
+      {/* Navigation */}
+      <div className="flex items-center justify-between">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-black text-[#0f172a] hover:gap-4 transition-all uppercase tracking-widest"
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
         >
           <span>←</span> Back to Dashboard
         </button>
         <div className="flex items-center gap-3">
-           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ticket_Status:</span>
-           <span className={`badge-prism ${
+           <span className="text-xs font-semibold text-slate-500 uppercase">Status:</span>
+           <span className={`badge ${
              ticket.status === 'resolved' ? 'badge-green' : 
-             ticket.status === 'in_progress' ? 'badge-blue' : 'badge-amber'
+             ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'
            }`}>
              {ticket.status.replace("_", " ")}
            </span>
         </div>
       </div>
 
-      {/* Ticket Bento Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Main Content Area */}
-        <div className="lg:col-span-2 space-y-8">
-           <div className="prism-reveal glass-panel p-10 bg-white shadow-2xl border-white/80">
-              <div className="flex items-center gap-4 mb-8">
-                 <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-3xl shadow-inner">
+        <div className="lg:col-span-2 space-y-6">
+           <div className="card p-6">
+              <div className="flex items-start gap-4 mb-6 border-b border-slate-100 pb-6">
+                 <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-2xl flex-shrink-0">
                     {ticket.type === 'IT' ? '💻' : '📋'}
                  </div>
                  <div>
-                    <h1 className="text-4xl font-extrabold text-[#0f172a] tracking-tight mb-1">{ticket.title}</h1>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Global_ID: #{ticket.id.toUpperCase()}</p>
+                    <h1 className="text-2xl font-bold text-slate-900 mb-1">{ticket.title}</h1>
+                    <p className="text-xs text-slate-500 font-mono">ID: #{ticket.id.toUpperCase()}</p>
                  </div>
               </div>
 
-              <div className="space-y-6">
-                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Problem Description</h3>
-                 <p className="text-lg text-[#475569] leading-relaxed font-medium whitespace-pre-wrap">
+              <div className="space-y-4">
+                 <h3 className="text-sm font-semibold text-slate-900">Problem Description</h3>
+                 <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
                     {ticket.description}
                  </p>
               </div>
@@ -148,96 +132,103 @@ export default function TicketDetailPage() {
 
            {/* Solution Panel */}
            {ticket.status === 'resolved' && (
-             <div className="prism-reveal glass-panel p-10 bg-emerald-50/20 border-emerald-100 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                   <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white text-xl">✅</div>
-                   <h3 className="text-xl font-extrabold text-emerald-900 tracking-tight">Resolution Details</h3>
+             <div className="card p-6 bg-green-50/50 border-green-100">
+                <div className="flex items-center gap-2 mb-4">
+                   <span className="text-green-600 text-lg">✅</span>
+                   <h3 className="text-base font-bold text-green-900">Resolution Details</h3>
                 </div>
-                <div className="bg-white/80 rounded-2xl p-6 border border-emerald-100 text-[#475569] font-medium leading-relaxed italic">
+                <div className="bg-white rounded-lg p-4 border border-green-100 text-sm text-slate-700 leading-relaxed">
                    {ticket.solution}
                 </div>
-                <div className="mt-6 flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xs uppercase border border-emerald-200">
-                      {ticket.assignee?.name?.charAt(0)}
-                   </div>
-                   <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                      Finalized by {ticket.assignee?.name} • {new Date(ticket.updatedAt).toLocaleDateString()}
-                   </div>
+                <div className="mt-4 flex items-center gap-2 text-xs text-green-700">
+                   <span className="font-medium">Resolved by {ticket.assignee?.name}</span>
+                   <span>•</span>
+                   <span>{new Date(ticket.updatedAt).toLocaleDateString()}</span>
                 </div>
              </div>
            )}
 
            {/* Resolve Action Panel (Staff Only) */}
            {isStaff && ticket.status !== 'resolved' && (
-             <div className="prism-reveal glass-panel p-10 bg-white border-blue-100 shadow-2xl">
-                <h3 className="text-xl font-extrabold text-[#0f172a] tracking-tight mb-6">Submit Resolution</h3>
-                <form onSubmit={handleResolve} className="space-y-6">
+             <div className="card p-6 border-blue-100">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Submit Resolution</h3>
+                <form onSubmit={handleResolve} className="space-y-4">
                    <textarea
                      required
-                     placeholder="Document the technical solution applied to this request..."
+                     placeholder="Document the solution applied to this request..."
                      value={solution}
                      onChange={(e) => setSolution(e.target.value)}
-                     className="input-prism w-full min-h-[160px] resize-none text-base"
+                     className="input-field min-h-[120px] resize-y"
                    />
-                   <button 
-                     type="submit" 
-                     disabled={isSubmitting}
-                     className="btn-prism w-full h-14 text-lg"
-                   >
-                     {isSubmitting ? "Processing..." : "Finalize Support Stream"}
-                   </button>
+                   <div className="flex gap-3">
+                     <button 
+                       type="submit" 
+                       disabled={isSubmitting}
+                       className="btn-primary flex-1"
+                     >
+                       {isSubmitting ? "Processing..." : "Resolve Ticket"}
+                     </button>
+                     {ticket.status === 'open' && (
+                        <button
+                          type="button"
+                          onClick={() => handleStatusChange("in_progress")}
+                          className="btn-secondary"
+                        >
+                          Start Working
+                        </button>
+                     )}
+                   </div>
                 </form>
              </div>
            )}
         </div>
 
-        {/* Sidebar Analytics/Meta Area */}
-        <div className="space-y-8">
-           {/* Meta Info */}
-           <div className="prism-reveal glass-panel p-8 bg-white/40 space-y-8">
-              <div className="space-y-6">
+        {/* Sidebar Info Area */}
+        <div className="space-y-6">
+           <div className="card p-5 space-y-6">
+              <div className="space-y-4">
                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Originator</p>
-                    <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-blue-600 shadow-sm">
+                    <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Creator</p>
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                           {ticket.creator.name.charAt(0)}
                        </div>
                        <div className="flex flex-col">
-                          <span className="font-extrabold text-[#0f172a]">{ticket.creator.name}</span>
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">{ticket.creator.email}</span>
+                          <span className="font-medium text-sm text-slate-900">{ticket.creator.name}</span>
+                          <span className="text-xs text-slate-500">{ticket.creator.email}</span>
                        </div>
                     </div>
                  </div>
 
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Priority</p>
-                       <p className={`font-black uppercase text-xs ${
-                         ticket.priority === 'urgent' ? 'text-red-500' : 'text-[#0f172a]'
+                 <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
+                    <div>
+                       <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Priority</p>
+                       <p className={`font-medium text-sm ${
+                         ticket.priority === 'urgent' ? 'text-red-600' : 'text-slate-900'
                        }`}>{ticket.priority}</p>
                     </div>
-                    <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Department</p>
-                       <p className="font-black uppercase text-xs text-[#0f172a]">{ticket.type}</p>
+                    <div>
+                       <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Department</p>
+                       <p className="font-medium text-sm text-slate-900">{ticket.type}</p>
                     </div>
                  </div>
 
-                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Timeline_Log</p>
-                    <div className="space-y-4">
-                       <div className="flex gap-4">
-                          <div className="w-1 bg-blue-100 rounded-full" />
+                 <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs font-semibold text-slate-500 uppercase mb-3">Timeline</p>
+                    <div className="space-y-3">
+                       <div className="flex gap-3">
+                          <div className="w-0.5 bg-blue-200 mt-1" />
                           <div>
-                             <p className="text-xs font-extrabold text-[#0f172a]">Initialized</p>
-                             <p className="text-[10px] text-slate-400 font-bold uppercase">{new Date(ticket.createdAt).toLocaleString()}</p>
+                             <p className="text-xs font-medium text-slate-900">Created</p>
+                             <p className="text-xs text-slate-500">{new Date(ticket.createdAt).toLocaleString()}</p>
                           </div>
                        </div>
                        {ticket.status === 'resolved' && (
-                         <div className="flex gap-4">
-                            <div className="w-1 bg-emerald-500 rounded-full" />
+                         <div className="flex gap-3">
+                            <div className="w-0.5 bg-green-200 mt-1" />
                             <div>
-                               <p className="text-xs font-extrabold text-emerald-600">Finalized</p>
-                               <p className="text-[10px] text-slate-400 font-bold uppercase">{new Date(ticket.updatedAt).toLocaleString()}</p>
+                               <p className="text-xs font-medium text-green-700">Resolved</p>
+                               <p className="text-xs text-slate-500">{new Date(ticket.updatedAt).toLocaleString()}</p>
                             </div>
                          </div>
                        )}
@@ -248,36 +239,35 @@ export default function TicketDetailPage() {
 
            {/* Feedback System (Creator Only) */}
            {isCreator && ticket.status === 'resolved' && !ticket.feedback && (
-             <div className="prism-reveal glass-panel p-8 bg-blue-50/30 border-blue-100 shadow-2xl">
-                <h3 className="text-lg font-extrabold text-[#0f172a] tracking-tight mb-6">Service Feedback</h3>
-                <form onSubmit={handleFeedback} className="space-y-6">
+             <div className="card p-5 border-blue-100">
+                <h3 className="text-base font-bold text-slate-900 mb-4">Rate your support</h3>
+                <form onSubmit={handleFeedback} className="space-y-4">
                    <div className="space-y-2">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quality_Rating</p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                          {[1,2,3,4,5].map(s => (
                            <button 
                              key={s} 
                              type="button" 
                              onClick={() => setRating(s)}
-                             className={`w-10 h-10 rounded-xl font-black transition-all ${
-                               rating >= s ? "bg-amber-400 text-white shadow-lg" : "bg-white text-slate-300 border border-slate-100"
+                             className={`text-2xl transition-colors ${
+                               rating >= s ? "text-amber-400" : "text-slate-200 hover:text-slate-300"
                              }`}
                            >
-                             {s}
+                             ★
                            </button>
                          ))}
                       </div>
                    </div>
                    <textarea
-                     placeholder="Optional comments on resolution quality..."
+                     placeholder="Any comments on the resolution?"
                      value={comment}
                      onChange={(e) => setComment(e.target.value)}
-                     className="input-prism w-full min-h-[100px] text-sm bg-white"
+                     className="input-field min-h-[80px] text-sm"
                    />
                    <button 
                      type="submit" 
                      disabled={isSubmitting}
-                     className="btn-prism w-full !bg-blue-600 shadow-blue-500/20"
+                     className="btn-primary w-full"
                    >
                      {isSubmitting ? "Submitting..." : "Send Feedback"}
                    </button>
@@ -287,15 +277,15 @@ export default function TicketDetailPage() {
 
            {/* Feedback View */}
            {ticket.feedback && (
-             <div className="prism-reveal glass-panel p-8 bg-amber-50/20 border-amber-100 shadow-lg">
-                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-4">Employee_Sentiment</p>
-                <div className="flex items-center gap-1 mb-4">
+             <div className="card p-5 bg-amber-50/50 border-amber-100">
+                <p className="text-xs font-semibold text-amber-700 uppercase mb-2">Feedback Provided</p>
+                <div className="flex items-center gap-1 mb-3">
                    {[1,2,3,4,5].map(s => (
                      <span key={s} className={`text-xl ${ticket.feedback!.rating >= s ? "text-amber-400" : "text-slate-200"}`}>★</span>
                    ))}
                 </div>
                 {ticket.feedback.comment && (
-                  <p className="text-sm font-medium text-[#475569] leading-relaxed italic border-l-2 border-amber-200 pl-4">
+                  <p className="text-sm text-slate-700 italic border-l-2 border-amber-300 pl-3">
                     "{ticket.feedback.comment}"
                   </p>
                 )}

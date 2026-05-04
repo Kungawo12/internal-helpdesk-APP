@@ -46,24 +46,20 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 selection:bg-primary/30">
-      {/* Visual Foundation */}
-      <div className="app-bg" />
-      <div className="app-overlay" />
-
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="card p-8 bg-black/60 backdrop-blur-3xl shadow-2xl border-white/5">
+    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        <div className="card p-8">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-xl font-bold text-white text-xl mb-4 shadow-lg shadow-primary/20">
+            <Link href="/" className="inline-flex items-center justify-center w-12 h-12 bg-[#2563eb] rounded-xl font-bold text-white text-xl mb-4 shadow-sm">
               H
             </Link>
-            <h1 className="heading-prime text-2xl mb-1">Create Account</h1>
-            <p className="text-sm text-slate-400">Join the enterprise helpdesk platform</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Create Account</h1>
+            <p className="text-sm text-slate-500">Join the enterprise helpdesk platform</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Full Name</label>
+              <label className="text-sm font-semibold text-slate-700">Full Name</label>
               <input
                 type="text"
                 required
@@ -75,7 +71,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Email Address</label>
+              <label className="text-sm font-semibold text-slate-700">Email Address</label>
               <input
                 type="email"
                 required
@@ -87,7 +83,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Password</label>
+              <label className="text-sm font-semibold text-slate-700">Password</label>
               <input
                 type="password"
                 required
@@ -99,17 +95,17 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2 pt-2">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Select Your Role</label>
+              <label className="text-sm font-semibold text-slate-700">Select Your Role</label>
               <div className="grid grid-cols-2 gap-2">
                 {roles.map((r) => (
                   <button
                     key={r.id}
                     type="button"
                     onClick={() => setRole(r.id)}
-                    className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex items-center gap-2 p-3 rounded-lg border text-sm font-medium transition-all ${
                       role === r.id 
-                        ? "bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10" 
-                        : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
+                        ? "bg-blue-50 border-blue-200 text-blue-700" 
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
                     <span>{r.icon}</span>
@@ -120,24 +116,24 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-[11px] text-red-400 font-bold text-center">{error}</p>
+              <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
+                <p className="text-sm text-red-600 font-medium text-center">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 mt-4"
+              className="btn-primary w-full py-2.5 mt-2"
             >
               {loading ? "Creating Account..." : "Register Now"}
             </button>
           </form>
 
-          <div className="mt-8 text-center pt-6 border-t border-white/5">
-            <p className="text-xs text-slate-500">
+          <div className="mt-8 text-center pt-6 border-t border-slate-100">
+            <p className="text-sm text-slate-500">
               Already have an account?{" "}
-              <Link href="/login" className="text-primary font-bold hover:underline">
+              <Link href="/login" className="text-blue-600 font-semibold hover:underline">
                 Sign In
               </Link>
             </p>

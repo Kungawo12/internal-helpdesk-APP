@@ -37,24 +37,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 selection:bg-primary/30">
-      {/* Visual Foundation */}
-      <div className="app-bg" />
-      <div className="app-overlay" />
-
-      <div className="w-full max-w-sm animate-fade-in">
-        <div className="card p-8 bg-black/60 backdrop-blur-3xl shadow-2xl border-white/5">
+    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        <div className="card p-8">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center justify-center w-12 h-12 bg-primary rounded-xl font-bold text-white text-xl mb-4 shadow-lg shadow-primary/20">
+            <Link href="/" className="inline-flex items-center justify-center w-12 h-12 bg-[#2563eb] rounded-xl font-bold text-white text-xl mb-4 shadow-sm">
               H
             </Link>
-            <h1 className="heading-prime text-2xl mb-1">Sign In</h1>
-            <p className="text-sm text-slate-400">Sign in to your account</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Sign In</h1>
+            <p className="text-sm text-slate-500">Sign in to your account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Email Address</label>
+              <label className="text-sm font-semibold text-slate-700">Email Address</label>
               <input
                 type="email"
                 required
@@ -66,7 +62,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Password</label>
+              <label className="text-sm font-semibold text-slate-700">Password</label>
               <input
                 type="password"
                 required
@@ -78,25 +74,25 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-[11px] text-red-400 font-bold text-center">{error}</p>
+              <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
+                <p className="text-sm text-red-600 font-medium text-center">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3 mt-4"
+              className="btn-primary w-full py-2.5 mt-2"
             >
               {loading ? "Authenticating..." : "Sign In"}
             </button>
           </form>
 
-          <div className="mt-8 text-center pt-6 border-t border-white/5">
-            <p className="text-xs text-slate-500">
+          <div className="mt-8 text-center pt-6 border-t border-slate-100">
+            <p className="text-sm text-slate-500">
               Don't have an account?{" "}
-              <Link href="/register" className="text-primary font-bold hover:underline">
-                Create Account
+              <Link href="/register" className="text-blue-600 font-semibold hover:underline">
+                Register
               </Link>
             </p>
           </div>
