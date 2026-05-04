@@ -17,7 +17,6 @@
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    cursor: none; /* Custom cursor for that premium agency feel */
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -43,74 +42,70 @@
   }
 
   .card {
-    background: #f4f4f4;
-    border-radius: 32px;
-    padding: 40px;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s ease;
-    overflow: hidden;
-    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
   
   .card:hover {
-    transform: scale(0.98);
-    background: #eeeeee;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
   }
 
   .btn-primary {
-    background: #000000;
+    background: #0f172a;
     color: #ffffff;
-    padding: 20px 48px;
-    border-radius: 100px;
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .btn-primary:hover {
-    transform: scale(1.05);
-    background: #222222;
+    background: #1e293b;
   }
   
   .btn-secondary {
     background: transparent;
-    color: #000000;
-    border: 2px solid #000000;
-    padding: 18px 46px;
-    border-radius: 100px;
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
   
   .btn-secondary:hover {
-    background: #000000;
-    color: #ffffff;
-    transform: scale(1.05);
+    background: #f8fafc;
+    border-color: #94a3b8;
   }
 
   .input-field {
-    background: #f4f4f4;
-    border: none;
-    border-radius: 16px;
-    padding: 20px 24px;
-    color: #000000;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #0f172a;
     width: 100%;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    font-size: 18px;
-    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 14px;
   }
   
   .input-field:focus {
     outline: none;
-    background: #eeeeee;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 /* Dashboard Fade Animations */
 .animate-fade-in {
@@ -133,20 +128,18 @@
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
   .badge {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 100px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
-    text-transform: uppercase;
   }
-  .badge-blue { background: #000000; color: #ffffff; }
-  .badge-green { background: #000000; color: #ffffff; }
-  .badge-amber { background: #000000; color: #ffffff; }
-  .badge-red { background: #ff3b30; color: #ffffff; }
-  .badge-slate { background: #f4f4f4; color: #000000; }
+  .badge-blue { background: #eff6ff; color: #2563eb; }
+  .badge-green { background: #f0fdf4; color: #16a34a; }
+  .badge-amber { background: #fffbeb; color: #d97706; }
+  .badge-red { background: #fef2f2; color: #dc2626; }
+  .badge-slate { background: #f8fafc; color: #475569; }
 }
 
 /* Custom Cursor */

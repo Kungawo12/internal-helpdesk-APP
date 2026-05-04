@@ -11,18 +11,7 @@ if (typeof window !== "undefined") {
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
-  const [isHovering, setIsHovering] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
-    };
-    
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -59,15 +48,6 @@ export default function LandingPage() {
           }
         );
       });
-
-      // Horizontal Logo Wall Scroll
-      gsap.to(".logo-track", {
-        xPercent: -50,
-        ease: "none",
-        duration: 20,
-        repeat: -1
-      });
-
     }, containerRef);
 
     return () => ctx.revert();
@@ -78,21 +58,15 @@ export default function LandingPage() {
   return (
     <div ref={containerRef} className="min-h-screen bg-[#050411] text-white font-sans overflow-hidden">
       
-      {/* Custom Cursor */}
-      <div 
-        className={`custom-cursor hidden md:block ${isHovering ? 'hovering' : ''}`}
-        style={{ left: `${cursorPos.x}px`, top: `${cursorPos.y}px` }}
-      />
-
-      {/* Header_Header__wKE8N */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-8 mix-blend-difference text-white pointer-events-none">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-8 text-white">
         <div className="font-bold tracking-tighter text-2xl pointer-events-auto">
           <Link href="/">HELPDESK®</Link>
         </div>
         <nav className="hidden md:flex gap-8 font-semibold tracking-tight text-lg pointer-events-auto">
-          <Link href="/dashboard" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Platform</Link>
-          <Link href="/login" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Sign In</Link>
-          <Link href="/register" className="px-6 py-2 bg-white text-black rounded-full hover:scale-105 transition-transform" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start</Link>
+          <Link href="/dashboard">Platform</Link>
+          <Link href="/login">Sign In</Link>
+          <Link href="/register" className="px-6 py-2 bg-white text-black rounded-full hover:scale-105 transition-transform">Start</Link>
         </nav>
       </header>
 
@@ -130,8 +104,6 @@ export default function LandingPage() {
                   <button 
                     className="w-full py-8 flex justify-between items-center text-left"
                     onClick={() => setActiveAccordion(activeAccordion === i ? null : i)}
-                    onMouseEnter={() => setIsHovering(true)} 
-                    onMouseLeave={() => setIsHovering(false)}
                   >
                     <span className="text-3xl md:text-5xl font-semibold tracking-tight">{item}</span>
                     <svg width="24" height="24" viewBox="0 0 21 13" fill="none" className={`transform transition-transform duration-500 ${activeAccordion === i ? 'rotate-180' : ''}`}>
@@ -174,7 +146,7 @@ export default function LandingPage() {
               
               {/* Item 1 - Small Wrapper */}
               <li className="col-span-1 md:col-span-1 md:pr-12">
-                <Link href="/dashboard" className="block group cursor-pointer" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                <Link href="/dashboard" className="block group cursor-pointer">
                   <article>
                     <div className="aspect-square bg-[#f4f4f4] rounded-[40px] mb-8 overflow-hidden relative">
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-50 flex items-center justify-center transition-transform duration-700 group-hover:scale-105">
@@ -199,7 +171,7 @@ export default function LandingPage() {
 
               {/* Item 2 - Large Wrapper */}
               <li className="col-span-1 md:col-span-1 md:pt-32">
-                <Link href="/dashboard/create" className="block group cursor-pointer" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+                <Link href="/dashboard/create" className="block group cursor-pointer">
                   <article>
                     <div className="aspect-[4/5] bg-[#000000] rounded-[40px] mb-8 overflow-hidden relative">
                        <div className="absolute inset-0 bg-gradient-to-t from-black to-slate-900 flex items-center justify-center transition-transform duration-700 group-hover:scale-105">
@@ -235,8 +207,8 @@ export default function LandingPage() {
           <div className="w-full md:w-1/2">
              <h2 className="text-[10vw] md:text-[6vw] font-black leading-none tracking-tighter mb-8">HELPDESK®</h2>
              <div className="flex gap-4">
-               <Link href="/register" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Start Trial</Link>
-               <Link href="/login" className="px-8 py-4 border-2 border-white/20 rounded-full font-bold text-lg hover:border-white transition-colors" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>Sign In</Link>
+               <Link href="/register" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform">Start Trial</Link>
+               <Link href="/login" className="px-8 py-4 border-2 border-white/20 rounded-full font-bold text-lg hover:border-white transition-colors">Sign In</Link>
              </div>
           </div>
           <div className="w-full md:w-auto text-left md:text-right text-white/60 font-medium text-lg">
