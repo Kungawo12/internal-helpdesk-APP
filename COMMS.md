@@ -10,6 +10,157 @@
 
 ## Backend → Frontend
 
+### 2026-05-04 — Landing Page: Owner Wants a Complete Redo
+
+**Claude:** Tom, the owner specifically doesn't like the front/landing page design. Here's exactly what they want.
+
+#### The Problem
+The current landing page looks like a developer portfolio or a dark tech startup — not an internal company tool. Real employees visiting this page need to understand in 3 seconds: "This is where I go to get help with IT or HR issues."
+
+#### What to Build
+A clean, professional landing page. Reference: **Zendesk**, **Freshdesk**, or **Notion's homepage** — simple, clear, trustworthy.
+
+**Hero Section:**
+- Big clear headline: something like "Internal Support, Simplified" or "Get Help. Stay Productive."
+- Short subtitle: "Submit IT and HR support tickets, track their status, and get solutions."
+- Two buttons: "Get Started" (→ /register) and "Sign In" (→ /login)
+- A clean mockup/illustration of the dashboard (use the existing preview image or a simple CSS mockup)
+- Light or white background — NOT dark
+
+**Features (3-6 cards):**
+- Simple icons (emoji is fine), title, one-line description
+- Examples: "Quick Ticketing", "Real-Time Tracking", "Email Alerts", "Role-Based Access", "Solution Database", "Feedback System"
+- White cards on light gray background
+
+**How It Works (3-4 steps):**
+- Step 1: Submit a ticket
+- Step 2: Team gets notified
+- Step 3: Issue resolved
+- Step 4: Give feedback
+- Clean numbered steps, no fancy animations
+
+**Roles Section:**
+- 3 cards: Employee, IT/HR Staff, Manager
+- What each can do (2-3 bullet points)
+
+**CTA + Footer:**
+- "Ready to get started?" with Register button
+- Simple footer with copyright
+
+#### Design Rules for Landing Page
+- **Light background** — white or `#f8fafc`
+- **Dark text** — `#0f172a` for headings, `#475569` for body
+- **Blue primary** — `#2563eb` for buttons and accents
+- **White cards** with subtle borders
+- **No glass morphism, no backdrop blur, no dark overlays**
+- **No background images** — use CSS gradients at most (very subtle)
+- Clean, readable fonts — Inter or system font
+- Mobile responsive
+
+**The landing page is the first thing people see. Make it professional and trustworthy.**
+
+---
+
+### 2026-05-04 — Design Direction: The Owner Doesn't Like the Current Design
+
+**Claude (Senior Engineer):** Tom, the project owner reviewed the app and doesn't like the design. Here's what needs to change across the entire app.
+
+#### What's Wrong
+- The dark theme with glass effects looks like a gaming dashboard, not a business tool
+- Background images make it feel heavy and slow
+- Labels still drift into jargon occasionally
+- Too much visual noise — glows, blurs, overlays
+- It doesn't look like something a real company would use
+
+#### New Design Direction: Clean Light Mode
+
+**Switch the entire app to a light, professional theme.** Think of tools people actually use at work every day — Google Workspace, Slack (light mode), Jira, GitHub.
+
+**Color Palette:**
+- Background: `#f8fafc` (slate-50) — light gray
+- Cards: `#ffffff` — white with subtle border `#e2e8f0` (slate-200)
+- Text: `#0f172a` (slate-900) for headings, `#475569` (slate-600) for body
+- Primary: `#2563eb` (blue-600) for buttons, links, active states
+- Success: `#16a34a` (green-600) for resolved
+- Warning: `#d97706` (amber-600) for in progress
+- Danger: `#dc2626` (red-600) for urgent
+- Borders: `#e2e8f0` (slate-200)
+
+**Typography:**
+- Font: Inter or system font — no fancy fonts
+- Headings: `font-semibold`, not `font-black`
+- No `uppercase tracking-widest` on everything — only on small labels
+- Body text: normal case, regular weight
+
+**Cards:**
+```css
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+```
+
+**No:**
+- No `backdrop-filter` anywhere except navbar
+- No background images on any page
+- No `.app-bg`, `.app-overlay` divs
+- No glass morphism
+- No glow effects
+- No `animate-pulse` on decorative elements
+- No dark backgrounds
+
+**Buttons:**
+```css
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+```
+
+**Inputs:**
+```css
+.input-field {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #0f172a;
+}
+```
+
+**Badges:**
+```css
+.badge-blue { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.badge-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.badge-amber { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.badge-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+```
+
+#### Apply to EVERY page:
+1. `globals.css` — rewrite with light theme
+2. Landing page — light background, professional hero
+3. Login & Register — white cards on light gray background
+4. Dashboard — white cards, light table
+5. Create Ticket — clean white form
+6. Manager Dashboard — the big redesign (see previous COMMS for full spec)
+7. Staff Queue — light theme
+8. Ticket Detail — light theme
+9. Layout — light navbar, white background, no background images
+
+**Deliver everything in one pass. This is a complete theme change.**
+
+---
+
 ### 2026-05-04 — MAJOR: Complete Manager Dashboard Redesign
 
 **Claude (Senior Engineer):** Tom, this is your biggest task yet. The manager dashboard needs to look and feel like a real executive dashboard — not just a ticket list. Managers don't create tickets. They oversee, analyse, and make decisions.

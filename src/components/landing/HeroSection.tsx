@@ -1,74 +1,47 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
 import Link from "next/link";
 
 export default function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".hero-text", {
-        opacity: 0,
-        y: 40,
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "power4.out",
-      });
-      
-      gsap.from(".hero-ui", {
-        opacity: 0,
-        y: 60,
-        duration: 1.8,
-        delay: 0.8,
-        ease: "expo.out",
-      });
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={containerRef} className="relative pt-40 pb-32 overflow-hidden min-h-screen flex flex-col items-center">
-      {/* Background Image Layer */}
-      <div className="app-bg" />
-      <div className="app-overlay bg-black/40" />
-      
-      <div className="max-w-6xl mx-auto px-8 text-center relative z-10">
-        <div className="hero-text inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-10 backdrop-blur-xl">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Enterprise Operations v1.0</span>
+    <section className="relative pt-40 pb-24 px-6 overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8 animate-fade-in">
+          <span className="w-2 h-2 rounded-full bg-blue-500" />
+          <span className="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Enterprise Helpdesk v1.0</span>
         </div>
-
-        <h1 className="hero-text text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.9] text-white text-glow">
-          Service Excellence, <br />
-          <span className="text-primary">Redefined.</span>
+        
+        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+          Support that moves as <br /> <span className="text-blue-500">fast as your team.</span>
         </h1>
-
-        <p className="hero-text text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto mb-16 leading-relaxed font-bold tracking-tight">
-          The high-performance IT & HR ticketing platform designed for 
-          the modern enterprise. Streamlined, professional, and breathtakingly fast.
+        
+        <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+          The unified internal ticketing system for IT and HR operations. 
+          Built for modern organizations who prioritize employee productivity.
         </p>
 
-        <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
-          <Link href="/register" className="btn-primary px-14 py-5 text-lg font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(56,189,248,0.3)]">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24">
+          <Link href="/register" className="btn-primary px-10 py-4 text-base shadow-xl shadow-blue-500/10">
             Get Started
           </Link>
-          <Link href="#features" className="btn-secondary px-14 py-5 text-lg font-black uppercase tracking-widest bg-white/5 border-white/10 hover:bg-white/10 backdrop-blur-3xl">
-            Explore Features
+          <Link href="#features" className="btn-secondary px-10 py-4 text-base">
+            Learn More
           </Link>
         </div>
 
-        {/* Cinematic Dashboard Preview */}
-        <div className="hero-ui relative w-full max-w-5xl mx-auto rounded-[40px] border border-white/10 glass-card shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-hidden aspect-[16/9] p-2 animate-float">
-           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none z-10" />
-           <div className="w-full h-full rounded-[32px] bg-bg-darker overflow-hidden relative">
-              <img 
-                src="/images/dashboard_preview.png" 
-                alt="Helpdesk Dashboard Preview"
-                className="w-full h-full object-cover"
-              />
-           </div>
+        {/* Professional Mockup Area */}
+        <div className="relative max-w-5xl mx-auto">
+          <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full" />
+          <div className="relative bg-[#0f172a] border border-white/10 rounded-2xl p-4 shadow-2xl">
+            <div className="flex items-center gap-2 mb-4 px-2">
+              <div className="w-3 h-3 rounded-full bg-red-500/20" />
+              <div className="w-3 h-3 rounded-full bg-amber-500/20" />
+              <div className="w-3 h-3 rounded-full bg-green-500/20" />
+            </div>
+            <div className="aspect-[16/9] bg-[#020617] rounded-lg border border-white/5 flex items-center justify-center">
+               <div className="text-slate-800 font-bold text-4xl uppercase tracking-[0.2em]">Dashboard Preview</div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
