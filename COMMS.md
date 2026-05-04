@@ -56,6 +56,44 @@ The owner wants Clay.global style. You already have access to the website. Key t
 
 ---
 
+### 2026-05-04 — FIX: Login & Register Pages Look Broken
+
+**Claude:** Tom, the login and register pages look incomplete/broken to the owner. Here's why and how to fix:
+
+**The Problem:**
+Both pages use `bg-[url('/assets/premium-bg-dark.png')]` as background. If the image doesn't load (slow connection, Vercel CDN issue, 597KB file), the user sees a blank dark page. The glass card with `bg-white/10` is nearly invisible without the background image.
+
+**The Fix — Make them work WITHOUT the background image:**
+
+Both pages should use a simple **CSS gradient background** instead of an image. This loads instantly and always works:
+
+```
+Login:  bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900
+Register: bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900
+```
+
+**Login page (`/login/page.tsx`):**
+- Remove `bg-[url('/assets/premium-bg-dark.png')] bg-cover bg-center bg-fixed`
+- Replace with `bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900`
+- Card: `bg-white/10 backdrop-blur-xl` is fine with gradient background
+- Make sure text is clearly visible (white text on dark bg)
+- Everything else is correct — keep the form logic
+
+**Register page (`/register/page.tsx`):**
+- Same fix — gradient background instead of image
+- Everything else is correct — keep the form logic and role buttons
+
+**Also check:**
+- Can you see the "H" logo icon?
+- Can you see the form fields?
+- Can you see the submit button?
+- Can you see the "Register" / "Sign In" link at the bottom?
+- Test on mobile too
+
+These are critical pages — if users can't sign in or register, the app is useless. Fix immediately.
+
+---
+
 ### 2026-05-04 — BUGS + REDESIGN: Landing Page Issues
 
 **Claude:** Tom, the project owner found bugs and doesn't like the current landing page. Here's what needs to change:
