@@ -1,15 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTickets } from "@/hooks/useTickets";
+import gsap from "gsap";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { tickets, loading, error } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  useEffect(() => {
+    if (!loading) {
+      gsap.from(".animate-in", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.05,
+        ease: "power3.out",
+      });
+    }
+  }, [loading]);
 
   const stats = useMemo(() => ({
     total: tickets.length,
@@ -30,71 +43,71 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-500 font-medium">Loading your tickets...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card p-8 text-center max-w-md mx-auto">
-        <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">⚠️</div>
-        <h2 className="text-lg font-bold text-slate-900 mb-2">Something went wrong</h2>
-        <p className="text-slate-600 mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="btn-primary w-full">Retry Connection</button>
+        <div className="w-12 h-12 border-[3px] border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Synchronizing Manifest</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="heading-prime">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Overview of your active and past support requests</p>
+    <div className="space-y-12">
+      <div className="prism-bg">
+        <div className="prism-mesh" />
+        <div 
+          className="prism-wallpaper" 
+          style={{ backgroundImage: 'url("/images/support_helpdesk_center_bg.png")' }} 
+        />
+      </div>
+      
+      {/* Premium Header */}
+      <div className="animate-in flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+        <div className="space-y-2">
+          <h1 className="text-5xl font-extrabold text-[#0f172a] tracking-tight">Overview</h1>
+          <p className="text-lg text-[#475569] font-medium">Manage and track your active support requests</p>
         </div>
-        <Link href="/dashboard/create" className="btn-primary">
-          + Create New Ticket
+        <Link href="/dashboard/create" className="btn-prism !py-4 !px-8 shadow-2xl">
+          <span className="mr-2 text-xl">+</span> Create New Request
         </Link>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats Cards - Refined Glass */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: "All Tickets", value: stats.total, color: "text-slate-900", bg: "bg-white" },
-          { label: "Open", value: stats.open, color: "text-amber-600", bg: "bg-white" },
-          { label: "In Progress", value: stats.inProgress, color: "text-blue-600", bg: "bg-white" },
-          { label: "Resolved", value: stats.resolved, color: "text-green-600", bg: "bg-white" },
+          { label: "Total Volume", value: stats.total, color: "text-slate-900", icon: "💎" },
+          { label: "Active", value: stats.open, color: "text-amber-600", icon: "⚡" },
+          { label: "In Production", value: stats.inProgress, color: "text-blue-600", icon: "⚙️" },
+          { label: "Resolved", value: stats.resolved, color: "text-emerald-600", icon: "✅" },
         ].map((s, idx) => (
-          <div key={idx} className={`card p-5 ${s.bg}`}>
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+          <div key={idx} className="animate-in glass-panel p-6 border-white/80">
+            <div className="flex items-center justify-between mb-4">
+               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</span>
+               <span className="text-lg grayscale opacity-50">{s.icon}</span>
+            </div>
+            <p className={`text-4xl font-extrabold ${s.color}`}>{s.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Main List */}
-      <div className="card bg-white">
-        <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50">
+      {/* Main List Container */}
+      <div className="animate-in glass-panel bg-white/40 border-white/50 overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center gap-6">
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search by title or ticket ID..."
+              placeholder="Search by title, ID or keyword..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field w-full pl-10"
+              className="input-prism w-full pl-12 bg-white/80"
             />
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-30">🔍</span>
           </div>
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg overflow-x-auto">
+          <div className="flex items-center gap-2 p-1.5 bg-slate-100/50 rounded-2xl border border-slate-200/50">
             {['all', 'open', 'in_progress', 'resolved'].map(f => (
               <button
                 key={f}
                 onClick={() => setStatusFilter(f)}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase transition-all whitespace-nowrap ${
-                  statusFilter === f ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                className={`px-5 py-2.5 rounded-xl text-[11px] font-black uppercase transition-all whitespace-nowrap tracking-wider ${
+                  statusFilter === f ? "bg-[#0f172a] text-white shadow-lg" : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 {f}
@@ -106,51 +119,51 @@ export default function DashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ticket</th>
-                <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Created</th>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Support Ticket</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dept</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Priority</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Created</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100/50">
               {filteredTickets.map((ticket) => (
                 <tr 
                   key={ticket.id} 
-                  className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="hover:bg-white/60 transition-all cursor-pointer group"
                   onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-6">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      <span className="font-extrabold text-[#0f172a] text-lg group-hover:text-blue-600 transition-colors tracking-tight">
                         {ticket.title}
                       </span>
-                      <span className="text-[11px] font-mono font-bold text-slate-400 mt-0.5">
-                        #{ticket.id.slice(0, 8)}
+                      <span className="text-[10px] font-black font-mono text-slate-400 mt-1 uppercase tracking-widest">
+                        Ref_ID: {ticket.id.slice(0, 8)}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs text-slate-600 font-medium px-2 py-1 bg-slate-100 rounded-md">{ticket.type}</span>
+                  <td className="px-8 py-6">
+                    <span className="text-[11px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg uppercase border border-blue-100 shadow-sm">{ticket.type}</span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`badge ${
+                  <td className="px-8 py-6">
+                    <span className={`badge-prism ${
                       ticket.status === 'resolved' ? 'badge-green' : 
                       ticket.status === 'in_progress' ? 'badge-blue' : 'badge-amber'
                     }`}>
                       {ticket.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs font-bold ${
-                      ticket.priority === 'urgent' ? 'text-red-600' :
-                      ticket.priority === 'high' ? 'text-amber-600' : 'text-slate-500'
+                  <td className="px-8 py-6">
+                    <span className={`text-[11px] font-black uppercase tracking-widest ${
+                      ticket.priority === 'urgent' ? 'text-red-500' :
+                      ticket.priority === 'high' ? 'text-amber-500' : 'text-slate-400'
                     }`}>
-                      {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                      {ticket.priority}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right text-xs text-slate-500 font-medium">
+                  <td className="px-8 py-6 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest">
                     {new Date(ticket.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
@@ -160,12 +173,12 @@ export default function DashboardPage() {
         </div>
 
         {filteredTickets.length === 0 && (
-          <div className="py-24 text-center">
-             <div className="text-4xl mb-4">📝</div>
-            <p className="text-slate-900 font-bold mb-1">No tickets yet</p>
-            <p className="text-slate-500 text-sm mb-6">Create your first ticket to get started with our support team.</p>
-            <Link href="/dashboard/create" className="btn-primary">
-              + Create Your First Ticket
+          <div className="py-32 text-center bg-white/40">
+             <div className="text-6xl mb-6">📂</div>
+            <h3 className="text-2xl font-extrabold text-[#0f172a] mb-2">No active records</h3>
+            <p className="text-[#475569] mb-8 font-medium">Your support stream is currently clear.</p>
+            <Link href="/dashboard/create" className="btn-prism !py-4 !px-10">
+              Submit Your First Request
             </Link>
           </div>
         )}
