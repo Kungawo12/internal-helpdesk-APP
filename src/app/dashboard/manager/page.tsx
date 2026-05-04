@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { useSession } from "next-auth/react";
-import gsap from "gsap";
 
 export default function ManagerDashboard() {
   const router = useRouter();
@@ -13,24 +12,11 @@ export default function ManagerDashboard() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  useEffect(() => {
-    if (!loading) {
-      gsap.from(".manager-animate", {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
-    }
-  }, [loading]);
-
   const stats = useMemo(() => {
     const resolved = tickets.filter(t => t.status === 'resolved');
     const it = tickets.filter(t => t.type === 'IT');
     const hr = tickets.filter(t => t.type === 'HR');
 
-    // Calculate Average Resolution Time (in hours)
     const totalResolutionTime = resolved.reduce((acc, t) => {
       const created = new Date(t.createdAt).getTime();
       const updated = new Date(t.updatedAt).getTime();
@@ -38,7 +24,6 @@ export default function ManagerDashboard() {
     }, 0);
     const avgResTime = resolved.length > 0 ? (totalResolutionTime / resolved.length / (1000 * 60 * 60)).toFixed(1) : "0";
 
-    // Calculate Satisfaction
     const feedbackTickets = tickets.filter(t => t.feedback?.rating);
     const avgSatisfaction = feedbackTickets.length > 0 
       ? (feedbackTickets.reduce((acc, t) => acc + (t.feedback?.rating || 0), 0) / feedbackTickets.length).toFixed(1)
@@ -74,39 +59,39 @@ export default function ManagerDashboard() {
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="h-20 w-full skeleton glass-card" />
+      <div className="space-y-8 animate-pulse">
+        <div className="h-12 w-48 bg-slate-200 rounded-lg" />
         <div className="grid grid-cols-6 gap-4">
-          {[1,2,3,4,5,6].map(i => <div key={i} className="h-24 skeleton glass-card" />)}
+          {[1,2,3,4,5,6].map(i => <div key={i} className="h-24 bg-white border border-slate-200 rounded-xl" />)}
         </div>
-        <div className="grid grid-cols-2 gap-4 h-64">
-           <div className="skeleton glass-card" />
-           <div className="skeleton glass-card" />
+        <div className="grid grid-cols-2 gap-8 h-80">
+          <div className="bg-white border border-slate-200 rounded-xl" />
+          <div className="bg-white border border-slate-200 rounded-xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-10">
       {/* Executive Welcome Header */}
-      <div className="manager-animate flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-8">
-        <div className="space-y-1">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+        <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-primary/20">
-              Executive_Session
+            <span className="px-3 py-0.5 bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-wider rounded-full border border-blue-100">
+              Company Overview
             </span>
-            <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-              {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <span className="text-slate-500 text-[11px] font-semibold uppercase tracking-wider">
+              {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
-          <h1 className="heading-prime text-4xl">Welcome back, {session?.user?.name?.split(' ')[0]}</h1>
-          <p className="text-slate-400 font-medium tracking-tight">System operations oversight and performance analytics</p>
+          <h1 className="heading-prime">Welcome back, {session?.user?.name?.split(' ')[0]}</h1>
+          <p className="text-slate-500 mt-1">Global oversight and performance metrics for all departments</p>
         </div>
-        <div className="flex items-center gap-3">
-           <div className="glass-card px-4 py-2 bg-emerald-500/10 border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Service_Online
+        <div className="flex items-center gap-4">
+           <div className="px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-green-700 text-xs font-bold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              Service Online
            </div>
         </div>
       </div>
@@ -114,179 +99,144 @@ export default function ManagerDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: "Total Volume", value: stats.total, icon: "📊", color: "text-white" },
-          { label: "Active Requests", value: stats.open, icon: "⚡", color: "text-amber-400" },
-          { label: "In Production", value: stats.inProgress, icon: "⚙️", color: "text-blue-400" },
-          { label: "Finalized", value: stats.resolvedCount, icon: "✅", color: "text-emerald-400" },
-          { label: "Avg Resolution", value: `${stats.avgResTime}h`, icon: "⏱️", color: "text-indigo-400" },
-          { label: "CSAT Score", value: `${stats.avgSatisfaction}/5`, icon: "⭐", color: "text-primary-light" },
+          { label: "Total Tickets", value: stats.total, icon: "📊", color: "text-slate-900" },
+          { label: "Open Issues", value: stats.open, icon: "⚡", color: "text-amber-600" },
+          { label: "Processing", value: stats.inProgress, icon: "⚙️", color: "text-blue-600" },
+          { label: "Resolved", value: stats.resolvedCount, icon: "✅", color: "text-green-600" },
+          { label: "Avg Speed", value: `${stats.avgResTime}h`, icon: "⏱️", color: "text-indigo-600" },
+          { label: "CSAT Score", value: `${stats.avgSatisfaction}/5`, icon: "⭐", color: "text-blue-600" },
         ].map((kpi, idx) => (
-          <div key={idx} className="manager-animate glass-card p-5 group hover:bg-white/[0.03]">
-             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{kpi.label}</p>
+          <div key={idx} className="card p-5">
+             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{kpi.label}</p>
              <div className="flex items-center justify-between">
-                <span className={`text-2xl font-black ${kpi.color}`}>{kpi.value}</span>
-                <span className="text-xl opacity-20 group-hover:opacity-100 transition-opacity">{kpi.icon}</span>
+                <span className={`text-2xl font-bold ${kpi.color}`}>{kpi.value}</span>
+                <span className="text-xl opacity-30">{kpi.icon}</span>
              </div>
           </div>
         ))}
       </div>
 
       {/* Analytics Visualization Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Ticket Volume & Dept Breakdown */}
-        <div className="manager-animate glass-card p-6 space-y-8">
-           <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Volume_Distribution</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Department Volume */}
+        <div className="card p-6 space-y-8 bg-white">
+           <h3 className="text-[12px] font-bold text-slate-900 uppercase tracking-wider">Volume Distribution</h3>
            
            <div className="space-y-6">
-              {/* IT vs HR Bar */}
               <div className="space-y-2">
                  <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-blue-400">IT Department</span>
-                    <span className="text-white">{stats.itCount} tickets</span>
+                    <span className="text-blue-600">IT Department</span>
+                    <span className="text-slate-900">{stats.itCount} tickets</span>
                  </div>
-                 <div className="progress-bar-container h-3">
-                    <div className="progress-bar-fill bg-blue-500" style={{ width: `${(stats.itCount / (stats.total || 1)) * 100}%` }} />
+                 <div className="progress-container h-3 bg-slate-100">
+                    <div className="progress-fill bg-blue-600" style={{ width: `${(stats.itCount / (stats.total || 1)) * 100}%` }} />
                  </div>
               </div>
 
               <div className="space-y-2">
                  <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-indigo-400">HR Department</span>
-                    <span className="text-white">{stats.hrCount} tickets</span>
+                    <span className="text-indigo-600">HR Department</span>
+                    <span className="text-slate-900">{stats.hrCount} tickets</span>
                  </div>
-                 <div className="progress-bar-container h-3">
-                    <div className="progress-bar-fill bg-indigo-500" style={{ width: `${(stats.hrCount / (stats.total || 1)) * 100}%` }} />
+                 <div className="progress-container h-3 bg-slate-100">
+                    <div className="progress-fill bg-indigo-600" style={{ width: `${(stats.hrCount / (stats.total || 1)) * 100}%` }} />
                  </div>
               </div>
            </div>
 
-           <div className="pt-6 border-t border-white/5 grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">IT Efficiency</p>
-                 <p className="text-lg font-black text-white">94.2%</p>
+           <div className="pt-6 border-t border-slate-100 grid grid-cols-2 gap-8">
+              <div className="space-y-1">
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">IT Efficiency</p>
+                 <p className="text-xl font-bold text-slate-900">94.2%</p>
               </div>
-              <div className="space-y-2">
-                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">HR SLA Hit</p>
-                 <p className="text-lg font-black text-white">88.5%</p>
+              <div className="space-y-1">
+                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">HR SLA Rate</p>
+                 <p className="text-xl font-bold text-slate-900">88.5%</p>
               </div>
            </div>
         </div>
 
-        {/* Priority Breakdown Chart */}
-        <div className="manager-animate glass-card p-6">
-           <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8">Priority_Matrix_Analytics</h3>
+        {/* Priority Analysis */}
+        <div className="card p-6 bg-white">
+           <h3 className="text-[12px] font-bold text-slate-900 uppercase tracking-wider mb-8">Priority Distribution</h3>
            
-           <div className="flex items-end justify-between h-40 gap-4 px-4">
+           <div className="flex items-end justify-between h-44 gap-4 px-4">
               {[
-                { label: "Low", value: stats.priority.low, color: "bg-slate-500/20", text: "text-slate-400" },
-                { label: "Med", value: stats.priority.medium, color: "bg-blue-500/40", text: "text-blue-400" },
-                { label: "High", value: stats.priority.high, color: "bg-amber-500/60", text: "text-amber-400" },
-                { label: "Urgent", value: stats.priority.urgent, color: "bg-red-500/80", text: "text-red-400" },
+                { label: "Low", value: stats.priority.low, color: "bg-slate-200", text: "text-slate-500" },
+                { label: "Med", value: stats.priority.medium, color: "bg-blue-400", text: "text-blue-600" },
+                { label: "High", value: stats.priority.high, color: "bg-amber-400", text: "text-amber-600" },
+                { label: "Urgent", value: stats.priority.urgent, color: "bg-red-400", text: "text-red-600" },
               ].map((p, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-4 group">
+                <div key={idx} className="flex-1 flex flex-col items-center gap-4">
                    <div className="relative w-full flex items-end justify-center">
-                      <div className="absolute -top-6 text-[10px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                        {p.value}
-                      </div>
-                      <div 
-                        className={`w-full rounded-t-xl transition-all duration-1000 ${p.color} border-t border-white/10 group-hover:brightness-125`} 
-                        style={{ height: `${(p.value / (stats.total || 1)) * 100}%`, minHeight: '8px' }} 
+                      <div className={`w-full rounded-t-lg transition-all duration-1000 bg-opacity-80 ${p.color}`}
+                        style={{ height: `${(p.value / (stats.total || 1)) * 100}%`, minHeight: '8px' }}
                       />
                    </div>
-                   <span className={`text-[10px] font-black uppercase tracking-widest ${p.text}`}>{p.label}</span>
+                   <span className={`text-[10px] font-bold uppercase tracking-wider ${p.text}`}>{p.label}</span>
                 </div>
               ))}
            </div>
         </div>
       </div>
 
-      {/* Recent Activity Feed */}
-      <div className="manager-animate glass-card">
-         <div className="p-6 border-b border-white/5">
-            <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em]">Recent_Operations_Feed</h3>
-         </div>
-         <div className="divide-y divide-white/5">
-            {tickets.slice(0, 5).map((t) => (
-               <div 
-                key={t.id} 
-                className="flex items-center justify-between p-4 px-6 hover:bg-white/[0.02] transition-all cursor-pointer group"
-                onClick={() => router.push(`/dashboard/ticket/${t.id}`)}
-               >
-                  <div className="flex items-center gap-4">
-                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-sm shadow-inner group-hover:scale-110 transition-transform">
-                        {t.type === 'IT' ? '💻' : '📋'}
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-white group-hover:text-primary transition-colors">{t.title}</span>
-                        <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{t.creator?.name} • {new Date(t.createdAt).toLocaleTimeString()}</span>
-                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                     <span className={`badge ${t.status === 'resolved' ? 'badge-green' : 'badge-amber'}`}>{t.status}</span>
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">#{t.id.slice(0, 8)}</span>
-                  </div>
-               </div>
-            ))}
-         </div>
-      </div>
-
       {/* Main Ticket Manifest */}
-      <div className="manager-animate space-y-4">
+      <div className="space-y-6">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="relative flex-1 w-full">
             <input
               type="text"
-              placeholder="Search global data-feed..."
+              placeholder="Filter by title, ID or employee name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 text-sm focus:outline-none focus:border-primary/50 transition-all"
+              className="input-field w-full pl-10"
             />
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
           </div>
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-[11px] font-black uppercase tracking-widest text-slate-300 outline-none hover:border-primary/40 transition-all cursor-pointer w-full md:w-auto"
+            className="input-field w-full md:w-48 cursor-pointer font-semibold text-xs uppercase"
           >
-            <option value="all">Global Manifest</option>
-            <option value="open">Open State</option>
-            <option value="in_progress">Processing</option>
-            <option value="resolved">Finalized</option>
+            <option value="all">All Statuses</option>
+            <option value="open">Open Issues</option>
+            <option value="in_progress">Working</option>
+            <option value="resolved">Resolved</option>
           </select>
         </div>
 
-        <div className="glass-card">
+        <div className="card bg-white overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/[0.02] border-b border-white/5">
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Employee / Ticket</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Dept</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Priority</th>
-                  <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Timestamp</th>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Employee / Ticket</th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Dept</th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Priority</th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100">
                 {filteredTickets.map((ticket) => (
                   <tr 
                     key={ticket.id} 
-                    className="hover:bg-white/[0.03] transition-all cursor-pointer group"
+                    className="hover:bg-slate-50 transition-colors cursor-pointer group"
                     onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
                   >
                     <td className="px-6 py-5">
                       <div className="flex flex-col">
-                        <span className="font-bold text-white text-sm group-hover:text-primary transition-colors tracking-tight">
+                        <span className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors tracking-tight">
                           {ticket.title}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{ticket.creator?.name}</span>
-                          <span className="text-[9px] font-black font-mono text-slate-700">#{ticket.id.slice(0, 8)}</span>
+                          <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{ticket.creator?.name}</span>
+                          <span className="text-[10px] font-mono font-bold text-slate-300">#{ticket.id.slice(0, 8)}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-[10px] font-black text-slate-400 bg-white/5 px-2 py-0.5 rounded border border-white/5 uppercase">
+                      <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md uppercase">
                         {ticket.type}
                       </span>
                     </td>
@@ -295,16 +245,19 @@ export default function ManagerDashboard() {
                          ticket.status === 'resolved' ? 'badge-green' : 
                          ticket.status === 'in_progress' ? 'badge-blue' : 'badge-amber'
                       }`}>
-                        {ticket.status}
+                        {ticket.status.replace("_", " ")}
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                       <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                       <span className={`text-[10px] font-bold uppercase tracking-widest ${
+                         ticket.priority === 'urgent' ? 'text-red-600' :
+                         ticket.priority === 'high' ? 'text-amber-600' : 'text-slate-500'
+                       }`}>
                           {ticket.priority}
                         </span>
                     </td>
                     <td className="px-6 py-5 text-right">
-                      <span className="text-[11px] font-bold text-slate-500 font-mono">
+                      <span className="text-[11px] font-medium text-slate-500 font-mono">
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </span>
                     </td>
@@ -315,10 +268,10 @@ export default function ManagerDashboard() {
           </div>
 
           {filteredTickets.length === 0 && (
-            <div className="text-center py-24 group opacity-50">
-              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">🏢</div>
-              <p className="text-sm font-bold text-white mb-1 uppercase tracking-widest">No active system data</p>
-              <p className="text-xs text-slate-500">The enterprise service manifest is currently clear.</p>
+            <div className="text-center py-24 bg-white">
+              <div className="text-4xl mb-4">🏢</div>
+              <p className="text-slate-900 font-bold mb-1 uppercase tracking-widest">No active system data</p>
+              <p className="text-slate-500 text-sm">The enterprise service manifest is currently clear.</p>
             </div>
           )}
         </div>
