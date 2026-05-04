@@ -12,15 +12,21 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // Entrance Animation
   useEffect(() => {
     if (!loading) {
-      gsap.from(".animate-item", {
-        y: 20,
+      gsap.from(".ticket-card", {
+        y: 40,
         opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power3.out",
+        duration: 0.8,
+        stagger: 0.05,
+        ease: "expo.out",
+        delay: 0.2
+      });
+      gsap.from(".hud-animate", {
+        scale: 0.9,
+        opacity: 0,
+        duration: 1,
+        ease: "power4.out"
       });
     }
   }, [loading]);
@@ -43,198 +49,136 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-fade-in">
-        <div className="flex justify-between items-end">
-          <div className="space-y-2">
-            <div className="h-8 w-48 skeleton" />
-            <div className="h-4 w-64 skeleton" />
-          </div>
-          <div className="h-10 w-32 skeleton" />
+      <div className="space-y-12 animate-pulse">
+        <div className="h-16 w-full glass-card skeleton" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1,2,3,4,5,6].map(i => <div key={i} className="h-64 glass-card skeleton" />)}
         </div>
-        <div className="grid grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => <div key={i} className="h-24 glass-card skeleton" />)}
-        </div>
-        <div className="h-96 glass-card skeleton" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="glass-card p-12 text-center border-red-500/20 bg-red-500/5">
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">⚠️</div>
-        <h2 className="text-xl font-bold text-white mb-2">Service Offline</h2>
-        <p className="text-slate-400 mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="btn-premium bg-red-600">
-          Re-initialize Data
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
-      {/* Header Section */}
-      <div className="animate-item flex items-end justify-between">
-        <div className="space-y-1">
-          <h1 className="heading-prime text-4xl">Command Center</h1>
-          <p className="text-slate-400 font-medium tracking-tight">Real-time service request monitor</p>
+    <div className="space-y-12 pb-20">
+      {/* Cinematic Search HUD */}
+      <div className="hud-animate flex flex-col items-center gap-8 text-center pt-8">
+        <div className="space-y-2">
+          <h1 className="heading-prime text-5xl md:text-6xl tracking-tight">Service Manifest</h1>
+          <p className="text-slate-400 font-medium text-lg tracking-wide">Securely monitoring {stats.total} active support streams</p>
         </div>
-        <Link href="/dashboard/create" className="btn-premium group">
-          <span className="flex items-center gap-2">
-            <span>New Ticket</span>
-            <span className="group-hover:translate-x-1 transition-transform">→</span>
-          </span>
-        </Link>
+
+        <div className="w-full max-w-3xl relative group">
+          <div className="absolute inset-0 bg-primary/20 blur-[100px] group-hover:bg-primary/30 transition-all duration-700 opacity-50" />
+          <div className="relative flex items-center bg-black/60 border border-white/10 rounded-[32px] p-2 backdrop-blur-3xl shadow-2xl">
+            <div className="pl-6 pr-4 opacity-30 text-2xl">🔍</div>
+            <input
+              type="text"
+              placeholder="Search by ID, title, or keyword..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent border-none py-4 text-lg font-medium text-white outline-none placeholder:text-slate-600"
+            />
+            <div className="flex items-center gap-2 pr-4">
+              <span className="text-[10px] font-black text-primary/50 uppercase tracking-widest hidden sm:block">Uplink_Active</span>
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {[
+            { id: "all", label: "Global", count: stats.total, color: "bg-white/10" },
+            { id: "open", label: "Open", count: stats.open, color: "bg-amber-500/20 text-amber-400 border-amber-500/20" },
+            { id: "in_progress", label: "Working", count: stats.inProgress, color: "bg-primary/20 text-primary border-primary/20" },
+            { id: "resolved", label: "Resolved", count: stats.resolved, color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" },
+          ].map(f => (
+            <button
+              key={f.id}
+              onClick={() => setStatusFilter(f.id)}
+              className={`px-8 py-3 rounded-2xl border text-sm font-bold transition-all ${
+                statusFilter === f.id ? `${f.color} shadow-lg shadow-primary/10 ring-1 ring-white/10` : "bg-white/5 border-white/5 text-slate-500 hover:bg-white/10"
+              }`}
+            >
+              {f.label} <span className="ml-2 opacity-40 font-mono text-xs">{f.count}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Load", value: stats.total, icon: "📊", id: "all", color: "from-blue-500/20" },
-          { label: "Active", value: stats.open, icon: "⚡", id: "open", color: "from-amber-500/20" },
-          { label: "Processing", value: stats.inProgress, icon: "⚙️", id: "in_progress", color: "from-primary/20" },
-          { label: "Completed", value: stats.resolved, icon: "✅", id: "resolved", color: "from-emerald-500/20" },
-        ].map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setStatusFilter(s.id)}
-            className={`animate-item glass-card p-5 text-left group hover:scale-[1.02] active:scale-[0.98] ${
-              statusFilter === s.id ? "border-primary bg-primary/10 shadow-[0_0_30px_rgba(14,165,233,0.15)]" : ""
-            }`}
+      {/* Interactive Service Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Create New Card */}
+        <Link href="/dashboard/create" className="ticket-card group flex flex-col items-center justify-center h-[320px] rounded-[40px] border-2 border-dashed border-white/5 bg-white/[0.02] hover:bg-primary/5 hover:border-primary/20 transition-all duration-500">
+           <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-3xl group-hover:bg-primary group-hover:scale-110 group-hover:text-white transition-all duration-500 shadow-inner">
+             +
+           </div>
+           <p className="mt-6 text-lg font-black text-slate-500 group-hover:text-white transition-colors">Submit New Request</p>
+           <p className="text-xs text-slate-600 mt-2">Initialize support stream</p>
+        </Link>
+
+        {filteredTickets.map((ticket) => (
+          <div 
+            key={ticket.id}
+            onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
+            className="ticket-card group glass-card flex flex-col h-[320px] rounded-[40px] cursor-pointer p-8"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${s.color} to-transparent opacity-0 group-hover:opacity-100 transition-opacity`} />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xl">{s.icon}</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">System_Metric</span>
+            {/* Top Row: Type & ID */}
+            <div className="flex items-start justify-between mb-8">
+              <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform duration-500">
+                {ticket.type === 'IT' ? '💻' : '📋'}
               </div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-white">{s.value}</span>
-                <span className="text-[10px] text-slate-600 font-bold">PTS</span>
+              <div className="text-right">
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] block mb-1">Stream_ID</span>
+                <span className="text-xs font-mono font-bold text-white tracking-widest">#{ticket.id.slice(0, 8)}</span>
               </div>
             </div>
-          </button>
+
+            {/* Content */}
+            <div className="flex-1 space-y-3">
+              <h3 className="text-2xl font-black text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                {ticket.title}
+              </h3>
+              <p className="text-sm text-slate-400 font-medium line-clamp-2 leading-relaxed">
+                {ticket.description}
+              </p>
+            </div>
+
+            {/* Footer: Progress & Status */}
+            <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
+               <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                     <div className={`w-2 h-2 rounded-full animate-pulse ${
+                       ticket.status === 'resolved' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 
+                       ticket.status === 'in_progress' ? 'bg-primary shadow-[0_0_10px_#0ea5e9]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'
+                     }`} />
+                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                       {ticket.status.replace("_", " ")}
+                     </span>
+                  </div>
+                  <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                    Priority: {ticket.priority}
+                  </span>
+               </div>
+               
+               <div className="progress-bar-container h-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                  <div 
+                    className={`progress-bar-fill ${
+                      ticket.status === 'resolved' ? 'bg-emerald-500' : 
+                      ticket.priority === 'urgent' ? 'bg-red-500' : 'bg-primary'
+                    }`} 
+                    style={{ width: ticket.status === 'resolved' ? '100%' : ticket.status === 'in_progress' ? '65%' : '15%' }} 
+                  />
+               </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Table Section */}
-      <div className="animate-item glass-card bg-black/40 border-white/5">
-        <div className="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-           <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search data-feed..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 text-sm focus:outline-none focus:border-primary/50 focus:bg-white/[0.08] transition-all"
-            />
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-30 text-sm">🔍</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-2">Filter_By:</span>
-            {['all', 'open', 'in_progress', 'resolved'].map(f => (
-               <button 
-                key={f}
-                onClick={() => setStatusFilter(f)}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  statusFilter === f ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-slate-500 hover:text-slate-300"
-                }`}
-               >
-                 {f}
-               </button>
-            ))}
-          </div>
+      {filteredTickets.length === 0 && (
+        <div className="hud-animate text-center py-20 opacity-30">
+          <p className="text-2xl font-black text-white uppercase tracking-widest">No Active Streams Detected</p>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-white/[0.02]">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Service_Identity</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Category</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Status_State</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Priority</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {filteredTickets.map((ticket, idx) => (
-                <tr 
-                  key={ticket.id} 
-                  className="hover:bg-white/[0.03] transition-all cursor-pointer group animate-item"
-                  onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                >
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center text-lg shadow-inner group-hover:scale-110 transition-transform">
-                        {ticket.type === 'IT' ? '💻' : '📋'}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-white text-base group-hover:text-primary transition-colors tracking-tight">
-                          {ticket.title}
-                        </span>
-                        <span className="text-[10px] font-black font-mono text-slate-600 mt-0.5 tracking-widest uppercase">
-                          ID: {ticket.id.slice(0, 8)}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className="text-[11px] font-black text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 uppercase tracking-widest">
-                      {ticket.type}_DEPT
-                    </span>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2">
-                       <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                         ticket.status === 'resolved' ? 'bg-emerald-500' : 
-                         ticket.status === 'in_progress' ? 'bg-blue-500' : 'bg-amber-500'
-                       }`} />
-                       <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${
-                         ticket.status === 'resolved' ? 'text-emerald-400' : 
-                         ticket.status === 'in_progress' ? 'text-blue-400' : 'text-amber-400'
-                       }`}>
-                         {ticket.status.replace("_", " ")}
-                       </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                        <span>P: {ticket.priority}</span>
-                        <span>75%</span>
-                      </div>
-                      <div className="w-24 h-1 bg-white/5 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${
-                           ticket.priority === 'urgent' ? 'bg-red-500' :
-                           ticket.priority === 'high' ? 'bg-amber-500' : 'bg-primary'
-                        }`} style={{ width: '75%' }} />
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    <span className="text-[11px] font-bold text-slate-500 font-mono">
-                      {new Date(ticket.createdAt).toLocaleDateString()}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredTickets.length === 0 && (
-          <div className="text-center py-24 group">
-            <div className="w-20 h-20 bg-white/5 rounded-[30px] flex items-center justify-center mx-auto mb-6 border border-white/5 text-3xl group-hover:scale-110 transition-transform duration-500">
-              🛰️
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">No Uplink Data</h3>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto">Your service manifest is currently clear. No active transmissions detected.</p>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
