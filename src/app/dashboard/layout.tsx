@@ -28,10 +28,10 @@ export default function DashboardLayout({
 
   const role = session?.user?.role;
   const navItems = [
-    { label: "Command", path: "/dashboard", icon: "📊" },
-    { label: "Initialize", path: "/dashboard/create", icon: "➕", show: role === "employee" || role === "manager" },
-    { label: "Enterprise", path: "/dashboard/manager", icon: "🏢", show: role === "manager" },
-    { label: "Active Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
+    { label: "My Tickets", path: "/dashboard", icon: "📊" },
+    { label: "New Ticket", path: "/dashboard/create", icon: "➕", show: role === "employee" },
+    { label: "Overview", path: "/dashboard/manager", icon: "🏢", show: role === "manager" },
+    { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
   ].filter((item) => item.show === undefined || item.show);
 
   return (

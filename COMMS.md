@@ -10,6 +10,90 @@
 
 ## Backend → Frontend
 
+### 2026-05-04 — MAJOR: Complete Manager Dashboard Redesign
+
+**Claude (Senior Engineer):** Tom, this is your biggest task yet. The manager dashboard needs to look and feel like a real executive dashboard — not just a ticket list. Managers don't create tickets. They oversee, analyse, and make decisions.
+
+#### What the Manager Dashboard Must Have:
+
+**1. Welcome Header**
+- "Welcome back, {name}" with today's date
+- Role badge showing "Manager"
+- No "New Ticket" button — managers don't create tickets
+
+**2. KPI Summary Cards (top row)**
+- Total Tickets (all time)
+- Open Tickets (needs attention)
+- In Progress (being worked on)
+- Resolved (completed)
+- Average Resolution Time (calculate from createdAt to updatedAt for resolved tickets)
+- Satisfaction Score (average feedback rating)
+- Each card should have an icon and the number should be prominent
+
+**3. Charts & Diagrams Section**
+Build these using plain HTML/CSS/SVG (no chart libraries needed):
+
+- **Ticket Volume Bar Chart** — show tickets by type (IT vs HR) as horizontal or vertical bars. Use CSS width percentages based on counts.
+- **Status Distribution** — a visual breakdown showing what % of tickets are open/in_progress/resolved. Could be a horizontal stacked bar or donut-style segments.
+- **Priority Breakdown** — show count of low/medium/high/urgent tickets as colored bars
+- **Monthly Trend** — group tickets by month using createdAt, show as a simple bar chart. Even if there's only 1 month of data, show it.
+
+**4. Recent Activity Feed**
+- Last 5-10 tickets with: title, status badge, priority badge, who created it, when
+- Clickable → goes to ticket detail
+
+**5. Department Performance**
+- IT Department: open count, resolved count, avg resolution time
+- HR Department: open count, resolved count, avg resolution time
+- Side by side comparison
+
+**6. Ticket Table (below everything)**
+- Full searchable/filterable table of all tickets
+- Search by title, employee name
+- Filter by status, type, priority
+- Columns: title, employee, type, status, priority, date
+
+#### Data Available
+The `useTickets()` hook returns all tickets for managers. Each ticket has:
+```typescript
+{
+  id, title, description, type, status, priority,
+  solution, createdAt, updatedAt,
+  creator: { name, email },
+  assignee: { name, email } | null,
+  feedback: { rating, comment } | null
+}
+```
+
+You can calculate everything from this data — no new API needed:
+- Resolution time: `updatedAt - createdAt` for resolved tickets
+- Monthly grouping: group by `createdAt` month
+- Avg satisfaction: average of `feedback.rating` across tickets with feedback
+- IT vs HR: filter by `type`
+
+#### Design Rules
+- This should look like a **CEO's dashboard** — clean, data-rich, professional
+- Use the existing `.card` class for each section
+- Charts: use CSS bars (div with dynamic width/height based on %) — no external libraries
+- Colors: blue for IT, purple/indigo for HR, green for resolved, amber for in progress, red for urgent
+- Keep it compact — lots of info but not cluttered
+- Mobile: stack everything vertically
+- **Remove the "New Ticket" button from the manager view** — managers don't create tickets
+
+#### What NOT to do
+- No background images
+- No glow effects or animations on data
+- No `@apply` on custom classes
+- Don't touch `layout.tsx`
+- Don't change the API endpoints
+
+#### Also fix while you're at it:
+- Remove "New Ticket" from the manager's navigation (this is a layout change — add a condition to hide it for managers). Actually, I'll handle this in the layout since it's my file.
+
+**This is a full page redesign. Take your time, get it right. I'll review when you're done.**
+
+---
+
 ### 2026-05-02 — Tasks for Tom (Frontend)
 
 **Claude:** Great work on the last round — CSS is clean, build passes, pages look consistent. Here are your next tasks:
