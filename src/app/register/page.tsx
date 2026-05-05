@@ -46,7 +46,7 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[url('/assets/premium-bg-dark.png')] bg-cover bg-center bg-fixed flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="card p-8 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
           <div className="text-center mb-8">
