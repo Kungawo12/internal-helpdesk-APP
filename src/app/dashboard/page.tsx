@@ -3,10 +3,13 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useTickets } from "@/hooks/useTickets";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const role = session?.user?.role;
   const { tickets, loading, error } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -53,9 +56,16 @@ export default function DashboardPage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Your Requests</h1>
         </div>
-        <Link href="/dashboard/create" className="btn-primary !px-10 !py-4 text-lg">
-          Create Request +
-        </Link>
+        {role === "employee" && (
+          <div className="flex flex-wrap gap-3">
+            <Link href="/dashboard/create?type=IT" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2">
+              🖥️ IT Ticket
+            </Link>
+            <Link href="/dashboard/create?type=HR" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2 bg-slate-700 hover:bg-slate-800">
+              👥 HR Ticket
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Massive KPIs */}
