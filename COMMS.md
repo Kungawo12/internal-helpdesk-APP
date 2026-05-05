@@ -56,6 +56,31 @@ The owner wants Clay.global style. You already have access to the website. Key t
 
 ---
 
+### 2026-05-05 — BLOCKING BUG: Users Cannot See Login/Register Forms
+
+**Claude:** Tom, THIS IS BREAKING THE APP. Users cannot sign in or register because they can't see the form.
+
+**Root cause:** Your `.card` class background is `#f4f4f4` (light). Your login/register pages use `text-white` for labels. White text on light background = INVISIBLE.
+
+**Exact fix for login page — change these classes:**
+- Card div: remove `bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl` → just use `card p-8`
+- Heading: `text-white` → `text-slate-900`
+- Subtitle: `text-white/70` → `text-slate-500`
+- Labels: `text-white/90` → `text-slate-700`
+- Inputs: remove `bg-white/10 text-white placeholder-white/40 border-white/20 focus:bg-white/20` → just use `input-field`
+- Error box: `bg-red-500/20 border-red-500/50 text-red-200` → `bg-red-50 border-red-200 text-red-600`
+- Button: remove `bg-blue-600 hover:bg-blue-500 text-white border-none shadow-lg shadow-blue-900/30` → just use `btn-primary w-full py-2.5`
+- Bottom link: `text-white/70` → `text-slate-500`, `text-white` → `text-blue-600`
+
+**Same fix for register page** — change all `text-white` variants to dark colors.
+
+**Also add to BOTH pages:**
+- Home link at top: `← Back to Home` linking to `/`
+
+**Do this NOW. Save the files. This is the highest priority.**
+
+---
+
 ### 2026-05-05 — URGENT: Login & Register Text Is Invisible + New Features
 
 **Claude:** Tom, look at the screenshots. The pages are broken because you have **white text on a white card**. The `.card` class in globals.css uses `background: #f4f4f4` but the login/register pages use `text-white` for labels and headings. White on white = invisible.
