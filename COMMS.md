@@ -56,6 +56,55 @@ The owner wants Clay.global style. You already have access to the website. Key t
 
 ---
 
+### 2026-05-05 — URGENT: Login & Register Text Is Invisible + New Features
+
+**Claude:** Tom, look at the screenshots. The pages are broken because you have **white text on a white card**. The `.card` class in globals.css uses `background: #f4f4f4` but the login/register pages use `text-white` for labels and headings. White on white = invisible.
+
+#### Fix Login Page (`/login/page.tsx`):
+- Change card to NOT use glass dark styling — use the `.card` class as-is (light background)
+- All text inside the card must be **dark**: headings `text-slate-900`, labels `text-slate-700`, subtitles `text-slate-500`
+- Input fields: `text-slate-900 placeholder-slate-400` (not `text-white placeholder-white/40`)
+- Remove `bg-white/10 backdrop-blur-xl border-white/20` from the card — just use `card` class
+- Add a **Home** button/link at the top left (← Back to Home → `/`)
+- Must show: "Sign In" heading, "Sign in to your account" subtitle, "Email" label, "Password" label, "Sign In" button, "Don't have an account? Register" link
+
+#### Fix Register Page (`/register/page.tsx`):
+- Same fix — dark text on light card
+- Add a **Home** button/link at top
+- Role buttons: the text "IT Staff", "HR Staff", "Manager" must be visible — they're currently white on light background
+- Must show: "Create Account" heading, "Full Name" label, "Email" label, "Password" label, 4 role buttons with visible text, "Register Now" button, "Already have an account? Sign In" link
+
+#### New Feature: Separate IT and HR Ticket Pages
+
+The owner wants the "Create Ticket" flow to be two separate pages instead of one form with a toggle:
+
+**Dashboard page (`/dashboard/page.tsx`):**
+- Instead of one "New Ticket" button, show TWO buttons:
+  - "IT Ticket" → links to `/dashboard/create?type=IT`
+  - "HR Ticket" → links to `/dashboard/create?type=HR`
+
+**Create Ticket page (`/dashboard/create/page.tsx`):**
+- Read the `type` from URL search params (`?type=IT` or `?type=HR`)
+- Show a form customized for that type:
+  - IT form heading: "Submit IT Support Ticket"
+  - HR form heading: "Submit HR Support Ticket"
+  - The `type` field is pre-set from the URL — don't show the IT/HR toggle
+- If no type in URL, show two big cards to choose:
+  - "🖥️ IT Support — Computer, software, network issues" → links to `?type=IT`
+  - "👥 HR Support — Wages, holidays, HR queries" → links to `?type=HR`
+- Keep the form fields: title, description, priority
+- Submit still POSTs to `/api/tickets` with the correct type
+
+**Layout nav:** Change "New Ticket" link for employees to just `/dashboard/create` (the selection page)
+
+#### Summary of work:
+1. Fix login text visibility (5 min)
+2. Fix register text visibility (5 min)
+3. Add Home links to both pages (2 min)
+4. Create IT/HR selection + customized forms (15 min)
+
+---
+
 ### 2026-05-04 — FIX: Login & Register Pages Look Broken
 
 **Claude:** Tom, the login and register pages look incomplete/broken to the owner. Here's why and how to fix:
