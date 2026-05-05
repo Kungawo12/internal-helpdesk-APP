@@ -27,7 +27,11 @@ export async function middleware(req: NextRequest) {
   // Role-based access
   const role = token.role as string;
 
-  if (pathname.startsWith("/dashboard/manager") && role !== "manager") {
+  if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  if (pathname.startsWith("/dashboard/manager") && role !== "manager" && role !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
@@ -36,6 +40,10 @@ export async function middleware(req: NextRequest) {
     role !== "it_staff" &&
     role !== "hr_staff"
   ) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  if (pathname.startsWith("/dashboard/create") && role !== "employee") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
