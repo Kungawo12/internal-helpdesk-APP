@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useTicket } from "@/hooks/useTicket";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function TicketDetailPage() {
@@ -17,6 +17,49 @@ export default function TicketDetailPage() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [ticketComments, setTicketComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [isPostingComment, setIsPostingComment] = useState(false);
+
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`/api/tickets/${id}/comments`);
+      if (res.ok) {
+        const data = await res.json();
+        setTicketComments(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch comments", err);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchComments();
+    }
+  }, [id]);
+
+  const handlePostComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    setIsPostingComment(true);
+    try {
+      const res = await fetch(`/api/tickets/${id}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: newComment }),
+      });
+      if (res.ok) {
+        setNewComment("");
+        fetchComments();
+      }
+    } catch (err) {
+      console.error("Failed to post comment", err);
+    } finally {
+      setIsPostingComment(false);
+    }
+  };
 
   const handleResolve = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,6 +224,58 @@ export default function TicketDetailPage() {
                 </form>
              </div>
            )}
+
+           {/* Comments Section */}
+           <div className="card p-6 border-slate-200">
+             <h3 className="text-lg font-bold text-slate-900 mb-6">Discussion</h3>
+             
+             <div className="space-y-6 mb-6">
+               {ticketComments.length === 0 ? (
+                 <p className="text-sm text-slate-500 italic">No comments yet. Start the conversation.</p>
+               ) : (
+                 ticketComments.map((c) => (
+                   <div key={c.id} className="flex gap-4">
+                     <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                       {c.user?.name?.charAt(0) || '?'}
+                     </div>
+                     <div className="flex-1">
+                       <div className="flex items-baseline gap-2 mb-1">
+                         <span className="font-bold text-sm text-slate-900">{c.user?.name || 'Unknown User'}</span>
+                         <span className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleString()}</span>
+                       </div>
+                       <p className="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-wrap">
+                         {c.content}
+                       </p>
+                     </div>
+                   </div>
+                 ))
+               )}
+             </div>
+
+             <form onSubmit={handlePostComment} className="flex gap-3 items-start border-t border-slate-100 pt-6">
+               <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold flex-shrink-0">
+                 {session?.user?.name?.charAt(0) || '?'}
+               </div>
+               <div className="flex-1 space-y-3">
+                 <textarea
+                   placeholder="Add a comment..."
+                   value={newComment}
+                   onChange={(e) => setNewComment(e.target.value)}
+                   className="input-field min-h-[80px] text-sm resize-y"
+                   required
+                 />
+                 <div className="flex justify-end">
+                   <button 
+                     type="submit" 
+                     disabled={isPostingComment || !newComment.trim()}
+                     className="btn-primary"
+                   >
+                     {isPostingComment ? "Posting..." : "Post Comment"}
+                   </button>
+                 </div>
+               </div>
+             </form>
+           </div>
         </div>
 
         {/* Sidebar Info Area */}

@@ -53,8 +53,11 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Employee Portal</span>
+            <span className="text-sm font-semibold text-[#6e6e73]">
+              {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+            </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Your Requests</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Welcome back,<br/>{session?.user?.name?.split(' ')[0] || "User"}</h1>
         </div>
         {role === "employee" && (
           <div className="flex flex-wrap gap-3">

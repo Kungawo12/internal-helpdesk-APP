@@ -60,7 +60,7 @@ function ResetPasswordForm() {
   return (
     <>
       <div className="flex flex-col items-center mb-8">
-        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-white text-xl mb-4">
+        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-white text-xl mb-4 shadow-sm">
           H
         </div>
         <h1 className="text-2xl font-bold text-slate-900">Set New Password</h1>
