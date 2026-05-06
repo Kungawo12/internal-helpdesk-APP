@@ -7,6 +7,214 @@
 
 ## Backend → Frontend
 
+### 2026-05-06 — VISUAL OVERHAUL DIRECTIVE (READ THIS FIRST)
+
+**Claude:** Tom, the owner wants the app to look significantly more impressive — premium, modern, visually alive. Here is a page-by-page breakdown of every visual upgrade needed. This is the most important task right now.
+
+---
+
+#### GLOBAL — Add to `globals.css`
+
+Add these styles. Do NOT use `@apply` on custom classes. Plain CSS only.
+
+```css
+/* Glowing blue orb — reusable background effect */
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Shimmer skeleton loader */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+/* Status-colored left border for ticket cards */
+.ticket-card-open    { border-left: 4px solid #3b82f6; }
+.ticket-card-progress{ border-left: 4px solid #f59e0b; }
+.ticket-card-resolved{ border-left: 4px solid #22c55e; }
+
+/* Pulse animation for CTA buttons */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(59,130,246,0); }
+}
+.btn-pulse { animation: pulse-glow 2.5s infinite; }
+
+/* Page reveal */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-reveal { animation: page-in 0.5s ease forwards; }
+
+/* Status pulse dot */
+@keyframes status-ping {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+.status-pulse { display: inline-block; border-radius: 9999px; animation: status-ping 2s infinite; }
+```
+
+---
+
+#### PAGE 1 — Landing Page (`src/app/page.tsx`)
+
+**Hero Section (lines 91–197):**
+- Add two glowing orb `<div>`s inside the hero for ambient light:
+  ```jsx
+  <div className="glow-orb w-[600px] h-[600px] bg-blue-600/20 -top-40 -left-40" />
+  <div className="glow-orb w-[400px] h-[400px] bg-cyan-500/10 top-1/2 right-0" />
+  ```
+- Make the headline gradient text animate: add a CSS `@keyframes gradient-shift` that cycles the gradient angle slowly (`background-size: 200%` + `animation: gradient-shift 4s ease infinite`)
+- The "Get Started for Free" button: add class `btn-pulse` so it has a breathing glow effect
+- Add a floating badge above the headline:
+  ```jsx
+  <div className="hero-element inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+    <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
+    Now Live — Internal Helpdesk Platform
+  </div>
+  ```
+- Dashboard mockup (lines 112–195): add a left sidebar to it to look more realistic:
+  ```jsx
+  <div className="flex h-[400px]">
+    {/* Sidebar */}
+    <div className="w-48 bg-slate-900 p-4 space-y-2 flex-shrink-0">
+      <div className="h-4 w-20 bg-blue-600 rounded mb-6" />
+      {['Dashboard','Tickets','Staff Queue','Overview'].map((item,i) => (
+        <div key={i} className={`h-8 rounded-lg flex items-center px-3 ${i===0?'bg-white/10':''}`}>
+          <div className={`h-3 rounded ${i===0?'w-20 bg-white':'w-16 bg-slate-700'}`} />
+        </div>
+      ))}
+    </div>
+    {/* Main content — existing mockup content goes here */}
+    <div className="flex-1 p-6 md:p-8 bg-slate-50 text-left overflow-hidden">
+      ... (existing stat cards and table)
+    </div>
+  </div>
+  ```
+
+**Features Section (lines 200–224):**
+- Each feature card: add a coloured top accent line and icon background colour per feature:
+  ```jsx
+  // Instead of generic bg-[#f8fafc], give each card a subtle tinted top border
+  style={{ borderTop: '3px solid', borderTopColor: ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#10b981','#f43f5e'][i] }}
+  ```
+- On hover, the icon emoji box should scale up slightly: `hover:scale-110 transition-transform`
+
+**How It Works Section (lines 227–254):**
+- The connecting line between steps is invisible against slate-900. Change it to `bg-gradient-to-r from-blue-500/30 via-blue-500/60 to-blue-500/30`
+- Step circles: add a glowing ring on hover: `hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-shadow`
+- Add icons inside the step circles instead of just numbers:
+  - 01 → 📝 , 02 → 🔔 , 03 → ✅ , 04 → ⭐
+
+**CTA Section (lines 303–312):**
+- The blue CTA box is flat. Upgrade it:
+  - Background: `bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800`
+  - Add a subtle pattern overlay: `<div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,...')]" />`
+  - Two glowing orbs inside: `<div className="glow-orb w-80 h-80 bg-white/10 -top-20 -right-20" />`
+  - "Create an Account" button: add `btn-pulse` class
+
+**Navbar (lines 79–88):**
+- Make it glass on scroll: start transparent, become `bg-slate-900/90 backdrop-blur-md` after user scrolls 50px. Use `useEffect` + `window.addEventListener('scroll', ...)` — set state and apply class conditionally.
+
+---
+
+#### PAGE 2 — Dashboard (`src/app/dashboard/page.tsx`)
+
+- Stat cards: each card should have a matching coloured icon in the top right corner:
+  - Total: 🎫 in slate, Open: 🔴 in red/orange, In Progress: ⚡ in blue, Resolved: ✅ in green
+- Add a horizontal divider with `Today's Activity` label between stat cards and ticket list
+- Ticket cards: apply `.ticket-card-open`, `.ticket-card-progress`, `.ticket-card-resolved` left border classes based on `ticket.status`
+- Add a small priority dot in top-right of each card:
+  ```jsx
+  <div className={`w-2.5 h-2.5 rounded-full ${
+    ticket.priority === 'urgent' ? 'bg-red-500' :
+    ticket.priority === 'high'   ? 'bg-orange-400' : 'bg-slate-300'
+  }`} />
+  ```
+- Empty state: replace the plain empty message with a proper illustrated empty state:
+  ```jsx
+  <div className="text-8xl mb-6 opacity-20">🎫</div>
+  <h3>No tickets yet</h3>
+  <p>Your support requests will appear here once submitted.</p>
+  <Link href="/dashboard/create">Submit your first ticket →</Link>
+  ```
+  (only show that link if `role === "employee"`)
+
+---
+
+#### PAGE 3 — Ticket Detail (`src/app/dashboard/ticket/[id]/page.tsx`)
+
+- Add a progress stepper at the top showing ticket lifecycle:
+  ```
+  [● Created] ——— [● In Progress] ——— [○ Resolved]
+  ```
+  Filled circles = completed stages, empty = pending. Color the active stage blue.
+- Ticket metadata (type, priority, date) should be in a clean sidebar panel on desktop (lg:grid-cols-3, ticket info takes 1 col, main content 2 cols)
+- Priority badge should be coloured: urgent=red, high=orange, medium=blue, low=slate
+- Comments: make them chat-bubble style (current user's comments right-aligned with blue bubble, others left-aligned with grey bubble). Use `session.user.id` to determine which side.
+- Comment input: make it sticky at the bottom of the comments section on desktop with a clean send button
+
+---
+
+#### PAGE 4 — Staff Queue (`src/app/dashboard/staff/page.tsx`)
+
+- Header: show a live count badge: `"X tickets awaiting"`  
+  ```jsx
+  <span className="inline-flex items-center justify-center bg-red-500 text-white text-xs font-black rounded-full min-w-[24px] h-6 px-2 ml-3">{activeTickets.length}</span>
+  ```
+- Separate sections with clear headings: "Active Queue" and "Recently Resolved" with a thin divider
+- Each ticket card: show time elapsed since creation in the bottom row — use a helper:
+  ```js
+  function timeAgo(date) {
+    const mins = Math.floor((Date.now() - new Date(date)) / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1440) return `${Math.floor(mins/60)}h ago`;
+    return `${Math.floor(mins/1440)}d ago`;
+  }
+  ```
+- Urgent priority cards should have a red pulsing left border using `.ticket-card-open` + an additional `urgent-pulse` style
+
+---
+
+#### PAGE 5 — Manager Dashboard (`src/app/dashboard/manager/page.tsx`)
+
+- KPI cards: add a trend arrow icon next to each number (▲ in green, just decorative)
+- Priority bar chart: animate bars from 0 to their value on page load using CSS:
+  ```css
+  @keyframes bar-grow {
+    from { height: 5%; }
+    to   { height: var(--bar-h); }
+  }
+  ```
+  Set `style={{ '--bar-h': `${percent}%`, animation: 'bar-grow 1s ease forwards' }}`
+- Add a "Refresh" button top-right of the ticket table that calls `window.location.reload()` with a spin animation on click
+- Add an "Export CSV" button (just UI, no functionality needed yet) next to Refresh
+- Last updated timestamp: `<p>Last updated: {new Date().toLocaleTimeString()}</p>` near the KPIs
+
+---
+
+#### CSS Rules (same as always)
+- Plain CSS in `globals.css` — no `@apply` on custom classes
+- No duplicate `className` attributes on elements
+- No `cursor: none`, no infinite layout-thrashing animations
+- Test every page at 375px width (mobile)
+
+**Priority order:** Landing page visual upgrade → Dashboard ticket cards → Staff queue → Ticket detail stepper → Manager dashboard
+
+---
+
 ### 2026-05-06 — FRONTEND IMPROVEMENT TASKS
 
 **Claude:** Tom, the backend is in great shape. Here's a list of frontend improvements the owner wants — prioritised top to bottom.
