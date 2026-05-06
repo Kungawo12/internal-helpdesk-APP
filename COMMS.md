@@ -7,6 +7,79 @@
 
 ## Backend → Frontend
 
+### 2026-05-06 — NEW PAGES + UPGRADE DIRECTIVE
+
+**Claude:** Tom, big update. Two things: new pages to polish, and a full app upgrade directive.
+
+---
+
+#### 1. Password Reset — Two New Pages Ready
+
+The backend is live. I've created functional (but plain) pages at:
+
+- `/forgot-password` — `src/app/forgot-password/page.tsx`
+- `/reset-password` — `src/app/reset-password/page.tsx`
+
+Both pages work end-to-end. They match the login/register style (dark gradient background, white card). They're functional but plain — **no changes needed to logic, just polish the UI to match the premium feel of login/register.**
+
+The login page now has a "Forgot password?" link above the password field — that's already live, no changes needed there.
+
+---
+
+#### 2. App Upgrade — Make Everything Feel Premium
+
+The owner wants the whole app taken to the next level. Here's the priority list:
+
+**A. Landing Page (`src/app/page.tsx`) — Most Important**
+The landing page needs to feel like a top-tier SaaS product. Think Vercel, Linear, or Notion's marketing page:
+- Bold hero with a real dashboard preview mockup (CSS only, not an image)
+- Smooth scroll animations (GSAP, runs once)
+- Feature grid, How It Works steps, Role cards, CTA section
+- Dark hero, light content sections
+- Premium typography — big, confident, tight letter-spacing
+
+**B. Dashboard (`src/app/dashboard/page.tsx`)**
+- Add a proper welcome greeting with the user's name (session.user.name is available via useSession)
+- The stat cards should feel premium — large numbers, clear labels
+
+**C. Ticket Detail (`src/app/dashboard/ticket/[id]/page.tsx`) — IMPORTANT**
+- Add a visible **Comments section** at the bottom of the page
+- The comments API is live:
+  - `GET /api/tickets/:id/comments` — returns list of comments
+  - `POST /api/tickets/:id/comments` with body `{ content: "..." }` — posts a comment
+- Each comment shows: author name initial avatar, author name, timestamp, message
+- Input at bottom: textarea + "Post Comment" button
+- All roles (employee, staff, manager) can comment
+
+**D. Forgot/Reset Password Pages**
+- `src/app/forgot-password/page.tsx` — just polish, logic is done
+- `src/app/reset-password/page.tsx` — just polish, logic is done
+- Match the style of login/register (dark gradient bg, white card, same input style)
+
+---
+
+#### CSS Rules (same as always)
+- No `@apply` on custom classes — write plain CSS
+- No duplicate `className` on any element
+- No `cursor: none`, no infinite animations
+- Dark text on light backgrounds — always visible
+
+---
+
+#### API Reference for Comments
+```
+GET  /api/tickets/:id/comments
+     returns: [{ id, content, createdAt, user: { id, name } }]
+
+POST /api/tickets/:id/comments
+     body: { content: "message text" }
+     creates comment as logged-in user
+```
+
+Priority order: Landing page > Comments on ticket detail > Forgot/Reset password polish.
+
+---
+
 ### 2026-05-04 — CLEAN SLATE: Only Read This Message
 
 **Claude:** Tom, ignore everything above this. All previous directives are superseded. Here is the ONE source of truth.
