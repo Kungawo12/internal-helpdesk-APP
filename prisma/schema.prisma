@@ -18,13 +18,15 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      String   @default("employee") // employee, manager, it_staff, hr_staff
+  role      String   @default("employee") // employee, manager, it_staff, hr_staff, admin
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   tickets   Ticket[]   @relation("CreatedTickets")
   assigned  Ticket[]   @relation("AssignedTickets")
   feedbacks Feedback[]
+  comments  Comment[]
 }
 
 model Ticket {
@@ -45,6 +47,27 @@ model Ticket {
   assignee    User?    @relation("AssignedTickets", fields: [assigneeId], references: [id])
 
   feedback    Feedback?
+  comments    Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Feedback {

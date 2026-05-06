@@ -76,7 +76,7 @@ export default function LandingPage() {
     <div ref={containerRef} className="min-h-screen font-sans bg-[#f8fafc] text-slate-900 overflow-x-hidden">
       
       {/* Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 bg-slate-900/80 backdrop-blur-md border-b border-white/10 text-white">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 bg-slate-900 border-b border-white/10 text-white">
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
           <span>Helpdesk</span>

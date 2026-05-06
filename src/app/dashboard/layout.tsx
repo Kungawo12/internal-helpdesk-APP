@@ -3,8 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import gsap from "gsap";
+import { useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -15,18 +14,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    // Breathing Mesh for Dashboard
-    gsap.to(".prism-mesh", {
-      x: "5%",
-      y: "3%",
-      duration: 15,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
-  }, []);
-
   const role = session?.user?.role;
   const navItems = [
     { label: "Dashboard", path: "/dashboard", icon: "📊" },
@@ -36,19 +23,18 @@ export default function DashboardLayout({
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden">
-      {/* Dynamic Motion Background */}
-      <div className="prism-bg">
-        <div className="prism-mesh" />
+    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc]">
+      {/* Background Layer */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
         <div 
-          className="prism-wallpaper bg-cover bg-center" 
+          className="w-full h-full bg-cover bg-center opacity-40" 
           style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }} 
         />
       </div>
       
       {/* Sidebar - Desktop */}
       <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
-        <div className="glass-panel h-full flex flex-col p-8 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border-white/60">
+        <div className="bg-white/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60">
           <div className="mb-14 px-2">
             <Link href="/dashboard" className="flex items-center gap-4 group">
               <div className="w-12 h-12 bg-[#0f172a] rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
@@ -78,7 +64,7 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
-            <div className="bg-white/40 backdrop-blur-md rounded-3xl p-5 border border-white/50 shadow-inner">
+            <div className="bg-white/60 rounded-3xl p-5 border border-white/50 shadow-inner">
               <div className="flex items-center gap-4 mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm border border-blue-200 shadow-sm">
                   {session?.user?.name?.charAt(0)}
@@ -105,9 +91,9 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="lg:pl-80 flex-1 flex flex-col min-h-screen">
+      <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
         {/* Mobile Header */}
-        <header className="lg:hidden h-20 glass-nav flex items-center justify-between px-8 sticky top-0 z-50">
+        <header className="lg:hidden h-20 bg-white/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100">
            <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center font-bold text-white text-lg">H</div>
             <span className="font-extrabold text-xl text-[#0f172a]">Helpdesk</span>
@@ -122,7 +108,7 @@ export default function DashboardLayout({
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-3xl pt-24 px-8 overflow-y-auto">
+          <div className="lg:hidden fixed inset-0 z-40 bg-white pt-24 px-8 overflow-y-auto">
              <nav className="space-y-3">
                 {navItems.map((item) => (
                   <Link

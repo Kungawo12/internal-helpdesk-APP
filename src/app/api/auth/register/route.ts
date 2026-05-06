@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-const validRoles = ["employee", "manager", "it_staff", "hr_staff"];
+const validRoles = ["employee", "manager", "it_staff", "hr_staff", "admin"];
 
 export async function POST(req: Request) {
   try {
