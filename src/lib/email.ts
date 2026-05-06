@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+const isSmtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
@@ -10,73 +12,145 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendPasswordResetEmail(email: string, token: string) {
-  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const resetUrl = `${appUrl}/reset-password?token=${token}`;
-
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
-    console.log(`[DEV] Password reset link for ${email}: ${resetUrl}`);
+async function sendEmail(to: string, subject: string, html: string) {
+  if (!isSmtpConfigured) {
+    console.log(`[EMAIL - NOT SENT] To: ${to} | Subject: ${subject}`);
     return;
   }
-
   await transporter.sendMail({
     from: `"Helpdesk" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: "Reset your Helpdesk password",
-    html: `
-      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:40px 24px;">
-        <div style="background:#0f172a;padding:24px;border-radius:12px;text-align:center;margin-bottom:32px;">
-          <span style="color:white;font-size:24px;font-weight:900;">Helpdesk</span>
-        </div>
-        <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px;">Reset your password</h1>
-        <p style="color:#64748b;margin-bottom:32px;line-height:1.6;">
-          You requested a password reset. This link expires in <strong>1 hour</strong>.
-        </p>
-        <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:700;font-size:14px;">
-          Reset Password
-        </a>
-        <p style="margin-top:32px;font-size:12px;color:#94a3b8;">
-          If you didn't request this, ignore this email.<br>
-          Link: <a href="${resetUrl}" style="color:#3b82f6;">${resetUrl}</a>
-        </p>
-      </div>
-    `,
+    to,
+    subject,
+    html,
   });
 }
+
+// ─── TICKET CREATED → notify relevant department staff ───────────────────────
 
 export async function sendTicketCreatedEmail(
   staffEmail: string,
   ticketTitle: string,
   ticketType: string,
-  creatorName: string
+  ticketId: string,
+  creatorName: string,
+  priority: string
 ) {
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
-    to: staffEmail,
-    subject: `New ${ticketType} Ticket: ${ticketTitle}`,
-    html: `
-      <h2>New ${ticketType} Ticket Created</h2>
-      <p><strong>Title:</strong> ${ticketTitle}</p>
-      <p><strong>Created by:</strong> ${creatorName}</p>
-      <p>Please log in to the ticketing system to review and resolve this ticket.</p>
-    `,
-  });
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+  const priorityColor = priority === "urgent" ? "#dc2626" : priority === "high" ? "#d97706" : "#3b82f6";
+  const deptLabel = ticketType === "IT" ? "IT Support" : "HR Support";
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;">${deptLabel} Queue</p>
+        <h1 style="margin:0 0 24px;font-size:22px;font-weight:800;color:#0f172a;line-height:1.3;">New Ticket Assigned to Your Queue</h1>
+
+        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid ${priorityColor};">
+          <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <span style="font-size:12px;font-weight:700;color:#64748b;">Type: <span style="color:#0f172a;">${ticketType}</span></span>
+            <span style="font-size:12px;font-weight:700;color:#64748b;">Priority: <span style="color:${priorityColor};text-transform:capitalize;">${priority}</span></span>
+            <span style="font-size:12px;font-weight:700;color:#64748b;">From: <span style="color:#0f172a;">${creatorName}</span></span>
+          </div>
+        </div>
+
+        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          View &amp; Respond to Ticket →
+        </a>
+
+        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+          You received this because you are a member of the ${deptLabel} team.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(staffEmail, `[${priority.toUpperCase()}] New ${ticketType} Ticket: ${ticketTitle}`, html);
 }
+
+// ─── TICKET RESOLVED → notify the employee who raised it ─────────────────────
 
 export async function sendTicketResolvedEmail(
   employeeEmail: string,
   ticketTitle: string,
-  solution: string
+  ticketId: string,
+  solution: string,
+  resolvedByName: string
 ) {
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
-    to: employeeEmail,
-    subject: `Ticket Resolved: ${ticketTitle}`,
-    html: `
-      <h2>Your Ticket Has Been Resolved</h2>
-      <p><strong>Ticket:</strong> ${ticketTitle}</p>
-      <p><strong>Solution:</strong> ${solution}</p>
-      <p>Please log in to the ticketing system to review the solution and provide feedback.</p>
-    `,
-  });
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
+          <span style="color:#16a34a;font-size:14px;">✓</span>
+          <span style="color:#16a34a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Resolved</span>
+        </div>
+
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Your ticket has been resolved</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${resolvedByName} has resolved your request.</p>
+
+        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #16a34a;">
+          <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ticket</p>
+          <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+          <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Solution</p>
+          <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">${solution}</p>
+        </div>
+
+        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          View Ticket &amp; Leave Feedback →
+        </a>
+
+        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+          If the issue persists, you can open a new ticket from your dashboard.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(employeeEmail, `✓ Resolved: ${ticketTitle}`, html);
+}
+
+// ─── PASSWORD RESET ───────────────────────────────────────────────────────────
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const resetUrl = `${appUrl}/reset-password?token=${token}`;
+
+  if (!isSmtpConfigured) {
+    console.log(`[DEV] Password reset link for ${email}: ${resetUrl}`);
+    return;
+  }
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Reset your password</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#64748b;line-height:1.6;">
+          You requested a password reset. This link expires in <strong>1 hour</strong>.
+        </p>
+        <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          Reset Password →
+        </a>
+        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+          If you didn't request this, ignore this email. Your password won't change.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(email, "Reset your Helpdesk password", html);
 }

@@ -44,7 +44,9 @@ export async function PATCH(
       sendTicketResolvedEmail(
         ticket.creator.email,
         ticket.title,
-        solution
+        ticket.id,
+        solution,
+        session.user.name
       ).catch(() => {});
     }
 

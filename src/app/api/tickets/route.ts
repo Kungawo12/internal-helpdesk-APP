@@ -84,17 +84,19 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email notification to relevant staff (non-blocking)
+    // Send email notification to relevant department staff (non-blocking)
     const staffRole = type === "IT" ? "it_staff" : "hr_staff";
     prisma.user
-      .findMany({ where: { role: staffRole }, select: { email: true } })
+      .findMany({ where: { role: staffRole, active: true }, select: { email: true } })
       .then((staffMembers) => {
         for (const staff of staffMembers) {
           sendTicketCreatedEmail(
             staff.email,
             ticket.title,
             ticket.type,
-            session.user.name
+            ticket.id,
+            session.user.name,
+            ticket.priority
           ).catch(() => {});
         }
       })
