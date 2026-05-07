@@ -3,8 +3,9 @@
 import { useParams, useRouter } from "next/navigation";
 import { useTicket } from "@/hooks/useTicket";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { timeAgo } from "@/lib/utils";
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -19,8 +20,10 @@ export default function TicketDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [ticketComments, setTicketComments] = useState<any[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
   const [isPostingComment, setIsPostingComment] = useState(false);
+  const commentsEndRef = useRef<HTMLDivElement>(null);
 
   const fetchComments = async () => {
     try {
@@ -31,6 +34,8 @@ export default function TicketDetailPage() {
       }
     } catch (err) {
       console.error("Failed to fetch comments", err);
+    } finally {
+      setCommentsLoading(false);
     }
   };
 
@@ -52,7 +57,10 @@ export default function TicketDetailPage() {
       });
       if (res.ok) {
         setNewComment("");
-        fetchComments();
+        await fetchComments();
+        setTimeout(() => {
+          commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
       }
     } catch (err) {
       console.error("Failed to post comment", err);
@@ -154,6 +162,32 @@ export default function TicketDetailPage() {
         
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
+           {/* Progress Stepper */}
+           <div className="flex items-center justify-between max-w-lg mx-auto mb-10 mt-4 relative">
+             <div className="absolute left-0 top-4 w-full h-1 bg-slate-200 z-0" />
+             <div className={`absolute left-0 top-4 h-1 bg-blue-600 z-0 transition-all duration-500 ${ticket.status === 'resolved' ? 'w-full' : ticket.status === 'in_progress' ? 'w-1/2' : 'w-0'}`} />
+             
+             <div className="relative z-10 flex flex-col items-center gap-2">
+               <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center ${ticket.status === 'open' ? 'border-blue-600 bg-white' : 'border-blue-600 bg-blue-600'}`}>
+                 <div className={`w-2.5 h-2.5 rounded-full ${ticket.status === 'open' ? 'bg-blue-600' : 'bg-white'}`} />
+               </div>
+               <span className={`text-xs font-bold ${ticket.status === 'open' ? 'text-blue-600' : 'text-slate-900'}`}>Created</span>
+             </div>
+             
+             <div className="relative z-10 flex flex-col items-center gap-2">
+               <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center ${ticket.status === 'in_progress' ? 'border-blue-600 bg-white' : ticket.status === 'resolved' ? 'border-blue-600 bg-blue-600' : 'border-slate-200 bg-slate-100'}`}>
+                 <div className={`w-2.5 h-2.5 rounded-full ${ticket.status === 'in_progress' ? 'bg-blue-600' : ticket.status === 'resolved' ? 'bg-white' : 'bg-slate-300'}`} />
+               </div>
+               <span className={`text-xs font-bold ${ticket.status === 'in_progress' ? 'text-blue-600' : ticket.status === 'resolved' ? 'text-slate-900' : 'text-slate-400'}`}>In Progress</span>
+             </div>
+             
+             <div className="relative z-10 flex flex-col items-center gap-2">
+               <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center ${ticket.status === 'resolved' ? 'border-green-500 bg-white' : 'border-slate-200 bg-slate-100'}`}>
+                 <div className={`w-2.5 h-2.5 rounded-full ${ticket.status === 'resolved' ? 'bg-green-500' : 'bg-slate-300'}`} />
+               </div>
+               <span className={`text-xs font-bold ${ticket.status === 'resolved' ? 'text-green-600' : 'text-slate-400'}`}>Resolved</span>
+             </div>
+           </div>
            <div className="card p-6">
               <div className="flex items-start gap-4 mb-6 border-b border-slate-100 pb-6">
                  <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-2xl flex-shrink-0">
@@ -230,29 +264,52 @@ export default function TicketDetailPage() {
              <h3 className="text-lg font-bold text-slate-900 mb-6">Discussion</h3>
              
              <div className="space-y-6 mb-6">
-               {ticketComments.length === 0 ? (
-                 <p className="text-sm text-slate-500 italic">No comments yet. Start the conversation.</p>
-               ) : (
-                 ticketComments.map((c) => (
-                   <div key={c.id} className="flex gap-4">
-                     <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
-                       {c.user?.name?.charAt(0) || '?'}
-                     </div>
-                     <div className="flex-1">
-                       <div className="flex items-baseline gap-2 mb-1">
-                         <span className="font-bold text-sm text-slate-900">{c.user?.name || 'Unknown User'}</span>
-                         <span className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleString()}</span>
-                       </div>
-                       <p className="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-wrap">
-                         {c.content}
-                       </p>
+               {commentsLoading ? (
+                 <div className="space-y-4">
+                   <div className="flex gap-4 animate-pulse">
+                     <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0" />
+                     <div className="space-y-2 flex-1">
+                       <div className="h-4 bg-slate-200 rounded w-1/4" />
+                       <div className="h-16 bg-slate-200 rounded-lg w-3/4" />
                      </div>
                    </div>
-                 ))
+                   <div className="flex gap-4 animate-pulse justify-end">
+                     <div className="space-y-2 flex-1 items-end flex flex-col">
+                       <div className="h-4 bg-slate-200 rounded w-1/4" />
+                       <div className="h-16 bg-slate-200 rounded-lg w-3/4" />
+                     </div>
+                     <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0" />
+                   </div>
+                 </div>
+               ) : ticketComments.length === 0 ? (
+                 <div className="text-center py-8">
+                   <p className="text-sm text-slate-500 italic">No messages yet. Be the first to comment.</p>
+                 </div>
+               ) : (
+                 ticketComments.map((c) => {
+                   const isMe = c.user?.email === session?.user?.email;
+                   return (
+                     <div key={c.id} className={`flex gap-4 ${isMe ? "flex-row-reverse" : ""}`}>
+                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isMe ? "bg-slate-900 text-white" : "bg-blue-100 text-blue-600"}`}>
+                         {c.user?.name?.charAt(0) || '?'}
+                       </div>
+                       <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[80%]`}>
+                         <div className={`flex items-baseline gap-2 mb-1 ${isMe ? "flex-row-reverse" : ""}`}>
+                           <span className="font-bold text-sm text-slate-900">{isMe ? "You" : c.user?.name || 'Unknown User'}</span>
+                           <span className="text-xs text-slate-500">{timeAgo(c.createdAt)}</span>
+                         </div>
+                         <p className={`text-sm p-3 rounded-2xl whitespace-pre-wrap ${isMe ? "bg-blue-600 text-white rounded-tr-sm" : "bg-slate-50 text-slate-700 border border-slate-100 rounded-tl-sm"}`}>
+                           {c.content}
+                         </p>
+                       </div>
+                     </div>
+                   );
+                 })
                )}
+               <div ref={commentsEndRef} />
              </div>
 
-             <form onSubmit={handlePostComment} className="flex gap-3 items-start border-t border-slate-100 pt-6">
+             <form onSubmit={handlePostComment} className="flex gap-3 items-start border-t border-slate-100 pt-6 sticky bottom-0 bg-white z-10 pb-2">
                <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold flex-shrink-0">
                  {session?.user?.name?.charAt(0) || '?'}
                </div>
@@ -299,7 +356,7 @@ export default function TicketDetailPage() {
                     <div>
                        <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Priority</p>
                        <p className={`font-medium text-sm ${
-                         ticket.priority === 'urgent' ? 'text-red-600' : 'text-slate-900'
+                         ticket.priority === 'urgent' ? 'text-red-600' : ticket.priority === 'high' ? 'text-orange-500' : ticket.priority === 'medium' ? 'text-blue-600' : 'text-slate-500'
                        }`}>{ticket.priority}</p>
                     </div>
                     <div>

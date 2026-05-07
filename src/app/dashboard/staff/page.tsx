@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
+import { timeAgo } from "@/lib/utils";
 
 export default function StaffQueuePage() {
   const router = useRouter();
@@ -51,7 +52,14 @@ export default function StaffQueuePage() {
       <div className="lg:col-span-3 space-y-8">
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">Staff Operations</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3">
+              Staff Operations
+              {activeTickets.length > 0 && (
+                <span className="inline-flex items-center justify-center bg-red-500 text-white text-sm font-black rounded-full px-3 py-1 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                  {activeTickets.length} awaiting
+                </span>
+              )}
+            </h1>
             <p className="text-xl text-[#6e6e73] font-medium">Assigned service requests awaiting resolution</p>
           </div>
         </div>
@@ -64,7 +72,7 @@ export default function StaffQueuePage() {
             </div>
           ) : (
             activeTickets.map((ticket) => (
-              <div key={ticket.id} className="card p-8 group hover:bg-[#fafafa]">
+              <div key={ticket.id} className={`card p-8 group hover:bg-[#fafafa] relative ${ticket.priority === 'urgent' ? 'border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-pulse-glow' : ''}`}>
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-3">
@@ -84,7 +92,7 @@ export default function StaffQueuePage() {
                     </div>
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-semibold text-black/60 pt-2">
                       <span className="flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold">{ticket.creator?.name?.charAt(0) || '?'}</div> {ticket.creator?.name}</span>
-                      <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                      <span>{timeAgo(ticket.createdAt)}</span>
                       {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold flex items-center gap-1"><span className="text-xl leading-none">!</span> URGENT</span>}
                       {ticket.priority === 'high' && <span className="text-amber-600 font-extrabold">HIGH PRIORITY</span>}
                     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
@@ -11,6 +11,15 @@ if (typeof window !== "undefined") {
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -76,7 +85,7 @@ export default function LandingPage() {
     <div ref={containerRef} className="min-h-screen font-sans bg-[#f8fafc] text-slate-900 overflow-x-hidden">
       
       {/* Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 bg-slate-900 border-b border-white/10 text-white">
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 text-white transition-all duration-300 ${scrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-white/5' : 'bg-transparent border-b border-transparent'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
           <span>Helpdesk</span>
@@ -92,15 +101,22 @@ export default function LandingPage() {
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWMGgtMXYzOXoiIGZpbGw9InJnYmEoMjU1LDExNSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50"></div>
         
+        <div className="glow-orb w-[600px] h-[600px] bg-blue-600/20 -top-40 -left-40" />
+        <div className="glow-orb w-[400px] h-[400px] bg-cyan-500/10 top-1/2 right-0" />
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="hero-element inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+            <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
+            Now Live — Internal Helpdesk Platform
+          </div>
           <h1 className="hero-element text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-6 max-w-4xl mx-auto">
-            The unified support platform for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">modern teams</span>.
+            The unified support platform for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300" style={{ backgroundSize: '200%', animation: 'gradient-shift 4s ease infinite' }}>modern teams</span>.
           </h1>
           <p className="hero-element text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 font-medium">
             Streamline internal requests, empower your IT and HR staff, and give managers the visibility they need to scale operations smoothly.
           </p>
           <div className="hero-element flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-            <Link href="/register" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20">
+            <Link href="/register" className="btn-pulse w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20">
               Get Started for Free
             </Link>
             <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/15 text-white rounded-xl font-bold text-lg backdrop-blur-sm transition-all border border-white/10">
@@ -123,7 +139,17 @@ export default function LandingPage() {
               </div>
             </div>
             {/* Mockup Content */}
-            <div className="p-6 md:p-8 bg-slate-50 text-left h-[400px]">
+            <div className="flex h-[400px]">
+              {/* Sidebar */}
+              <div className="hidden md:block w-48 bg-slate-900 p-4 space-y-2 flex-shrink-0">
+                <div className="h-4 w-20 bg-blue-600 rounded mb-6" />
+                {['Dashboard','Tickets','Staff Queue','Overview'].map((item,i) => (
+                  <div key={i} className={`h-8 rounded-lg flex items-center px-3 ${i===0?'bg-white/10':''}`}>
+                    <div className={`h-3 rounded ${i===0?'w-20 bg-white':'w-16 bg-slate-700'}`} />
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1 p-6 md:p-8 bg-slate-50 text-left overflow-hidden">
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-xl font-bold text-slate-900">Dashboard Overview</h3>
                 <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">JD</div>
@@ -189,9 +215,25 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+            </div>
+            
             
             {/* Fade Out Overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent z-20"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section className="reveal-section py-10 bg-white border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
+          <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Trusted by innovative teams</p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 grayscale">
+            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-full bg-black"></div> ACME Corp</div>
+            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rotate-45 bg-black"></div> Globex</div>
+            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded bg-black"></div> Initech</div>
+            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-tl-full rounded-br-full bg-black"></div> Soylent</div>
+            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-t-full bg-black"></div> Umbrella</div>
           </div>
         </div>
       </section>
@@ -213,8 +255,8 @@ export default function LandingPage() {
               { icon: "🗄️", title: "Solution Database", desc: "Automatically log resolutions to build a powerful knowledge base." },
               { icon: "⭐", title: "Feedback System", desc: "Collect CSAT ratings to measure and improve support quality." }
             ].map((feature, i) => (
-              <div key={i} className="stagger-card p-8 rounded-2xl bg-[#f8fafc] border border-slate-200 hover:border-blue-200 hover:shadow-md transition-all">
-                <div className="text-3xl mb-4 bg-white w-12 h-12 flex items-center justify-center rounded-xl shadow-sm">{feature.icon}</div>
+              <div key={i} className="stagger-card p-8 rounded-2xl bg-[#f8fafc] border border-slate-200 hover:border-blue-200 hover:shadow-md transition-all" style={{ borderTop: '3px solid', borderTopColor: ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#10b981','#f43f5e'][i] }}>
+                <div className="text-3xl mb-4 bg-white w-12 h-12 flex items-center justify-center rounded-xl shadow-sm hover:scale-110 transition-transform cursor-default">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-slate-600">{feature.desc}</p>
               </div>
@@ -233,17 +275,17 @@ export default function LandingPage() {
           
           <div className="stagger-grid grid grid-cols-1 md:grid-cols-4 gap-12 relative">
             {/* Connecting Line */}
-            <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-slate-800 z-0"></div>
+            <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-blue-500/30 via-blue-500/60 to-blue-500/30 z-0"></div>
             
             {[
-              { step: "01", title: "Submit", desc: "Employee fills out a simple request form." },
-              { step: "02", title: "Notified", desc: "The right staff member gets an instant alert." },
-              { step: "03", title: "Resolved", desc: "Staff works the ticket and logs the solution." },
-              { step: "04", title: "Feedback", desc: "Employee confirms and rates the service." }
+              { icon: "📝", title: "Submit", desc: "Employee fills out a simple request form." },
+              { icon: "🔔", title: "Notified", desc: "The right staff member gets an instant alert." },
+              { icon: "✅", title: "Resolved", desc: "Staff works the ticket and logs the solution." },
+              { icon: "⭐", title: "Feedback", desc: "Employee confirms and rates the service." }
             ].map((item, i) => (
               <div key={i} className="stagger-card relative z-10 flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-800 flex items-center justify-center text-xl font-black text-blue-400 mb-6 shadow-xl">
-                  {item.step}
+                <div className="w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-800 flex items-center justify-center text-xl hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-shadow mb-6 shadow-xl">
+                  {item.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2">{item.title}</h3>
                 <p className="text-slate-400 font-medium">{item.desc}</p>
@@ -302,12 +344,17 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
-        <div className="max-w-4xl mx-auto bg-blue-600 rounded-3xl p-12 md:p-20 text-center text-white shadow-xl shadow-blue-900/10">
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Ready to get started?</h2>
-          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">Join the teams already using our platform to streamline their internal operations.</p>
-          <Link href="/register" className="inline-block px-10 py-5 bg-white text-blue-700 rounded-xl font-bold text-xl hover:scale-105 transition-transform shadow-lg">
-            Create an Account
-          </Link>
+        <div className="max-w-4xl mx-auto bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-12 md:p-20 text-center text-white shadow-xl shadow-blue-900/10 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWMGgtMXYzOXoiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yKSIvPjwvc3ZnPg==')]" />
+          <div className="glow-orb w-80 h-80 bg-white/10 -top-20 -right-20" />
+          
+          <div className="relative z-10">
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Ready to get started?</h2>
+            <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">Join the teams already using our platform to streamline their internal operations.</p>
+            <Link href="/register" className="btn-pulse inline-block px-10 py-5 bg-white text-blue-700 rounded-xl font-bold text-xl hover:scale-105 transition-transform shadow-lg">
+              Create an Account
+            </Link>
+          </div>
         </div>
       </section>
 

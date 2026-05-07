@@ -162,7 +162,7 @@ export default function ManagerDashboard() {
              ].map((p, idx) => (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-3">
                    <div className="text-xl font-bold">{p.value}</div>
-                   <div className={`w-full rounded-xl ${p.color} transition-all duration-1000`} style={{ height: `${Math.max((p.value / (stats.total || 1)) * 100, 5)}%` }}></div>
+                   <div className={`w-full rounded-xl ${p.color} animate-bar-grow`} style={{ height: `${Math.max((p.value / (stats.total || 1)) * 100, 5)}%` }}></div>
                    <span className="text-xs font-bold uppercase tracking-wider text-white/50">{p.label}</span>
                 </div>
              ))}
@@ -175,17 +175,19 @@ export default function ManagerDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight">Active Manifest</h2>
           <div className="flex w-full md:w-auto gap-4">
+            <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10">🔄 Refresh</button>
+            <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10">⬇ Export CSV</button>
             <input
               type="text"
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field max-w-xs"
+              className="input-field max-w-[140px]"
             />
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input-field max-w-[160px]"
+              className="input-field max-w-[140px]"
             >
               <option value="all">All</option>
               <option value="open">Open</option>
