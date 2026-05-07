@@ -109,7 +109,7 @@ export default function LandingPage() {
             <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
             Now Live — Internal Helpdesk Platform
           </div>
-          <h1 className="hero-element text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-6 max-w-4xl mx-auto">
+          <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-6 max-w-4xl mx-auto">
             The unified support platform for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300" style={{ backgroundSize: '200%', animation: 'gradient-shift 4s ease infinite' }}>modern teams</span>.
           </h1>
           <p className="hero-element text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 font-medium">
@@ -269,7 +269,7 @@ export default function LandingPage() {
       <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-slate-900 text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">A frictionless workflow.</h2>
+            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">A frictionless workflow.</h2>
             <p className="text-lg text-slate-400">From request to resolution in four simple steps.</p>
           </div>
           
