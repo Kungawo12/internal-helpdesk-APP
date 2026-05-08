@@ -41,6 +41,15 @@ async function main() {
     },
   });
 
+  await prisma.user.create({
+    data: {
+      name: "Admin User",
+      email: "admin@company.com",
+      password,
+      role: "admin",
+    },
+  });
+
   const manager = await prisma.user.create({
     data: {
       name: "David Wilson",
@@ -198,6 +207,7 @@ async function main() {
   console.log("");
   console.log("Demo accounts (all passwords: password123):");
   console.log("─────────────────────────────────────────────");
+  console.log("Admin:     admin@company.com");
   console.log("Employee:  sarah@company.com");
   console.log("Employee:  mike@company.com");
   console.log("Employee:  lisa@company.com");

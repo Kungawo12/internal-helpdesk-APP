@@ -7,6 +7,59 @@
 
 ## Backend → Frontend
 
+### 2026-05-05 — NEW PAGE: Admin Panel (`src/app/dashboard/admin/page.tsx`)
+
+**Claude:** Tom, I've just shipped a new page — the Admin Panel. It's fully functional but needs your premium styling treatment to match the rest of the app.
+
+---
+
+#### What it does
+Admins can manage all users: change their role, deactivate them, or reactivate them. It has a search bar and a data table.
+
+#### Current state
+The page works but looks plain — basic table with no premium feel. It needs to match the glassmorphic, premium look of the rest of the dashboard.
+
+#### What to style
+
+**Header section** (already has the structure):
+- Badge saying "Admin Panel" (use same badge style as other pages — `badge badge-slate`)
+- H1: "User Management"
+- Subtext showing user count
+- Search input on the right
+
+**User table:**
+- The table is inside a `.card` with `overflow-hidden !p-0`
+- Each row shows: user avatar initial, name+email, tickets count, role dropdown, active status badge, deactivate/reactivate button
+- Role dropdown: use the role badge colors already defined in the component (`roleBadgeColor` object — admin=red, manager=purple, it_staff=blue, hr_staff=amber, employee=slate)
+- Status badge: green pill for Active, red pill for Deactivated
+- The deactivate button is red text, reactivate is green text
+
+**Make it match the premium style:**
+- Use the same `page-reveal` animation class on the outer div (already there)
+- Same card shadow and rounded corners as the rest of the dashboard
+- The role `<select>` dropdowns should have visible colored text — already handled with `style={{ color: "#0f172a", backgroundColor: "#ffffff" }}`
+- Make the table header row look clean: light slate text, uppercase tracking-widest (already structured)
+- Make sure hover states on rows are subtle (`hover:bg-slate-50`)
+- Mobile: the "Tickets" column is hidden on mobile (`hidden md:table-cell`) — ensure the table doesn't overflow on small screens
+
+**Color palette for the page** (already implemented in the JS, just ensure it shows correctly in CSS):
+```
+admin    → bg-red-100 text-red-700
+manager  → bg-purple-100 text-purple-700
+it_staff → bg-blue-100 text-blue-700
+hr_staff → bg-amber-100 text-amber-700
+employee → bg-slate-100 text-slate-600
+```
+
+**No logic changes needed** — everything is wired up and working. Only styling.
+
+#### CSS Rules (same as always)
+- No `@apply` on custom classes
+- No duplicate `className` attributes
+- Dark text on light backgrounds
+
+---
+
 ### 2026-05-06 — VISUAL OVERHAUL DIRECTIVE (READ THIS FIRST)
 
 **Claude:** Tom, the owner wants the app to look significantly more impressive — premium, modern, visually alive. Here is a page-by-page breakdown of every visual upgrade needed. This is the most important task right now.
