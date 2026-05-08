@@ -8,7 +8,6 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("employee");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -22,7 +21,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, email, password, role: "employee" }),
       });
 
       if (res.ok) {
@@ -37,13 +36,6 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
-
-  const roles = [
-    { id: "employee", label: "Employee", icon: "👤" },
-    { id: "it_staff", label: "IT Staff", icon: "🛠️" },
-    { id: "hr_staff", label: "HR Staff", icon: "📋" },
-    { id: "manager", label: "Manager", icon: "💼" },
-  ];
 
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-slate-950">
@@ -131,29 +123,6 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold text-white/80 mb-3 uppercase tracking-wide">
-                Select Your Role
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {roles.map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setRole(r.id)}
-                    className={`flex items-center gap-2 p-3 rounded-xl border text-sm font-bold transition-all ${
-                      role === r.id
-                        ? "bg-blue-600 border-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]"
-                        : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    <span className="text-lg">{r.icon}</span>
-                    {r.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {error && (
