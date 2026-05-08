@@ -14,15 +14,21 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to: string, subject: string, html: string) {
   if (!isSmtpConfigured) {
-    console.log(`[EMAIL - NOT SENT] To: ${to} | Subject: ${subject}`);
+    console.log(`[EMAIL - SMTP NOT CONFIGURED] To: ${to} | Subject: ${subject}`);
     return;
   }
-  await transporter.sendMail({
-    from: `"Helpdesk" <${process.env.SMTP_USER}>`,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const info = await transporter.sendMail({
+      from: `"Helpdesk" <${fromEmail}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`[EMAIL SENT] To: ${to} | Subject: ${subject} | ID: ${info.messageId}`);
+  } catch (err) {
+    console.error(`[EMAIL ERROR] To: ${to} | Subject: ${subject}`, err);
+  }
 }
 
 // ─── TICKET CREATED → notify relevant department staff ───────────────────────
