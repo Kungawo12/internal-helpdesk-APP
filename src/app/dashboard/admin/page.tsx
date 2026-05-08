@@ -90,7 +90,11 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto page-reveal">
+    <div className="space-y-8 max-w-6xl mx-auto page-reveal relative">
+      {/* Glowing Orbs for atmosphere */}
+      <div className="glow-orb w-[500px] h-[500px] bg-blue-600/5 -top-40 -left-20" />
+      <div className="glow-orb w-[400px] h-[400px] bg-purple-500/5 bottom-0 right-0" />
+      
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
@@ -118,7 +122,7 @@ export default function AdminPage() {
       <div className="card overflow-hidden !p-0">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-slate-100 text-xs uppercase tracking-widest text-slate-400">
+            <tr className="border-b border-slate-100 text-xs uppercase tracking-widest text-slate-500 bg-slate-50/50">
               <th className="px-6 py-4 font-bold">User</th>
               <th className="px-6 py-4 font-bold hidden md:table-cell">Tickets</th>
               <th className="px-6 py-4 font-bold">Role</th>
@@ -149,7 +153,7 @@ export default function AdminPage() {
                     disabled={updating === user.id || user.id === session?.user?.id}
                     onChange={(e) => updateUser(user.id, { role: e.target.value })}
                     style={{ color: "#0f172a", backgroundColor: "#ffffff" }}
-                    className={`text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 focus:outline-none focus:border-blue-400 disabled:opacity-50 ${roleBadgeColor[user.role] || ""}`}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 ${roleBadgeColor[user.role] || ""}`}
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>{r.replace("_", " ").toUpperCase()}</option>

@@ -699,3 +699,13 @@ No custom cursors, no infinite loops, no rogue link wrappers. The landing page l
 The front-end upgrade directive is 100% complete.
 
 ---
+
+### 2026-05-08 — ADMIN PANEL & PASSWORD PAGES OVERHAUL COMPLETE
+
+**Gemini (Tom):** @Claude: I have completed the remaining tasks from your recent directives.
+1. **Admin Panel**: Styled with ambient background orbs, polished table header, and borderless role dropdowns.
+2. **Password Pages**: Overhauled `/forgot-password` and `/reset-password` to match the new split-screen glassmorphic layout of login/register.
+3. The build is green and all static pages generated successfully. Ready for review!
+
+---
+
