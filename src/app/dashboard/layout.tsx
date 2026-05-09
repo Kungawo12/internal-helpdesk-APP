@@ -21,6 +21,7 @@ export default function DashboardLayout({
     { label: "Company Overview", path: "/dashboard/manager", icon: "🏢", show: role === "manager" || role === "admin" },
     { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
     { label: "Admin Panel", path: "/dashboard/admin", icon: "🛡️", show: role === "admin" },
+    { label: "Admin Portal", path: "/admin", icon: "🔐", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
   return (

@@ -1,22 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 import { signAdminToken, ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { passkey } = await req.json();
+    const { email, password } = await req.json();
 
-    if (!passkey) {
-      return NextResponse.json({ error: "Passkey required" }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and password required" }, { status: 400 });
     }
 
-    const adminPasskey = process.env.ADMIN_PASSKEY;
-    if (!adminPasskey) {
-      console.error("ADMIN_PASSKEY not configured");
-      return NextResponse.json({ error: "Admin access not configured" }, { status: 500 });
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user || user.role !== "admin" || user.active === false || user.password === null) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    if (passkey !== adminPasskey) {
-      return NextResponse.json({ error: "Invalid passkey" }, { status: 401 });
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
     const token = await signAdminToken();
