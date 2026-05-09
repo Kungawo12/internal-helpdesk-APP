@@ -63,7 +63,14 @@ export default function AdminOverviewPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((k) => (
-          <div key={k.label} className={`bg-white/5 border ${k.color} rounded-2xl p-6`}>
+          <div 
+            key={k.label} 
+            className={`bg-white/5 border ${k.color} rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:bg-white/8 ${
+              k.color.includes("orange") ? "hover:shadow-[0_0_20px_rgba(249,115,22,0.15)]" :
+              k.color.includes("emerald") ? "hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]" :
+              "hover:shadow-[0_0_20px_rgba(239,68,68,0.1)]"
+            }`}
+          >
             <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">{k.label}</p>
             <p className="text-5xl font-extrabold text-white">{k.value}</p>
           </div>
@@ -73,7 +80,7 @@ export default function AdminOverviewPage() {
       {/* Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Ticket split */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:bg-white/8 hover:shadow-[0_0_20px_rgba(239,68,68,0.05)]">
           <h2 className="text-sm font-bold text-white/60 uppercase tracking-widest mb-5">Ticket Split</h2>
           <div className="space-y-4">
             {[
@@ -97,7 +104,7 @@ export default function AdminOverviewPage() {
         </div>
 
         {/* Users by role */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:bg-white/8 hover:shadow-[0_0_20px_rgba(239,68,68,0.05)]">
           <h2 className="text-sm font-bold text-white/60 uppercase tracking-widest mb-5">Users by Role</h2>
           <div className="space-y-3">
             {stats.usersByRole.map((r) => (

@@ -44,6 +44,8 @@ export function useTicket(id: string) {
 
   useEffect(() => {
     if (id) fetchTicket();
+    const interval = setInterval(() => { if (id) fetchTicket(); }, 30000);
+    return () => clearInterval(interval);
   }, [id, fetchTicket]);
 
   return { ticket, loading, error, refresh: fetchTicket };

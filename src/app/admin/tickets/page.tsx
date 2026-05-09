@@ -116,7 +116,7 @@ export default function AdminTicketsPage() {
           </thead>
           <tbody>
             {filtered.map((ticket) => (
-              <tr key={ticket.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+              <tr key={ticket.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4">
                   <p className="font-bold text-white text-sm line-clamp-1">{ticket.title}</p>
                   <p className="text-xs text-white/20 font-mono mt-0.5">#{ticket.id.slice(0, 8)}</p>

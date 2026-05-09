@@ -25,6 +25,8 @@ export function useTickets() {
 
   useEffect(() => {
     fetchTickets();
+    const interval = setInterval(fetchTickets, 30000);
+    return () => clearInterval(interval);
   }, [fetchTickets]);
 
   return { tickets, loading, error, refresh: fetchTickets };

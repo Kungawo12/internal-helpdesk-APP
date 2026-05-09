@@ -127,6 +127,42 @@ export async function sendTicketResolvedEmail(
   await sendEmail(employeeEmail, `✓ Resolved: ${ticketTitle}`, html);
 }
 
+// ─── TICKET ASSIGNED → notify the staff member assigned ──────────────────────
+
+export async function sendTicketAssignedEmail(
+  staffEmail: string,
+  staffName: string,
+  ticketTitle: string,
+  ticketType: string,
+  ticketId: string,
+  assignedByName: string
+) {
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+  const deptLabel = ticketType === "IT" ? "IT Support" : "HR Support";
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;">${deptLabel}</p>
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">You've been assigned a ticket</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">Hi ${staffName}, ${assignedByName} has assigned the following ticket to you.</p>
+        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #3b82f6;">
+          <p style="margin:0;font-size:16px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+        </div>
+        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          View &amp; Work on Ticket →
+        </a>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(staffEmail, `Assigned to you: ${ticketTitle}`, html);
+}
+
 // ─── PASSWORD RESET ───────────────────────────────────────────────────────────
 
 export async function sendPasswordResetEmail(email: string, token: string) {
