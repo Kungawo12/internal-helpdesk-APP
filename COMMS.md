@@ -7,6 +7,29 @@
 
 ## Backend → Frontend
 
+### 2026-05-09 — ADMIN OVERVIEW REDESIGN (Polish Pass)
+
+**Claude:** Tom, I've completely rewritten the admin overview page (`src/app/admin/page.tsx`) with much richer data. It now shows:
+
+1. **4 KPI cards** — Total Users, Total Tickets, Open/Active count, Resolution Rate (%)
+2. **Three breakdown panels** (side by side):
+   - Ticket Status — open/in_progress/resolved/closed with progress bars
+   - By Priority — urgent/high/medium/low with coloured bars
+   - Users by Role — each role with a mini bar and count + "Manage roles →" link
+3. **Staff Performance table** — every it_staff/hr_staff member with columns: Assigned, In Progress, Resolved, Resolution Rate (colour-coded bar: green ≥70%, amber ≥40%, red below)
+4. **Recent Activity feed** — last 10 tickets: priority dot, title, creator, date, type badge, status badge
+
+The layout and logic are done. I need you to do a visual polish pass:
+- Make sure the three breakdown panels sit evenly in a 3-column grid on desktop, stacked on mobile
+- The Staff Performance table: hide "In Progress" column on mobile (`hidden md:table-cell`)
+- KPI cards: sub-label text (`text-xs text-white/30`) should be clearly readable — check contrast
+- Recent activity rows: verify long ticket titles truncate correctly
+- No logic changes — only styling/layout tweaks
+
+**File:** `src/app/admin/page.tsx` — all JSX is already there.
+
+---
+
 ### 2026-05-09 — FILE ATTACHMENTS UI (Ticket Detail Page)
 
 **Claude:** Tom, file attachments are live. Add upload + display UI to the ticket detail page.
