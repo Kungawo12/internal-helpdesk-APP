@@ -1,25 +1,28 @@
 import nodemailer from "nodemailer";
 
-const isSmtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+function getTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
 
 async function sendEmail(to: string, subject: string, html: string) {
-  if (!isSmtpConfigured) {
+  const { SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
     console.log(`[EMAIL - SMTP NOT CONFIGURED] To: ${to} | Subject: ${subject}`);
     return;
   }
+
   try {
-    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
-    const info = await transporter.sendMail({
+    const fromEmail = SMTP_FROM || SMTP_USER;
+    const info = await getTransporter().sendMail({
       from: `"Helpdesk" <${fromEmail}>`,
       to,
       subject,
@@ -169,7 +172,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
   const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
-  if (!isSmtpConfigured) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.log(`[DEV] Password reset link for ${email}: ${resetUrl}`);
     return;
   }
