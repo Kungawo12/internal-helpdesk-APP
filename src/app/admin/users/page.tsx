@@ -1,0 +1,189 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  active: boolean;
+  createdAt: string;
+  _count: { tickets: number; assigned: number };
+};
+
+const ROLES = ["employee", "it_staff", "hr_staff", "manager", "admin"];
+
+const ROLE_BADGE: Record<string, string> = {
+  admin: "bg-red-500/20 text-red-400 border-red-500/20",
+  manager: "bg-purple-500/20 text-purple-400 border-purple-500/20",
+  it_staff: "bg-blue-500/20 text-blue-400 border-blue-500/20",
+  hr_staff: "bg-amber-500/20 text-amber-400 border-amber-500/20",
+  employee: "bg-slate-500/20 text-slate-400 border-slate-500/20",
+};
+
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [updating, setUpdating] = useState<string | null>(null);
+  const [error, setError] = useState("");
+
+  const fetchUsers = async () => {
+    const res = await fetch("/api/admin-portal/users");
+    if (res.ok) setUsers(await res.json());
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchUsers(); }, []);
+
+  const updateUser = async (id: string, data: { role?: string; active?: boolean }) => {
+    setUpdating(id);
+    setError("");
+    const res = await fetch(`/api/admin-portal/users/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      setError(d.error || "Update failed");
+    }
+    await fetchUsers();
+    setUpdating(null);
+  };
+
+  const deactivateUser = async (id: string) => {
+    if (!confirm("Deactivate this user? They will not be able to log in.")) return;
+    setUpdating(id);
+    const res = await fetch(`/api/admin-portal/users/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const d = await res.json();
+      setError(d.error || "Failed to deactivate");
+    }
+    await fetchUsers();
+    setUpdating(null);
+  };
+
+  const filtered = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase()) ||
+      u.role.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 max-w-6xl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight">User Management</h1>
+          <p className="text-white/30 mt-1 text-sm font-medium">
+            {users.length} total · {users.filter((u) => u.active).length} active
+          </p>
+        </div>
+        <input
+          type="text"
+          placeholder="Search name, email, role..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-72 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
+        />
+      </div>
+
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400 font-bold">
+          {error}
+        </div>
+      )}
+
+      <div className="bg-white/3 border border-white/8 rounded-2xl overflow-hidden">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-white/5 text-xs uppercase tracking-widest text-white/30 bg-white/5">
+              <th className="px-6 py-4 font-bold">User</th>
+              <th className="px-6 py-4 font-bold hidden md:table-cell">Tickets</th>
+              <th className="px-6 py-4 font-bold">Role</th>
+              <th className="px-6 py-4 font-bold">Status</th>
+              <th className="px-6 py-4 font-bold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((user) => (
+              <tr key={user.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white/10 text-white flex items-center justify-center font-black text-sm flex-shrink-0">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-sm">{user.name}</p>
+                      <p className="text-xs text-white/30">{user.email}</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 hidden md:table-cell">
+                  <span className="text-sm font-semibold text-white/40">{user._count.tickets} raised</span>
+                </td>
+                <td className="px-6 py-4">
+                  <select
+                    value={user.role}
+                    disabled={updating === user.id}
+                    onChange={(e) => updateUser(user.id, { role: e.target.value })}
+                    style={{ backgroundColor: "transparent" }}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-red-500/30 disabled:opacity-50 ${ROLE_BADGE[user.role] || ""}`}
+                  >
+                    {ROLES.map((r) => (
+                      <option key={r} value={r} style={{ backgroundColor: "#1e293b", color: "#fff" }}>
+                        {r.replace("_", " ").toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${user.active ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${user.active ? "bg-emerald-400" : "bg-red-400"}`} />
+                    {user.active ? "Active" : "Deactivated"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  {user.active ? (
+                    <button
+                      onClick={() => deactivateUser(user.id)}
+                      disabled={updating === user.id}
+                      className="text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {updating === user.id ? "..." : "Deactivate"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => updateUser(user.id, { active: true })}
+                      disabled={updating === user.id}
+                      className="text-xs font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {updating === user.id ? "..." : "Reactivate"}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-white/20 font-semibold">No users found.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

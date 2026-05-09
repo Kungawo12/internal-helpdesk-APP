@@ -1,9 +1,31 @@
 import { getToken } from "next-auth/jwt";
+import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
+const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "fallback-secret");
+
+async function isValidAdminToken(req: NextRequest): Promise<boolean> {
+  const token = req.cookies.get("admin_token")?.value;
+  if (!token) return false;
+  try {
+    await jwtVerify(token, secret);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
+
+  // Admin portal routes
+  if (pathname.startsWith("/admin")) {
+    if (pathname === "/admin/login") return NextResponse.next();
+    if (await isValidAdminToken(req)) return NextResponse.next();
+    return NextResponse.redirect(new URL("/admin/login", req.url));
+  }
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   // Public routes
   if (
@@ -14,7 +36,6 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/api/auth")
   ) {
-    // Redirect logged-in users away from login/register
     if (token && (pathname === "/login" || pathname === "/register")) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
@@ -54,6 +75,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/admin/:path*",
     "/dashboard/:path*",
     "/login",
     "/register",

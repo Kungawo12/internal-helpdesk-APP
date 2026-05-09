@@ -53,7 +53,7 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center font-bold text-3xl mb-8 shadow-2xl">
             H
           </div>
-          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight text-white">
             Prism <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 animate-gradient-shift bg-[length:200%_auto]">Enterprise</span>
           </h1>
@@ -77,7 +77,7 @@ export default function LoginPage() {
           </Link>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-extrabold mb-2">Welcome Back</h2>
+            <h2 className="text-3xl font-extrabold mb-2 text-white">Welcome Back</h2>
             <p className="text-white/60 font-medium">Sign in to continue to the dashboard.</p>
           </div>
 
