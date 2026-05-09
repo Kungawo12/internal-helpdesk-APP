@@ -23,11 +23,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts  Account[]
-  tickets   Ticket[]   @relation("CreatedTickets")
-  assigned  Ticket[]   @relation("AssignedTickets")
-  feedbacks Feedback[]
-  comments  Comment[]
+  accounts     Account[]
+  tickets      Ticket[]      @relation("CreatedTickets")
+  assigned     Ticket[]      @relation("AssignedTickets")
+  feedbacks    Feedback[]
+  comments     Comment[]
+  attachments  Attachment[]  @relation("UploadedAttachments")
 }
 
 model Account {
@@ -66,8 +67,9 @@ model Ticket {
   assigneeId  String?
   assignee    User?    @relation("AssignedTickets", fields: [assigneeId], references: [id])
 
-  feedback    Feedback?
-  comments    Comment[]
+  feedback     Feedback?
+  comments     Comment[]
+  attachments  Attachment[]
 }
 
 model Comment {
@@ -80,6 +82,20 @@ model Comment {
 
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  url          String
+  filename     String
+  size         Int
+  createdAt    DateTime @default(now())
+
+  ticketId     String
+  ticket       Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User     @relation("UploadedAttachments", fields: [uploadedById], references: [id])
 }
 
 model PasswordResetToken {

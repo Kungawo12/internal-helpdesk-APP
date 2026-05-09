@@ -7,6 +7,104 @@
 
 ## Backend → Frontend
 
+### 2026-05-09 — FILE ATTACHMENTS UI (Ticket Detail Page)
+
+**Claude:** Tom, file attachments are live. Add upload + display UI to the ticket detail page.
+
+---
+
+#### API Contracts
+```
+GET  /api/tickets/:id/attachments
+     returns: [{ id, url, filename, size, createdAt, uploadedBy: { name } }]
+
+POST /api/tickets/:id/attachments
+     body: multipart/form-data with field "file"
+     max 10MB, allowed: images, PDF, txt, doc, docx, xlsx
+     returns: created attachment object
+```
+
+---
+
+#### Where to add it — `src/app/dashboard/ticket/[id]/page.tsx`
+
+Add a new **Attachments** section between the ticket description card and the comments section (inside the left `lg:col-span-2` column).
+
+State to add at the top of the component:
+```tsx
+const [attachments, setAttachments] = useState<any[]>([]);
+const [uploading, setUploading] = useState(false);
+const [uploadError, setUploadError] = useState("");
+
+const fetchAttachments = async () => {
+  const res = await fetch(`/api/tickets/${id}/attachments`);
+  if (res.ok) setAttachments(await res.json());
+};
+
+useEffect(() => { if (id) fetchAttachments(); }, [id]);
+
+const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  setUploading(true);
+  setUploadError("");
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`/api/tickets/${id}/attachments`, { method: "POST", body: form });
+  if (res.ok) {
+    await fetchAttachments();
+  } else {
+    const d = await res.json();
+    setUploadError(d.error || "Upload failed");
+  }
+  setUploading(false);
+  e.target.value = "";
+};
+```
+
+The section JSX (add between description card and comments):
+```tsx
+<div className="card p-6">
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="text-lg font-bold text-slate-900">Attachments</h3>
+    <label className="btn-secondary text-sm cursor-pointer flex items-center gap-2">
+      {uploading ? "Uploading..." : "＋ Attach File"}
+      <input type="file" className="hidden" onChange={handleUpload} disabled={uploading}
+        accept="image/*,.pdf,.txt,.doc,.docx,.xlsx" />
+    </label>
+  </div>
+
+  {uploadError && <p className="text-sm text-red-500 mb-3">{uploadError}</p>}
+
+  {attachments.length === 0 ? (
+    <p className="text-sm text-slate-400 italic">No attachments yet.</p>
+  ) : (
+    <div className="space-y-2">
+      {attachments.map(a => (
+        <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors group">
+          <span className="text-2xl">{a.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? "🖼️" : a.filename.match(/\.pdf$/i) ? "📄" : "📎"}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-slate-900 truncate group-hover:text-blue-600">{a.filename}</p>
+            <p className="text-xs text-slate-400">{(a.size / 1024).toFixed(1)} KB · {a.uploadedBy?.name} · {new Date(a.createdAt).toLocaleDateString()}</p>
+          </div>
+          <span className="text-slate-400 group-hover:text-blue-600 text-xs font-bold">↗</span>
+        </a>
+      ))}
+    </div>
+  )}
+</div>
+```
+
+**Important:** The `BLOB_READ_WRITE_TOKEN` env var must be set on Vercel for uploads to work (I'll handle that). You just need the UI.
+
+---
+
+#### CSS rules
+- No `@apply`, no duplicate `className`
+
+---
+
 ### 2026-05-09 — TICKET ASSIGNMENT UI (Manager Dashboard + Ticket Detail)
 
 **Claude:** Tom, backend is live. Managers can now assign tickets to staff. Add assignment UI to two places.
