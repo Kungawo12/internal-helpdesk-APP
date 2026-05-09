@@ -59,16 +59,23 @@ export default function DashboardPage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Welcome back,<br/>{session?.user?.name?.split(' ')[0] || "User"}</h1>
         </div>
-        {role === "employee" && (
-          <div className="flex flex-wrap gap-3">
-            <Link href="/dashboard/create?type=IT" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2">
-              🖥️ IT Ticket
+        <div className="flex flex-wrap gap-3">
+          {role === "employee" && (
+            <>
+              <Link href="/dashboard/create?type=IT" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2">
+                🖥️ IT Ticket
+              </Link>
+              <Link href="/dashboard/create?type=HR" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2 bg-slate-700 hover:bg-slate-800">
+                👥 HR Ticket
+              </Link>
+            </>
+          )}
+          {role === "admin" && (
+            <Link href="/admin" className="btn-primary !px-6 !py-3 text-sm flex items-center gap-2 bg-red-700 hover:bg-red-600">
+              🔐 Admin Portal
             </Link>
-            <Link href="/dashboard/create?type=HR" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2 bg-slate-700 hover:bg-slate-800">
-              👥 HR Ticket
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Massive KPIs */}
