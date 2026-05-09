@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { useSession } from "next-auth/react";
@@ -8,9 +8,23 @@ import { useSession } from "next-auth/react";
 export default function ManagerDashboard() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { tickets, loading, error } = useTickets();
+  const { tickets, loading, error, refresh } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const [staffList, setStaffList] = useState<{id:string,name:string,role:string}[]>([]);
+  useEffect(() => {
+    fetch("/api/staff").then(r => r.json()).then(setStaffList);
+  }, []);
+
+  const assignTicket = async (ticketId: string, assigneeId: string | null) => {
+    await fetch(`/api/tickets/${ticketId}/assign`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assigneeId }),
+    });
+    refresh();
+  };
 
   const stats = useMemo(() => {
     const resolved = tickets.filter(t => t.status === 'resolved');
@@ -205,6 +219,7 @@ export default function ManagerDashboard() {
                   <th className="p-6 font-bold">Ticket</th>
                   <th className="p-6 font-bold hidden md:table-cell">Creator</th>
                   <th className="p-6 font-bold">Status</th>
+                  <th className="p-6 font-bold">Assignee</th>
                   <th className="p-6 font-bold hidden lg:table-cell">Date</th>
                   <th className="p-6 font-bold text-right">Action</th>
                 </tr>
@@ -240,6 +255,20 @@ export default function ManagerDashboard() {
                       }`}>
                         {ticket.status.replace("_", " ")}
                       </span>
+                    </td>
+                    <td className="p-6" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={(ticket.assignee as any)?.id || ""}
+                        onChange={(e) => assignTicket(ticket.id, e.target.value || null)}
+                        className="input-field !py-1.5 !text-sm max-w-[160px]"
+                        style={{ color: "#0f172a" }}
+                      >
+                        <option value="">Unassigned</option>
+                        {staffList
+                          .filter(s => ticket.type === "IT" ? s.role === "it_staff" : s.role === "hr_staff")
+                          .map(s => <option key={s.id} value={s.id}>{s.name}</option>)
+                        }
+                      </select>
                     </td>
                     <td className="p-6 hidden lg:table-cell text-sm text-[#6e6e73] font-semibold">
                       {new Date(ticket.createdAt).toLocaleDateString()}
