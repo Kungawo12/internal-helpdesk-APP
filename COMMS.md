@@ -7,6 +7,73 @@
 
 ## Backend → Frontend
 
+### 2026-05-09 — CRITICAL FIX + ADMIN PORTAL STYLING
+
+**Claude:** Tom, two things.
+
+---
+
+#### 1. HEADING VISIBILITY — ROOT CAUSE FIXED (no action needed from you)
+
+I've fixed this globally in `globals.css`. Changed:
+```css
+h1, h2, h3, h4, h5, h6 { color: #000000; }
+```
+to:
+```css
+h1, h2, h3, h4, h5, h6 { color: inherit; }
+```
+
+This means headings now inherit colour from their parent. Dark pages (login, register, forgot-password, reset-password, admin portal) all use `text-white` on their root div — headings will now be white automatically. Dashboard pages inherit black from `body { color: #000000 }` — no change there.
+
+**You don't need to do anything for this.** Just be aware: going forward, never hardcode `color` on headings in globals.css. Always use `text-*` utilities on the parent container.
+
+---
+
+#### 2. ADMIN PORTAL — New dark-themed section at `/admin`
+
+I've built a completely separate admin portal at `/admin`. It has its own login (passkey-only, no NextAuth), its own layout, and three pages. It needs styling to match the premium dark aesthetic.
+
+**Pages to style:**
+
+**A. `/admin/login`** (`src/app/admin/login/page.tsx`)
+- Already has dark background, red-themed orbs, glass card — matches the pattern
+- Just verify it looks clean and consistent. Should feel "restricted/secure" — red accent, not blue
+
+**B. `/admin` (Overview)** (`src/app/admin/page.tsx`)
+- Dark background (`bg-slate-950`) with sidebar layout
+- KPI cards: currently plain `bg-white/5 border border-white/10` — make them feel premium
+- Two breakdown panels (Ticket Split + Users by Role) — same card treatment
+- Page heading uses `text-red-400/80` as accent — keep that red theme throughout
+
+**C. `/admin/users`** (`src/app/admin/users/page.tsx`)
+- Dark table with `bg-white/3 border border-white/8` — verify rows are readable
+- Role dropdowns styled with coloured badges (already implemented in JS)
+- Status pills: emerald for active, red for deactivated — already there
+
+**D. `/admin/tickets`** (`src/app/admin/tickets/page.tsx`)
+- Same dark table treatment
+- Filter selects already have dark background styling
+- Status/priority badges already coloured
+
+**E. `/admin/layout.tsx`** — The sidebar
+- Dark sidebar (`bg-slate-900/80`) with red accent on active nav items
+- Already structured — just verify it looks polished and premium
+
+**Overall design rules for the admin portal:**
+- Background: `bg-slate-950` (darker than the main app)
+- Accent colour: **red** (`red-400`, `red-500`, `red-600`) — not blue. This distinguishes admin from the regular app
+- Cards: `bg-white/5 border border-white/10 rounded-2xl` with subtle glow
+- Text: `text-white` for headings, `text-white/60` for secondary, `text-white/30` for muted
+- No `.card` class (that's light-themed) — use raw dark Tailwind classes
+
+**CSS rules (same as always):**
+- No `@apply` on custom classes
+- No duplicate `className`
+- Dark text in the main app, white text in the admin portal
+
+---
+
 ### 2026-05-05 — NEW PAGE: Admin Panel (`src/app/dashboard/admin/page.tsx`)
 
 **Claude:** Tom, I've just shipped a new page — the Admin Panel. It's fully functional but needs your premium styling treatment to match the rest of the app.
