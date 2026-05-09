@@ -1,0 +1,57 @@
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+
+async function adminExists(): Promise<boolean> {
+  const count = await prisma.user.count({ where: { role: "admin" } });
+  return count > 0;
+}
+
+export async function GET() {
+  try {
+    const exists = await adminExists();
+    return NextResponse.json({ setupRequired: !exists });
+  } catch (error) {
+    console.error("Setup check error:", error);
+    return NextResponse.json({ error: "Failed to check setup status" }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    // Lock out if admin already exists
+    if (await adminExists()) {
+      return NextResponse.json({ error: "Admin account already exists" }, { status: 409 });
+    }
+
+    const { name, email, password } = await req.json();
+
+    if (!name || !email || !password) {
+      return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      // Upgrade existing user to admin instead of creating a duplicate
+      const hashed = await bcrypt.hash(password, 12);
+      await prisma.user.update({
+        where: { email },
+        data: { role: "admin", password: hashed, active: true },
+      });
+    } else {
+      const hashed = await bcrypt.hash(password, 12);
+      await prisma.user.create({
+        data: { name, email, password: hashed, role: "admin", active: true },
+      });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Admin setup error:", error);
+    return NextResponse.json({ error: "Failed to create admin account" }, { status: 500 });
+  }
+}

@@ -123,10 +123,17 @@ export default function AdminLoginPage() {
           </form>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors font-medium">
-            ← Back to main login
-          </Link>
+        <div className="mt-6 text-center space-y-2">
+          <div>
+            <Link href="/admin/setup" className="text-xs text-white/30 hover:text-white/60 transition-colors font-bold">
+              First time? Set up admin account →
+            </Link>
+          </div>
+          <div>
+            <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors font-medium">
+              ← Back to main login
+            </Link>
+          </div>
         </div>
 
         <p className="text-center text-xs text-white/20 mt-3 font-medium">

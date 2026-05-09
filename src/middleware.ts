@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
 
   // Admin portal routes
   if (pathname.startsWith("/admin")) {
-    if (pathname === "/admin/login") return NextResponse.next();
+    if (pathname === "/admin/login" || pathname === "/admin/setup") return NextResponse.next();
     if (await isValidAdminToken(req)) return NextResponse.next();
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
