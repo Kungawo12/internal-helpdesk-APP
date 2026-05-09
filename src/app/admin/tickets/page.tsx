@@ -33,13 +33,19 @@ export default function AdminTicketsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [wipeConfirm, setWipeConfirm] = useState("");
+  const [wiping, setWiping] = useState(false);
+  const [wipeMsg, setWipeMsg] = useState("");
+  const [showWipePanel, setShowWipePanel] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/admin-portal/tickets")
-      .then((r) => r.json())
-      .then((data) => { setTickets(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, []);
+  const fetchTickets = async () => {
+    const res = await fetch("/api/admin-portal/tickets");
+    if (res.ok) setTickets(await res.json());
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchTickets(); }, []);
 
   const filtered = useMemo(() => {
     return tickets.filter((t) => {
@@ -53,6 +59,30 @@ export default function AdminTicketsPage() {
     });
   }, [tickets, search, statusFilter, typeFilter]);
 
+  const deleteTicket = async (id: string, title: string) => {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    setDeleting(id);
+    await fetch(`/api/admin-portal/tickets/${id}`, { method: "DELETE" });
+    await fetchTickets();
+    setDeleting(null);
+  };
+
+  const wipeAll = async () => {
+    if (wipeConfirm !== "WIPE") return;
+    setWiping(true);
+    setWipeMsg("");
+    const res = await fetch("/api/admin-portal/wipe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: "tickets", confirm: "WIPE" }),
+    });
+    const data = await res.json();
+    setWipeMsg(res.ok ? data.message : data.error);
+    setWiping(false);
+    setWipeConfirm("");
+    if (res.ok) await fetchTickets();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -63,11 +93,48 @@ export default function AdminTicketsPage() {
 
   return (
     <div className="space-y-6 max-w-6xl">
-      <div>
-        <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight">All Tickets</h1>
-        <p className="text-white/30 mt-1 text-sm font-medium">{tickets.length} total across all departments</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight">All Tickets</h1>
+          <p className="text-white/30 mt-1 text-sm font-medium">{tickets.length} total across all departments</p>
+        </div>
+        <button
+          onClick={() => setShowWipePanel(!showWipePanel)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-sm font-bold text-red-400 transition-all"
+        >
+          ⚠ Danger Zone
+        </button>
       </div>
+
+      {/* Danger Zone */}
+      {showWipePanel && (
+        <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 space-y-4">
+          <div>
+            <h2 className="text-sm font-extrabold text-red-400 uppercase tracking-widest mb-1">Wipe All Tickets</h2>
+            <p className="text-xs text-white/40">Permanently deletes every ticket, comment, attachment, and feedback. Cannot be undone.</p>
+          </div>
+          {wipeMsg && (
+            <p className={`text-sm font-bold ${wipeMsg.includes("wiped") ? "text-emerald-400" : "text-red-400"}`}>{wipeMsg}</p>
+          )}
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              placeholder='Type "WIPE" to confirm'
+              value={wipeConfirm}
+              onChange={(e) => setWipeConfirm(e.target.value)}
+              className="bg-white/5 border border-red-500/20 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/50 w-56"
+            />
+            <button
+              onClick={wipeAll}
+              disabled={wipeConfirm !== "WIPE" || wiping}
+              className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-extrabold rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              {wiping ? "Wiping..." : "Wipe All Tickets"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3">
@@ -112,6 +179,7 @@ export default function AdminTicketsPage() {
               <th className="px-6 py-4 font-bold">Status</th>
               <th className="px-6 py-4 font-bold hidden md:table-cell">Priority</th>
               <th className="px-6 py-4 font-bold hidden md:table-cell">Date</th>
+              <th className="px-6 py-4 font-bold text-right">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -143,6 +211,15 @@ export default function AdminTicketsPage() {
                 </td>
                 <td className="px-6 py-4 hidden md:table-cell">
                   <span className="text-xs text-white/30">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <button
+                    onClick={() => deleteTicket(ticket.id, ticket.title)}
+                    disabled={deleting === ticket.id}
+                    className="text-xs font-bold text-red-400/50 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-30"
+                  >
+                    {deleting === ticket.id ? "..." : "Delete"}
+                  </button>
                 </td>
               </tr>
             ))}

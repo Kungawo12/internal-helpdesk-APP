@@ -65,6 +65,19 @@ export default function AdminUsersPage() {
     setUpdating(null);
   };
 
+  const deleteUserPermanently = async (id: string, name: string) => {
+    if (!confirm(`Permanently delete "${name}"? This will also delete all their tickets, comments, and attachments. Cannot be undone.`)) return;
+    setUpdating(id);
+    setError("");
+    const res = await fetch(`/api/admin-portal/users/${id}?permanent=true`, { method: "DELETE" });
+    if (!res.ok) {
+      const d = await res.json();
+      setError(d.error || "Failed to delete user");
+    }
+    await fetchUsers();
+    setUpdating(null);
+  };
+
   const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -155,23 +168,35 @@ export default function AdminUsersPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  {user.active ? (
-                    <button
-                      onClick={() => deactivateUser(user.id)}
-                      disabled={updating === user.id}
-                      className="text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {updating === user.id ? "..." : "Deactivate"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => updateUser(user.id, { active: true })}
-                      disabled={updating === user.id}
-                      className="text-xs font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {updating === user.id ? "..." : "Reactivate"}
-                    </button>
-                  )}
+                  <div className="flex items-center justify-end gap-2">
+                    {user.active ? (
+                      <button
+                        onClick={() => deactivateUser(user.id)}
+                        disabled={updating === user.id}
+                        className="text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {updating === user.id ? "..." : "Deactivate"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => updateUser(user.id, { active: true })}
+                        disabled={updating === user.id}
+                        className="text-xs font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {updating === user.id ? "..." : "Reactivate"}
+                      </button>
+                    )}
+                    {user.role !== "admin" && (
+                      <button
+                        onClick={() => deleteUserPermanently(user.id, user.name)}
+                        disabled={updating === user.id}
+                        className="text-xs font-bold text-red-500/40 hover:text-red-500 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        title="Permanently delete user and all their data"
+                      >
+                        {updating === user.id ? "..." : "Delete"}
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

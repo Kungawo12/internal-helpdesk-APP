@@ -24,7 +24,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Admin account already exists" }, { status: 409 });
     }
 
-    const { name, email, password } = await req.json();
+    const { name, email, password, companyPasskey } = await req.json();
+
+    const expectedPasskey = process.env.ADMIN_PASSKEY;
+    if (!expectedPasskey) {
+      return NextResponse.json({ error: "ADMIN_PASSKEY not configured on server" }, { status: 500 });
+    }
+    if (!companyPasskey || companyPasskey !== expectedPasskey) {
+      return NextResponse.json({ error: "Invalid company passkey" }, { status: 401 });
+    }
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });

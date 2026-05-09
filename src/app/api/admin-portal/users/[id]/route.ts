@@ -29,12 +29,24 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   }
 
   const { id } = await params;
+  const { searchParams } = new URL(req.url);
+  const permanent = searchParams.get("permanent") === "true";
 
   try {
-    await prisma.user.update({ where: { id }, data: { active: false } });
+    if (permanent) {
+      // Hard delete — cascade removes tickets, comments, attachments via Prisma relations
+      await prisma.feedback.deleteMany({ where: { ticket: { creatorId: id } } });
+      await prisma.comment.deleteMany({ where: { userId: id } });
+      await prisma.attachment.deleteMany({ where: { uploadedById: id } });
+      await prisma.ticket.deleteMany({ where: { creatorId: id } });
+      await prisma.user.delete({ where: { id } });
+    } else {
+      // Soft deactivate
+      await prisma.user.update({ where: { id }, data: { active: false } });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin portal deactivate user error:", error);
-    return NextResponse.json({ error: "Failed to deactivate user" }, { status: 500 });
+    console.error("Admin portal delete user error:", error);
+    return NextResponse.json({ error: "Failed to delete user" }, { status: 500 });
   }
 }

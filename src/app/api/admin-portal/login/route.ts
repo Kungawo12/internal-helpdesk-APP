@@ -5,10 +5,15 @@ import { signAdminToken, ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, companyPasskey } = await req.json();
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+    if (!email || !password || !companyPasskey) {
+      return NextResponse.json({ error: "Email, password, and company passkey are required" }, { status: 400 });
+    }
+
+    const expectedPasskey = process.env.ADMIN_PASSKEY;
+    if (!expectedPasskey || companyPasskey !== expectedPasskey) {
+      return NextResponse.json({ error: "Invalid company passkey" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
