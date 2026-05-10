@@ -26,25 +26,25 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const role = session?.user?.role;
-  const { tickets, loading, error } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { tickets: allTickets, loading, error } = useTickets();
 
   const stats = useMemo(() => ({
-    total: tickets.length,
-    open: tickets.filter(t => t.status === 'open').length,
-    inProgress: tickets.filter(t => t.status === 'in_progress').length,
-    resolved: tickets.filter(t => t.status === 'resolved').length,
-  }), [tickets]);
+    total: allTickets.length,
+    open: allTickets.filter(t => t.status === 'open').length,
+    inProgress: allTickets.filter(t => t.status === 'in_progress').length,
+    resolved: allTickets.filter(t => t.status === 'resolved').length,
+  }), [allTickets]);
 
-  const filteredTickets = useMemo(() => {
-    return tickets.filter(t => {
-      const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
-                           t.id.toLowerCase().includes(search.toLowerCase());
+  const tickets = useMemo(() => {
+    return allTickets.filter(t => {
       const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const q = search.toLowerCase();
+      const matchesSearch = !q || t.title.toLowerCase().includes(q) || t.id.toLowerCase().includes(q);
+      return matchesStatus && matchesSearch;
     });
-  }, [tickets, search, statusFilter]);
+  }, [allTickets, statusFilter, search]);
 
   if (loading) {
     return (
@@ -142,9 +142,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {filteredTickets.length > 0 ? (
+        {tickets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTickets.map((ticket) => {
+            {tickets.map((ticket) => {
               let borderClass = "";
               if (ticket.status === "open") borderClass = "ticket-card-open";
               if (ticket.status === "in_progress") borderClass = "ticket-card-progress";

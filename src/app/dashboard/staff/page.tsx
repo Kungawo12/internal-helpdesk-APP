@@ -23,7 +23,8 @@ function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBr
 
 export default function StaffQueuePage() {
   const router = useRouter();
-  const { tickets, loading, error, refresh } = useTickets();
+  const [statusFilter, setStatusFilter] = useState("all");
+  const { tickets, loading, error, refresh } = useTickets({ status: statusFilter });
   const [solution, setSolution] = useState("");
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -136,6 +137,29 @@ export default function StaffQueuePage() {
             </button>
           </div>
         )}
+
+        {/* Status Tabs */}
+        <div className="flex gap-2 mb-6 border-b border-black/10 pb-2 overflow-x-auto">
+          {[
+            { value: "all", label: "All" },
+            { value: "open", label: "Open" },
+            { value: "in_progress", label: "In Progress" },
+            { value: "resolved", label: "Resolved" },
+            { value: "closed", label: "Closed" },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setStatusFilter(tab.value)}
+              className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
+                statusFilter === tab.value
+                  ? "bg-black text-white"
+                  : "text-[#6e6e73] hover:bg-[#f5f5f7]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
         <div className="space-y-6">
           {activeTickets.length === 0 ? (
