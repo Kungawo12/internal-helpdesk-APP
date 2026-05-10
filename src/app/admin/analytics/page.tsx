@@ -23,6 +23,12 @@ type Analytics = {
     over3d: number;
   };
   topResolvers: { name: string; role: string; resolved: number }[];
+  csat: {
+    totalRated: number;
+    avgRating: number;
+    responseRate: number;
+    ratingDistribution: { star: number; count: number }[];
+  };
 };
 
 const ROLE_COLOR: Record<string, string> = {
@@ -225,6 +231,54 @@ export default function AnalyticsPage() {
               );
             })}
           </div>
+        </div>
+
+        {/* Column D - CSAT */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 col-span-1 lg:col-span-3">
+          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-6">Customer Satisfaction</h2>
+          
+          {data.csat.totalRated === 0 ? (
+            <p className="text-white/40 text-sm italic">No feedback submitted yet.</p>
+          ) : (
+            <div className="space-y-6">
+              {/* KPI row */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-3xl font-extrabold text-white">{data.csat.avgRating.toFixed(1)}</p>
+                  <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
+                  <div className="flex gap-0.5 mt-2">
+                    {[1,2,3,4,5].map(s => (
+                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-white/20"}`}>★</span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-3xl font-extrabold text-white">{data.csat.totalRated}</p>
+                  <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Responses</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-extrabold text-white">{data.csat.responseRate}%</p>
+                  <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Response Rate</p>
+                </div>
+              </div>
+
+              {/* Rating distribution bars */}
+              <div className="space-y-2">
+                {[...data.csat.ratingDistribution].reverse().map(({ star, count }) => {
+                  const pct = data.csat.totalRated > 0 ? (count / data.csat.totalRated) * 100 : 0;
+                  return (
+                    <div key={star} className="flex items-center gap-3">
+                      <span className="text-xs font-bold text-white/60 w-4">{star}★</span>
+                      <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="text-xs text-white/40 w-6 text-right">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

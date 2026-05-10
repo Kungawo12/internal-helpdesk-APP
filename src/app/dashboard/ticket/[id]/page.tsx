@@ -40,6 +40,7 @@ export default function TicketDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
+  const [reopening, setReopening] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
@@ -164,6 +165,13 @@ export default function TicketDetailPage() {
       body: JSON.stringify({ status }),
     });
     refresh();
+  };
+
+  const handleReopen = async () => {
+    setReopening(true);
+    await fetch(`/api/tickets/${id}/reopen`, { method: "PATCH" });
+    refresh();
+    setReopening(false);
   };
 
   const handleFeedback = async (e: React.FormEvent) => {
@@ -575,13 +583,26 @@ export default function TicketDetailPage() {
                    </div>
                  )}
                  {ticket.status === "resolved" && (
-                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
-                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.slaBreached ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
-                       {ticket.slaBreached ? "⚠ Resolved after breach" : "✓ Resolved within SLA"}
-                     </span>
-                   </div>
-                 )}
+                    <div className="pt-4 border-t border-slate-100">
+                      <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.slaBreached ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
+                        {ticket.slaBreached ? "⚠ Resolved after breach" : "✓ Resolved within SLA"}
+                      </span>
+                    </div>
+                  )}
+
+                  {isCreator && (ticket.status === 'resolved' || ticket.status === 'closed') && (
+                    <div className="pt-4 border-t border-slate-100">
+                      <button
+                        onClick={handleReopen}
+                        disabled={reopening}
+                        className="btn-secondary w-full text-sm"
+                      >
+                        {reopening ? "Reopening..." : "↩ Reopen Ticket"}
+                      </button>
+                      <p className="text-xs text-slate-400 text-center mt-2">Issue not resolved? Reopen to submit again.</p>
+                    </div>
+                  )}
 
                  <div className="pt-4 border-t border-slate-100">
                     <p className="text-xs font-semibold text-slate-500 uppercase mb-3">Timeline</p>
