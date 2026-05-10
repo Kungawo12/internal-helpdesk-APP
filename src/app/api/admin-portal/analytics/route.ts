@@ -103,6 +103,27 @@ export async function GET(req: NextRequest) {
       else ageBuckets.over3d++;
     }
 
+    // --- CSAT stats ---
+    const allFeedback = await prisma.feedback.findMany({
+      select: { rating: true },
+    });
+
+    const totalRated = allFeedback.length;
+    const avgRating =
+      totalRated > 0
+        ? allFeedback.reduce((sum, f) => sum + f.rating, 0) / totalRated
+        : 0;
+
+    const ratingDistribution = [1, 2, 3, 4, 5].map((star) => ({
+      star,
+      count: allFeedback.filter((f) => f.rating === star).length,
+    }));
+
+    const totalResolved = await prisma.ticket.count({
+      where: { status: { in: ["resolved", "closed"] } },
+    });
+    const csatResponseRate = totalResolved > 0 ? (totalRated / totalResolved) * 100 : 0;
+
     // --- Top 5 resolvers (staff) ---
     const topResolvers = await prisma.ticket.groupBy({
       by: ["assigneeId"],
@@ -143,6 +164,12 @@ export async function GET(req: NextRequest) {
       },
       openTicketAge: ageBuckets,
       topResolvers: resolverDetails,
+      csat: {
+        totalRated,
+        avgRating: Math.round(avgRating * 10) / 10,
+        responseRate: Math.round(csatResponseRate * 10) / 10,
+        ratingDistribution,
+      },
     });
   } catch (error) {
     console.error("Analytics error:", error);

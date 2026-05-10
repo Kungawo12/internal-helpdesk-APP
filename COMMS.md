@@ -1948,3 +1948,125 @@ The build is green and everything is ready for review.
 
 ---
 
+
+---
+
+## Backend → Frontend
+
+### 2026-05-09 — PHASE 4: REOPEN TICKET + CSAT ANALYTICS
+
+**Claude:** Tom, Phase 4. Two features. Both APIs are live. Build them now.
+
+---
+
+#### FEATURE 1 — Reopen Ticket Button (`src/app/dashboard/ticket/[id]/page.tsx`)
+
+**API:** `PATCH /api/tickets/:id/reopen` — no body needed. Returns updated ticket.
+
+Show a **"Reopen Ticket"** button in the sidebar, below the SLA section:
+- Conditions: `isCreator && (ticket.status === 'resolved' || ticket.status === 'closed')`
+- On click: call PATCH `/api/tickets/${id}/reopen`, then call `refresh()`
+- Style: `btn-secondary w-full` with text "↩ Reopen Ticket"
+- Add a small muted note below: `"Issue not resolved? Reopen to submit again."`
+
+State needed: `const [reopening, setReopening] = useState(false)` for loading state.
+
+```tsx
+{isCreator && (ticket.status === 'resolved' || ticket.status === 'closed') && (
+  <div className="pt-4 border-t border-slate-100">
+    <button
+      onClick={handleReopen}
+      disabled={reopening}
+      className="btn-secondary w-full text-sm"
+    >
+      {reopening ? "Reopening..." : "↩ Reopen Ticket"}
+    </button>
+    <p className="text-xs text-slate-400 text-center mt-2">Issue not resolved? Reopen to submit again.</p>
+  </div>
+)}
+```
+
+`handleReopen`:
+```ts
+const handleReopen = async () => {
+  setReopening(true);
+  await fetch(`/api/tickets/${id}/reopen`, { method: "PATCH" });
+  refresh();
+  setReopening(false);
+};
+```
+
+---
+
+#### FEATURE 2 — CSAT Summary Card in Admin Analytics (`src/app/admin/analytics/page.tsx`)
+
+The analytics API now returns a `csat` object. Add a new section at the bottom of the analytics page, after the "Top Resolvers" table.
+
+**API response shape (new field):**
+```ts
+csat: {
+  totalRated: number;      // how many resolved tickets got rated
+  avgRating: number;       // 0.0 – 5.0
+  responseRate: number;    // % of resolved tickets that received feedback
+  ratingDistribution: { star: number; count: number }[];  // stars 1–5
+}
+```
+
+**Section to add:**
+
+```tsx
+{/* CSAT */}
+<div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+  <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-6">Customer Satisfaction</h2>
+  
+  {data.csat.totalRated === 0 ? (
+    <p className="text-white/40 text-sm italic">No feedback submitted yet.</p>
+  ) : (
+    <div className="space-y-6">
+      {/* KPI row */}
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <p className="text-3xl font-extrabold text-white">{data.csat.avgRating.toFixed(1)}</p>
+          <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
+          <div className="flex gap-0.5 mt-2">
+            {[1,2,3,4,5].map(s => (
+              <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-white/20"}`}>★</span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="text-3xl font-extrabold text-white">{data.csat.totalRated}</p>
+          <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Responses</p>
+        </div>
+        <div>
+          <p className="text-3xl font-extrabold text-white">{data.csat.responseRate}%</p>
+          <p className="text-xs text-white/40 mt-1 font-bold uppercase tracking-widest">Response Rate</p>
+        </div>
+      </div>
+
+      {/* Rating distribution bars */}
+      <div className="space-y-2">
+        {[...data.csat.ratingDistribution].reverse().map(({ star, count }) => {
+          const pct = data.csat.totalRated > 0 ? (count / data.csat.totalRated) * 100 : 0;
+          return (
+            <div key={star} className="flex items-center gap-3">
+              <span className="text-xs font-bold text-white/60 w-4">{star}★</span>
+              <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
+              </div>
+              <span className="text-xs text-white/40 w-6 text-right">{count}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  )}
+</div>
+```
+
+Place this card in the 3-column grid section (alongside MTTR, age buckets, and SLA by dept — make it the 4th card, spanning full width or fitting in the grid as appropriate for your layout).
+
+---
+
+**Ship both. Reopen is the higher priority — it's a critical UX gap for employees.**
+

@@ -130,6 +130,45 @@ export async function sendTicketResolvedEmail(
   await sendEmail(employeeEmail, `✓ Resolved: ${ticketTitle}`, html);
 }
 
+// ─── TICKET IN PROGRESS → notify the employee who raised it ──────────────────
+
+export async function sendTicketInProgressEmail(
+  employeeEmail: string,
+  ticketTitle: string,
+  ticketId: string,
+  staffName: string
+) {
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
+          <span style="color:#d97706;font-size:14px;">⚡</span>
+          <span style="color:#d97706;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">In Progress</span>
+        </div>
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Your ticket is being worked on</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${staffName} has picked up your request and is working on it now.</p>
+        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #d97706;">
+          <p style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+        </div>
+        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          View Ticket →
+        </a>
+        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+          We'll notify you again when your ticket is resolved.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(employeeEmail, `⚡ In Progress: ${ticketTitle}`, html);
+}
+
 // ─── TICKET ASSIGNED → notify the staff member assigned ──────────────────────
 
 export async function sendTicketAssignedEmail(

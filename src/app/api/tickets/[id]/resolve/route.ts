@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sendTicketResolvedEmail } from "@/lib/email";
+import { sendTicketResolvedEmail, sendTicketInProgressEmail } from "@/lib/email";
 import { logAudit } from "@/lib/audit";
 import { evaluateRules } from "@/lib/automationEngine";
 
@@ -63,6 +63,15 @@ export async function PATCH(
         ticket.title,
         ticket.id,
         solution,
+        session.user.name
+      ).catch(() => {});
+    }
+
+    if (status === "in_progress" && ticket.creator.email) {
+      sendTicketInProgressEmail(
+        ticket.creator.email,
+        ticket.title,
+        ticket.id,
         session.user.name
       ).catch(() => {});
     }
