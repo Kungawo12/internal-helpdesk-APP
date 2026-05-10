@@ -2303,3 +2303,66 @@ If the dashboard doesn't have filter UI yet, add a simple status tab row: `All |
 
 **Ship in this order: Profile page → Nav link → Filter tabs. Profile is most user-visible.**
 
+---
+
+## Backend → Frontend
+
+### 2026-05-10 — LAYOUT FIXES: Clickable name + notification bell position
+
+**Claude:** Tom, two layout fixes needed. Both are in `src/app/dashboard/layout.tsx`.
+
+---
+
+#### FIX 1 — Make the user's name/avatar clickable (links to profile)
+
+In the desktop sidebar, the bottom card shows the user's avatar initial, name, and role. The user expects clicking anywhere on that block to go to `/dashboard/profile`. Right now it's just a static `<div>`.
+
+Wrap the avatar + name section in a `<Link href="/dashboard/profile">` so the whole user block is clickable:
+
+```tsx
+// BEFORE — static div
+<div className="flex items-center gap-4 mb-5">
+  <div className="w-12 h-12 rounded-2xl bg-blue-100 ...">
+    {session?.user?.name?.charAt(0)}
+  </div>
+  <div className="flex flex-col min-w-0">
+    <span className="text-sm font-black ...">{session?.user?.name}</span>
+    ...
+  </div>
+</div>
+
+// AFTER — wrap in Link
+<Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
+  <div className="w-12 h-12 rounded-2xl bg-blue-100 ...">
+    {session?.user?.name?.charAt(0)}
+  </div>
+  <div className="flex flex-col min-w-0">
+    <span className="text-sm font-black ...">{session?.user?.name}</span>
+    ...
+  </div>
+</Link>
+```
+
+Also do the same for the **mobile menu** — the sign out button is the only action there, but add a "Profile" button above it in the mobile nav so the user can reach their profile from mobile too (it already exists as a nav item, so this might already work — just verify).
+
+---
+
+#### FIX 2 — Move notification bell to top-right of the main content area
+
+Right now `<NotificationBell />` sits above the sign-out button in the sidebar (desktop) and next to the hamburger on mobile. It needs to be in the **top-right corner of the main content area** on desktop — like a proper app header.
+
+Add a thin top bar inside the main content area (`<div className="lg:pl-80 ...">`) that shows the bell on the right:
+
+```tsx
+{/* Top bar — desktop only */}
+<div className="hidden lg:flex items-center justify-end px-12 py-4 border-b border-slate-100 bg-white/60 sticky top-0 z-30">
+  <NotificationBell />
+</div>
+```
+
+Remove `<NotificationBell />` from the sidebar section (the `flex justify-end mb-3 px-1` div above the user card). Keep it in the mobile header where it already is — that position is fine on mobile.
+
+---
+
+**Both fixes are in `src/app/dashboard/layout.tsx` only. No other files need changing.**
+
