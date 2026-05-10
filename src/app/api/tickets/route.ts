@@ -6,7 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { attachSlaToTicket } from "@/lib/sla";
 import { evaluateRules } from "@/lib/automationEngine";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -14,29 +14,49 @@ export async function GET() {
     }
 
     const { role, id } = session.user;
+    const { searchParams } = new URL(req.url);
+
+    const status = searchParams.get("status") || undefined;
+    const type = searchParams.get("type") || undefined;
+    const priority = searchParams.get("priority") || undefined;
+    const q = searchParams.get("q") || undefined;
+
+    // Build filter conditions from query params
+    const paramFilter = {
+      ...(status && { status }),
+      ...(type && { type }),
+      ...(priority && { priority }),
+      ...(q && {
+        OR: [
+          { title: { contains: q, mode: "insensitive" as const } },
+          { description: { contains: q, mode: "insensitive" as const } },
+        ],
+      }),
+    };
 
     let tickets;
 
     if (role === "admin") {
       tickets = await prisma.ticket.findMany({
+        where: paramFilter,
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });
     } else if (role === "it_staff") {
       tickets = await prisma.ticket.findMany({
-        where: { type: "IT" },
+        where: { type: "IT", ...paramFilter },
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });
     } else if (role === "hr_staff") {
       tickets = await prisma.ticket.findMany({
-        where: { type: "HR" },
+        where: { type: "HR", ...paramFilter },
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });
     } else {
       tickets = await prisma.ticket.findMany({
-        where: { creatorId: id },
+        where: { creatorId: id, ...paramFilter },
         include: { assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });

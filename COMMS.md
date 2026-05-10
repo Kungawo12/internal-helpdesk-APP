@@ -2218,3 +2218,88 @@ Change the `<button>` to `<a href="/api/tickets/export" download>`. That's all �
 
 **Ship all three. Workload panel is highest priority — it's the biggest visible gap for a manager.**
 
+---
+
+## Backend → Frontend
+
+### 2026-05-09 — PHASE 6: Profile Page + Dashboard Filter Tabs
+
+**Claude:** Tom, three frontend tasks this phase. Backend is fully shipped and tested.
+
+---
+
+#### FEATURE 1 — User Profile Page (`src/app/dashboard/profile/page.tsx`) — NEW FILE
+
+Create a profile page at `/dashboard/profile`. All roles can access it.
+
+**What to show:**
+- User's name, email, role badge (same style as the rest of the dashboard)
+- A form to update their display name
+- A collapsible (or separate) section to change password (current password + new password + confirm)
+
+**API: `PATCH /api/auth/profile`**
+
+Request body:
+```ts
+{
+  name: string;             // required, min 2 chars
+  currentPassword?: string; // required only if changing password
+  newPassword?: string;     // optional
+}
+```
+
+Response: `{ id, name, email, role }` — update the displayed name on success.
+
+Errors returned as `{ error: string }` with status 400. Show inline error messages, not alerts.
+
+**Form validation (client-side before submit):**
+- Name: non-empty, min 2 chars
+- If `newPassword` is set: `currentPassword` must also be set, `newPassword` min 8 chars
+- Confirm password field must match `newPassword` (client-side only, not sent to API)
+
+**After successful save:** show a success toast or inline green message ("Profile updated").
+
+---
+
+#### FEATURE 2 — Nav link for Profile (`src/app/dashboard/layout.tsx`)
+
+Add a "Profile" nav item in the dashboard sidebar/nav for all roles. Link to `/dashboard/profile`. Use the same nav item pattern as existing links. You can use a user/person icon.
+
+---
+
+#### FEATURE 3 — Wire Dashboard Filter Tabs to Server-Side Query Params
+
+The `useTickets` hook at `src/hooks/useTickets.ts` currently fetches `/api/tickets` with no params. The API now supports:
+- `?status=open|in_progress|resolved|closed`
+- `?type=IT|HR`
+- `?priority=low|medium|high|urgent`
+- `?q=search+term` (searches title + description)
+
+**What to change:**
+
+The hook at `src/hooks/useTickets.ts` currently:
+```ts
+// fetches /api/tickets with no params
+```
+
+Update it to accept an optional `filters` object and append them as query params:
+```ts
+export function useTickets(filters?: {
+  status?: string;
+  type?: string;
+  priority?: string;
+  q?: string;
+}) {
+  // build URLSearchParams from filters, fetch /api/tickets?status=...&type=...etc
+  // keep the 30s polling
+}
+```
+
+Then on the **employee dashboard** (`src/app/dashboard/page.tsx`) and **staff dashboard** (`src/app/dashboard/staff/page.tsx`), wire any existing filter UI (status tabs, type toggle, search box) to pass those values into `useTickets(filters)` instead of filtering client-side.
+
+If the dashboard doesn't have filter UI yet, add a simple status tab row: `All | Open | In Progress | Resolved | Closed`. Active tab highlighted. Clicking a tab re-fetches with `?status=...`. 
+
+---
+
+**Ship in this order: Profile page → Nav link → Filter tabs. Profile is most user-visible.**
+

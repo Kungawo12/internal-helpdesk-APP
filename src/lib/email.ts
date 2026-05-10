@@ -130,6 +130,47 @@ export async function sendTicketResolvedEmail(
   await sendEmail(employeeEmail, `✓ Resolved: ${ticketTitle}`, html);
 }
 
+// ─── NEW COMMENT → notify the ticket creator ─────────────────────────────────
+
+export async function sendTicketCommentEmail(
+  creatorEmail: string,
+  ticketTitle: string,
+  ticketId: string,
+  commenterName: string,
+  commentPreview: string
+) {
+  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+  const preview = commentPreview.length > 200 ? commentPreview.slice(0, 200) + "…" : commentPreview;
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      </div>
+      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
+          <span style="color:#2563eb;font-size:14px;">💬</span>
+          <span style="color:#2563eb;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">New Reply</span>
+        </div>
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Someone replied to your ticket</h1>
+        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${commenterName} left a reply on your request.</p>
+        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #3b82f6;">
+          <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ticket</p>
+          <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+          <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Reply</p>
+          <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;font-style:italic;">"${preview}"</p>
+        </div>
+        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+          View &amp; Reply →
+        </a>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(creatorEmail, `💬 New reply on: ${ticketTitle}`, html);
+}
+
 // ─── TICKET IN PROGRESS → notify the employee who raised it ──────────────────
 
 export async function sendTicketInProgressEmail(

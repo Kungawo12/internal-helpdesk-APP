@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
+import { sendTicketCommentEmail } from "@/lib/email";
 
 export async function GET(
   _req: Request,
@@ -55,6 +56,16 @@ export async function POST(
     const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(session.user.role);
     const internal = isStaffOrAbove && isInternal === true;
 
+    // Fetch creator info for notification (only when staff posts a public reply)
+    let ticketCreator: { email: string; id: string; title: string } | null = null;
+    if (isStaffOrAbove && !internal) {
+      const t = await prisma.ticket.findUnique({
+        where: { id: ticketId },
+        select: { title: true, creatorId: true, creator: { select: { email: true } } },
+      });
+      if (t) ticketCreator = { email: t.creator.email, id: t.creatorId, title: t.title };
+    }
+
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
@@ -75,6 +86,17 @@ export async function POST(
         where: { id: ticketId, slaFirstResponseMet: false, slaFirstResponseDue: { not: null } },
         data: { slaFirstResponseMet: true },
       }).catch(() => {});
+
+      // Notify ticket creator (skip if the commenter IS the creator)
+      if (ticketCreator && ticketCreator.id !== session.user.id) {
+        sendTicketCommentEmail(
+          ticketCreator.email,
+          ticketCreator.title,
+          ticketId,
+          session.user.name ?? "Staff",
+          content.trim()
+        ).catch(() => {});
+      }
     }
 
     return Response.json(comment, { status: 201 });
