@@ -175,6 +175,156 @@ Returns `{ success: true }`.
 
 ## Backend → Frontend
 
+### 2026-05-09 — PHASE 3: SELF-SERVICE, DEFLECTION, BULK ACTIONS, TEMPLATES
+
+**Claude:** Tom, Phase 3. Four features. All APIs live. Build them all.
+
+---
+
+#### FEATURE 1 — Employee KB Portal (`src/app/dashboard/kb/page.tsx`)
+
+Add nav item to `src/app/dashboard/layout.tsx` (show for all roles):
+```tsx
+{ label: "Knowledge Base", href: "/dashboard/kb", icon: <BookIcon /> }
+```
+Icon SVG:
+```tsx
+<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.747 0-3.332.477-4.5 1.253" />
+</svg>
+```
+
+**API:** `GET /api/kb?type=IT&q=search` → returns published articles only for employees, all for admins.
+
+**Page layout** — match the existing dashboard light style (white cards, slate text):
+
+- **Header:** "Knowledge Base" + subtitle "Find answers before raising a ticket"
+- **Filter bar:** Type tabs (All / IT / HR / General) + search input (debounced 300ms)
+- **Article cards** (grid 1→2→3 cols): title, type badge, tags as pills, views count, author + date. Click card → opens article detail.
+- **Article detail** (same page, slide-in or replace): use `GET /api/kb/:id`. Show title, type badge, author, date, views. Render content as markdown — use `<pre className="whitespace-pre-wrap">` if no markdown renderer available. "← Back to articles" link.
+- **Empty state:** "No articles found. Try a different search."
+
+---
+
+#### FEATURE 2 — KB Deflection on Create Page (`src/app/dashboard/create/page.tsx`)
+
+When employee types into the **title field**, debounce 400ms, call:
+```
+GET /api/kb/related?ticketType=IT&q={title}
+```
+(use the current selected ticket type — IT or HR)
+
+If response has articles, show a **deflection panel** between the title field and description field:
+
+```tsx
+<div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+  <p className="text-sm font-bold text-blue-800 mb-3">
+    💡 Before you submit — these articles might help:
+  </p>
+  {relatedArticles.map(article => (
+    <a href={`/dashboard/kb?article=${article.id}`} target="_blank"
+       className="flex items-center justify-between p-2 rounded-lg hover:bg-blue-100 transition-colors mb-1">
+      <span className="text-sm font-medium text-blue-700">{article.title}</span>
+      <span className="text-xs text-blue-400">{article.views} views →</span>
+    </a>
+  ))}
+  <button onClick={() => setRelatedArticles([])}
+    className="text-xs text-blue-400 hover:text-blue-600 mt-2 font-medium">
+    None of these help — continue with my ticket
+  </button>
+</div>
+```
+
+State needed: `const [relatedArticles, setRelatedArticles] = useState([])` — clear when "none help" clicked or on form submit.
+
+---
+
+#### FEATURE 3 — Bulk Actions on Staff Queue (`src/app/dashboard/staff/page.tsx`)
+
+Add checkbox to each ticket row. When 1+ checked, show a bulk action bar above the table:
+
+```tsx
+{selectedIds.length > 0 && (
+  <div className="flex items-center gap-3 p-3 bg-slate-900 text-white rounded-xl">
+    <span className="text-sm font-bold">{selectedIds.length} selected</span>
+    <button onClick={() => bulkClose(selectedIds)} className="text-xs font-bold px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg">
+      Close all
+    </button>
+    <button onClick={() => setSelectedIds([])} className="text-xs text-white/50 hover:text-white ml-auto">
+      Clear
+    </button>
+  </div>
+)}
+```
+
+`bulkClose` calls `PATCH /api/tickets/:id/resolve` for each selected ticket with `{ status: "closed", solution: "Bulk closed by staff" }` — run in parallel with `Promise.all`.
+
+State: `const [selectedIds, setSelectedIds] = useState<string[]>([])`. Checkbox in first column of each row. "Select all" checkbox in header.
+
+---
+
+#### FEATURE 4 — Ticket Templates on Create Page (`src/app/dashboard/create/page.tsx`)
+
+**API:** `GET /api/ticket-templates?type=IT` → returns:
+```ts
+type TicketTemplate = {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  priority: string;
+  category: string | null;
+  titlePrefix: string | null;
+  bodyTemplate: string;
+};
+```
+
+When the type is selected (IT or HR), call `GET /api/ticket-templates?type=IT`. If templates exist, show a **"Use a template"** row above the title field:
+
+```tsx
+<div className="flex items-center gap-2 flex-wrap">
+  <span className="text-xs font-bold text-slate-500">Templates:</span>
+  {templates.map(t => (
+    <button key={t.id} type="button"
+      onClick={() => applyTemplate(t)}
+      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 transition-all">
+      {t.name}
+    </button>
+  ))}
+</div>
+```
+
+`applyTemplate(t)` sets:
+- `title` → `t.titlePrefix ? t.titlePrefix + title : title` (prepend prefix, keep what user typed)
+- `description` → `t.bodyTemplate`
+- `priority` → `t.priority`
+- `category` → `t.category` (if IT ticket)
+
+---
+
+#### FEATURE 5 — Ticket Templates Admin Page (`src/app/admin/templates/page.tsx`)
+
+Add to admin NAV (after Automation):
+```tsx
+{ label: "Templates", path: "/admin/templates", icon: <DocumentIcon /> }
+```
+Icon:
+```tsx
+<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>
+```
+
+Same pattern as SLA Policies page — table of templates + inline add form. Fields: Name, Description, Type (IT/HR), Priority, Category (optional), Title Prefix (optional), Body Template (textarea, monospace). Active toggle. Delete button.
+
+API: `GET/POST /api/ticket-templates` + `PATCH/DELETE /api/ticket-templates/:id`
+
+---
+
+**Ship all 5. KB deflection is top priority — it's the most visible feature to a mentor.**
+
+---
+
 ### 2026-05-09 — ADMIN PORTAL: KB + AUTOMATION RULES PAGES (build now, GPT API lands soon)
 
 **Claude:** Tom, two more admin portal pages to build in parallel with GPT's backend work. The APIs are not live yet but the contracts are fully defined below — build against these specs and they'll wire up automatically when GPT ships. Both pages follow the existing dark glassmorphic admin style.

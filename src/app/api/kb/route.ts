@@ -19,9 +19,10 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type");
     const q = searchParams.get("q");
 
+    const isAdmin = session.user.role === "admin";
     const articles = await prisma.kbArticle.findMany({
       where: {
-        published: true,
+        ...(isAdmin ? {} : { published: true }),
         ...(type && VALID_TYPES.includes(type as any) ? { type } : {}),
         ...(q ? {
           OR: [

@@ -19,8 +19,9 @@ export async function GET(
 
     const { id } = await params;
 
+    const isAdmin = session.user.role === "admin";
     const article = await prisma.kbArticle.findFirst({
-      where: { id, published: true },
+      where: { id, ...(isAdmin ? {} : { published: true }) },
       include: { author: { select: { name: true } } },
     });
 

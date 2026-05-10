@@ -116,6 +116,19 @@ model AuditLog {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+model TicketTemplate {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "VPN Access Request"
+  description String   // shown to user before they pick it
+  type        String   // "IT" | "HR"
+  priority    String   @default("medium")
+  category    String?  // "Incident" | "Service Request"
+  titlePrefix String?  // pre-fills title e.g. "[VPN] "
+  bodyTemplate String  // pre-fills description — markdown with {{placeholders}}
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
 model SlaPolicy {
   id                   String   @id @default(cuid())
   name                 String
