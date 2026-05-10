@@ -1,9 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { isRateLimited } from "@/lib/rateLimit";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(`forgot-password:${ip}`, 5, 15 * 60 * 1000)) {
+      return Response.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const { email } = await req.json();
 
     if (!email) {

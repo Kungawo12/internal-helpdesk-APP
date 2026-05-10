@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { sendTicketCommentEmail } from "@/lib/email";
+import { notify } from "@/lib/notify";
 
 export async function GET(
   _req: Request,
@@ -89,6 +90,7 @@ export async function POST(
 
       // Notify ticket creator (skip if the commenter IS the creator)
       if (ticketCreator && ticketCreator.id !== session.user.id) {
+        notify(ticketCreator.id, "TICKET_COMMENT", `New reply on "${ticketCreator.title}" from ${session.user.name ?? "Staff"}.`, ticketId).catch(() => {});
         sendTicketCommentEmail(
           ticketCreator.email,
           ticketCreator.title,

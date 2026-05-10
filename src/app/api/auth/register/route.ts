@@ -1,10 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { isRateLimited } from "@/lib/rateLimit";
 
 const validRoles = ["employee", "it_staff", "hr_staff", "admin"];
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(`register:${ip}`, 5, 15 * 60 * 1000)) {
+      return Response.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const { name, email, password, role } = await req.json();
 
     if (!name || !email || !password) {

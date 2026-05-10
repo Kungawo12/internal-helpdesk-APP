@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketAssignedEmail } from "@/lib/email";
 import { logAudit } from "@/lib/audit";
+import { notify } from "@/lib/notify";
 
 export async function PATCH(
   req: NextRequest,
@@ -63,6 +64,8 @@ export async function PATCH(
         ticketId,
         session.user.name
       ).catch(() => {});
+
+      notify(assignee.id, "TICKET_ASSIGNED", `You have been assigned: "${ticket.title}"`, ticketId).catch(() => {});
     } else {
       await prisma.ticket.update({
         where: { id: ticketId },

@@ -23,14 +23,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts     Account[]
-  tickets      Ticket[]      @relation("CreatedTickets")
-  assigned     Ticket[]      @relation("AssignedTickets")
-  feedbacks    Feedback[]
-  comments     Comment[]
-  attachments  Attachment[]  @relation("UploadedAttachments")
-  auditLogs    AuditLog[]
-  kbArticles   KbArticle[]
+  accounts      Account[]
+  tickets       Ticket[]        @relation("CreatedTickets")
+  assigned      Ticket[]        @relation("AssignedTickets")
+  feedbacks     Feedback[]
+  comments      Comment[]
+  attachments   Attachment[]    @relation("UploadedAttachments")
+  auditLogs     AuditLog[]
+  kbArticles    KbArticle[]
+  notifications Notification[]
 }
 
 model Account {
@@ -206,4 +207,16 @@ model Feedback {
 
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String   // TICKET_ASSIGNED | TICKET_COMMENT | TICKET_ESCALATED | TICKET_RESOLVED | TICKET_REOPENED
+  message   String
+  ticketId  String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

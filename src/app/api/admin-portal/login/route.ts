@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { signAdminToken, ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
+import { isRateLimited } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(`admin-login:${ip}`, 10, 15 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const { email, password, companyPasskey } = await req.json();
 
     if (!email || !password || !companyPasskey) {

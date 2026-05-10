@@ -2,8 +2,119 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+
+interface Notification {
+  id: string;
+  type: string;
+  message: string;
+  ticketId: string | null;
+  read: boolean;
+  createdAt: string;
+}
+
+function NotificationBell() {
+  const router = useRouter();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const fetchNotifications = async () => {
+    const res = await fetch("/api/notifications");
+    if (res.ok) setNotifications(await res.json());
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const unread = notifications.filter((n) => !n.read).length;
+
+  const markAllRead = async () => {
+    await fetch("/api/notifications/read-all", { method: "PATCH" });
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleOpen = () => {
+    setOpen((v) => !v);
+    if (!open && unread > 0) markAllRead();
+  };
+
+  const typeIcon: Record<string, string> = {
+    TICKET_ASSIGNED: "📋",
+    TICKET_COMMENT: "💬",
+    TICKET_ESCALATED: "⬆",
+    TICKET_RESOLVED: "✅",
+    TICKET_REOPENED: "🔄",
+    TICKET_IN_PROGRESS: "⚡",
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={handleOpen}
+        className="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow hover:bg-slate-50 transition-colors"
+        aria-label="Notifications"
+      >
+        🔔
+        {unread > 0 && (
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center">
+            {unread > 9 ? "9+" : unread}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+            <span className="text-sm font-black text-slate-900">Notifications</span>
+            {notifications.some((n) => !n.read) && (
+              <button onClick={markAllRead} className="text-xs text-blue-600 font-bold hover:underline">
+                Mark all read
+              </button>
+            )}
+          </div>
+          <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
+            {notifications.length === 0 ? (
+              <p className="text-sm text-slate-400 text-center py-8">No notifications yet</p>
+            ) : (
+              notifications.map((n) => (
+                <button
+                  key={n.id}
+                  onClick={() => {
+                    if (n.ticketId) router.push(`/dashboard/ticket/${n.ticketId}`);
+                    setOpen(false);
+                  }}
+                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
+                >
+                  <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                  {!n.read && <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -68,6 +179,9 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
+            <div className="flex justify-end mb-3 px-1">
+              <NotificationBell />
+            </div>
             <div className="bg-white/60 rounded-3xl p-5 border border-white/50 shadow-inner">
               <div className="flex items-center gap-4 mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm border border-blue-200 shadow-sm">
@@ -102,12 +216,15 @@ export default function DashboardLayout({
             <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center font-bold text-white text-lg">H</div>
             <span className="font-extrabold text-xl text-[#0f172a]">Helpdesk</span>
           </Link>
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow-xl"
-          >
-            {isMobileMenuOpen ? "✕" : "☰"}
-          </button>
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow-xl"
+            >
+              {isMobileMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
         </header>
 
         {/* Mobile Menu */}

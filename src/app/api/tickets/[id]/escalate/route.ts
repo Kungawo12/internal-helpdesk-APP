@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
+import { notify } from "@/lib/notify";
 
 const PRIORITY_ORDER = ["low", "medium", "high", "urgent"] as const;
 type Priority = (typeof PRIORITY_ORDER)[number];
@@ -50,7 +51,17 @@ export async function PATCH(
       newValue: newPriority,
     }).catch(() => {});
 
-    // Notify all admins non-blocking
+    // In-app notifications for all admins
+    prisma.user.findMany({
+      where: { role: "admin", active: true },
+      select: { id: true },
+    }).then((admins) => {
+      return Promise.all(admins.map((a) =>
+        notify(a.id, "TICKET_ESCALATED", `Ticket "${ticket.title}" escalated to ${newPriority.toUpperCase()}.`, id)
+      ));
+    }).catch(() => {});
+
+    // Email all admins non-blocking
     prisma.user.findMany({
       where: { role: "admin", active: true },
       select: { email: true },

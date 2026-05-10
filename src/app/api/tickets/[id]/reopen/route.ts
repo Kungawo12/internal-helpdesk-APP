@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
+import { notify } from "@/lib/notify";
 
 export async function PATCH(
   _req: Request,
@@ -16,7 +17,7 @@ export async function PATCH(
 
     const ticket = await prisma.ticket.findUnique({
       where: { id },
-      select: { creatorId: true, status: true, title: true },
+      select: { creatorId: true, status: true, title: true, assigneeId: true },
     });
 
     if (!ticket) return Response.json({ error: "Ticket not found" }, { status: 404 });
@@ -40,6 +41,11 @@ export async function PATCH(
       oldValue: ticket.status,
       newValue: "open",
     }).catch(() => {});
+
+    // Notify the assignee (if any) that the ticket was reopened
+    if (ticket.assigneeId) {
+      notify(ticket.assigneeId, "TICKET_REOPENED", `Ticket "${ticket.title}" has been reopened.`, id).catch(() => {});
+    }
 
     return Response.json(updated);
   } catch (error) {

@@ -26,10 +26,16 @@ export default function ManagerDashboard() {
 
   const [staffList, setStaffList] = useState<{id:string,name:string,role:string}[]>([]);
   const [workload, setWorkload] = useState<StaffWorkload[]>([]);
+  const [report, setReport] = useState<{
+    dailyCounts: { date: string; count: number }[];
+    sla: { complianceRate: number | null; compliant: number; breached: number; total: number };
+    avgResolutionHours: number | null;
+  } | null>(null);
 
   useEffect(() => {
     fetch("/api/staff").then(r => r.json()).then(setStaffList);
     fetch("/api/staff/workload").then(r => r.json()).then(setWorkload);
+    fetch("/api/reports/summary").then(r => r.json()).then(setReport);
   }, []);
 
   const assignTicket = async (ticketId: string, assigneeId: string | null) => {
@@ -252,6 +258,68 @@ export default function ManagerDashboard() {
           </table>
         </div>
       </div>
+
+      {/* Reports — 14-day volume + SLA compliance */}
+      {report && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
+          {/* Daily volume chart */}
+          <div className="lg:col-span-2 card p-8 md:p-10 space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-bold tracking-tight">Ticket Volume — Last 14 Days</h3>
+            </div>
+            <div className="flex items-end gap-1 h-32">
+              {(() => {
+                const max = Math.max(...report.dailyCounts.map(d => d.count), 1);
+                return report.dailyCounts.map((d) => (
+                  <div key={d.date} className="flex-1 flex flex-col items-center gap-1 group relative">
+                    <div
+                      className="w-full bg-black rounded-t-md transition-all"
+                      style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
+                    />
+                    {d.count > 0 && (
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {d.count}
+                      </span>
+                    )}
+                    <span className="text-[9px] text-slate-400 font-medium rotate-45 origin-left mt-1 hidden sm:block">
+                      {new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                    </span>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+
+          {/* SLA + avg resolution */}
+          <div className="card p-8 md:p-10 space-y-6 bg-black text-white">
+            <h3 className="text-2xl font-bold tracking-tight">SLA Health</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Compliance Rate</p>
+                <p className="text-5xl font-extrabold">
+                  {report.sla.complianceRate != null ? `${report.sla.complianceRate}%` : "—"}
+                </p>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                <div
+                  className="h-2 rounded-full bg-emerald-400"
+                  style={{ width: `${report.sla.complianceRate ?? 0}%` }}
+                />
+              </div>
+              <div className="flex gap-6 text-sm font-semibold text-white/70">
+                <span>✅ {report.sla.compliant} on time</span>
+                <span>🔴 {report.sla.breached} breached</span>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Avg Resolution</p>
+                <p className="text-3xl font-extrabold">
+                  {report.avgResolutionHours != null ? `${report.avgResolutionHours}h` : "—"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Ticket Cards Grid (Replacing Table) */}
       <div className="space-y-8 animate-fade-in delay-300">

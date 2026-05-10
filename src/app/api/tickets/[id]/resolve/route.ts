@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketResolvedEmail, sendTicketInProgressEmail } from "@/lib/email";
 import { logAudit } from "@/lib/audit";
+import { notify } from "@/lib/notify";
 import { evaluateRules } from "@/lib/automationEngine";
 
 export async function PATCH(
@@ -56,6 +57,13 @@ export async function PATCH(
 
     // Re-evaluate rules after status change (e.g. in_progress triggers escalation)
     evaluateRules(id).catch(() => {});
+
+    if (status === "resolved") {
+      notify(ticket.creatorId, "TICKET_RESOLVED", `Your ticket "${ticket.title}" has been resolved.`, id).catch(() => {});
+    }
+    if (status === "in_progress") {
+      notify(ticket.creatorId, "TICKET_IN_PROGRESS", `Your ticket "${ticket.title}" is now being worked on.`, id).catch(() => {});
+    }
 
     if (status === "resolved" && ticket.creator.email) {
       sendTicketResolvedEmail(
