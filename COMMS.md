@@ -2070,3 +2070,151 @@ Place this card in the 3-column grid section (alongside MTTR, age buckets, and S
 
 **Ship both. Reopen is the higher priority — it's a critical UX gap for employees.**
 
+
+---
+
+## Backend → Frontend
+
+### 2026-05-09 — PHASE 5: STAFF WORKLOAD + ESCALATION + CSV EXPORT
+
+**Claude:** Tom, Phase 5. Three features. All APIs live. Build them now.
+
+---
+
+#### FEATURE 1 — Staff Workload Panel in Manager Dashboard (`src/app/dashboard/manager/page.tsx`)
+
+**API:** `GET /api/staff/workload` — returns:
+```ts
+type StaffWorkload = {
+  id: string;
+  name: string;
+  role: string;          // "it_staff" | "hr_staff"
+  open: number;
+  inProgress: number;
+  resolved: number;
+  totalActive: number;   // open + inProgress
+  slaBreached: number;
+  avgResolutionHours: number | null;
+};
+```
+
+Add a new section in the manager dashboard below the "Department Activity / Priority" row. Fetch `/api/staff/workload` on mount with `useEffect`. Show a table titled **"Team Workload"**:
+
+```tsx
+<div className="card p-8 md:p-10 space-y-6">
+  <h3 className="text-2xl font-bold tracking-tight">Team Workload</h3>
+  <div className="overflow-x-auto">
+    <table className="w-full text-left">
+      <thead>
+        <tr className="border-b border-black/10 text-xs uppercase tracking-widest text-[#6e6e73]">
+          <th className="pb-3 font-bold">Staff Member</th>
+          <th className="pb-3 font-bold text-center">Open</th>
+          <th className="pb-3 font-bold text-center">In Progress</th>
+          <th className="pb-3 font-bold text-center">Resolved</th>
+          <th className="pb-3 font-bold text-center">SLA Breached</th>
+          <th className="pb-3 font-bold text-center">Avg Resolution</th>
+        </tr>
+      </thead>
+      <tbody>
+        {workload.map(s => (
+          <tr key={s.id} className="border-b border-black/5 hover:bg-[#f5f5f7] transition-colors">
+            <td className="py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                  {s.name.charAt(0)}
+                </div>
+                <div>
+                  <p className="font-bold text-sm">{s.name}</p>
+                  <p className="text-xs text-[#6e6e73] capitalize">{s.role.replace("_", " ")}</p>
+                </div>
+              </div>
+            </td>
+            <td className="py-4 text-center">
+              <span className={`font-bold text-sm ${s.open > 5 ? "text-red-500" : "text-slate-700"}`}>{s.open}</span>
+            </td>
+            <td className="py-4 text-center">
+              <span className="font-bold text-sm text-amber-600">{s.inProgress}</span>
+            </td>
+            <td className="py-4 text-center">
+              <span className="font-bold text-sm text-emerald-600">{s.resolved}</span>
+            </td>
+            <td className="py-4 text-center">
+              <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400"}`}>{s.slaBreached}</span>
+            </td>
+            <td className="py-4 text-center text-sm text-[#6e6e73] font-medium">
+              {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
+            </td>
+          </tr>
+        ))}
+        {workload.length === 0 && (
+          <tr><td colSpan={6} className="py-10 text-center text-[#6e6e73] italic">No staff members found.</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+State: `const [workload, setWorkload] = useState<StaffWorkload[]>([])`. Fetch in `useEffect` alongside the existing `staffList` fetch.
+
+---
+
+#### FEATURE 2 — Escalate Button on Ticket Detail (`src/app/dashboard/ticket/[id]/page.tsx`)
+
+**API:** `PATCH /api/tickets/:id/escalate` — no body. Bumps priority one level (low→medium→high→urgent). Returns 400 if already urgent.
+
+Add an **Escalate button** in the sidebar, below the Priority/Department row. Show it only for staff or admin, and only when ticket is not already urgent or resolved:
+
+```tsx
+{(isStaff || role === 'admin') && ticket.priority !== 'urgent' && ticket.status !== 'resolved' && ticket.status !== 'closed' && (
+  <div className="pt-4 border-t border-slate-100">
+    <button
+      onClick={handleEscalate}
+      disabled={escalating}
+      className="w-full py-2.5 px-4 rounded-xl border-2 border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 text-sm font-bold transition-all"
+    >
+      {escalating ? "Escalating..." : "⬆ Escalate Priority"}
+    </button>
+    <p className="text-xs text-slate-400 text-center mt-1.5">
+      Current: <span className="font-bold capitalize">{ticket.priority}</span> → next level up
+    </p>
+  </div>
+)}
+```
+
+State: `const [escalating, setEscalating] = useState(false)`.
+
+`handleEscalate`:
+```ts
+const handleEscalate = async () => {
+  setEscalating(true);
+  await fetch(`/api/tickets/${id}/escalate`, { method: "PATCH" });
+  refresh();
+  setEscalating(false);
+};
+```
+
+---
+
+#### FEATURE 3 — Wire CSV Export on Manager Dashboard (`src/app/dashboard/manager/page.tsx`)
+
+**API:** `GET /api/tickets/export` — returns a CSV file download. Columns: ID, Title, Type, Status, Priority, Creator, Creator Email, Assignee, SLA Breached, Created, Updated.
+
+Replace the existing inert "Export CSV" button with a working download link:
+
+```tsx
+<a
+  href="/api/tickets/export"
+  download
+  className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10"
+>
+  ⬇ Export CSV
+</a>
+```
+
+Change the `<button>` to `<a href="/api/tickets/export" download>`. That's all — the API returns the correct `Content-Disposition` header so the browser will save the file automatically.
+
+---
+
+**Ship all three. Workload panel is highest priority — it's the biggest visible gap for a manager.**
+
