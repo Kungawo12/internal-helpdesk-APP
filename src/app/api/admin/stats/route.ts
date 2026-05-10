@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== "manager" && session.user.role !== "admin")) {
-      return Response.json({ error: "Manager or admin access required" }, { status: 403 });
+    if (!session || session.user.role !== "admin") {
+      return Response.json({ error: "Admin access required" }, { status: 403 });
     }
 
     const [

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logAudit } from "@/lib/audit";
 
 export async function GET(
   _req: Request,
@@ -13,9 +14,14 @@ export async function GET(
     }
 
     const { id } = await params;
+    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(session.user.role);
 
     const comments = await prisma.comment.findMany({
-      where: { ticketId: id },
+      where: {
+        ticketId: id,
+        // Employees cannot see internal notes
+        ...(isStaffOrAbove ? {} : { isInternal: false }),
+      },
       include: {
         user: { select: { name: true, email: true, role: true } },
       },
@@ -40,15 +46,19 @@ export async function POST(
     }
 
     const { id: ticketId } = await params;
-    const { content } = await req.json();
+    const { content, isInternal } = await req.json();
 
     if (!content || content.trim().length < 2) {
       return Response.json({ error: "Comment must be at least 2 characters" }, { status: 400 });
     }
 
+    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(session.user.role);
+    const internal = isStaffOrAbove && isInternal === true;
+
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
+        isInternal: internal,
         ticketId,
         userId: session.user.id,
       },
@@ -56,6 +66,16 @@ export async function POST(
         user: { select: { name: true, email: true, role: true } },
       },
     });
+
+    logAudit(ticketId, session.user.id, internal ? "INTERNAL_NOTE" : "COMMENT_ADDED").catch(() => {});
+
+    // Mark first response SLA met when staff posts the first public reply
+    if (isStaffOrAbove && !internal) {
+      prisma.ticket.updateMany({
+        where: { id: ticketId, slaFirstResponseMet: false, slaFirstResponseDue: { not: null } },
+        data: { slaFirstResponseMet: true },
+      }).catch(() => {});
+    }
 
     return Response.json(comment, { status: 201 });
   } catch (error) {

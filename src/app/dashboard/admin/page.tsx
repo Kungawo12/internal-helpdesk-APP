@@ -14,7 +14,7 @@ type User = {
   _count: { tickets: number; assigned: number };
 };
 
-const ROLES = ["employee", "it_staff", "hr_staff", "manager", "admin"];
+const ROLES = ["employee", "it_staff", "hr_staff", "admin"];
 
 export default function AdminPage() {
   const { data: session } = useSession();

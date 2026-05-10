@@ -1,4 +1,4 @@
-export type UserRole = "employee" | "manager" | "it_staff" | "hr_staff";
+export type UserRole = "employee" | "it_staff" | "hr_staff" | "admin";
 
 export type TicketType = "IT" | "HR";
 

@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const now = new Date();
     const [
       totalUsers,
       activeUsers,
@@ -18,6 +19,8 @@ export async function GET(req: NextRequest) {
       closedTickets,
       itTickets,
       hrTickets,
+      slaBreachedCount,
+      slaAtRiskCount,
       usersByRole,
       priorityBreakdown,
     ] = await Promise.all([
@@ -30,6 +33,14 @@ export async function GET(req: NextRequest) {
       prisma.ticket.count({ where: { status: "closed" } }),
       prisma.ticket.count({ where: { type: "IT" } }),
       prisma.ticket.count({ where: { type: "HR" } }),
+      prisma.ticket.count({ where: { slaBreached: true, status: { notIn: ["resolved", "closed"] } } }),
+      prisma.ticket.count({
+        where: {
+          slaBreached: false,
+          status: { notIn: ["resolved", "closed"] },
+          slaResolutionDue: { gt: now, lt: new Date(now.getTime() + 60 * 60 * 1000) },
+        },
+      }),
       prisma.user.groupBy({ by: ["role"], _count: { role: true } }),
       prisma.ticket.groupBy({ by: ["priority"], _count: { priority: true } }),
     ]);
@@ -85,6 +96,8 @@ export async function GET(req: NextRequest) {
       closedTickets,
       itTickets,
       hrTickets,
+      slaBreachedCount,
+      slaAtRiskCount,
       usersByRole: usersByRole.map((r) => ({ role: r.role, count: r._count.role })),
       priorityBreakdown: priorityBreakdown.map((p) => ({ priority: p.priority, count: p._count.priority })),
       staffPerformance,

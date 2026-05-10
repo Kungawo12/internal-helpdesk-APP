@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
       await prisma.feedback.deleteMany({ where: { ticket: { creatorId: { notIn: adminIds } } } });
       await prisma.comment.deleteMany({ where: { userId: { notIn: adminIds } } });
       await prisma.attachment.deleteMany({ where: { uploadedById: { notIn: adminIds } } });
+      // AuditLog has no cascade on user relation — must delete explicitly before user deletion
+      await prisma.auditLog.deleteMany({ where: { userId: { notIn: adminIds } } });
       await prisma.ticket.deleteMany({ where: { creatorId: { notIn: adminIds } } });
       await prisma.user.deleteMany({ where: { role: { not: "admin" } } });
 
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest) {
       await prisma.feedback.deleteMany();
       await prisma.comment.deleteMany();
       await prisma.attachment.deleteMany();
+      await prisma.auditLog.deleteMany({ where: { userId: { notIn: adminIds } } });
       await prisma.ticket.deleteMany();
       await prisma.user.deleteMany({ where: { id: { notIn: adminIds } } });
 

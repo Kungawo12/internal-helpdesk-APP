@@ -10,6 +10,14 @@ export type Ticket = {
   status: string;
   priority: string;
   solution: string | null;
+  slaResolutionDue: string | null;
+  slaFirstResponseDue: string | null;
+  slaBreached: boolean;
+  slaFirstResponseMet: boolean;
+  category: string | null;
+  softwareName: string | null;
+  affectedSystem: string | null;
+  errorMessage: string | null;
   createdAt: string;
   updatedAt: string;
   creatorId: string;

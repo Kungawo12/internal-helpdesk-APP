@@ -3,9 +3,25 @@
 import { useParams, useRouter } from "next/navigation";
 import { useTicket } from "@/hooks/useTicket";
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
+
+function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
+  if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
+  const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
+  const breached = ticket.slaBreached || diff < 0;
+  const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
+  const cls = breached
+    ? "bg-red-50 text-red-700 border border-red-200"
+    : atRisk
+    ? "bg-amber-50 text-amber-700 border border-amber-200"
+    : "bg-emerald-50 text-emerald-700 border border-emerald-200";
+  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>;
+}
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -23,7 +39,38 @@ export default function TicketDetailPage() {
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
   const [isPostingComment, setIsPostingComment] = useState(false);
+  const [isInternal, setIsInternal] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const commentsEndRef = useRef<HTMLDivElement>(null);
+
+  const [attachments, setAttachments] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const fetchAttachments = async () => {
+    const res = await fetch(`/api/tickets/${id}/attachments`);
+    if (res.ok) setAttachments(await res.json());
+  };
+
+  useEffect(() => { if (id) fetchAttachments(); }, [id]);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError("");
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`/api/tickets/${id}/attachments`, { method: "POST", body: form });
+    if (res.ok) {
+      await fetchAttachments();
+    } else {
+      const d = await res.json();
+      setUploadError(d.error || "Upload failed");
+    }
+    setUploading(false);
+    e.target.value = "";
+  };
 
   const fetchComments = async () => {
     try {
@@ -39,11 +86,32 @@ export default function TicketDetailPage() {
     }
   };
 
+  const fetchAuditLogs = async () => {
+    try {
+      const res = await fetch(`/api/tickets/${id}/audit`);
+      if (res.ok) {
+        const data = await res.json();
+        setAuditLogs(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch audit logs", err);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchComments();
+      fetchAuditLogs();
     }
   }, [id]);
+
+  const timeline = useMemo(() => {
+    const items = [
+      ...ticketComments.map(c => ({ ...c, timelineType: 'comment' })),
+      ...auditLogs.map(a => ({ ...a, timelineType: 'audit' }))
+    ];
+    return items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  }, [ticketComments, auditLogs]);
 
   const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +121,13 @@ export default function TicketDetailPage() {
       const res = await fetch(`/api/tickets/${id}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newComment }),
+        body: JSON.stringify({ content: newComment, isInternal }),
       });
       if (res.ok) {
         setNewComment("");
+        setIsInternal(false);
         await fetchComments();
+        await fetchAuditLogs();
         setTimeout(() => {
           commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 100);
@@ -205,6 +275,39 @@ export default function TicketDetailPage() {
                     {ticket.description}
                  </p>
               </div>
+
+              {/* IT-specific detail fields */}
+              {ticket.type === 'IT' && (ticket.category || ticket.softwareName || ticket.affectedSystem || ticket.errorMessage) && (
+                <div className="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                  <h3 className="text-sm font-semibold text-slate-900">Software Details</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {ticket.category && (
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Type</p>
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700">{ticket.category}</span>
+                      </div>
+                    )}
+                    {ticket.affectedSystem && (
+                      <div>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Platform</p>
+                        <p className="text-sm font-semibold text-slate-700">{ticket.affectedSystem}</p>
+                      </div>
+                    )}
+                    {ticket.softwareName && (
+                      <div className="col-span-2">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Affected Software</p>
+                        <p className="text-sm font-semibold text-slate-700">{ticket.softwareName}</p>
+                      </div>
+                    )}
+                  </div>
+                  {ticket.errorMessage && (
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Error Message</p>
+                      <pre className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-3 whitespace-pre-wrap font-mono overflow-x-auto">{ticket.errorMessage}</pre>
+                    </div>
+                  )}
+                </div>
+              )}
            </div>
 
            {/* Solution Panel */}
@@ -259,6 +362,38 @@ export default function TicketDetailPage() {
              </div>
            )}
 
+           {/* Attachments Section */}
+           <div className="card p-6">
+             <div className="flex items-center justify-between mb-4">
+               <h3 className="text-lg font-bold text-slate-900">Attachments</h3>
+               <label className="btn-secondary text-sm cursor-pointer flex items-center gap-2">
+                 {uploading ? "Uploading..." : "＋ Attach File"}
+                 <input type="file" className="hidden" onChange={handleUpload} disabled={uploading}
+                   accept="image/*,.pdf,.txt,.doc,.docx,.xlsx" />
+               </label>
+             </div>
+
+             {uploadError && <p className="text-sm text-red-500 mb-3">{uploadError}</p>}
+
+             {attachments.length === 0 ? (
+               <p className="text-sm text-slate-400 italic">No attachments yet.</p>
+             ) : (
+               <div className="space-y-2">
+                 {attachments.map(a => (
+                   <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+                     className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors group">
+                     <span className="text-2xl">{a.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? "🖼️" : a.filename.match(/\.pdf$/i) ? "📄" : "📎"}</span>
+                     <div className="flex-1 min-w-0">
+                       <p className="text-sm font-semibold text-slate-900 truncate group-hover:text-blue-600">{a.filename}</p>
+                       <p className="text-xs text-slate-400">{(a.size / 1024).toFixed(1)} KB · {a.uploadedBy?.name} · {new Date(a.createdAt).toLocaleDateString()}</p>
+                     </div>
+                     <span className="text-slate-400 group-hover:text-blue-600 text-xs font-bold">↗</span>
+                   </a>
+                 ))}
+               </div>
+             )}
+           </div>
+
            {/* Comments Section */}
            <div className="card p-6 border-slate-200">
              <h3 className="text-lg font-bold text-slate-900 mb-6">Discussion</h3>
@@ -281,29 +416,69 @@ export default function TicketDetailPage() {
                      <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0" />
                    </div>
                  </div>
-               ) : ticketComments.length === 0 ? (
+               ) : timeline.length === 0 ? (
                  <div className="text-center py-8">
                    <p className="text-sm text-slate-500 italic">No messages yet. Be the first to comment.</p>
                  </div>
                ) : (
-                 ticketComments.map((c) => {
-                   const isMe = c.user?.email === session?.user?.email;
-                   return (
-                     <div key={c.id} className={`flex gap-4 ${isMe ? "flex-row-reverse" : ""}`}>
-                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isMe ? "bg-slate-900 text-white" : "bg-blue-100 text-blue-600"}`}>
-                         {c.user?.name?.charAt(0) || '?'}
-                       </div>
-                       <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[80%]`}>
-                         <div className={`flex items-baseline gap-2 mb-1 ${isMe ? "flex-row-reverse" : ""}`}>
-                           <span className="font-bold text-sm text-slate-900">{isMe ? "You" : c.user?.name || 'Unknown User'}</span>
-                           <span className="text-xs text-slate-500">{timeAgo(c.createdAt)}</span>
-                         </div>
-                         <p className={`text-sm p-3 rounded-2xl whitespace-pre-wrap ${isMe ? "bg-blue-600 text-white rounded-tr-sm" : "bg-slate-50 text-slate-700 border border-slate-100 rounded-tl-sm"}`}>
-                           {c.content}
-                         </p>
-                       </div>
-                     </div>
-                   );
+                 timeline.map((item) => {
+                      if (item.timelineType === 'comment') {
+                        const isMe = item.user?.email === session?.user?.email;
+                        const isInternal = item.isInternal;
+                        return (
+                          <div key={item.id} className={`flex gap-4 ${isMe ? "flex-row-reverse" : ""}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isMe ? "bg-slate-900 text-white" : "bg-blue-100 text-blue-600"}`}>
+                              {item.user?.name?.charAt(0) || '?'}
+                            </div>
+                            <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[80%]`}>
+                              <div className={`flex items-baseline gap-2 mb-1 ${isMe ? "flex-row-reverse" : ""}`}>
+                                <span className="font-bold text-sm text-slate-900">{isMe ? "You" : item.user?.name || 'Unknown User'}</span>
+                                <span className="text-xs text-slate-500">{timeAgo(item.createdAt)}</span>
+                                {isInternal && <span className="text-xs text-amber-600 font-bold">🔒 Staff Only</span>}
+                              </div>
+                              <p className={`text-sm p-3 rounded-2xl whitespace-pre-wrap ${
+                                isInternal ? "bg-amber-50 text-amber-800 border border-amber-200" :
+                                isMe ? "bg-blue-600 text-white rounded-tr-sm" : "bg-slate-50 text-slate-700 border border-slate-100 rounded-tl-sm"
+                              }`}>
+                                {item.content}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        const actionLabels: Record<string, string> = {
+                          CREATED: "raised this ticket",
+                          STATUS_CHANGED: `changed status from ${item.oldValue} → ${item.newValue}`,
+                          ASSIGNED: `assigned to ${item.newValue}`,
+                          UNASSIGNED: "removed assignee",
+                          RESOLVED: "resolved this ticket",
+                          COMMENT_ADDED: "left a comment",
+                          INTERNAL_NOTE: "added an internal note",
+                          SLA_BREACHED: "SLA deadline breached",
+                        };
+                        const icons: Record<string, string> = {
+                          CREATED: "🟢",
+                          STATUS_CHANGED: "🔵",
+                          ASSIGNED: "👤",
+                          UNASSIGNED: "👤",
+                          RESOLVED: "✅",
+                          COMMENT_ADDED: "💬",
+                          INTERNAL_NOTE: "🔒",
+                          SLA_BREACHED: "🔴",
+                        };
+                        return (
+                          <div key={item.id} className="flex gap-4 items-center text-sm text-slate-500">
+                            <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 text-lg">
+                              {icons[item.action] || "ℹ️"}
+                            </div>
+                            <div className="flex-1">
+                              <span className="font-bold text-slate-700">{item.user?.name}</span>{" "}
+                              {actionLabels[item.action] || item.action}{" "}
+                              <span className="text-xs text-slate-400">· {timeAgo(item.createdAt)}</span>
+                            </div>
+                          </div>
+                        );
+                      }
                  })
                )}
                <div ref={commentsEndRef} />
@@ -318,17 +493,25 @@ export default function TicketDetailPage() {
                    placeholder="Add a comment..."
                    value={newComment}
                    onChange={(e) => setNewComment(e.target.value)}
-                   className="input-field min-h-[80px] text-sm resize-y"
+                   className={`input-field min-h-[80px] text-sm resize-y ${isInternal ? "bg-amber-50 border-amber-200" : ""}`}
                    required
                  />
-                 <div className="flex justify-end">
-                   <button 
-                     type="submit" 
-                     disabled={isPostingComment || !newComment.trim()}
-                     className="btn-primary"
-                   >
-                     {isPostingComment ? "Posting..." : "Post Comment"}
-                   </button>
+                 <div className="flex justify-between items-center">
+                   {isStaff && (
+                     <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                       <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                       <span>🔒 Internal note</span>
+                     </label>
+                   )}
+                   <div className="flex justify-end flex-1">
+                     <button 
+                       type="submit" 
+                       disabled={isPostingComment || !newComment.trim()}
+                       className="btn-primary"
+                     >
+                       {isPostingComment ? "Posting..." : "Post Comment"}
+                     </button>
+                   </div>
                  </div>
                </div>
              </form>
@@ -352,6 +535,23 @@ export default function TicketDetailPage() {
                     </div>
                  </div>
 
+                 <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Assignee</p>
+                    {ticket.assignee ? (
+                       <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                             {ticket.assignee.name.charAt(0)}
+                          </div>
+                          <div>
+                             <span className="font-medium text-sm text-slate-900 block">{ticket.assignee.name}</span>
+                             <span className="text-xs text-slate-500">{ticket.assignee.email}</span>
+                          </div>
+                       </div>
+                    ) : (
+                       <span className="badge badge-slate">Unassigned</span>
+                    )}
+                 </div>
+
                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
                     <div>
                        <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Priority</p>
@@ -364,6 +564,24 @@ export default function TicketDetailPage() {
                        <p className="font-medium text-sm text-slate-900">{ticket.type}</p>
                     </div>
                  </div>
+
+                 {ticket.slaResolutionDue && ticket.status !== "resolved" && (
+                   <div className="pt-4 border-t border-slate-100">
+                     <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
+                     <SlaBadge ticket={ticket} />
+                     <p className="text-xs text-slate-400 mt-1">
+                       Due: {new Date(ticket.slaResolutionDue).toLocaleString()}
+                     </p>
+                   </div>
+                 )}
+                 {ticket.status === "resolved" && (
+                   <div className="pt-4 border-t border-slate-100">
+                     <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
+                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.slaBreached ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
+                       {ticket.slaBreached ? "⚠ Resolved after breach" : "✓ Resolved within SLA"}
+                     </span>
+                   </div>
+                 )}
 
                  <div className="pt-4 border-t border-slate-100">
                     <p className="text-xs font-semibold text-slate-500 uppercase mb-3">Timeline</p>

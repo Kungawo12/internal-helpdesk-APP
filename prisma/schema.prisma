@@ -29,6 +29,8 @@ model User {
   feedbacks    Feedback[]
   comments     Comment[]
   attachments  Attachment[]  @relation("UploadedAttachments")
+  auditLogs    AuditLog[]
+  kbArticles   KbArticle[]
 }
 
 model Account {
@@ -51,15 +53,20 @@ model Account {
 }
 
 model Ticket {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  type        String   // "IT" or "HR"
-  status      String   @default("open") // open, in_progress, resolved, closed
-  priority    String   @default("medium") // low, medium, high, urgent
-  solution    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  type            String   // "IT" or "HR"
+  status          String   @default("open") // open, in_progress, resolved, closed
+  priority        String   @default("medium") // low, medium, high, urgent
+  solution        String?
+  // IT-specific fields
+  category        String?  // "Incident" or "Service Request"
+  softwareName    String?  // e.g. "Microsoft Teams", "Chrome"
+  affectedSystem  String?  // e.g. "Windows 11", "macOS", "Web Browser"
+  errorMessage    String?  // exact error text the user sees
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   creatorId   String
   creator     User     @relation("CreatedTickets", fields: [creatorId], references: [id])
@@ -67,21 +74,58 @@ model Ticket {
   assigneeId  String?
   assignee    User?    @relation("AssignedTickets", fields: [assigneeId], references: [id])
 
+  // SLA
+  slaPolicyId         String?
+  slaPolicy           SlaPolicy? @relation(fields: [slaPolicyId], references: [id])
+  slaFirstResponseDue DateTime?
+  slaResolutionDue    DateTime?
+  slaFirstResponseMet Boolean    @default(false)
+  slaBreached         Boolean    @default(false)
+
   feedback     Feedback?
   comments     Comment[]
   attachments  Attachment[]
+  auditLogs    AuditLog[]
 }
 
 model Comment {
+  id         String   @id @default(cuid())
+  content    String
+  isInternal Boolean  @default(false) // true = staff-only, not visible to employee
+  createdAt  DateTime @default(now())
+
+  ticketId   String
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
   id        String   @id @default(cuid())
-  content   String
+  action    String   // STATUS_CHANGED | PRIORITY_CHANGED | ASSIGNED | UNASSIGNED | COMMENT_ADDED | INTERNAL_NOTE | RESOLVED | CREATED | SLA_BREACHED
+  field     String?  // which field changed
+  oldValue  String?
+  newValue  String?
   createdAt DateTime @default(now())
 
   ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model SlaPolicy {
+  id                   String   @id @default(cuid())
+  name                 String
+  ticketType           String   // "IT" | "HR"
+  priority             String   // "low" | "medium" | "high" | "urgent"
+  firstResponseMinutes Int
+  resolutionMinutes    Int
+  createdAt            DateTime @default(now())
+
+  tickets              Ticket[]
 }
 
 model Attachment {
@@ -96,6 +140,38 @@ model Attachment {
 
   uploadedById String
   uploadedBy   User     @relation("UploadedAttachments", fields: [uploadedById], references: [id])
+}
+
+model KbArticle {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   // Markdown
+  type      String   // "IT" | "HR" | "general"
+  tags      String   @default("") // comma-separated e.g. "vpn,password,wifi"
+  views     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model AutomationRule {
+  id          String   @id @default(cuid())
+  name        String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  // Conditions — null means "match any"
+  condTicketType  String?  // "IT" | "HR"
+  condPriority    String?  // "low" | "medium" | "high" | "urgent"
+  condStatus      String?  // "open" | "in_progress"
+  condUnassigned  Boolean  @default(false)
+
+  // Action
+  action      String   // "assign_to_role" | "escalate_priority" | "notify_admins"
+  actionValue String?  // role name or new priority
 }
 
 model PasswordResetToken {

@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketResolvedEmail } from "@/lib/email";
+import { logAudit } from "@/lib/audit";
+import { evaluateRules } from "@/lib/automationEngine";
 
 export async function PATCH(
   req: Request,
@@ -14,7 +16,7 @@ export async function PATCH(
     }
 
     const { role, id: userId } = session.user;
-    if (role !== "it_staff" && role !== "hr_staff") {
+    if (role !== "it_staff" && role !== "hr_staff" && role !== "admin") {
       return Response.json({ error: "Only staff can resolve tickets" }, { status: 403 });
     }
 
@@ -28,17 +30,32 @@ export async function PATCH(
       );
     }
 
+    const before = await prisma.ticket.findUnique({ where: { id }, select: { status: true } });
+
     const ticket = await prisma.ticket.update({
       where: { id },
       data: {
         solution: solution?.trim() || undefined,
         status: status || "resolved",
         assigneeId: userId,
+        // slaFirstResponseMet is set on first public staff comment, not here
       },
       include: {
         creator: { select: { email: true, name: true } },
       },
     });
+
+    // Audit log status change
+    if (before?.status !== ticket.status) {
+      logAudit(id, userId, status === "resolved" ? "RESOLVED" : "STATUS_CHANGED", {
+        field: "status",
+        oldValue: before?.status ?? "unknown",
+        newValue: ticket.status,
+      }).catch(() => {});
+    }
+
+    // Re-evaluate rules after status change (e.g. in_progress triggers escalation)
+    evaluateRules(id).catch(() => {});
 
     if (status === "resolved" && ticket.creator.email) {
       sendTicketResolvedEmail(

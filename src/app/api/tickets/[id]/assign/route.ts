@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketAssignedEmail } from "@/lib/email";
+import { logAudit } from "@/lib/audit";
 
 export async function PATCH(
   req: NextRequest,
@@ -14,7 +15,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "manager" && session.user.role !== "admin") {
+    if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -48,19 +49,31 @@ export async function PATCH(
         data: { assigneeId },
       });
 
-      await sendTicketAssignedEmail(
+      logAudit(ticketId, session.user.id, "ASSIGNED", {
+        field: "assigneeId",
+        oldValue: ticket.assigneeId ?? "unassigned",
+        newValue: assignee.name,
+      }).catch(() => {});
+
+      sendTicketAssignedEmail(
         assignee.email,
         assignee.name,
         ticket.title,
         ticket.type,
         ticketId,
         session.user.name
-      );
+      ).catch(() => {});
     } else {
       await prisma.ticket.update({
         where: { id: ticketId },
         data: { assigneeId: null },
       });
+
+      logAudit(ticketId, session.user.id, "UNASSIGNED", {
+        field: "assigneeId",
+        oldValue: ticket.assigneeId ?? "unassigned",
+        newValue: "unassigned",
+      }).catch(() => {});
     }
 
     const updated = await prisma.ticket.findUnique({

@@ -2,6 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketCreatedEmail } from "@/lib/email";
+import { logAudit } from "@/lib/audit";
+import { attachSlaToTicket } from "@/lib/sla";
+import { evaluateRules } from "@/lib/automationEngine";
 
 export async function GET() {
   try {
@@ -14,7 +17,7 @@ export async function GET() {
 
     let tickets;
 
-    if (role === "manager") {
+    if (role === "admin") {
       tickets = await prisma.ticket.findMany({
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
@@ -53,7 +56,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, type, priority } = await req.json();
+    const { title, description, type, priority, category, softwareName, affectedSystem, errorMessage } = await req.json();
 
     if (!title || !description || !type) {
       return Response.json({ error: "Title, description, and type are required" }, { status: 400 });
@@ -81,6 +84,12 @@ export async function POST(req: Request) {
         type,
         priority: ticketPriority,
         creatorId: session.user.id,
+        ...(type === "IT" && {
+          category: category || null,
+          softwareName: softwareName?.trim() || null,
+          affectedSystem: affectedSystem || null,
+          errorMessage: errorMessage?.trim() || null,
+        }),
       },
     });
 
@@ -101,6 +110,13 @@ export async function POST(req: Request) {
         }
       })
       .catch(() => {});
+
+    // Attach SLA, log creation, evaluate automation rules (all non-blocking)
+    Promise.all([
+      attachSlaToTicket(ticket.id, ticket.type, ticket.priority, ticket.createdAt),
+      logAudit(ticket.id, session.user.id, "CREATED", { newValue: ticket.title }),
+    ]).catch(() => {});
+    evaluateRules(ticket.id).catch(() => {});
 
     return Response.json(ticket, { status: 201 });
   } catch (error) {

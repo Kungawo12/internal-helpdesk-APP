@@ -34,6 +34,8 @@ type Stats = {
   closedTickets: number;
   itTickets: number;
   hrTickets: number;
+  slaBreachedCount: number;
+  slaAtRiskCount: number;
   usersByRole: { role: string; count: number }[];
   priorityBreakdown: { priority: string; count: number }[];
   staffPerformance: StaffMember[];
@@ -115,11 +117,13 @@ export default function AdminOverviewPage() {
           { label: "Total Tickets", value: stats.totalTickets, sub: `${stats.itTickets} IT · ${stats.hrTickets} HR`, border: "border-white/10" },
           { label: "Open / Active", value: stats.openTickets + stats.inProgressTickets, sub: `${stats.openTickets} open · ${stats.inProgressTickets} in progress`, border: "border-orange-500/30" },
           { label: "Resolution Rate", value: `${resolutionRate}%`, sub: `${stats.resolvedTickets} resolved total`, border: "border-emerald-500/30" },
+          { label: "SLA Breached", value: stats.slaBreachedCount, sub: "active tickets past deadline", border: "border-red-500/30", color: stats.slaBreachedCount > 0 ? "text-red-400" : "text-white" },
+          { label: "SLA At Risk", value: stats.slaAtRiskCount, sub: "due within 1 hour", border: "border-amber-500/30", color: stats.slaAtRiskCount > 0 ? "text-amber-400" : "text-white" },
         ].map((k) => (
           <div key={k.label} className={`bg-white/5 border ${k.border} rounded-2xl p-6 hover:bg-white/8 transition-all`}>
             <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">{k.label}</p>
-            <p className="text-5xl font-extrabold text-white mb-2">{k.value}</p>
-            <p className="text-xs text-white/30 font-medium">{k.sub}</p>
+            <p className={`text-5xl font-extrabold mb-2 ${(k as any).color || "text-white"}`}>{k.value}</p>
+            <p className="text-xs text-white/50 font-medium">{k.sub}</p>
           </div>
         ))}
       </div>
@@ -216,7 +220,7 @@ export default function AdminOverviewPage() {
               <tr className="text-xs uppercase tracking-widest text-white/30 bg-white/3 border-b border-white/5">
                 <th className="px-6 py-3 font-bold">Staff Member</th>
                 <th className="px-6 py-3 font-bold text-center">Assigned</th>
-                <th className="px-6 py-3 font-bold text-center">In Progress</th>
+                <th className="px-6 py-3 font-bold text-center hidden md:table-cell">In Progress</th>
                 <th className="px-6 py-3 font-bold text-center">Resolved</th>
                 <th className="px-6 py-3 font-bold">Resolution Rate</th>
               </tr>
@@ -244,7 +248,7 @@ export default function AdminOverviewPage() {
                       <td className="px-6 py-4 text-center">
                         <span className="text-sm font-extrabold text-white">{staff.assigned}</span>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center hidden md:table-cell">
                         <span className="text-sm font-extrabold text-amber-400">{staff.inProgress}</span>
                       </td>
                       <td className="px-6 py-4 text-center">

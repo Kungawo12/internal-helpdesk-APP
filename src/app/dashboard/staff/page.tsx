@@ -5,6 +5,22 @@ import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { timeAgo } from "@/lib/utils";
 
+function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
+  if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
+  const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
+  const breached = ticket.slaBreached || diff < 0;
+  const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
+  const cls = breached
+    ? "bg-red-50 text-red-700 border border-red-200"
+    : atRisk
+    ? "bg-amber-50 text-amber-700 border border-amber-200"
+    : "bg-emerald-50 text-emerald-700 border border-emerald-200";
+  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>;
+}
+
 export default function StaffQueuePage() {
   const router = useRouter();
   const { tickets, loading, error, refresh } = useTickets();
@@ -80,6 +96,7 @@ export default function StaffQueuePage() {
                       <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'}`}>
                         {ticket.status.replace("_", " ")}
                       </span>
+                      <SlaBadge ticket={ticket} />
                       <span className="text-sm text-[#6e6e73] font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
                     </div>
                     <div>
