@@ -41,6 +41,7 @@ export default function TicketDetailPage() {
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
   const [reopening, setReopening] = useState(false);
+  const [escalating, setEscalating] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
@@ -165,6 +166,13 @@ export default function TicketDetailPage() {
       body: JSON.stringify({ status }),
     });
     refresh();
+  };
+
+  const handleEscalate = async () => {
+    setEscalating(true);
+    await fetch(`/api/tickets/${id}/escalate`, { method: "PATCH" });
+    refresh();
+    setEscalating(false);
   };
 
   const handleReopen = async () => {
@@ -572,6 +580,21 @@ export default function TicketDetailPage() {
                        <p className="font-medium text-sm text-slate-900">{ticket.type}</p>
                     </div>
                  </div>
+
+                  {(isStaff || role === 'admin') && ticket.priority !== 'urgent' && ticket.status !== 'resolved' && ticket.status !== 'closed' && (
+                    <div className="pt-4 border-t border-slate-100">
+                      <button
+                        onClick={handleEscalate}
+                        disabled={escalating}
+                        className="w-full py-2.5 px-4 rounded-xl border-2 border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 text-sm font-bold transition-all"
+                      >
+                        {escalating ? "Escalating..." : "⬆ Escalate Priority"}
+                      </button>
+                      <p className="text-xs text-slate-400 text-center mt-1.5">
+                        Current: <span className="font-bold capitalize">{ticket.priority}</span> → next level up
+                      </p>
+                    </div>
+                  )}
 
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (
                    <div className="pt-4 border-t border-slate-100">

@@ -5,6 +5,18 @@ import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { useSession } from "next-auth/react";
 
+type StaffWorkload = {
+  id: string;
+  name: string;
+  role: string;
+  open: number;
+  inProgress: number;
+  resolved: number;
+  totalActive: number;
+  slaBreached: number;
+  avgResolutionHours: number | null;
+};
+
 export default function ManagerDashboard() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -13,8 +25,11 @@ export default function ManagerDashboard() {
   const [statusFilter, setStatusFilter] = useState("all");
 
   const [staffList, setStaffList] = useState<{id:string,name:string,role:string}[]>([]);
+  const [workload, setWorkload] = useState<StaffWorkload[]>([]);
+
   useEffect(() => {
     fetch("/api/staff").then(r => r.json()).then(setStaffList);
+    fetch("/api/staff/workload").then(r => r.json()).then(setWorkload);
   }, []);
 
   const assignTicket = async (ticketId: string, assigneeId: string | null) => {
@@ -184,13 +199,73 @@ export default function ManagerDashboard() {
         </div>
       </div>
 
+      {/* Team Workload */}
+      <div className="card p-8 md:p-10 space-y-6">
+        <h3 className="text-2xl font-bold tracking-tight">Team Workload</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-black/10 text-xs uppercase tracking-widest text-[#6e6e73]">
+                <th className="pb-3 font-bold">Staff Member</th>
+                <th className="pb-3 font-bold text-center">Open</th>
+                <th className="pb-3 font-bold text-center">In Progress</th>
+                <th className="pb-3 font-bold text-center">Resolved</th>
+                <th className="pb-3 font-bold text-center">SLA Breached</th>
+                <th className="pb-3 font-bold text-center">Avg Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workload.map(s => (
+                <tr key={s.id} className="border-b border-black/5 hover:bg-[#f5f5f7] transition-colors">
+                  <td className="py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                        {s.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{s.name}</p>
+                        <p className="text-xs text-[#6e6e73] capitalize">{s.role.replace("_", " ")}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 text-center">
+                    <span className={`font-bold text-sm ${s.open > 5 ? "text-red-500" : "text-slate-700"}`}>{s.open}</span>
+                  </td>
+                  <td className="py-4 text-center">
+                    <span className="font-bold text-sm text-amber-600">{s.inProgress}</span>
+                  </td>
+                  <td className="py-4 text-center">
+                    <span className="font-bold text-sm text-emerald-600">{s.resolved}</span>
+                  </td>
+                  <td className="py-4 text-center">
+                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400"}`}>{s.slaBreached}</span>
+                  </td>
+                  <td className="py-4 text-center text-sm text-[#6e6e73] font-medium">
+                    {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
+                  </td>
+                </tr>
+              ))}
+              {workload.length === 0 && (
+                <tr><td colSpan={6} className="py-10 text-center text-[#6e6e73] italic">No staff members found.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* Ticket Cards Grid (Replacing Table) */}
       <div className="space-y-8 animate-fade-in delay-300">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight">Active Manifest</h2>
           <div className="flex w-full md:w-auto gap-4">
             <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10">🔄 Refresh</button>
-            <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10">⬇ Export CSV</button>
+            <a
+              href="/api/tickets/export"
+              download
+              className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10"
+            >
+              ⬇ Export CSV
+            </a>
             <input
               type="text"
               placeholder="Search..."
