@@ -26,6 +26,26 @@ export default function StaffQueuePage() {
   const { tickets, loading, error, refresh } = useTickets();
   const [solution, setSolution] = useState("");
   const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const handleBulkClose = async () => {
+    if (!confirm(`Are you sure you want to close ${selectedIds.length} tickets?`)) return;
+    try {
+      await Promise.all(
+        selectedIds.map(id =>
+          fetch(`/api/tickets/${id}/resolve`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "closed", solution: "Bulk closed by staff" }),
+          })
+        )
+      );
+      setSelectedIds([]);
+      refresh();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const activeTickets = useMemo(() => 
     tickets.filter(t => t.status === 'open' || t.status === 'in_progress'), 
@@ -76,9 +96,46 @@ export default function StaffQueuePage() {
                 </span>
               )}
             </h1>
-            <p className="text-xl text-[#6e6e73] font-medium">Assigned service requests awaiting resolution</p>
+            <div className="flex items-center gap-4">
+              <p className="text-xl text-[#6e6e73] font-medium">Assigned service requests awaiting resolution</p>
+              {activeTickets.length > 0 && (
+                <label className="flex items-center gap-1 text-sm text-slate-500 font-bold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === activeTickets.length}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedIds(activeTickets.map(t => t.id));
+                      } else {
+                        setSelectedIds([]);
+                      }
+                    }}
+                    className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
+                  />
+                  Select All
+                </label>
+              )}
+            </div>
           </div>
         </div>
+
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 p-4 bg-slate-900 text-white rounded-2xl mb-6 page-reveal">
+            <span className="text-sm font-bold">{selectedIds.length} selected</span>
+            <button
+              onClick={handleBulkClose}
+              className="text-xs font-bold px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+            >
+              Close all
+            </button>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="text-xs text-white/50 hover:text-white ml-auto font-bold transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        )}
 
         <div className="space-y-6">
           {activeTickets.length === 0 ? (
@@ -92,6 +149,18 @@ export default function StaffQueuePage() {
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(ticket.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds([...selectedIds, ticket.id]);
+                          } else {
+                            setSelectedIds(selectedIds.filter(id => id !== ticket.id));
+                          }
+                        }}
+                        className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
+                      />
                       <span className="badge badge-slate !px-3 !py-1">{ticket.type}</span>
                       <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'}`}>
                         {ticket.status.replace("_", " ")}

@@ -20,6 +20,11 @@ function CreateTicketForm() {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high" | "urgent">("medium");
 
+  // KB Deflection & Templates
+  const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
+  const [searchingKb, setSearchingKb] = useState(false);
+  const [templates, setTemplates] = useState<any[]>([]);
+
   // IT-specific fields
   const [category, setCategory] = useState<"Incident" | "Service Request" | "">("");
   const [softwareName, setSoftwareName] = useState("");
@@ -83,6 +88,53 @@ function CreateTicketForm() {
     document.addEventListener("paste", handlePaste);
     return () => document.removeEventListener("paste", handlePaste);
   }, [addFiles]);
+
+  // KB Deflection effect
+  useEffect(() => {
+    if (!title.trim()) {
+      setRelatedArticles([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearchingKb(true);
+      try {
+        const res = await fetch(`/api/kb/related?ticketType=${typeParam}&q=${encodeURIComponent(title)}`);
+        if (res.ok) {
+          setRelatedArticles(await res.json());
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setSearchingKb(false);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [title, typeParam]);
+
+  // Templates effect
+  useEffect(() => {
+    if (!typeParam) return;
+    const fetchTemplates = async () => {
+      try {
+        const res = await fetch(`/api/ticket-templates?type=${typeParam}`);
+        if (res.ok) {
+          setTemplates(await res.json());
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchTemplates();
+  }, [typeParam]);
+
+  const applyTemplate = (t: any) => {
+    setTitle(t.titlePrefix ? t.titlePrefix + title : title);
+    setDescription(t.bodyTemplate);
+    setPriority(t.priority);
+    if (t.category && typeParam === "IT") {
+      setCategory(t.category);
+    }
+  };
 
   // Drag-and-drop handlers
   const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
@@ -207,6 +259,19 @@ function CreateTicketForm() {
 
           {/* Title + Description */}
           <div className="card p-8 space-y-6">
+            {templates.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                <span className="text-xs font-bold text-slate-500">Templates:</span>
+                {templates.map(t => (
+                  <button key={t.id} type="button"
+                    onClick={() => applyTemplate(t)}
+                    className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 transition-all">
+                    {t.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
                 {typeParam === "IT" ? "Issue Title" : "Request Title"}
@@ -220,6 +285,27 @@ function CreateTicketForm() {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
+
+            {relatedArticles.length > 0 && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-4 mb-2 page-reveal">
+                <p className="text-sm font-bold text-blue-800 mb-3">
+                  💡 Before you submit — these articles might help:
+                </p>
+                <div className="space-y-1">
+                  {relatedArticles.map(article => (
+                    <a key={article.id} href={`/dashboard/kb?article=${article.id}`} target="_blank"
+                       className="flex items-center justify-between p-2 rounded-lg hover:bg-blue-100 transition-colors">
+                      <span className="text-sm font-medium text-blue-700">{article.title}</span>
+                      <span className="text-xs text-blue-400">{article.views} views →</span>
+                    </a>
+                  ))}
+                </div>
+                <button onClick={() => setRelatedArticles([])}
+                  className="text-xs text-blue-400 hover:text-blue-600 mt-2 font-medium">
+                  None of these help — continue with my ticket
+                </button>
+              </div>
+            )}
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
