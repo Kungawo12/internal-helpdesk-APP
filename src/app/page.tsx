@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import PeopleMarquee from "@/components/landing/PeopleMarquee";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -53,7 +54,7 @@ export default function LandingPage() {
           });
         }
       })
-      .catch(err => console.log("Stats API not available yet, using fallback."));
+      .catch(() => console.log("Stats API not available yet, using fallback."));
   }, []);
 
   useEffect(() => {
@@ -450,6 +451,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Animated People Marquee */}
+      <PeopleMarquee />
+
       {/* Features Grid */}
       <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -680,7 +684,7 @@ function timeAgo(dateStr: string): string {
 function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [_lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [filter, setFilter] = useState<"All" | "Technology" | "Business">("All");
   const [page, setPage] = useState(0);
 

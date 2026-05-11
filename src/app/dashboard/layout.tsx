@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import AiChatWidget from "@/components/dashboard/AiChatWidget";
 
 interface Notification {
   id: string;
@@ -262,6 +263,7 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+      {role === "employee" && <AiChatWidget />}
     </div>
   );
 }
