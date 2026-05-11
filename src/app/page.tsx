@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
@@ -91,8 +91,7 @@ export default function LandingPage() {
           <span>Helpdesk</span>
         </div>
         <nav className="hidden md:flex items-center gap-6 font-medium text-sm">
-          <Link href="/login" className="hover:text-blue-400 transition-colors">Sign In</Link>
-          <Link href="/register" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">Get Started</Link>
+          <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">Sign In</Link>
         </nav>
       </header>
 
@@ -116,10 +115,7 @@ export default function LandingPage() {
             Streamline internal requests, empower your IT and HR staff, and give managers the visibility they need to scale operations smoothly.
           </p>
           <div className="hero-element flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-            <Link href="/register" className="btn-pulse w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20">
-              Get Started for Free
-            </Link>
-            <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/15 text-white rounded-xl font-bold text-lg backdrop-blur-sm transition-all border border-white/10">
+            <Link href="/login" className="btn-pulse w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20">
               Sign In
             </Link>
           </div>
@@ -342,21 +338,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-12 md:p-20 text-center text-white shadow-xl shadow-blue-900/10 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWMGgtMXYzOXoiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yKSIvPjwvc3ZnPg==')]" />
-          <div className="glow-orb w-80 h-80 bg-white/10 -top-20 -right-20" />
-          
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Ready to get started?</h2>
-            <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">Join the teams already using our platform to streamline their internal operations.</p>
-            <Link href="/register" className="btn-pulse inline-block px-10 py-5 bg-white text-blue-700 rounded-xl font-bold text-xl hover:scale-105 transition-transform shadow-lg">
-              Create an Account
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Live News Feed */}
+      <NewsSection />
 
       {/* Footer */}
       <footer className="bg-slate-950 text-slate-400 px-6 py-12 md:px-12 border-t border-slate-900">
@@ -371,5 +354,134 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// ─── Live News Feed Section ───────────────────────────────────────────────────
+interface NewsItem {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  source: string;
+  category: "Technology" | "Business";
+}
+
+function timeAgo(dateStr: string): string {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function NewsSection() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [filter, setFilter] = useState<"All" | "Technology" | "Business">("All");
+
+  const fetchNews = useCallback(async () => {
+    try {
+      const res = await fetch("/api/news");
+      if (res.ok) {
+        const data = await res.json();
+        setNews(data);
+        setLastUpdated(new Date());
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNews();
+    const interval = setInterval(fetchNews, 3600000);
+    return () => clearInterval(interval);
+  }, [fetchNews]);
+
+  const filtered = filter === "All" ? news : news.filter(n => n.category === filter);
+
+  return (
+    <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#f8fafc]">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-full mb-3 uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              Live Feed — Updates Every Hour
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Technology &amp; Business News</h2>
+            {lastUpdated && (
+              <p className="text-sm text-slate-400 mt-1 font-medium">
+                Last updated: {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {(["All", "Technology", "Business"] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${filter === f ? "bg-blue-600 text-white" : "bg-white border border-slate-200 text-slate-600 hover:border-blue-300"}`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200 animate-pulse">
+                <div className="h-3 w-20 bg-slate-200 rounded mb-3" />
+                <div className="h-5 bg-slate-200 rounded mb-2" />
+                <div className="h-5 w-3/4 bg-slate-200 rounded mb-4" />
+                <div className="h-3 bg-slate-100 rounded mb-1.5" />
+                <div className="h-3 w-5/6 bg-slate-100 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-slate-400 font-medium">No news available right now. Check back shortly.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((item, i) => (
+              <a
+                key={i}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all flex flex-col"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.category === "Technology" ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"}`}>
+                    {item.category}
+                  </span>
+                  <span className="text-xs text-slate-400 font-medium">{timeAgo(item.pubDate)}</span>
+                </div>
+                <h3 className="font-bold text-slate-900 leading-snug mb-3 group-hover:text-blue-600 transition-colors line-clamp-3">
+                  {item.title}
+                </h3>
+                {item.description && (
+                  <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 flex-1 mb-4">{item.description}</p>
+                )}
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
+                  <span className="text-xs font-bold text-slate-400">{item.source}</span>
+                  <svg className="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
