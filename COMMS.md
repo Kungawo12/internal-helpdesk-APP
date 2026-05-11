@@ -2589,3 +2589,148 @@ const [isRegister, setIsRegister] = useState(false);
 
 **Do not touch any API routes, auth config, or middleware.**
 
+---
+
+## Backend → Frontend
+
+### 2026-05-11 — News Feed Section: Full Redesign Brief (CNN/BBC Style)
+
+**Claude → Tom:**
+
+The `NewsSection` component at the bottom of `src/app/page.tsx` needs a complete visual overhaul. Tenzin wants it to look and feel like a real news portal — think CNN, BBC News, or Reuters. Here is the full spec.
+
+---
+
+#### What's already built — DO NOT CHANGE any of this logic
+
+```ts
+// Data shape from /api/news (up to 60 articles):
+interface NewsItem {
+  title: string;
+  link: string;          // always open in target="_blank" rel="noopener noreferrer"
+  description: string;   // up to 200 chars, plain text
+  pubDate: string;
+  source: string;        // e.g. "BBC Technology", "TechCrunch", "NY Times Tech"
+  category: "Technology" | "Business";
+  image: string | null;  // ← NEW: image URL from RSS feed (may be null)
+}
+```
+
+Existing logic to keep **exactly as-is**:
+- `fetchNews` / `useEffect` / `setInterval(fetchNews, 3600000)` — hourly auto-refresh
+- `setFilter` / filter state (`"All" | "Technology" | "Business"`)
+- `timeAgo(pubDate)` helper
+- Every card must be an `<a href={item.link} target="_blank" rel="noopener noreferrer">`
+
+---
+
+#### Layout — Paginated 3-row grid
+
+- Show **3 rows × 3 columns = 9 cards per page** on desktop
+- **2 columns on tablet**, **1 column on mobile** (still 3 rows worth)
+- Add **Previous / Next** buttons bottom-right to page through results
+- Show page indicator: e.g. `1 / 7` between Prev and Next
+- The pagination is pure client-side — slice the `filtered` array
+
+```ts
+const CARDS_PER_PAGE = 9;
+const totalPages = Math.ceil(filtered.length / CARDS_PER_PAGE);
+const visible = filtered.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+// Reset page to 0 whenever filter changes
+```
+
+---
+
+#### Card Design — image-first, editorial style
+
+Each card has two variants:
+
+**Variant A — has image (`item.image !== null`):**
+```
+┌─────────────────────────────┐
+│  [IMAGE — 16:9, cover]      │  ← next/image with aspect-ratio-video
+│                             │
+├─────────────────────────────┤
+│  [TECH] • BBC Technology    │  ← category badge + source, same line
+│  Title of the article here  │  ← bold, 2-line clamp, white
+│  in two lines max           │
+│  Short description...       │  ← white/50, small, 2-line clamp
+│  3h ago           [↗]       │  ← time left, external icon right
+└─────────────────────────────┘
+```
+
+**Variant B — no image:**
+```
+┌─────────────────────────────┐
+│  [TECH] • BBC Technology    │
+│  Title of the article here  │
+│  in two or three lines      │
+│  Short description text...  │
+│  3h ago           [↗]       │
+└─────────────────────────────┘
+```
+No-image cards are slightly taller to compensate. Use a subtle left colored border (orange for Tech, blue for Business) to make them visually interesting.
+
+---
+
+#### Visual Style — dark editorial theme
+
+**Section background:** `#0a0f1e` (near black, slightly blue-tinted)
+
+**Section header area:**
+- Left: Large bold white heading `"Today's News"` + subtitle `"Technology & Business — Updated hourly"`
+- Live pulse badge: small orange dot + `"LIVE"` text in orange, top-left
+- Right: Filter pills — `All` / `Technology` / `Business`
+  - Inactive: `border border-white/20 text-white/60 rounded-full px-4 py-1.5`
+  - Active: `bg-orange-500 text-white border-orange-500`
+- Below header: a thin divider line `border-white/10`
+
+**Cards:**
+- Background: `#111827` with `border border-white/8`
+- Hover: `border-orange-400/40` + subtle `shadow-[0_0_20px_rgba(249,115,22,0.08)]`
+- Border radius: `rounded-2xl`
+- Image: `rounded-t-2xl overflow-hidden`, object-cover, 16:9 aspect ratio
+- Category badge: pill, `bg-orange-500/15 text-orange-400 border border-orange-400/20` for Tech; `bg-blue-500/15 text-blue-400 border border-blue-400/20` for Business
+- Title: `text-white font-bold text-base leading-snug line-clamp-2 group-hover:text-orange-400 transition-colors`
+- Description: `text-white/50 text-sm line-clamp-2`
+- Source: `text-white/40 text-xs font-semibold`
+- Time ago: `text-white/30 text-xs`
+- External icon: `↗` in top-right corner of card body, `text-white/20 group-hover:text-orange-400`
+
+**Pagination bar (bottom-right of section):**
+```
+        ← Prev    1 / 7    Next →
+```
+- Prev/Next: `border border-white/20 text-white/70 px-5 py-2 rounded-full hover:bg-white/10`
+- Page counter: `text-white/50 text-sm font-medium mx-4`
+- Disabled state (first/last page): `opacity-30 cursor-not-allowed`
+
+**Loading skeleton:**
+- Same dark card shape, image placeholder at top (`bg-white/5 animate-pulse`)
+- Lines below: `bg-white/8 rounded animate-pulse` in varying widths
+- Use `shimmer` via `animate-pulse` (Tailwind built-in)
+
+---
+
+#### Sources shown in this feed
+BBC Technology · BBC Business · TechCrunch · Wired · CNBC · NY Times Tech · NY Times Biz · MarketWatch
+
+No need to show source logos — source name text is enough.
+
+---
+
+#### Files to change
+- `src/app/page.tsx` — only the `NewsSection` component and `NewsItem` interface at the bottom
+- Do **not** touch `next.config.ts`, `/api/news/route.ts`, or any other file
+
+#### Important image note
+Use `<img>` tag (not `next/image`) for news images since the domains are dynamic and unpredictable. Add `onError` to hide broken images gracefully:
+```tsx
+<img
+  src={item.image}
+  alt={item.title}
+  className="w-full aspect-video object-cover"
+  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+/>
+```
+
