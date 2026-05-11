@@ -179,11 +179,8 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
-            <div className="flex justify-end mb-3 px-1">
-              <NotificationBell />
-            </div>
             <div className="bg-white/60 rounded-3xl p-5 border border-white/50 shadow-inner">
-              <div className="flex items-center gap-4 mb-5">
+              <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm border border-blue-200 shadow-sm">
                   {session?.user?.name?.charAt(0)}
                 </div>
@@ -196,7 +193,7 @@ export default function DashboardLayout({
                      </span>
                   </div>
                 </div>
-              </div>
+              </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="w-full py-3 rounded-2xl bg-[#0f172a] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#1e293b] hover:shadow-xl transition-all shadow-md"
@@ -210,6 +207,11 @@ export default function DashboardLayout({
 
       {/* Main Content Area */}
       <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
+        {/* Top bar — desktop only */}
+        <div className="hidden lg:flex items-center justify-end px-12 py-4 border-b border-slate-100 bg-white/60 sticky top-0 z-30">
+          <NotificationBell />
+        </div>
+
         {/* Mobile Header */}
         <header className="lg:hidden h-20 bg-white/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100">
            <Link href="/dashboard" className="flex items-center gap-3">
