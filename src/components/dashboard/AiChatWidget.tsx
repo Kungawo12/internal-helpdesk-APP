@@ -138,13 +138,30 @@ export default function AiChatWidget() {
       )}
 
       {/* Toggle Button */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-2xl hover:bg-blue-700 transition-all hover:scale-105 active:scale-95"
-        aria-label="Toggle AI Chat"
-      >
-        {open ? "✕" : "🤖"}
-      </button>
+      {!open && (
+        <div className="flex items-center gap-3">
+          <div className="bg-white text-slate-800 text-xs font-black px-4 py-2.5 rounded-2xl shadow-xl border border-slate-100 whitespace-nowrap">
+            AI Assistant
+            <span className="ml-2 inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-2xl hover:bg-blue-700 transition-all hover:scale-105 active:scale-95"
+            aria-label="Open AI Chat"
+          >
+            🤖
+          </button>
+        </div>
+      )}
+      {open && (
+        <button
+          onClick={() => setOpen(false)}
+          className="w-14 h-14 bg-slate-800 text-white rounded-2xl flex items-center justify-center text-xl shadow-2xl hover:bg-slate-700 transition-all"
+          aria-label="Close AI Chat"
+        >
+          ✕
+        </button>
+      )}
     </div>
   );
 }
