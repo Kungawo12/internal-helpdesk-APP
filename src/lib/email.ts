@@ -1,34 +1,35 @@
-import nodemailer from "nodemailer";
-
-function getTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-}
-
 async function sendEmail(to: string, subject: string, html: string) {
-  const { SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+  const apiKey = process.env.BREVO_API_KEY;
+  const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
 
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    console.log(`[EMAIL - SMTP NOT CONFIGURED] To: ${to} | Subject: ${subject}`);
+  if (!apiKey) {
+    console.log(`[EMAIL - BREVO_API_KEY NOT SET] To: ${to} | Subject: ${subject}`);
     return;
   }
 
   try {
-    const fromEmail = SMTP_FROM || SMTP_USER;
-    const info = await getTransporter().sendMail({
-      from: `"Helpdesk" <${fromEmail}>`,
-      to,
-      subject,
-      html,
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "api-key": apiKey,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "Helpdesk", email: fromEmail },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
     });
-    console.log(`[EMAIL SENT] To: ${to} | Subject: ${subject} | ID: ${info.messageId}`);
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error(`[EMAIL ERROR] To: ${to} | Status: ${res.status} | ${err}`);
+    } else {
+      const data = await res.json();
+      console.log(`[EMAIL SENT] To: ${to} | Subject: ${subject} | ID: ${data.messageId}`);
+    }
   } catch (err) {
     console.error(`[EMAIL ERROR] To: ${to} | Subject: ${subject}`, err);
   }
@@ -252,7 +253,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
   const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  if (!process.env.BREVO_API_KEY) {
     console.log(`[DEV] Password reset link for ${email}: ${resetUrl}`);
     return;
   }
