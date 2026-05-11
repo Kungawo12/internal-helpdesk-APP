@@ -365,6 +365,7 @@ interface NewsItem {
   pubDate: string;
   source: string;
   category: "Technology" | "Business";
+  image: string | null;
 }
 
 function timeAgo(dateStr: string): string {
@@ -382,6 +383,7 @@ function NewsSection() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [filter, setFilter] = useState<"All" | "Technology" | "Business">("All");
+  const [page, setPage] = useState(0);
 
   const fetchNews = useCallback(async () => {
     try {
@@ -403,30 +405,36 @@ function NewsSection() {
   }, [fetchNews]);
 
   const filtered = filter === "All" ? news : news.filter(n => n.category === filter);
+  
+  useEffect(() => {
+    setPage(0);
+  }, [filter]);
+
+  const CARDS_PER_PAGE = 9;
+  const totalPages = Math.ceil(filtered.length / CARDS_PER_PAGE);
+  const visible = filtered.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
 
   return (
-    <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#f8fafc]">
+    <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-full mb-3 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              Live Feed — Updates Every Hour
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 border-b border-white/10 pb-6">
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 text-orange-500 text-xs font-bold mb-2 uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              LIVE
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Technology &amp; Business News</h2>
-            {lastUpdated && (
-              <p className="text-sm text-slate-400 mt-1 font-medium">
-                Last updated: {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </p>
-            )}
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Today's News</h2>
+            <p className="text-sm text-white/50 mt-1 font-medium">
+              Technology & Business — Updated hourly
+            </p>
           </div>
           <div className="flex items-center gap-2">
             {(["All", "Technology", "Business"] as const).map(f => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${filter === f ? "bg-blue-600 text-white" : "bg-white border border-slate-200 text-slate-600 hover:border-blue-300"}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${filter === f ? "bg-orange-500 text-white border-orange-500" : "border border-white/20 text-white/60 hover:bg-white/10"}`}
               >
                 {f}
               </button>
@@ -438,47 +446,81 @@ function NewsSection() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200 animate-pulse">
-                <div className="h-3 w-20 bg-slate-200 rounded mb-3" />
-                <div className="h-5 bg-slate-200 rounded mb-2" />
-                <div className="h-5 w-3/4 bg-slate-200 rounded mb-4" />
-                <div className="h-3 bg-slate-100 rounded mb-1.5" />
-                <div className="h-3 w-5/6 bg-slate-100 rounded" />
+              <div key={i} className="bg-[#111827] rounded-2xl p-6 border border-white/10 animate-pulse">
+                <div className="aspect-video bg-white/5 rounded-xl mb-4" />
+                <div className="h-3 w-20 bg-white/10 rounded mb-3" />
+                <div className="h-5 bg-white/10 rounded mb-2" />
+                <div className="h-5 w-3/4 bg-white/10 rounded mb-4" />
+                <div className="h-3 bg-white/5 rounded mb-1.5" />
+                <div className="h-3 w-5/6 bg-white/5 rounded" />
               </div>
             ))}
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-slate-400 font-medium">No news available right now. Check back shortly.</div>
+        ) : visible.length === 0 ? (
+          <div className="text-center py-20 text-white/40 font-medium">No news available right now. Check back shortly.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((item, i) => (
+            {visible.map((item, i) => (
               <a
                 key={i}
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all flex flex-col"
+                className="group bg-[#111827] rounded-2xl border border-white/8 hover:border-orange-400/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.08)] transition-all flex flex-col overflow-hidden"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.category === "Technology" ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"}`}>
-                    {item.category}
-                  </span>
-                  <span className="text-xs text-slate-400 font-medium">{timeAgo(item.pubDate)}</span>
-                </div>
-                <h3 className="font-bold text-slate-900 leading-snug mb-3 group-hover:text-blue-600 transition-colors line-clamp-3">
-                  {item.title}
-                </h3>
-                {item.description && (
-                  <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 flex-1 mb-4">{item.description}</p>
+                {item.image && (
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  </div>
                 )}
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
-                  <span className="text-xs font-bold text-slate-400">{item.source}</span>
-                  <svg className="w-4 h-4 text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                <div className={`p-6 flex flex-col flex-1 ${!item.image ? "border-l-4 " + (item.category === "Technology" ? "border-orange-500" : "border-blue-500") : ""}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.category === "Technology" ? "bg-orange-500/15 text-orange-400 border border-orange-400/20" : "bg-blue-500/15 text-blue-400 border border-blue-400/20"}`}>
+                      {item.category}
+                    </span>
+                    <span className="text-xs text-white/30 font-medium">{timeAgo(item.pubDate)}</span>
+                  </div>
+                  <h3 className="font-bold text-white leading-snug mb-3 group-hover:text-orange-400 transition-colors line-clamp-2 text-base">
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="text-sm text-white/50 leading-relaxed line-clamp-2 flex-1 mb-4">{item.description}</p>
+                  )}
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
+                    <span className="text-xs font-bold text-white/40">{item.source}</span>
+                    <span className="text-white/20 group-hover:text-orange-400 transition-colors">↗</span>
+                  </div>
                 </div>
               </a>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-end mt-10 gap-4">
+            <button
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className={`border border-white/20 text-white/70 px-5 py-2 rounded-full hover:bg-white/10 transition-all text-sm font-medium ${page === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
+            >
+              ← Prev
+            </button>
+            <span className="text-white/50 text-sm font-medium">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+              disabled={page === totalPages - 1}
+              className={`border border-white/20 text-white/70 px-5 py-2 rounded-full hover:bg-white/10 transition-all text-sm font-medium ${page === totalPages - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>
