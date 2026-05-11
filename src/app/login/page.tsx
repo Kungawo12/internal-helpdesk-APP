@@ -6,24 +6,21 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
+  const [isRegister, setIsRegister] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
+      const res = await signIn("credentials", { email, password, redirect: false });
       if (res?.error) {
         setError("Invalid credentials. Please try again.");
       } else {
@@ -36,116 +33,248 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex relative overflow-hidden bg-slate-950">
-      {/* Global Animated Mesh Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-600/30 rounded-full blur-[140px] animate-pulse-glow" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-600/30 rounded-full blur-[140px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-[20%] right-[20%] w-[40%] h-[40%] bg-emerald-500/20 rounded-full blur-[120px] animate-pulse-glow" style={{ animationDelay: '4s' }} />
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role: "employee" }),
+      });
+      if (res.ok) {
+        setSuccess("Account created! You can now sign in.");
+        setName(""); setEmail(""); setPassword("");
+        setTimeout(() => { setIsRegister(false); setSuccess(""); }, 1500);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Registration failed. Please try again.");
+      }
+    } catch {
+      setError("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      {/* Left Side Branding */}
-      <div className="hidden lg:flex w-1/2 relative z-10 items-center justify-center p-12">
-        <div className="max-w-lg text-white">
-          <div className="w-16 h-16 bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center font-bold text-3xl mb-8 shadow-2xl">
+  const switchMode = (toRegister: boolean) => {
+    setError(""); setSuccess("");
+    setIsRegister(toRegister);
+  };
+
+  const slide = (condition: boolean) => ({
+    transform: condition ? "translateX(0%)" : "translateX(-110%)",
+    transition: "transform 0.7s cubic-bezier(0.77,0,0.175,1)",
+  });
+
+  const slideRight = (condition: boolean) => ({
+    transform: condition ? "translateX(0%)" : "translateX(110%)",
+    transition: "transform 0.7s cubic-bezier(0.77,0,0.175,1)",
+  });
+
+  const fieldAnim = (i: number, visible: boolean) => ({
+    transform: visible ? "translateX(0)" : "translateX(40px)",
+    opacity: visible ? 1 : 0,
+    filter: visible ? "blur(0)" : "blur(6px)",
+    transition: `all 0.5s ease ${i * 0.08}s`,
+  });
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#0c1222] p-4 relative overflow-hidden">
+      {/* Ambient glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-orange-600/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/8 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Card */}
+      <div className="relative w-full max-w-[860px] h-[540px] rounded-3xl overflow-hidden shadow-2xl z-10 flex">
+
+        {/* ── LOGIN FORM — slides out left when switching to register ── */}
+        <div
+          className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col justify-center px-10 py-8 bg-[#131c2e] z-20"
+          style={slide(!isRegister)}
+        >
+          <FormInner
+            mode="login"
+            name={name} setName={setName}
+            email={email} setEmail={setEmail}
+            password={password} setPassword={setPassword}
+            error={error} success={success}
+            loading={loading}
+            onSubmit={handleLogin}
+            onSwitch={() => switchMode(true)}
+            fieldAnim={fieldAnim}
+            active={!isRegister}
+          />
+        </div>
+
+        {/* ── REGISTER FORM — slides in from right ── */}
+        <div
+          className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col justify-center px-10 py-8 bg-[#131c2e] z-20"
+          style={slideRight(isRegister)}
+        >
+          <FormInner
+            mode="register"
+            name={name} setName={setName}
+            email={email} setEmail={setEmail}
+            password={password} setPassword={setPassword}
+            error={error} success={success}
+            loading={loading}
+            onSubmit={handleRegister}
+            onSwitch={() => switchMode(false)}
+            fieldAnim={fieldAnim}
+            active={isRegister}
+          />
+        </div>
+
+        {/* ── BRANDING PANEL — slides from right to left on register ── */}
+        <div
+          className="hidden md:flex absolute inset-y-0 right-0 w-1/2 flex-col items-center justify-center px-10 text-white text-center z-30 bg-gradient-to-br from-[#1a2540] to-[#0c1222] border-l border-white/5"
+          style={{
+            transform: isRegister ? "translateX(-100%)" : "translateX(0%)",
+            transition: "transform 0.7s cubic-bezier(0.77,0,0.175,1)",
+          }}
+        >
+          {/* Logo */}
+          <div className="w-16 h-16 bg-orange-500/20 border border-orange-400/30 rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-[0_0_40px_rgba(249,115,22,0.2)]">
             H
           </div>
-          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight text-white">
-            Prism <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 animate-gradient-shift bg-[length:200%_auto]">Enterprise</span>
-          </h1>
-          <p className="text-xl text-white/70 font-medium leading-relaxed">
-            The intelligent platform for managing internal operations, IT requests, and human resources effortlessly.
-          </p>
+
+          {isRegister ? (
+            <>
+              <h2 className="text-3xl font-black mb-3 tracking-tight">Welcome Back!</h2>
+              <p className="text-white/50 text-sm mb-8 font-medium leading-relaxed">
+                Already have an account?<br />Sign in to continue.
+              </p>
+              <button
+                onClick={() => switchMode(false)}
+                className="border border-white/30 text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all text-sm"
+              >
+                Sign In
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl font-black mb-3 tracking-tight">Hello, Friend!</h2>
+              <p className="text-white/50 text-sm mb-8 font-medium leading-relaxed">
+                New here? Create an account<br />and get started today.
+              </p>
+              <button
+                onClick={() => switchMode(true)}
+                className="border border-white/30 text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all text-sm"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ─── Shared form inner ────────────────────────────────────────────────────────
+function FormInner({
+  mode, name, setName, email, setEmail, password, setPassword,
+  error, success, loading, onSubmit, onSwitch, fieldAnim, active,
+}: {
+  mode: "login" | "register";
+  name: string; setName: (v: string) => void;
+  email: string; setEmail: (v: string) => void;
+  password: string; setPassword: (v: string) => void;
+  error: string; success: string; loading: boolean;
+  onSubmit: (e: React.FormEvent) => void;
+  onSwitch: () => void;
+  fieldAnim: (i: number, visible: boolean) => React.CSSProperties;
+  active: boolean;
+}) {
+  const isRegister = mode === "register";
+
+  return (
+    <div className="max-w-sm mx-auto w-full">
+      <Link href="/" className="flex items-center gap-2 mb-6 text-white/40 hover:text-white transition-colors w-fit">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span className="text-xs font-bold uppercase tracking-wider">Back</span>
+      </Link>
+
+      <div className="mb-7" style={fieldAnim(0, active)}>
+        <h2 className="text-3xl font-extrabold text-white mb-1.5">
+          {isRegister ? "Create Account" : "Welcome Back"}
+        </h2>
+        <p className="text-white/50 text-sm font-medium">
+          {isRegister ? "Join the enterprise platform" : "Sign in to continue"}
+        </p>
       </div>
 
-      {/* Right Side Glassmorphic Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-white">
-          <Link
-            href="/"
-            className="flex items-center gap-2 mb-8 text-white/60 hover:text-white transition-colors w-fit"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span className="text-sm font-bold uppercase tracking-wider">Back to Home</span>
-          </Link>
-
-          <div className="mb-8">
-            <h2 className="text-3xl font-extrabold mb-2 text-white">Welcome Back</h2>
-            <p className="text-white/60 font-medium">Sign in to continue to the dashboard.</p>
+      <form onSubmit={onSubmit} className="space-y-4">
+        {isRegister && (
+          <div style={fieldAnim(1, active)}>
+            <label className="block text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-widest">Full Name</label>
+            <input
+              type="text" required value={name} onChange={e => setName(e.target.value)}
+              placeholder="John Doe"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+            />
           </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-bold text-white/80 mb-2 uppercase tracking-wide">
-                Email Address
-              </label>
-              <input
-                type="email"
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
-                placeholder="name@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+        <div style={fieldAnim(isRegister ? 2 : 1, active)}>
+          <label className="block text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-widest">Email Address</label>
+          <input
+            type="email" required value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="name@company.com"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+          />
+        </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-bold text-white/80 uppercase tracking-wide">
-                  Password
-                </label>
-                <Link href="/forgot-password" className="text-sm font-bold text-blue-300 hover:text-white transition-colors">
-                  Recover
-                </Link>
-              </div>
-              <input
-                type="password"
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            {error && (
-              <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl backdrop-blur-md">
-                <p className="text-sm text-red-200 font-bold text-center">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-white text-slate-900 font-extrabold py-3.5 rounded-xl hover:bg-slate-100 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4 shadow-[0_0_20px_rgba(255,255,255,0.3)] disabled:opacity-70 disabled:hover:scale-100"
-            >
-              {loading ? "Authenticating..." : "Sign In"}
-            </button>
-          </form>
-
-          <div className="mt-8 pt-8 border-t border-white/10 text-center space-y-3">
-            <p className="text-sm text-white/60 font-medium">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-white font-bold hover:underline">
-                Register here
+        <div style={fieldAnim(isRegister ? 3 : 2, active)}>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-widest">Password</label>
+            {!isRegister && (
+              <Link href="/forgot-password" className="text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors">
+                Forgot?
               </Link>
-            </p>
-            <Link href="/admin/login" className="inline-flex items-center gap-1.5 text-xs text-white/20 hover:text-white/50 transition-colors font-medium">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-              Admin Portal
-            </Link>
+            )}
           </div>
+          <input
+            type="password" required value={password} onChange={e => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+          />
         </div>
-      </div>
+
+        {error && (
+          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-red-500/15 border border-red-500/30 rounded-xl">
+            <p className="text-xs text-red-300 font-bold text-center">{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-xl">
+            <p className="text-xs text-emerald-300 font-bold text-center">{success}</p>
+          </div>
+        )}
+
+        <div style={fieldAnim(isRegister ? 5 : 4, active)}>
+          <button
+            type="submit" disabled={loading}
+            className="w-full bg-orange-500 text-white font-extrabold py-3 rounded-xl hover:bg-orange-600 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(249,115,22,0.25)] disabled:opacity-60 disabled:hover:scale-100 text-sm mt-1"
+          >
+            {loading ? "Please wait..." : (isRegister ? "Create Account" : "Sign In")}
+          </button>
+        </div>
+      </form>
+
+      {/* Mobile-only toggle */}
+      <p className="mt-5 text-center text-xs text-white/40 font-medium md:hidden">
+        {isRegister ? "Already have an account? " : "Don't have an account? "}
+        <button onClick={onSwitch} className="text-white font-bold hover:underline">
+          {isRegister ? "Sign In" : "Sign Up"}
+        </button>
+      </p>
     </div>
   );
 }
