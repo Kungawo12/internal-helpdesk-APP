@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
+import AiCopilotPanel from "@/components/tickets/AiCopilotPanel";
 
 function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
   if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
@@ -594,6 +595,10 @@ export default function TicketDetailPage() {
                         Current: <span className="font-bold capitalize">{ticket.priority}</span> → next level up
                       </p>
                     </div>
+                  )}
+
+                  {(isStaff || role === 'admin') && (
+                    <AiCopilotPanel ticketId={id} />
                   )}
 
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (

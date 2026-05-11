@@ -1,57 +1,73 @@
 "use client";
 
-const ROLE_COLORS: Record<string, { bg: string; text: string; badge: string; badgeText: string }> = {
-  "IT Staff":  { bg: "bg-blue-500",   text: "text-white", badge: "bg-blue-100",   badgeText: "text-blue-700" },
-  "HR Staff":  { bg: "bg-amber-500",  text: "text-white", badge: "bg-amber-100",  badgeText: "text-amber-700" },
-  "Manager":   { bg: "bg-purple-500", text: "text-white", badge: "bg-purple-100", badgeText: "text-purple-700" },
-  "Employee":  { bg: "bg-slate-600",  text: "text-white", badge: "bg-slate-100",  badgeText: "text-slate-600" },
-  "Admin":     { bg: "bg-red-500",    text: "text-white", badge: "bg-red-100",    badgeText: "text-red-700" },
+const ROLE_COLORS: Record<string, { ring: string; badge: string; badgeText: string }> = {
+  "IT Staff":  { ring: "ring-blue-400",   badge: "bg-blue-100",   badgeText: "text-blue-700" },
+  "HR Staff":  { ring: "ring-amber-400",  badge: "bg-amber-100",  badgeText: "text-amber-700" },
+  "Manager":   { ring: "ring-purple-400", badge: "bg-purple-100", badgeText: "text-purple-700" },
+  "Employee":  { ring: "ring-slate-300",  badge: "bg-slate-100",  badgeText: "text-slate-600" },
+  "Admin":     { ring: "ring-red-400",    badge: "bg-red-100",    badgeText: "text-red-700" },
 };
 
+// DiceBear "adventurer" style gives illustrated human character faces
+const AVATAR_BASE = "https://api.dicebear.com/9.x/adventurer/svg";
+
 const ROW_ONE = [
-  { name: "Alex Chen",      initials: "AC", role: "IT Staff",  dept: "Infrastructure" },
-  { name: "Maria Santos",   initials: "MS", role: "Employee",  dept: "Operations" },
-  { name: "Jordan Kim",     initials: "JK", role: "HR Staff",  dept: "People Ops" },
-  { name: "Sam Patel",      initials: "SP", role: "Manager",   dept: "IT Division" },
-  { name: "Chris Taylor",   initials: "CT", role: "Employee",  dept: "Finance" },
-  { name: "Priya Nair",     initials: "PN", role: "IT Staff",  dept: "Security" },
-  { name: "Marcus Johnson", initials: "MJ", role: "Employee",  dept: "Marketing" },
-  { name: "Layla Ahmed",    initials: "LA", role: "HR Staff",  dept: "Recruitment" },
+  { name: "Alex Chen",      seed: "Alex",    role: "IT Staff",  dept: "Infrastructure", bg: "dce5f5" },
+  { name: "Maria Santos",   seed: "Maria",   role: "Employee",  dept: "Operations",     bg: "fde8d8" },
+  { name: "Jordan Kim",     seed: "Jordan",  role: "HR Staff",  dept: "People Ops",     bg: "fef3c7" },
+  { name: "Sam Patel",      seed: "Sam",     role: "Manager",   dept: "IT Division",    bg: "ede9fe" },
+  { name: "Chris Taylor",   seed: "Chris",   role: "Employee",  dept: "Finance",        bg: "dcfce7" },
+  { name: "Priya Nair",     seed: "Priya",   role: "IT Staff",  dept: "Security",       bg: "dce5f5" },
+  { name: "Marcus Johnson", seed: "Marcus",  role: "Employee",  dept: "Marketing",      bg: "fee2e2" },
+  { name: "Layla Ahmed",    seed: "Layla",   role: "HR Staff",  dept: "Recruitment",    bg: "fef3c7" },
 ];
 
 const ROW_TWO = [
-  { name: "David Lee",      initials: "DL", role: "Admin",     dept: "Platform" },
-  { name: "Sophie Brown",   initials: "SB", role: "Employee",  dept: "Legal" },
-  { name: "Tom Wilson",     initials: "TW", role: "IT Staff",  dept: "Networks" },
-  { name: "Aisha Mohammed", initials: "AM", role: "Manager",   dept: "HR Division" },
-  { name: "Ryan Chen",      initials: "RC", role: "Employee",  dept: "Product" },
-  { name: "Emma Davis",     initials: "ED", role: "HR Staff",  dept: "Benefits" },
-  { name: "James Park",     initials: "JP", role: "IT Staff",  dept: "Dev Ops" },
-  { name: "Zoe Thompson",   initials: "ZT", role: "Employee",  dept: "Design" },
+  { name: "David Lee",      seed: "David",   role: "Admin",     dept: "Platform",       bg: "fecaca" },
+  { name: "Sophie Brown",   seed: "Sophie",  role: "Employee",  dept: "Legal",          bg: "e0f2fe" },
+  { name: "Tom Wilson",     seed: "Tom",     role: "IT Staff",  dept: "Networks",       bg: "dce5f5" },
+  { name: "Aisha Mohammed", seed: "Aisha",   role: "Manager",   dept: "HR Division",    bg: "ede9fe" },
+  { name: "Ryan Chen",      seed: "Ryan",    role: "Employee",  dept: "Product",        bg: "d1fae5" },
+  { name: "Emma Davis",     seed: "Emma",    role: "HR Staff",  dept: "Benefits",       bg: "fef3c7" },
+  { name: "James Park",     seed: "James",   role: "IT Staff",  dept: "Dev Ops",        bg: "dce5f5" },
+  { name: "Zoe Thompson",   seed: "Zoe",     role: "Employee",  dept: "Design",         bg: "fce7f3" },
 ];
 
 interface PersonCardProps {
   name: string;
-  initials: string;
+  seed: string;
   role: string;
   dept: string;
+  bg: string;
   animDelay?: string;
 }
 
-function PersonCard({ name, initials, role, dept, animDelay = "0s" }: PersonCardProps) {
+function PersonCard({ name, seed, role, dept, bg, animDelay = "0s" }: PersonCardProps) {
   const colors = ROLE_COLORS[role] ?? ROLE_COLORS["Employee"];
+  const avatarUrl = `${AVATAR_BASE}?seed=${seed}&backgroundColor=${bg}&backgroundType=solid&radius=50`;
+
   return (
     <div
-      className="flex-shrink-0 w-44 bg-white rounded-2xl p-4 shadow-md border border-slate-100 mx-3 select-none"
+      className="flex-shrink-0 w-44 bg-white rounded-2xl p-4 shadow-md border border-slate-100 mx-3 select-none cursor-default"
       style={{ animation: `float 3s ease-in-out infinite`, animationDelay: animDelay }}
     >
-      <div className={`w-14 h-14 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center font-black text-xl mx-auto mb-3 shadow-lg`}>
-        {initials}
+      {/* Illustrated character face */}
+      <div className={`w-16 h-16 rounded-2xl mx-auto mb-3 ring-2 ${colors.ring} overflow-hidden`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={avatarUrl}
+          alt={name}
+          width={64}
+          height={64}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
       </div>
+
       <p className="text-sm font-black text-slate-900 text-center leading-tight truncate">{name}</p>
       <p className="text-[10px] text-slate-400 text-center mt-0.5 mb-2 truncate">{dept}</p>
+
       <div className="flex items-center justify-center gap-1.5">
-        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" style={{ animation: "pulse 2s infinite" }} />
+        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors.badge} ${colors.badgeText}`}>
           {role}
         </span>
@@ -61,16 +77,15 @@ function PersonCard({ name, initials, role, dept, animDelay = "0s" }: PersonCard
 }
 
 export default function PeopleMarquee() {
-  // Duplicate each row for seamless loop
   const row1 = [...ROW_ONE, ...ROW_ONE];
   const row2 = [...ROW_TWO, ...ROW_TWO];
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-20 bg-[#f8fafc] overflow-hidden">
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-10px); }
         }
         @keyframes marquee-left {
           from { transform: translateX(0); }
@@ -80,18 +95,17 @@ export default function PeopleMarquee() {
           from { transform: translateX(-50%); }
           to { transform: translateX(0); }
         }
-        .marquee-left {
+        .row-left {
           display: flex;
           width: max-content;
-          animation: marquee-left 35s linear infinite;
+          animation: marquee-left 40s linear infinite;
         }
-        .marquee-right {
+        .row-right {
           display: flex;
           width: max-content;
-          animation: marquee-right 35s linear infinite;
+          animation: marquee-right 40s linear infinite;
         }
-        .marquee-left:hover,
-        .marquee-right:hover {
+        .row-left:hover, .row-right:hover {
           animation-play-state: paused;
         }
       `}</style>
@@ -107,27 +121,25 @@ export default function PeopleMarquee() {
       </div>
 
       {/* Row 1 — scrolls left */}
-      <div className="relative mb-4" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
-        <div className="marquee-left py-2">
+      <div
+        className="relative mb-5"
+        style={{ WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)", maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)" }}
+      >
+        <div className="row-left py-3">
           {row1.map((p, i) => (
-            <PersonCard
-              key={`r1-${i}`}
-              {...p}
-              animDelay={`${(i % 8) * 0.4}s`}
-            />
+            <PersonCard key={`r1-${i}`} {...p} animDelay={`${(i % 8) * 0.45}s`} />
           ))}
         </div>
       </div>
 
       {/* Row 2 — scrolls right */}
-      <div className="relative" style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
-        <div className="marquee-right py-2">
+      <div
+        className="relative"
+        style={{ WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)", maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)" }}
+      >
+        <div className="row-right py-3">
           {row2.map((p, i) => (
-            <PersonCard
-              key={`r2-${i}`}
-              {...p}
-              animDelay={`${(i % 8) * 0.3 + 0.2}s`}
-            />
+            <PersonCard key={`r2-${i}`} {...p} animDelay={`${(i % 8) * 0.35 + 0.25}s`} />
           ))}
         </div>
       </div>

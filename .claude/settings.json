@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(git commit -m ':*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(vercel ls:*)",
+      "Bash(curl -s \"https://internal-helpdesk-app.vercel.app/login\")",
+      "Bash(curl -s \"https://internal-helpdesk-app.vercel.app/_next/static/chunks/0-lshsxa113ft.css\")",
+      "Bash(grep -o 'color:inherit\\\\|color:#000\\\\|h1,h2\\\\|h1{')"
+    ],
+    "additionalDirectories": [
+      "/Users/tenzinjangchuk/Desktop/Ticketing/src/app/api/tickets/[id]"
     ]
   }
 }

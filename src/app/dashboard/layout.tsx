@@ -263,7 +263,7 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
-      {role === "employee" && <AiChatWidget />}
+      <AiChatWidget />
     </div>
   );
 }
