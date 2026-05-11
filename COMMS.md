@@ -2366,3 +2366,107 @@ Remove `<NotificationBell />` from the sidebar section (the `flex justify-end mb
 
 **Both fixes are in `src/app/dashboard/layout.tsx` only. No other files need changing.**
 
+---
+
+## Backend → Frontend
+
+### 2026-05-10 — MAJOR: Full UI/UX Redesign
+
+**Claude:** Tom, the current design feels too basic. The user wants a premium, modern enterprise SaaS feel — the kind you see in Linear, Vercel Dashboard, Notion, or Stripe. Elevate every page. This is a full redesign pass, not small tweaks.
+
+---
+
+### Design Direction
+
+**Target aesthetic:** Dark-accented premium SaaS. Clean, spacious, confident. Not a generic Bootstrap dashboard.
+
+**Key principles:**
+- More whitespace everywhere — cards should breathe
+- Stronger typographic hierarchy — big bold headings, small muted labels
+- Subtle depth — soft shadows, micro-borders, layered surfaces
+- Purposeful color — use color to communicate status, not just decorate
+- Motion — subtle hover transitions, fade-ins, smooth state changes
+- Data should feel scannable at a glance, not cramped
+
+---
+
+### Pages to redesign (priority order)
+
+#### 1. Dashboard Layout (`src/app/dashboard/layout.tsx`)
+
+The sidebar needs a premium feel:
+- Make the sidebar background a true solid white with a very subtle shadow separating it from content (`shadow-xl`)
+- Nav items: pill-shaped active state with a stronger selected indicator (left accent bar or filled pill)
+- Logo area: larger, more confident branding treatment
+- Bottom user card: glass-morphism style — `backdrop-blur-sm bg-white/70 border border-white/40`
+- Top bar (notification area): add a subtle bottom border and the user's name + role on the LEFT side, bell on RIGHT. Makes it feel like a real app header.
+
+#### 2. Employee Dashboard (`src/app/dashboard/page.tsx`)
+
+- KPI cards: make them taller with more padding, add a subtle icon on each card (already there but make it bigger and more prominent)
+- Add a thin colored top border to each KPI card matching its meaning (red for open, blue for in-progress, green for resolved)
+- Ticket cards: add a left-side colored accent bar instead of top border for status indication — much cleaner
+- Empty state: illustrative, not just text — big icon + headline + subtext + CTA button
+
+#### 3. Ticket Detail Page (`src/app/dashboard/ticket/[id]/page.tsx`)
+
+This is the most important page — users spend the most time here:
+- Two-column layout: main content left (2/3), sidebar right (1/3) — already done but tighten it
+- Sidebar should have clearly separated sections with headers: "Details", "Actions", "People"
+- Status badge should be prominent — large pill at the top right of the card, not buried
+- Progress stepper: make it more visual — larger dots, connecting line with gradient fill
+- Comments: make each comment bubble distinct — staff comments should look visually different from employee comments (different background color, left vs right alignment or a staff badge)
+- Internal notes: add a distinct amber/yellow tinted background so staff can instantly tell them apart
+
+#### 4. Staff Queue (`src/app/dashboard/staff/page.tsx`)
+
+- Add a summary row at the top: "X open · Y in progress · Z resolved today" — quick at-a-glance numbers
+- Ticket rows: make them card-like with more padding instead of a flat table feel
+- Priority indicators: colored left border on each ticket row (red = urgent, orange = high, etc.)
+- Status filter tabs: make them look like proper segmented controls, not just buttons
+
+#### 5. Manager Dashboard (`src/app/dashboard/manager/page.tsx`)
+
+- The bar chart section needs more visual weight — taller bars, better labels
+- KPI cards: add trend indicators (↑ ↓ arrows) even if static for now — makes it feel like real analytics
+- Team workload table: add avatar initials with colored backgrounds for each staff member
+- Overall: it should feel like an executive analytics dashboard, not a spreadsheet
+
+#### 6. Ticket Create Form (`src/app/dashboard/create/page.tsx`)
+
+- Multi-step wizard feel: show step indicators at the top (Step 1: Basic Info → Step 2: Details → Step 3: Review)
+- Or at minimum: group fields visually with section headers and dividers
+- Make the submit button prominent — full width, large, with loading state animation
+
+#### 7. Login / Register Pages
+
+- Full-screen split layout: left side is a branded panel (dark background, product name, tagline), right side is the form
+- Or: centered card with a clean, minimal form and your brand mark at the top
+- Current design is very plain — this is the first impression
+
+---
+
+### Global CSS / Tailwind changes
+
+These should apply everywhere:
+
+- **Font:** Consider importing Inter or Plus Jakarta Sans from Google Fonts for a more premium feel than the default system font
+- **Cards:** Standardise to `rounded-2xl shadow-sm border border-slate-100 bg-white` — no more inconsistent border radii
+- **Buttons:** Primary = `bg-slate-900 text-white hover:bg-slate-700` with `rounded-xl px-6 py-3 font-semibold text-sm transition-all`; Secondary = `border border-slate-200 bg-white hover:bg-slate-50`
+- **Badges:** Consistent pill badges — `rounded-full px-3 py-0.5 text-xs font-semibold`
+- **Focus rings:** `focus-visible:ring-2 focus-visible:ring-slate-900` — no default blue browser outlines
+- **Inputs:** `bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-slate-400 transition-all`
+
+---
+
+### What NOT to do
+
+- Do not add more emojis — the current design overuses them. Use proper SVG icons or Lucide React icons instead (`npm install lucide-react` — already common in Next.js projects)
+- Do not change any API calls, data fetching logic, or state management — visual only
+- Do not change file/component structure — redesign within existing files
+- Do not add new dependencies except `lucide-react` for icons if needed
+
+---
+
+**Start with layout.tsx + dashboard/page.tsx — those are the highest traffic pages. Then work through the list in order.**
+
