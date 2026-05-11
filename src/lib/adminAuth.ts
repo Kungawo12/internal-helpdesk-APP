@@ -33,3 +33,11 @@ export async function isAdminRequest(req: NextRequest): Promise<boolean> {
 }
 
 export { COOKIE_NAME as ADMIN_COOKIE_NAME };
+
+/** Use in route handlers that have a standard Request (not NextRequest) */
+export async function isAdminServerSide(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
+  if (!token) return false;
+  return verifyAdminToken(token);
+}

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isAdminServerSide } from "@/lib/adminAuth";
 import { NextRequest } from "next/server";
 
 const VALID_TYPES = ["IT", "HR", "general"] as const;
@@ -13,13 +14,14 @@ function normalizeTags(tags?: string): string {
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const adminPortal = await isAdminServerSide();
+    if (!session && !adminPortal) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
     const q = searchParams.get("q");
 
-    const isAdmin = session.user.role === "admin";
+    const isAdmin = adminPortal || session?.user.role === "admin";
     const articles = await prisma.kbArticle.findMany({
       where: {
         ...(isAdmin ? {} : { published: true }),
@@ -45,9 +47,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
-      return Response.json({ error: "Admin access required" }, { status: 403 });
-    }
+    const adminPortal = await isAdminServerSide();
+    const isAdmin = adminPortal || session?.user.role === "admin";
+    if (!isAdmin) return Response.json({ error: "Admin access required" }, { status: 403 });
 
     const { title, content, type, tags, published } = await req.json();
 
@@ -58,6 +60,14 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "type must be IT, HR, or general" }, { status: 400 });
     }
 
+    // If coming from admin portal (no NextAuth session), use any admin user as author
+    let authorId = session?.user.id;
+    if (!authorId) {
+      const anyAdmin = await prisma.user.findFirst({ where: { role: "admin", active: true }, select: { id: true } });
+      if (!anyAdmin) return Response.json({ error: "No admin user found" }, { status: 500 });
+      authorId = anyAdmin.id;
+    }
+
     const article = await prisma.kbArticle.create({
       data: {
         title: title.trim(),
@@ -65,7 +75,7 @@ export async function POST(req: NextRequest) {
         type,
         tags: normalizeTags(tags),
         published: published !== false,
-        authorId: session.user.id,
+        authorId,
       },
       include: { author: { select: { name: true } } },
     });

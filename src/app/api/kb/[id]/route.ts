@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isAdminServerSide } from "@/lib/adminAuth";
 
 const VALID_TYPES = ["IT", "HR", "general"] as const;
 
@@ -15,11 +16,12 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const adminPortal = await isAdminServerSide();
+    if (!session && !adminPortal) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
 
-    const isAdmin = session.user.role === "admin";
+    const isAdmin = adminPortal || session?.user.role === "admin";
     const article = await prisma.kbArticle.findFirst({
       where: { id, ...(isAdmin ? {} : { published: true }) },
       include: { author: { select: { name: true } } },
@@ -43,7 +45,8 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
+    const adminPortal = await isAdminServerSide();
+    if (!adminPortal && session?.user.role !== "admin") {
       return Response.json({ error: "Admin access required" }, { status: 403 });
     }
 
@@ -81,7 +84,8 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
+    const adminPortal = await isAdminServerSide();
+    if (!adminPortal && session?.user.role !== "admin") {
       return Response.json({ error: "Admin access required" }, { status: 403 });
     }
 
