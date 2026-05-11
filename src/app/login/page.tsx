@@ -127,13 +127,9 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* ── BRANDING PANEL — slides from right to left on register ── */}
+        {/* ── BRANDING PANEL — stays on the right, only content changes ── */}
         <div
-          className="hidden md:flex absolute inset-y-0 right-0 w-1/2 flex-col items-center justify-center px-10 text-white text-center z-30 bg-gradient-to-br from-[#1a2540] to-[#0c1222] border-l border-white/5"
-          style={{
-            transform: isRegister ? "translateX(-100%)" : "translateX(0%)",
-            transition: "transform 0.7s cubic-bezier(0.77,0,0.175,1)",
-          }}
+          className="hidden md:flex absolute inset-y-0 right-0 w-1/2 flex-col items-center justify-center px-10 text-white text-center z-10 bg-gradient-to-br from-[#1a2540] to-[#0c1222] border-l border-white/5"
         >
           {/* Logo */}
           <div className="w-16 h-16 bg-orange-500/20 border border-orange-400/30 rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-[0_0_40px_rgba(249,115,22,0.2)]">
