@@ -2734,3 +2734,138 @@ Use `<img>` tag (not `next/image`) for news images since the domains are dynamic
 />
 ```
 
+
+---
+
+## Backend → Frontend
+
+### 2026-05-11 — Knowledge Base Page Redesign Brief
+
+**Claude → Tom:**
+
+Redesign the Knowledge Base page (`src/app/dashboard/kb/page.tsx`) to match the dark editorial style of the News Section, with paginated card grid and a full article reader view. Here is the full spec.
+
+---
+
+#### What exists — DO NOT change any logic
+
+The file has two views controlled by `selectedArticle` state:
+1. **List view** — `KbPortal()` renders the article grid + search + filter
+2. **Detail view** — renders when `selectedArticle !== null`
+
+Keep all of this logic exactly:
+- `fetchArticles()` — fetches `/api/kb` with `?type=` and `?q=` params
+- `fetchArticleDetail(id)` — fetches `/api/kb/:id`, sets `selectedArticle`
+- `useEffect` watching `[filterType, searchQuery]`
+- `useEffect` for `?article=id` URL param auto-open
+- `TYPE_COLOR` object
+- `KbPortalPage` wrapper with `<Suspense>`
+- `KbArticle` type — do not modify
+
+---
+
+#### Pagination to add (list view only)
+
+Add client-side pagination exactly like the News Section:
+```ts
+const CARDS_PER_PAGE = 9;
+const [page, setPage] = useState(0);
+// Reset page when filter or search changes:
+useEffect(() => { setPage(0); }, [filterType, searchQuery]);
+const totalPages = Math.ceil(articles.length / CARDS_PER_PAGE);
+const visible = articles.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
+```
+Render `visible` in the grid, not `articles`. Add Prev/Next buttons bottom-right identical to the News Section.
+
+---
+
+#### List View Design — dark editorial style matching News Section
+
+**Page background:** inherits dashboard bg (do not change layout wrapper)
+
+**Header block:**
+- Small label: `"HELP CENTER"` — orange, uppercase, tracking-widest, with a small book/doc icon (Lucide `BookOpen`)
+- Large heading: `"Knowledge Base"` — bold white (or very dark if dashboard is light-themed — check existing dashboard bg)
+- Subtitle: `"Browse guides and find answers before raising a ticket"` — muted
+
+**Filter + Search bar:**
+- Same dark glass style as News Section filter pills
+- Type pills: `All` / `IT` / `HR` / `General` — active = orange fill, inactive = outlined
+- Search input: dark bg, white text, orange focus ring, rounded-full or rounded-xl
+- Place filter pills left, search right — flex row
+
+**Article cards (grid):**
+```
+┌─────────────────────────────┐
+│  [IT] badge    👁 42 views  │  ← type badge left, views right
+│                             │
+│  Title of the article here  │  ← bold, 2-line clamp
+│  in two lines               │
+│                             │
+│  #tag1  #tag2  #tag3        │  ← tag pills, muted
+│                             │
+├─────────────────────────────┤
+│  Author name     📅 date    │  ← footer row
+└─────────────────────────────┘
+```
+
+Card styling:
+- Background: `#111827` (same as news cards)
+- Border: `border-white/10`, hover: `border-orange-400/40`
+- Hover shadow: `shadow-[0_0_20px_rgba(249,115,22,0.08)]`
+- Left colored border by type (no image, so always use left border):
+  - IT: `border-l-4 border-blue-500`
+  - HR: `border-l-4 border-amber-500`
+  - general: `border-l-4 border-slate-500`
+- Type badge: pill shape, same palette as News category badge
+  - IT: `bg-blue-500/15 text-blue-400 border border-blue-400/20`
+  - HR: `bg-amber-500/15 text-amber-400 border border-amber-400/20`
+  - general: `bg-slate-500/15 text-slate-300 border border-slate-400/20`
+- Title: `text-white font-bold line-clamp-2 group-hover:text-orange-400 transition-colors`
+- Tags: `bg-white/5 text-white/40 border border-white/10 text-[10px] font-bold rounded-full`
+- Views: `text-white/40 text-xs` with eye icon (Lucide `Eye`)
+- Footer: `border-t border-white/5`, author `text-white/50 font-semibold`, date `text-white/30`
+- Cursor: `cursor-pointer` (click calls `fetchArticleDetail(article.id)`)
+
+**Loading state:** 9 dark skeleton cards with `animate-pulse`, same shape as article cards
+
+**Empty state:** centered, muted white text, no results message
+
+**Pagination bar:** identical to News Section — bottom-right, Prev/Next buttons, `1 / N` counter
+
+---
+
+#### Detail View Design (article reader)
+
+**Back button:**
+- `← Back to articles` — white/60, hover white, with left arrow icon (Lucide `ArrowLeft`)
+- Sits above the article card
+
+**Article card:**
+- Background: `#111827`, `border border-white/10`, `rounded-3xl p-8`
+- Type badge + views count — top row
+- Title: large, `text-white`, `text-3xl font-extrabold`
+- Meta row: author bold white, · separator, date — all `text-white/50`
+- Divider: `border-white/10`
+- Body text: `text-white/80 leading-relaxed text-base whitespace-pre-wrap font-sans`
+- Tags at bottom: `bg-white/5 text-white/40 border border-white/10` pills
+
+---
+
+#### Dashboard context note
+The dashboard uses a light bg (`bg-[#f0f4f8]` or similar). The KB page sits inside it. To make the dark cards work, wrap the entire page content in a dark container:
+```tsx
+<div className="min-h-screen bg-[#0a0f1e] rounded-2xl p-6 -m-4 md:-m-6">
+  {/* all content here */}
+</div>
+```
+This creates a dark island inside the dashboard without breaking the layout.
+
+---
+
+#### Files to change
+- `src/app/dashboard/kb/page.tsx` — visual redesign + add pagination
+- No other files
+
+#### Do not touch
+`fetchArticles`, `fetchArticleDetail`, `useEffect` hooks, `KbArticle` type, `TYPE_COLOR`, `KbPortalPage`/`Suspense` wrapper, or the `?article=id` URL param logic.
