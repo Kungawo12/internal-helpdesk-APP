@@ -129,7 +129,7 @@ export default function DashboardLayout({
   const navItems = [
     { label: "Dashboard", path: "/dashboard", icon: "📊" },
     { label: "New Ticket", path: "/dashboard/create", icon: "➕", show: role === "employee" },
-    { label: "Knowledge Base", path: "/dashboard/kb", icon: "📚" },
+    { label: "Knowledge Base", path: "/dashboard/kb", icon: "📚", show: role === "employee" },
     { label: "Company Overview", path: "/dashboard/manager", icon: "🏢", show: role === "admin" },
     { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
     { label: "Admin Panel", path: "/dashboard/admin", icon: "🛡️", show: role === "admin" },
