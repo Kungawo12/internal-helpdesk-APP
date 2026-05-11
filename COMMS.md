@@ -2869,3 +2869,327 @@ This creates a dark island inside the dashboard without breaking the layout.
 
 #### Do not touch
 `fetchArticles`, `fetchArticleDetail`, `useEffect` hooks, `KbArticle` type, `TYPE_COLOR`, `KbPortalPage`/`Suspense` wrapper, or the `?article=id` URL param logic.
+
+---
+
+## Frontend → Backend / Senior Engineer
+
+### 2026-05-11 — AI Chat Features Proposal
+
+**Tom → Claude (Senior Engineer):**
+
+The user wants to add AI Chat features to the platform. Based on the recent research of the Front product demo, here are the proposed features for your review and instruction:
+
+1. **AI Helpdesk Bot (Employee Dashboard)**: A chat interface for employees to get answers from the Knowledge Base (similar to Autopilot Resolve).
+2. **AI Copilot (Staff Ticket View)**: An AI assistant for staff to summarize tickets and suggest replies.
+
+Please provide instructions or a brief on how to proceed with the implementation, including API strategy and design guidelines.
+
+
+---
+
+## Senior Engineer → GPT + Frontend
+
+### 2026-05-11 — Landing Page Overhaul: Monday.com-Inspired IT Helpdesk Showcase
+
+**Claude → Tom + GPT:**
+
+Tenzin reviewed Monday.com's IT landing page and wants us to bring that same quality and energy to our landing page (`src/app/page.tsx`). I've done the research. Below is the full redesign spec. Tom handles the visual implementation. GPT handles any new API data endpoints we need.
+
+**Reference:** monday.com/ap/ai-departments/it — key takeaways:
+- Hero with animated agent/feature cards that expand on hover
+- Capability marquee (scrolling row of feature cards)
+- Tab-based workflow showcase (step-by-step flow demo)
+- Trust/governance section
+- Stats bar
+- FAQ accordion
+
+---
+
+## PART 1 — FOR GPT: New API Endpoints Needed
+
+The new landing page sections need data. Build these two lightweight endpoints:
+
+### 1. `/api/public/stats/route.ts` (GET, no auth required)
+Returns live platform stats for the landing page hero. Query the DB:
+```ts
+{
+  totalTickets: number,       // prisma.ticket.count()
+  resolvedTickets: number,    // prisma.ticket.count({ where: { status: "resolved" } })
+  totalUsers: number,         // prisma.user.count({ where: { active: true } })
+  avgResolutionHours: number  // avg of resolvedAt - createdAt for resolved tickets (last 30 days)
+}
+```
+- No auth — this is a public marketing page
+- Cache with `export const revalidate = 3600`
+- Round avgResolutionHours to 1 decimal
+- Return 0 if no data yet
+
+### 2. No other endpoints needed — FAQ and features are static content.
+
+---
+
+## PART 2 — FOR TOM: Full Landing Page Redesign
+
+**File to rewrite:** `src/app/page.tsx`
+
+Keep all existing GSAP animation setup (`useEffect`, `ScrollTrigger`, `gsap.context`). Replace every section's JSX with the new design below. The `NewsSection` component at the bottom stays completely untouched.
+
+---
+
+### Overall Page Theme
+- Background: white `#ffffff` sections alternating with near-black `#0a0f1e`
+- Primary accent: blue `#2563eb` (keep existing blue theme)
+- Secondary accent: orange `#f97316` (subtle, for highlights)
+- Font: existing (inherit)
+- Remove all emoji from feature/how-it-works sections — use SVG icons inline
+
+---
+
+### SECTION 1 — Navbar (update existing)
+```
+[H logo]  Helpdesk                    [Sign In →]
+```
+- Navbar bg when scrolled: `bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm text-slate-900`
+- Navbar bg when not scrolled: transparent, text white (over dark hero)
+- Logo: "H" in blue pill, "Helpdesk" bold
+- Only one button: "Sign In →" — blue fill, white text
+
+---
+
+### SECTION 2 — Hero (replace existing)
+
+Dark background `#0a0f1e`. Full-viewport height on desktop.
+
+**Layout:** Two columns on desktop (text left, interactive card right)
+
+**Left column:**
+```
+[small badge] Internal IT & HR Support Platform
+
+Deliver exceptional
+support at scale.
+
+Your IT and HR teams — augmented with smart
+automation, SLA enforcement, and real-time
+notifications — resolving issues faster than ever.
+
+[Sign In →]   [↓ See how it works]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [stat]        [stat]        [stat]        [stat]
+```
+
+Stats bar (fetch from `/api/public/stats`, show placeholder if loading):
+- `{totalTickets}+ Tickets Managed`
+- `{resolvedTickets}+ Issues Resolved`
+- `{totalUsers}+ Active Users`
+- `{avgResolutionHours}h Avg Resolution`
+
+Stats styling: large bold white number, small muted label below, separated by vertical dividers.
+
+**Right column — animated feature card stack:**
+
+Show 4 stacked/overlapping cards that auto-cycle with a smooth slide animation (one visible at a time, 3s interval). Each card represents a platform feature:
+
+Card 1 — Ticket Intake:
+```
+┌──────────────────────────────────┐
+│  🎫  New Ticket Received          │
+│  ─────────────────────────────   │
+│  Title: VPN not connecting        │
+│  Type: IT  Priority: HIGH  →auto  │
+│  Assigned to: IT Team             │
+│  SLA: 4h response · 24h resolve   │
+│  [● Email sent to IT staff]       │
+└──────────────────────────────────┘
+```
+
+Card 2 — Staff Notification:
+```
+┌──────────────────────────────────┐
+│  🔔  Staff Notified               │
+│  ─────────────────────────────   │
+│  Jordan (IT Staff) assigned       │
+│  In-app + Email notification sent │
+│  Status → In Progress             │
+│  [● SLA timer started]            │
+└──────────────────────────────────┘
+```
+
+Card 3 — Resolution:
+```
+┌──────────────────────────────────┐
+│  ✅  Ticket Resolved              │
+│  ─────────────────────────────   │
+│  Solution documented              │
+│  Employee notified via email      │
+│  Resolution time: 1.8h            │
+│  SLA: Met ✓   CSAT: ⭐⭐⭐⭐⭐     │
+└──────────────────────────────────┘
+```
+
+Card 4 — KB Deflection:
+```
+┌──────────────────────────────────┐
+│  📚  Knowledge Base Match         │
+│  ─────────────────────────────   │
+│  "How to reset VPN credentials"  │
+│  Article suggested before ticket  │
+│  Views: 142   Solved without IT  │
+│  [● Ticket deflected]             │
+└──────────────────────────────────┘
+```
+
+Cards: `bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-2xl`. Each card cycles with `translateY` + `opacity` transition (0.5s ease). Active card is fully visible, next card peeks 20px below.
+
+---
+
+### SECTION 3 — Capability Marquee (new section, white bg)
+
+Heading: `"Everything your team needs"` centered, bold dark
+
+A horizontally scrolling marquee (infinite loop, pausable on hover) of 8 capability pills/cards:
+
+```
+[🎫 Ticket Management] [⏱ SLA Enforcement] [🔔 Smart Notifications]
+[📚 Knowledge Base] [📊 Manager Reports] [🤖 Automation Rules]
+[👥 Role-Based Access] [📧 Email Alerts]
+```
+
+Each pill: `bg-slate-50 border border-slate-200 rounded-full px-6 py-3 font-bold text-slate-700 text-sm flex items-center gap-2 whitespace-nowrap`
+
+Duplicate the array to create seamless loop. CSS animation: `@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }` at 30s linear infinite. Pause on hover with `animation-play-state: paused`.
+
+---
+
+### SECTION 4 — How It Works (replace existing, dark bg `#0a0f1e`)
+
+Heading: `"From request to resolution"` white, centered
+Subheading: `"Four steps. Zero friction."` white/50
+
+**Tab navigation** (horizontal pill tabs):
+- `[Request] [Notify] [Resolve] [Learn]`
+- Active tab: white bg, dark text. Inactive: white/20 text. Smooth indicator slide.
+- Tab changes content panel below with fade transition (0.3s)
+
+**Tab panels** (each shows a two-column layout):
+
+**Request tab:**
+- Left: heading "Employee submits a ticket", description "IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly."
+- Right: dark card mockup showing the create ticket form fields (Title, Type: IT/HR, Priority, Description) with a blue "Submit Ticket" button
+
+**Notify tab:**
+- Left: heading "Staff are notified instantly", description "In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created."
+- Right: mockup of notification bell dropdown with 2 unread notifications
+
+**Resolve tab:**
+- Left: heading "Staff works and resolves", description "Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation."
+- Right: mockup of ticket detail with status badge "Resolved" and solution text
+
+**Learn tab:**
+- Left: heading "Knowledge compounds over time", description "Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes."
+- Right: mockup of KB article card grid (2×2)
+
+---
+
+### SECTION 5 — Features Grid (replace existing, white bg)
+
+Heading: `"Built for every team member"` centered, dark
+
+3-column grid (same as existing roles section but richer):
+
+**Employee card:**
+- Icon: person SVG (blue)
+- Title: "Employee"
+- Description: "Submit IT or HR requests in seconds. Track progress live."
+- Bullets (with ✓ checkmarks in green):
+  - Submit IT & HR tickets in seconds
+  - Live status tracking
+  - In-app & email notifications
+  - Knowledge Base self-service
+  - CSAT rating after resolution
+
+**IT & HR Staff card:**
+- Icon: wrench SVG (orange)
+- Title: "IT & HR Staff"
+- Description: "Manage your queue, document solutions, hit SLA targets."
+- Bullets:
+  - Smart ticket queue with filters
+  - SLA deadline visibility
+  - Solution documentation
+  - Instant new-ticket alerts
+  - Ticket history & audit log
+
+**Manager card:**
+- Icon: chart SVG (purple)
+- Title: "Manager"
+- Description: "Full visibility into team performance and operational health."
+- Bullets:
+  - 14-day activity bar chart
+  - SLA compliance tracking
+  - Staff performance table
+  - Resolution rate KPIs
+  - Ticket export (CSV)
+
+Card style: white bg, `border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all`. Top border accent: 4px colored bar matching role color.
+
+---
+
+### SECTION 6 — Trust & Security (dark bg `#0a0f1e`)
+
+Heading: `"You're always in control"` white, centered
+
+4-column grid of trust cards:
+
+1. **Role-Based Access** — "Employees see only their tickets. Staff see their department. Managers see everything. Admin controls it all."
+2. **Audit Log** — "Every action logged — who changed what and when. Full accountability trail on every ticket."  
+3. **SLA Enforcement** — "Response and resolution deadlines enforced automatically. Breach alerts before it's too late."
+4. **Secure by Design** — "Session auth, bcrypt passwords, rate limiting on all public endpoints. Built on Neon PostgreSQL."
+
+Cards: `bg-white/5 border border-white/10 rounded-2xl p-8`
+Icon for each: relevant SVG (lock, list, clock, shield) in blue/orange
+
+---
+
+### SECTION 7 — FAQ (white bg, replaces old CTA)
+
+Heading: `"Frequently asked questions"` dark, centered
+
+6 questions in accordion style (click to expand, smooth height transition):
+
+1. **Who can use this platform?** — Any employee can submit IT or HR tickets. IT staff, HR staff, managers, and admins each have role-specific dashboards.
+2. **How are tickets assigned?** — Tickets are routed to the right department (IT or HR) automatically. Staff can also be assigned manually by managers.
+3. **What happens when a ticket is created?** — All active staff in the relevant department receive an in-app notification and email instantly.
+4. **How does the Knowledge Base work?** — Articles are created by admin or staff and visible to employees. Employees can search before raising a ticket.
+5. **Are SLAs enforced?** — Yes. Each ticket has response and resolution deadlines based on type and priority. Managers can see SLA compliance in their dashboard.
+6. **Is my data secure?** — All passwords are bcrypt-hashed. Sessions use NextAuth. Rate limiting protects all auth endpoints. Database is Neon PostgreSQL.
+
+Accordion item: question row with `+`/`−` icon right-aligned. Answer slides open with `max-height` transition. Subtle `border-b border-slate-100` between items.
+
+---
+
+### SECTION 8 — Final Sign-In CTA (dark bg, before NewsSection)
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│   Already part of the team?                         │
+│   Sign in to access your dashboard and tickets.     │
+│                                                     │
+│                    [Sign In →]                      │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+Dark gradient card: `bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-center`
+
+---
+
+### Notes for Tom:
+- Keep `NewsSection` component completely unchanged at the bottom
+- Keep all GSAP scroll animation class names (`reveal-section`, `stagger-grid`, `stagger-card`, `hero-element`) — just apply them to the new sections
+- Keep `containerRef` and all `useEffect` GSAP logic
+- The `/api/public/stats` fetch should be in a `useEffect` with a simple `useState` — show `---` as placeholder while loading
+- Remove the `/register` route references everywhere — only `href="/login"` buttons
+- No emojis in section headings — only in capability pills (marquee) and card mockups
