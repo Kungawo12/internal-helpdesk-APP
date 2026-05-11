@@ -2470,3 +2470,122 @@ These should apply everywhere:
 
 **Start with layout.tsx + dashboard/page.tsx — those are the highest traffic pages. Then work through the list in order.**
 
+---
+
+## Backend → Frontend
+
+### 2026-05-10 — LOGIN/REGISTER: Sliding panel animation (priority — do this first)
+
+**Claude:** Tom, the user wants the login and register pages redesigned with a sliding split-panel animation — like the reference below. Do this before the general redesign.
+
+---
+
+### What it looks like
+
+Two panels side by side in a single container:
+- **Left panel:** the form (login or register fields)
+- **Right panel:** a dark branded welcome panel ("Welcome Back!" or "Hello, Friend!")
+
+When the user clicks "Sign Up" or "Sign In", the panels **slide and swap** — the form slides out left, the branding panel slides across, and the new form slides in from the right. The individual form fields animate in with a staggered blur + fade + translateX effect.
+
+**Animation CSS pattern (translate this to Tailwind + inline styles or a `<style>` tag):**
+```css
+/* Fields hidden state */
+.form-box.register .field {
+  transform: translateX(120%);
+  opacity: 0;
+  filter: blur(10px);
+  transition: 0.7s ease;
+}
+
+/* Fields visible state (when container has .active class) */
+.container.active .field {
+  transform: translateX(0%);
+  opacity: 1;
+  filter: blur(0);
+  /* staggered delay — each field has a CSS var --i (0, 1, 2...) */
+  transition-delay: calc(0.1s * var(--i));
+}
+```
+
+---
+
+### Implementation plan
+
+**Merge `src/app/login/page.tsx` and `src/app/register/page.tsx` into one page.**
+
+Keep `src/app/login/page.tsx` as the combined page. Keep `src/app/register/page.tsx` as a simple redirect to `/login?mode=register` (or just leave it — the register link in login.tsx already works).
+
+**State:**
+```tsx
+const [isRegister, setIsRegister] = useState(false);
+// toggle this on "Sign Up" / "Sign In" click
+```
+
+**Layout structure:**
+```tsx
+<div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
+  <div className={`relative w-[800px] h-[500px] bg-[#1e293b] rounded-2xl overflow-hidden flex shadow-2xl transition-all duration-700 ${isRegister ? "active" : ""}`}>
+    
+    {/* LEFT: Form panel */}
+    <div className="w-1/2 flex flex-col justify-center px-12 py-10 z-10">
+      {/* Login fields OR Register fields — conditionally rendered, animated in */}
+    </div>
+
+    {/* RIGHT: Branded welcome panel */}
+    <div className="w-1/2 bg-gradient-to-br from-[#1e293b] to-[#0f172a] border-l border-white/10 flex flex-col items-center justify-center px-10 text-white text-center">
+      {isRegister ? (
+        <>
+          <h2 className="text-3xl font-black mb-3">Welcome Back!</h2>
+          <p className="text-white/60 text-sm mb-8">Already have an account? Sign in.</p>
+          <button onClick={() => setIsRegister(false)} className="border border-white text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all">Sign In</button>
+        </>
+      ) : (
+        <>
+          <h2 className="text-3xl font-black mb-3">Hello, Friend!</h2>
+          <p className="text-white/60 text-sm mb-8">Don't have an account? Join us.</p>
+          <button onClick={() => setIsRegister(true)} className="border border-white text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all">Sign Up</button>
+        </>
+      )}
+    </div>
+
+  </div>
+</div>
+```
+
+**Field stagger animation — apply inline style with delay:**
+```tsx
+{["Name", "Email", "Password"].map((field, i) => (
+  <div
+    key={field}
+    style={{
+      transitionDelay: `${i * 0.1}s`,
+      transform: isRegister ? "translateX(0)" : "translateX(120%)",
+      opacity: isRegister ? 1 : 0,
+      filter: isRegister ? "blur(0)" : "blur(10px)",
+      transition: "all 0.7s ease",
+    }}
+  >
+    <input ... />
+  </div>
+))}
+```
+
+**Color scheme for this page only:**
+- Background: `#0f172a` (near black)
+- Card: `#1e293b`
+- Accent / button primary: amber/orange (`#f97316`) to match the reference screenshot
+- Text: white / `white/60` for muted
+
+**Keep ALL existing logic unchanged** — `signIn("credentials", ...)`, `fetch("/api/auth/register", ...)`, error state, loading state. Only the visual wrapper changes.
+
+**On mobile** — stack vertically: form on top, branding panel below (hidden on very small screens). No sliding animation on mobile, just a simple toggle.
+
+---
+
+**Files to change:**
+- `src/app/login/page.tsx` — full rewrite (logic stays, only UI changes)
+- `src/app/register/page.tsx` — optional: add `useEffect` to redirect to `/login?mode=register` and auto-trigger the register panel, or leave as-is
+
+**Do not touch any API routes, auth config, or middleware.**
+
