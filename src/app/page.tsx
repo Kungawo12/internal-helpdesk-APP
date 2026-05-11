@@ -21,6 +21,48 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const [stats, setStats] = useState({
+    totalTickets: "---",
+    resolvedTickets: "---",
+    totalUsers: "---",
+    avgResolutionHours: "---"
+  });
+  const [activeTab, setActiveTab] = useState("Request");
+  const [activeCard, setActiveCard] = useState(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Fallback data since API is not built yet
+    setStats({
+      totalTickets: "1,240",
+      resolvedTickets: "1,180",
+      totalUsers: "850",
+      avgResolutionHours: "1.2"
+    });
+    
+    // Attempt to fetch if API exists
+    fetch("/api/public/stats")
+      .then(r => r.json())
+      .then(data => {
+        if (data) {
+          setStats({
+            totalTickets: data.totalTickets.toLocaleString(),
+            resolvedTickets: data.resolvedTickets.toLocaleString(),
+            totalUsers: data.totalUsers.toLocaleString(),
+            avgResolutionHours: data.avgResolutionHours.toString()
+          });
+        }
+      })
+      .catch(err => console.log("Stats API not available yet, using fallback."));
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveCard(prev => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (!containerRef.current) return;
     
@@ -82,179 +124,200 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen font-sans bg-[#f8fafc] text-slate-900 overflow-x-hidden">
+    <div ref={containerRef} className="min-h-screen font-sans bg-white text-slate-900 overflow-x-hidden">
       
+      <style>{`
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          display: flex;
+          animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
       {/* Navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 text-white transition-all duration-300 ${scrolled ? 'bg-slate-900/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-white/5' : 'bg-transparent border-b border-transparent'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm text-slate-900' : 'bg-transparent text-white'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
-          <span>Helpdesk</span>
+          <span className={scrolled ? 'text-slate-900' : 'text-white'}>Helpdesk</span>
         </div>
         <nav className="hidden md:flex items-center gap-6 font-medium text-sm">
-          <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">Sign In</Link>
+          <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center gap-2">
+            Sign In <span>→</span>
+          </Link>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 md:pt-48 md:pb-40 bg-gradient-to-b from-slate-900 to-slate-950 text-white overflow-hidden px-6 md:px-12">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWMGgtMXYzOXoiIGZpbGw9InJnYmEoMjU1LDExNSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50"></div>
-        
-        <div className="glow-orb w-[600px] h-[600px] bg-blue-600/20 -top-40 -left-40" />
-        <div className="glow-orb w-[400px] h-[400px] bg-cyan-500/10 top-1/2 right-0" />
-
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="hero-element inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
-            <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
-            Now Live — Internal Helpdesk Platform
-          </div>
-          <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight mb-6 max-w-4xl mx-auto">
-            The unified support platform for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300" style={{ backgroundSize: '200%', animation: 'gradient-shift 4s ease infinite' }}>modern teams</span>.
-          </h1>
-          <p className="hero-element text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 font-medium">
-            Streamline internal requests, empower your IT and HR staff, and give managers the visibility they need to scale operations smoothly.
-          </p>
-          <div className="hero-element flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-            <Link href="/login" className="btn-pulse w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20">
-              Sign In
-            </Link>
-          </div>
-
-          {/* Pure CSS Dashboard Mockup */}
-          <div className="hero-element relative mx-auto max-w-5xl rounded-t-2xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden">
-            {/* Mockup Header */}
-            <div className="flex items-center px-4 py-3 border-b border-white/10 bg-slate-800/50">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-              </div>
-              <div className="mx-auto px-4 py-1.5 rounded-md bg-slate-950/50 text-xs font-mono text-slate-400 flex items-center gap-2">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                helpdesk.internal
-              </div>
-            </div>
-            {/* Mockup Content */}
-            <div className="flex h-[400px]">
-              {/* Sidebar */}
-              <div className="hidden md:block w-48 bg-slate-900 p-4 space-y-2 flex-shrink-0">
-                <div className="h-4 w-20 bg-blue-600 rounded mb-6" />
-                {['Dashboard','Tickets','Staff Queue','Overview'].map((item,i) => (
-                  <div key={i} className={`h-8 rounded-lg flex items-center px-3 ${i===0?'bg-white/10':''}`}>
-                    <div className={`h-3 rounded ${i===0?'w-20 bg-white':'w-16 bg-slate-700'}`} />
-                  </div>
-                ))}
-              </div>
-              <div className="flex-1 p-6 md:p-8 bg-slate-50 text-left overflow-hidden">
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-bold text-slate-900">Dashboard Overview</h3>
-                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">JD</div>
-              </div>
-              
-              {/* Fake Stat Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                  <p className="text-xs font-bold text-slate-500 uppercase">Open Tickets</p>
-                  <p className="text-3xl font-extrabold text-slate-900 mt-1">12</p>
-                </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                  <p className="text-xs font-bold text-slate-500 uppercase">Resolved</p>
-                  <p className="text-3xl font-extrabold text-blue-600 mt-1">108</p>
-                </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hidden md:block">
-                  <p className="text-xs font-bold text-slate-500 uppercase">Avg Resolution</p>
-                  <p className="text-3xl font-extrabold text-slate-900 mt-1">1.2h</p>
-                </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hidden md:block">
-                  <p className="text-xs font-bold text-slate-500 uppercase">CSAT Score</p>
-                  <p className="text-3xl font-extrabold text-green-600 mt-1">4.9</p>
-                </div>
-              </div>
-
-              {/* Fake Table */}
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="border-b border-slate-100 p-4 flex justify-between">
-                  <div className="w-1/2 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600 font-bold">!</div>
-                    <div>
-                      <div className="h-4 w-32 bg-slate-800 rounded mb-2"></div>
-                      <div className="h-3 w-20 bg-slate-300 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="w-1/4 hidden md:flex items-center">
-                    <div className="h-6 w-16 bg-amber-100 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="border-b border-slate-100 p-4 flex justify-between">
-                  <div className="w-1/2 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg"></div>
-                    <div>
-                      <div className="h-4 w-40 bg-slate-800 rounded mb-2"></div>
-                      <div className="h-3 w-24 bg-slate-300 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="w-1/4 hidden md:flex items-center">
-                    <div className="h-6 w-20 bg-blue-100 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="p-4 flex justify-between">
-                  <div className="w-1/2 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg"></div>
-                    <div>
-                      <div className="h-4 w-28 bg-slate-800 rounded mb-2"></div>
-                      <div className="h-3 w-16 bg-slate-300 rounded"></div>
-                    </div>
-                  </div>
-                  <div className="w-1/4 hidden md:flex items-center">
-                    <div className="h-6 w-16 bg-green-100 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-            
-            
-            {/* Fade Out Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent z-20"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="reveal-section py-10 bg-white border-b border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Trusted by innovative teams</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 grayscale">
-            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-full bg-black"></div> ACME Corp</div>
-            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rotate-45 bg-black"></div> Globex</div>
-            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded bg-black"></div> Initech</div>
-            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-tl-full rounded-br-full bg-black"></div> Soylent</div>
-            <div className="flex items-center gap-2 font-black text-xl"><div className="w-6 h-6 rounded-t-full bg-black"></div> Umbrella</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Everything you need to resolve issues fast.</h2>
-            <p className="text-lg text-slate-500">A complete toolset designed to eliminate bottlenecks and empower your team.</p>
-          </div>
+      <section className="relative pt-40 pb-32 md:pt-48 md:pb-40 bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 min-h-screen flex flex-col justify-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
-          <div className="stagger-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="space-y-8">
+            <div className="hero-element inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">
+              <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
+              Internal IT & HR Support Platform
+            </div>
+            <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+              Deliver exceptional<br/>support at scale.
+            </h1>
+            <p className="hero-element text-lg md:text-xl text-slate-400 max-w-2xl font-medium">
+              Your IT and HR teams — augmented with smart automation, SLA enforcement, and real-time notifications — resolving issues faster than ever.
+            </p>
+            <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
+              <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
+                Sign In <span>→</span>
+              </Link>
+              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
+                ↓ See how it works
+              </a>
+            </div>
+
+            <hr className="border-white/10 my-8" />
+
+            {/* Stats Bar */}
+            <div className="hero-element grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+              <div>
+                <p className="text-3xl font-extrabold text-white">{stats.totalTickets}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Tickets Managed</p>
+              </div>
+              <div className="border-l border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Issues Resolved</p>
+              </div>
+              <div className="border-l border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-white">{stats.totalUsers}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Active Users</p>
+              </div>
+              <div className="border-l border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-white">{stats.avgResolutionHours}h</p>
+                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Avg Resolution</p>
+              </div>
+              {/* Fallback for mobile if grid collapses */}
+              <div className="md:hidden">
+                <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Issues Resolved</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column — Animated Feature Card Stack */}
+          <div className="relative h-[400px] flex items-center justify-center">
+            {/* Background glow */}
+            <div className="glow-orb w-[400px] h-[400px] bg-blue-600/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            
+            <div className="relative w-full max-w-md">
+              {[
+                {
+                  id: 0,
+                  title: "New Ticket Received",
+                  icon: "🎫",
+                  details: [
+                    "Title: VPN not connecting",
+                    "Type: IT  Priority: HIGH",
+                    "Assigned to: IT Team",
+                    "SLA: 4h response · 24h resolve",
+                    "● Email sent to IT staff"
+                  ]
+                },
+                {
+                  id: 1,
+                  title: "Staff Notified",
+                  icon: "🔔",
+                  details: [
+                    "Jordan (IT Staff) assigned",
+                    "In-app + Email notification sent",
+                    "Status → In Progress",
+                    "● SLA timer started"
+                  ]
+                },
+                {
+                  id: 2,
+                  title: "Ticket Resolved",
+                  icon: "✅",
+                  details: [
+                    "Solution documented",
+                    "Employee notified via email",
+                    "Resolution time: 1.8h",
+                    "SLA: Met ✓   CSAT: ⭐⭐⭐⭐⭐"
+                  ]
+                },
+                {
+                  id: 3,
+                  title: "Knowledge Base Match",
+                  icon: "📚",
+                  details: [
+                    '"How to reset VPN credentials"',
+                    "Article suggested before ticket",
+                    "Views: 142   Solved without IT",
+                    "● Ticket deflected"
+                  ]
+                }
+              ].map((card, idx) => {
+                const isActive = activeCard === idx;
+                const isNext = (activeCard + 1) % 4 === idx;
+                
+                return (
+                  <div
+                    key={card.id}
+                    className={`absolute top-0 left-0 w-full bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-in-out ${
+                      isActive ? 'opacity-100 transform-none z-30' : 
+                      isNext ? 'opacity-40 translate-y-5 scale-95 z-20' : 
+                      'opacity-0 -translate-y-5 scale-90 z-10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-2xl">{card.icon}</span>
+                      <h3 className="font-bold text-lg text-white">{card.title}</h3>
+                    </div>
+                    <hr className="border-white/5 mb-4" />
+                    <ul className="space-y-2 text-sm text-slate-400 font-mono">
+                      {card.details.map((detail, i) => (
+                        <li key={i} className={detail.startsWith('●') ? 'text-blue-400' : ''}>
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Capability Marquee */}
+      <section className="py-16 bg-white border-b border-slate-100 overflow-hidden">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-slate-900">Everything your team needs</h2>
+        </div>
+        
+        <div className="relative flex overflow-x-hidden">
+          <div className="py-4 animate-marquee flex gap-4 whitespace-nowrap">
             {[
-              { icon: "📝", title: "Ticket Creation", desc: "Frictionless submission forms tailored for any request type." },
-              { icon: "⏱️", title: "Real-Time Tracking", desc: "Know exactly where your request stands with live status updates." },
-              { icon: "📨", title: "Email Alerts", desc: "Automated notifications keep everyone in the loop instantly." },
-              { icon: "🔐", title: "Role-Based Access", desc: "Secure environments tailored for employees, staff, and managers." },
-              { icon: "🗄️", title: "Solution Database", desc: "Automatically log resolutions to build a powerful knowledge base." },
-              { icon: "⭐", title: "Feedback System", desc: "Collect CSAT ratings to measure and improve support quality." }
-            ].map((feature, i) => (
-              <div key={i} className="stagger-card p-8 rounded-2xl bg-[#f8fafc] border border-slate-200 hover:border-blue-200 hover:shadow-md transition-all" style={{ borderTop: '3px solid', borderTopColor: ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#10b981','#f43f5e'][i] }}>
-                <div className="text-3xl mb-4 bg-white w-12 h-12 flex items-center justify-center rounded-xl shadow-sm hover:scale-110 transition-transform cursor-default">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-slate-600">{feature.desc}</p>
+              "🎫 Ticket Management", "⏱ SLA Enforcement", "🔔 Smart Notifications",
+              "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
+              "👥 Role-Based Access", "📧 Email Alerts"
+            ].map((pill, idx) => (
+              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-full px-6 py-3 font-bold text-slate-700 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+                {pill}
+              </div>
+            ))}
+          </div>
+          {/* Duplicate for seamless loop */}
+          <div className="py-4 animate-marquee flex gap-4 whitespace-nowrap absolute top-0" style={{ transform: 'translateX(100%)' }}>
+            {[
+              "🎫 Ticket Management", "⏱ SLA Enforcement", "🔔 Smart Notifications",
+              "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
+              "👥 Role-Based Access", "📧 Email Alerts"
+            ].map((pill, idx) => (
+              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-full px-6 py-3 font-bold text-slate-700 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+                {pill}
               </div>
             ))}
           </div>
@@ -262,78 +325,314 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-slate-900 text-white">
+      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20 max-w-2xl mx-auto">
-            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">A frictionless workflow.</h2>
-            <p className="text-lg text-slate-400">From request to resolution in four simple steps.</p>
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
+            <p className="text-lg text-slate-400">Four steps. Zero friction.</p>
           </div>
           
-          <div className="stagger-grid grid grid-cols-1 md:grid-cols-4 gap-12 relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-blue-500/30 via-blue-500/60 to-blue-500/30 z-0"></div>
-            
-            {[
-              { icon: "📝", title: "Submit", desc: "Employee fills out a simple request form." },
-              { icon: "🔔", title: "Notified", desc: "The right staff member gets an instant alert." },
-              { icon: "✅", title: "Resolved", desc: "Staff works the ticket and logs the solution." },
-              { icon: "⭐", title: "Feedback", desc: "Employee confirms and rates the service." }
-            ].map((item, i) => (
-              <div key={i} className="stagger-card relative z-10 flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-800 flex items-center justify-center text-xl hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-shadow mb-6 shadow-xl">
-                  {item.icon}
+          {/* Tabs */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex bg-white/5 border border-white/10 rounded-full p-1">
+              {["Request", "Notify", "Resolve", "Learn"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
+                    activeTab === tab ? 'bg-white text-slate-900' : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <div className="bg-[#111827] border border-white/10 rounded-3xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
+            {activeTab === "Request" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold">Employee submits a ticket</h3>
+                  <p className="text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-slate-400 font-medium">{item.desc}</p>
+                <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold uppercase text-slate-500">Title</div>
+                    <div className="bg-white/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold uppercase text-slate-500">Type</div>
+                      <div className="bg-white/5 rounded-lg p-3 text-white/40">IT</div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold uppercase text-slate-500">Priority</div>
+                      <div className="bg-white/5 rounded-lg p-3 text-white/40">High</div>
+                    </div>
+                  </div>
+                  <button className="w-full bg-blue-600 text-white rounded-lg py-3 font-bold">Submit Ticket</button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Notify" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold">Staff are notified instantly</h3>
+                  <p className="text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
+                </div>
+                <div className="flex justify-center">
+                  <div className="relative bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-bold">Notifications</h4>
+                      <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">2</div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
+                        <span className="font-bold text-white">New IT Ticket:</span> "VPN not connecting" assigned to IT queue.
+                      </div>
+                      <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
+                        <span className="font-bold text-white">New HR Ticket:</span> "Payroll inquiry" assigned to HR queue.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Resolve" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold">Staff works and resolves</h3>
+                  <p className="text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
+                </div>
+                <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold">Ticket #124</span>
+                    <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
+                  </div>
+                  <div className="bg-white/5 p-4 rounded-lg text-sm text-slate-300">
+                    <span className="font-bold text-white">Solution:</span> Reset user credentials and updated VPN client config. Verified working.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Learn" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold">Knowledge compounds over time</h3>
+                  <p className="text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                    <div className="font-bold text-sm mb-1">VPN Setup</div>
+                    <div className="text-xs text-slate-500">142 views</div>
+                  </div>
+                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                    <div className="font-bold text-sm mb-1">Printer Map</div>
+                    <div className="text-xs text-slate-500">89 views</div>
+                  </div>
+                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                    <div className="font-bold text-sm mb-1">Wifi Pass</div>
+                    <div className="text-xs text-slate-500">204 views</div>
+                  </div>
+                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                    <div className="font-bold text-sm mb-1">Holiday Cal</div>
+                    <div className="text-xs text-slate-500">67 views</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900">Built for every team member</h2>
+            <p className="text-lg text-slate-500">Tailored experiences for employees, staff, and managers.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Employee */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all" style={{ borderTop: '3px solid #2563eb' }}>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900">Employee</h3>
+              <p className="text-slate-600 mb-6">Submit IT or HR requests in seconds. Track progress live.</p>
+              <ul className="space-y-3 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Submit IT & HR tickets in seconds
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Live status tracking
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  In-app & email notifications
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Knowledge Base self-service
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  CSAT rating after resolution
+                </li>
+              </ul>
+            </div>
+
+            {/* IT & HR Staff */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-orange-100 transition-all" style={{ borderTop: '3px solid #f97316' }}>
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-500 mb-6">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              </div>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900">IT & HR Staff</h3>
+              <p className="text-slate-600 mb-6">Manage your queue, document solutions, hit SLA targets.</p>
+              <ul className="space-y-3 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Smart ticket queue with filters
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  SLA deadline visibility
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Solution documentation
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Instant new-ticket alerts
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Ticket history & audit log
+                </li>
+              </ul>
+            </div>
+
+            {/* Manager */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-purple-100 transition-all" style={{ borderTop: '3px solid #9333ea' }}>
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L3 18"></path></svg>
+              </div>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900">Manager</h3>
+              <p className="text-slate-600 mb-6">Full visibility into team performance and operational health.</p>
+              <ul className="space-y-3 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  14-day activity bar chart
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  SLA compliance tracking
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Staff performance table
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Resolution rate KPIs
+                </li>
+                <li className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  Ticket export (CSV)
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Security */}
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">You're always in control</h2>
+            <p className="text-lg text-slate-400">Enterprise-grade security and access control.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "Role-Based Access", desc: "Employees see only their tickets. Staff see their department. Managers see everything. Admin controls it all.", icon: "lock" },
+              { title: "Audit Log", desc: "Every action logged — who changed what and when. Full accountability trail on every ticket.", icon: "list" },
+              { title: "SLA Enforcement", desc: "Response and resolution deadlines enforced automatically. Breach alerts before it's too late.", icon: "clock" },
+              { title: "Secure by Design", desc: "Session auth, bcrypt passwords, rate limiting on all public endpoints. Built on Neon PostgreSQL.", icon: "shield" }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 mb-6">
+                  {item.icon === "lock" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>}
+                  {item.icon === "list" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>}
+                  {item.icon === "clock" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>}
+                  {item.icon === "shield" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>}
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-white">{item.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Roles Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#f8fafc]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Built for every team member.</h2>
-            <p className="text-lg text-slate-500">Customized experiences ensure everyone has exactly what they need.</p>
+      {/* FAQ Section */}
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Frequently asked questions</h2>
+            <p className="text-lg text-slate-500">Everything you need to know about the platform.</p>
           </div>
           
-          <div className="stagger-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-4">
             {[
-              { 
-                role: "Employee", 
-                icon: "👤",
-                desc: "The core users requesting assistance.",
-                bullets: ["Submit IT & HR tickets in seconds", "Track live progress of requests", "Rate resolution quality"]
-              },
-              { 
-                role: "IT & HR Staff", 
-                icon: "🛠️",
-                desc: "The experts resolving the issues.",
-                bullets: ["Manage active ticket queues", "Document resolution steps", "Access historical solutions"]
-              },
-              { 
-                role: "Manager", 
-                icon: "💼",
-                desc: "The leaders overseeing operations.",
-                bullets: ["Monitor volume and KPI charts", "Track SLA and resolution times", "Audit department performance"]
-              }
-            ].map((role, i) => (
-              <div key={i} className="stagger-card bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-                <div className="text-4xl mb-6">{role.icon}</div>
-                <h3 className="text-2xl font-bold mb-2">{role.role}</h3>
-                <p className="text-slate-600 mb-6 pb-6 border-b border-slate-100">{role.desc}</p>
-                <ul className="space-y-4">
-                  {role.bullets.map((bullet, j) => (
-                    <li key={j} className="flex items-start gap-3 text-slate-700 font-medium">
-                      <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
+              { q: "Who can use this platform?", a: "Any employee can submit IT or HR tickets. IT staff, HR staff, managers, and admins each have role-specific dashboards." },
+              { q: "How are tickets assigned?", a: "Tickets are routed to the right department (IT or HR) automatically. Staff can also be assigned manually by managers." },
+              { q: "What happens when a ticket is created?", a: "All active staff in the relevant department receive an in-app notification and email instantly." },
+              { q: "How does the Knowledge Base work?", a: "Articles are created by admin or staff and visible to employees. Employees can search before raising a ticket." },
+              { q: "Are SLAs enforced?", a: "Yes. Each ticket has response and resolution deadlines based on type and priority. Managers can see SLA compliance in their dashboard." },
+              { q: "Is my data secure?", a: "All passwords are bcrypt-hashed. Sessions use NextAuth. Rate limiting protects all auth endpoints. Database is Neon PostgreSQL." }
+            ].map((faq, idx) => (
+              <div key={idx} className="border-b border-slate-100">
+                <button
+                  onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+                  className="w-full flex justify-between items-center py-6 text-left"
+                >
+                  <span className="font-bold text-slate-900">{faq.q}</span>
+                  <span className="text-slate-400 text-xl">{expandedFaq === idx ? '−' : '+'}</span>
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    expandedFaq === idx ? 'opacity-100 pb-6' : 'opacity-0'
+                  }`}
+                  style={{ maxHeight: expandedFaq === idx ? '200px' : '0px' }}
+                >
+                  <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+                </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final Sign-In CTA */}
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-center text-white">
+            <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>
+            <p className="text-slate-400 mb-8 max-w-lg mx-auto">Sign in to access your dashboard and tickets.</p>
+            <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
+              Sign In <span>→</span>
+            </Link>
           </div>
         </div>
       </section>

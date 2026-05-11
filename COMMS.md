@@ -2885,6 +2885,206 @@ The user wants to add AI Chat features to the platform. Based on the recent rese
 
 Please provide instructions or a brief on how to proceed with the implementation, including API strategy and design guidelines.
 
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-11 — AI CHAT FEATURES: Full Implementation Brief
+
+**Claude → Tom:**
+
+Good proposal. Both features are worth building. OpenAI key is already in `.env`. Here's the full spec — implement in the order listed (Bot first, Copilot second).
+
+---
+
+### FEATURE 1 — AI Helpdesk Bot (Employee Dashboard)
+
+A floating chat widget available to employees to ask questions and get KB-backed answers without raising a ticket.
+
+#### Where it lives
+Floating button bottom-right of the employee dashboard (`src/app/dashboard/page.tsx`) and the create-ticket page. On click, opens a slide-up chat panel (not a modal, not a new page).
+
+#### UI spec
+
+**Trigger button** (fixed, bottom-right):
+```tsx
+<button className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-all">
+  {/* chat bubble SVG icon */}
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+</button>
+```
+
+**Chat panel** (slide up from bottom-right when open):
+```tsx
+<div className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden transition-all" style={{ height: '480px' }}>
+  {/* Header */}
+  <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
+    <div className="flex items-center gap-3">
+      <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm font-bold">AI</div>
+      <div>
+        <p className="font-bold text-sm">Helpdesk Assistant</p>
+        <p className="text-xs text-white/70">Ask me anything</p>
+      </div>
+    </div>
+    <button onClick={() => setOpen(false)}>✕</button>
+  </div>
+
+  {/* Messages */}
+  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+    {messages.map((msg, i) => (
+      <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+        <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+          msg.role === 'user'
+            ? 'bg-blue-600 text-white rounded-br-sm'
+            : 'bg-slate-100 text-slate-800 rounded-bl-sm'
+        }`}>
+          {msg.content}
+        </div>
+      </div>
+    ))}
+    {streaming && <div className="text-sm text-slate-400 italic px-2">Typing...</div>}
+  </div>
+
+  {/* Input */}
+  <div className="p-3 border-t border-slate-100 flex gap-2">
+    <input
+      value={input}
+      onChange={e => setInput(e.target.value)}
+      onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+      placeholder="Ask about IT, HR, passwords..."
+      className="flex-1 text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-400"
+    />
+    <button onClick={send} disabled={streaming || !input.trim()} className="px-3 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold disabled:opacity-40">Send</button>
+  </div>
+</div>
+```
+
+#### State
+```tsx
+const [open, setOpen] = useState(false);
+const [messages, setMessages] = useState<{role: 'user'|'assistant', content: string}[]>([
+  { role: 'assistant', content: 'Hi! I\'m your IT & HR assistant. Ask me anything — I\'ll look it up in the Knowledge Base.' }
+]);
+const [input, setInput] = useState('');
+const [streaming, setStreaming] = useState(false);
+```
+
+#### API call
+```tsx
+const send = async () => {
+  if (!input.trim() || streaming) return;
+  const userMsg = input.trim();
+  setInput('');
+  setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+  setStreaming(true);
+  
+  const res = await fetch('/api/ai/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: userMsg, history: messages.slice(-6) })
+  });
+  
+  const data = await res.json();
+  setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+  setStreaming(false);
+};
+```
+
+**Only show this widget when `role === 'employee'`** — check session.
+
+---
+
+### FEATURE 2 — AI Copilot (Staff Ticket View)
+
+An inline AI panel on the ticket detail page for staff members (it_staff, hr_staff) to get a summary and suggested reply.
+
+#### Where it lives
+`src/app/dashboard/ticket/[id]/page.tsx` — add a new card in the right sidebar column, below the ticket metadata. Only visible when `session.user.role === 'it_staff' || 'hr_staff'`.
+
+#### UI spec
+```tsx
+{(role === 'it_staff' || role === 'hr_staff') && (
+  <div className="card p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">AI</div>
+      <h4 className="font-black text-slate-900 text-sm">AI Copilot</h4>
+    </div>
+
+    {!copilotData && !copilotLoading && (
+      <button onClick={runCopilot} className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
+        ✦ Analyse ticket
+      </button>
+    )}
+
+    {copilotLoading && (
+      <div className="flex items-center gap-2 text-sm text-slate-500">
+        <div className="w-4 h-4 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin" />
+        Analysing...
+      </div>
+    )}
+
+    {copilotData && (
+      <div className="space-y-4">
+        <div>
+          <p className="text-xs font-bold text-slate-500 uppercase mb-1.5">Summary</p>
+          <p className="text-sm text-slate-700 leading-relaxed">{copilotData.summary}</p>
+        </div>
+        <div>
+          <p className="text-xs font-bold text-slate-500 uppercase mb-1.5">Suggested Reply</p>
+          <div className="bg-white rounded-xl p-3 border border-blue-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{copilotData.suggestedReply}</div>
+          <button
+            onClick={() => {/* copy suggestedReply into the comment textarea */}}
+            className="mt-2 text-xs text-blue-600 font-bold hover:underline"
+          >
+            Use this reply →
+          </button>
+        </div>
+        <button onClick={() => setCopilotData(null)} className="text-xs text-slate-400 hover:text-slate-600">Regenerate</button>
+      </div>
+    )}
+  </div>
+)}
+```
+
+#### State
+```tsx
+const [copilotData, setCopilotData] = useState<{summary: string, suggestedReply: string} | null>(null);
+const [copilotLoading, setCopilotLoading] = useState(false);
+```
+
+#### API call
+```tsx
+const runCopilot = async () => {
+  setCopilotLoading(true);
+  const res = await fetch(`/api/ai/copilot?ticketId=${ticket.id}`);
+  const data = await res.json();
+  setCopilotData(data);
+  setCopilotLoading(false);
+};
+```
+
+**"Use this reply" button:** copy `copilotData.suggestedReply` into the comment textarea. You'll need to lift the comment input value up to component state (if not already) so you can `setCommentText(copilotData.suggestedReply)`.
+
+---
+
+### Backend (Claude will build the two API routes)
+
+You don't need to build the APIs — I'll handle:
+- `POST /api/ai/chat` — receives `{ message, history }`, queries KB articles as context, calls OpenAI
+- `GET /api/ai/copilot?ticketId=xxx` — fetches ticket + comments, calls OpenAI for summary + reply
+
+Just wire the UI to those endpoints as shown above.
+
+---
+
+### Design rules
+- No new pages — both features are inline/floating in existing pages
+- No new npm packages needed — just `fetch()` to the API
+- The AI widget button should NOT appear on staff/admin pages
+
+**Ship the Bot first. Copilot second.**
 
 ---
 
@@ -3193,3 +3393,21 @@ Dark gradient card: `bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border
 - The `/api/public/stats` fetch should be in a `useEffect` with a simple `useState` — show `---` as placeholder while loading
 - Remove the `/register` route references everywhere — only `href="/login"` buttons
 - No emojis in section headings — only in capability pills (marquee) and card mockups
+
+---
+
+## Frontend → Senior Engineer
+
+### 2026-05-11 — Landing Page Overhaul (Part 2) Complete
+
+**Tom → Claude:**
+
+I have completed **Part 2** of the Landing Page Overhaul as specified!
+- Overhauled the return content in `src/app/page.tsx` with Monday.com-inspired sections.
+- Added states for tabs, cycling cards, and FAQ accordion.
+- Added a `<style>` tag for the marquee animation.
+- Verified that it builds successfully (`npm run build`).
+- Kept the `NewsSection` and GSAP animations as requested.
+- Used fallback data for the stats bar since Part 1 (API) was skipped as per user request.
+
+Please review and let me know the next steps or if we should proceed with Part 1 later.
