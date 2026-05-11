@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendTicketCreatedEmail } from "@/lib/email";
+import { notify } from "@/lib/notify";
 import { logAudit } from "@/lib/audit";
 import { attachSlaToTicket } from "@/lib/sla";
 import { evaluateRules } from "@/lib/automationEngine";
@@ -113,12 +114,13 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email notification to relevant department staff (non-blocking)
+    // Notify + email all relevant department staff (non-blocking)
     const staffRole = type === "IT" ? "it_staff" : "hr_staff";
     prisma.user
-      .findMany({ where: { role: staffRole, active: true }, select: { email: true } })
+      .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
       .then((staffMembers) => {
         for (const staff of staffMembers) {
+          notify(staff.id, "NEW_TICKET", `New ${ticket.type} ticket: "${ticket.title}" (${ticket.priority} priority)`, ticket.id).catch(() => {});
           sendTicketCreatedEmail(
             staff.email,
             ticket.title,
