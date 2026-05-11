@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const NAV = [
   {
@@ -82,15 +83,22 @@ const NAV = [
 export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [loggingOut, setLoggingOut] = useState(false);
+  const { data: session, status } = useSession();
 
-  if (pathname === "/admin/login" || pathname === "/admin/setup") return <>{children}</>;
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || session.user.role !== "admin") {
+      router.replace("/login");
+    }
+  }, [session, status, router]);
 
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    await fetch("/api/admin-portal/logout", { method: "POST" });
-    router.push("/admin/login");
-  };
+  if (status === "loading" || !session || session.user.role !== "admin") {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
@@ -106,7 +114,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
             </div>
             <div>
               <p className="text-white font-extrabold text-sm leading-none">Admin Portal</p>
-              <p className="text-white/30 text-xs mt-0.5">Restricted Access</p>
+              <p className="text-white/30 text-xs mt-0.5">{session.user.name}</p>
             </div>
           </div>
         </div>
@@ -132,8 +140,8 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
           })}
         </nav>
 
-        {/* Back to app + logout */}
-        <div className="px-3 py-4 border-t border-white/5 space-y-1">
+        {/* Back to dashboard */}
+        <div className="px-3 py-4 border-t border-white/5">
           <Link
             href="/dashboard"
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold text-white/30 hover:text-white/60 hover:bg-white/5 transition-all"
@@ -141,18 +149,8 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Back to App
+            Back to Dashboard
           </Link>
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            {loggingOut ? "Signing out..." : "Sign Out"}
-          </button>
         </div>
       </aside>
 
