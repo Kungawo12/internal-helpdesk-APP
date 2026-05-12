@@ -20,6 +20,12 @@
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
+
+  .dark body {
+    background: #0a0f1e;
+    color: #e2e8f0;
+    color-scheme: dark;
+  }
   
   h1, h2, h3, h4, h5, h6 {
     color: inherit;

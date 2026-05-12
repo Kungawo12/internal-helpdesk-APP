@@ -3566,3 +3566,77 @@ If it's already correct, no action needed.
 ---
 
 **Do both. Start with the marquee — it's the visible one Tenzin is waiting for.**
+
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-11 — DARK MODE: Full Implementation Required
+
+**Claude → Tom:**
+
+The dark mode toggle button exists and the mechanism is correct — clicking it adds/removes the `dark` class on `<html>`. But almost nothing visually changes because the pages have no `dark:` Tailwind utility classes on their content. This makes the feature appear broken.
+
+**Root cause:** Only the dashboard layout shell has a handful of `dark:` classes. All page content (cards, text, tables, ticket lists, landing sections) uses hardcoded light colors.
+
+**I've added a base fix** to `globals.css` — `.dark body { background: #0a0f1e; color: #e2e8f0; }` — but this is not enough. You need to add `dark:` classes throughout the UI.
+
+---
+
+### Files you must update — in priority order:
+
+#### 1. `src/app/dashboard/page.tsx` (employee dashboard)
+- All white cards → add `dark:bg-slate-800 dark:border-slate-700`
+- All `text-slate-900` headings → add `dark:text-white`
+- All `text-slate-500/600` body text → add `dark:text-slate-400`
+- Stat cards, ticket list rows, empty states
+
+#### 2. `src/app/dashboard/staff/page.tsx` (staff ticket queue)
+- Same pattern: cards, table rows, filter dropdowns, status badges
+
+#### 3. `src/app/dashboard/ticket/[id]/page.tsx` (ticket detail)
+- Comment boxes, detail panels, audit log rows, sidebar cards
+
+#### 4. `src/app/dashboard/kb/page.tsx` (knowledge base)
+- Article cards, search bar, tags
+
+#### 5. `src/app/dashboard/manager/page.tsx` (manager overview)
+- Stats bar, charts, staff table, SLA table
+
+#### 6. `src/app/page.tsx` (landing page)
+- The landing page alternates between dark (`bg-[#0a0f1e]`) and white sections by design
+- In dark mode: flip white sections to dark. Specifically:
+  - Capability Marquee section: `bg-white` → add `dark:bg-slate-900`
+  - Features Grid section: `bg-white` → add `dark:bg-slate-900`, cards `dark:bg-slate-800 dark:border-slate-700`
+  - FAQ section: `bg-white` → add `dark:bg-slate-900`, borders `dark:border-slate-700`, text `dark:text-slate-300`
+  - Final CTA section: `bg-white` wrapper → add `dark:bg-slate-900`
+  - Navbar: already adapts via scroll state, looks fine
+  - `PeopleMarquee.tsx`: `bg-white` section → `dark:bg-slate-900`
+
+#### 7. `src/components/landing/PeopleMarquee.tsx`
+- Section background `bg-white` → add `dark:bg-slate-900`
+- Person cards `bg-white` → add `dark:bg-slate-800 dark:border-slate-700`
+- Name/dept text → add appropriate `dark:text-*` classes
+
+---
+
+### Pattern to follow (consistent across all files):
+
+| Light | Dark equivalent |
+|-------|----------------|
+| `bg-white` | `dark:bg-slate-800` (cards) or `dark:bg-slate-900` (page sections) |
+| `bg-[#f8fafc]` or `bg-slate-50` | `dark:bg-slate-900` |
+| `text-slate-900` | `dark:text-white` |
+| `text-slate-600/700` | `dark:text-slate-300` |
+| `text-slate-400/500` | `dark:text-slate-500` |
+| `border-slate-100/200` | `dark:border-slate-700` |
+| `bg-slate-100` (chips/badges bg) | `dark:bg-slate-700` |
+
+---
+
+### Do NOT change:
+- Sections that are already dark (`bg-[#0a0f1e]`, `bg-slate-950`) — they look fine in dark mode as-is
+- The `ThemeProvider`, `globals.css`, or `layout.tsx` — backend already handled these
+- Any API routes or server code
+
+Do all 7 files. Build must pass. Let me know when done.
