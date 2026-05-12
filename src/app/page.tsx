@@ -127,7 +127,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen font-sans bg-white text-slate-900 overflow-x-hidden">
+    <div ref={containerRef} className="min-h-screen font-sans bg-white dark:bg-slate-950 text-slate-900 dark:text-white overflow-x-hidden">
       
       <style>{`
         @keyframes marquee {
@@ -144,15 +144,15 @@ export default function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm text-slate-900' : 'bg-transparent text-white'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm text-slate-900 dark:text-white' : 'bg-transparent text-white'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
-          <span className={scrolled ? 'text-slate-900' : 'text-white'}>Helpdesk</span>
+          <span className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'}>Helpdesk</span>
         </div>
         <div className="flex items-center gap-3 font-medium text-sm">
           <button
             onClick={toggleTheme}
-            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-colors ${scrolled ? 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}
+            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-colors ${scrolled ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}
             aria-label="Toggle theme"
           >
             {theme === "light" ? "🌙" : "☀️"}
@@ -302,9 +302,9 @@ export default function LandingPage() {
       </section>
 
       {/* Capability Marquee */}
-      <section className="py-16 bg-white border-b border-slate-100 overflow-hidden">
+      <section className="py-16 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 overflow-hidden">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">Everything your team needs</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Everything your team needs</h2>
         </div>
         
         <div className="relative flex overflow-x-hidden">
@@ -314,7 +314,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-full px-6 py-3 font-bold text-slate-700 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full px-6 py-3 font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
                 {pill}
               </div>
             ))}
@@ -326,7 +326,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-full px-6 py-3 font-bold text-slate-700 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full px-6 py-3 font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
                 {pill}
               </div>
             ))}
@@ -464,22 +464,22 @@ export default function LandingPage() {
       <PeopleMarquee />
 
       {/* Features Grid */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900">Built for every team member</h2>
-            <p className="text-lg text-slate-500">Tailored experiences for employees, staff, and managers.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">Built for every team member</h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400">Tailored experiences for employees, staff, and managers.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Employee */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all" style={{ borderTop: '3px solid #2563eb' }}>
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all" style={{ borderTop: '3px solid #2563eb' }}>
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900">Employee</h3>
-              <p className="text-slate-600 mb-6">Submit IT or HR requests in seconds. Track progress live.</p>
-              <ul className="space-y-3 text-sm text-slate-700">
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Employee</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">Submit IT or HR requests in seconds. Track progress live.</p>
+              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
                   Submit IT & HR tickets in seconds
@@ -504,13 +504,13 @@ export default function LandingPage() {
             </div>
 
             {/* IT & HR Staff */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-orange-100 transition-all" style={{ borderTop: '3px solid #f97316' }}>
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-500 mb-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 hover:shadow-lg hover:border-orange-100 transition-all" style={{ borderTop: '3px solid #f97316' }}>
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/50 rounded-xl flex items-center justify-center text-orange-500 dark:text-orange-400 mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900">IT & HR Staff</h3>
-              <p className="text-slate-600 mb-6">Manage your queue, document solutions, hit SLA targets.</p>
-              <ul className="space-y-3 text-sm text-slate-700">
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">IT & HR Staff</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">Manage your queue, document solutions, hit SLA targets.</p>
+              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
                   Smart ticket queue with filters
@@ -535,13 +535,13 @@ export default function LandingPage() {
             </div>
 
             {/* Manager */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-lg hover:border-purple-100 transition-all" style={{ borderTop: '3px solid #9333ea' }}>
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 hover:shadow-lg hover:border-purple-100 transition-all" style={{ borderTop: '3px solid #9333ea' }}>
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L3 18"></path></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900">Manager</h3>
-              <p className="text-slate-600 mb-6">Full visibility into team performance and operational health.</p>
-              <ul className="space-y-3 text-sm text-slate-700">
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Manager</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">Full visibility into team performance and operational health.</p>
+              <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
                   14-day activity bar chart
@@ -599,11 +599,11 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Frequently asked questions</h2>
-            <p className="text-lg text-slate-500">Everything you need to know about the platform.</p>
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Frequently asked questions</h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400">Everything you need to know about the platform.</p>
           </div>
           
           <div className="space-y-4">
@@ -615,12 +615,12 @@ export default function LandingPage() {
               { q: "Are SLAs enforced?", a: "Yes. Each ticket has response and resolution deadlines based on type and priority. Managers can see SLA compliance in their dashboard." },
               { q: "Is my data secure?", a: "All passwords are bcrypt-hashed. Sessions use NextAuth. Rate limiting protects all auth endpoints. Database is Neon PostgreSQL." }
             ].map((faq, idx) => (
-              <div key={idx} className="border-b border-slate-100">
+              <div key={idx} className="border-b border-slate-100 dark:border-slate-800">
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
                   className="w-full flex justify-between items-center py-6 text-left"
                 >
-                  <span className="font-bold text-slate-900">{faq.q}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{faq.q}</span>
                   <span className="text-slate-400 text-xl">{expandedFaq === idx ? '−' : '+'}</span>
                 </button>
                 <div
@@ -629,7 +629,7 @@ export default function LandingPage() {
                   }`}
                   style={{ maxHeight: expandedFaq === idx ? '200px' : '0px' }}
                 >
-                  <p className="text-slate-600 text-sm leading-relaxed">{faq.a}</p>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{faq.a}</p>
                 </div>
               </div>
             ))}
@@ -638,7 +638,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final Sign-In CTA */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white">
+      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-center text-white">
             <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>

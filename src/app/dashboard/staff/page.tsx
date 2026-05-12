@@ -89,7 +89,7 @@ export default function StaffQueuePage() {
       <div className="lg:col-span-3 space-y-8">
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3 dark:text-white">
               Staff Operations
               {activeTickets.length > 0 && (
                 <span className="inline-flex items-center justify-center bg-red-500 text-white text-sm font-black rounded-full px-3 py-1 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
@@ -98,9 +98,9 @@ export default function StaffQueuePage() {
               )}
             </h1>
             <div className="flex items-center gap-4">
-              <p className="text-xl text-[#6e6e73] font-medium">Assigned service requests awaiting resolution</p>
+              <p className="text-xl text-[#6e6e73] dark:text-slate-400 font-medium">Assigned service requests awaiting resolution</p>
               {activeTickets.length > 0 && (
-                <label className="flex items-center gap-1 text-sm text-slate-500 font-bold cursor-pointer">
+                <label className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 font-bold cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedIds.length === activeTickets.length}
@@ -139,7 +139,7 @@ export default function StaffQueuePage() {
         )}
 
         {/* Status Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-black/10 pb-2 overflow-x-auto">
+        <div className="flex gap-2 mb-6 border-b border-black/10 dark:border-white/10 pb-2 overflow-x-auto">
           {[
             { value: "all", label: "All" },
             { value: "open", label: "Open" },
@@ -153,7 +153,7 @@ export default function StaffQueuePage() {
               className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
                 statusFilter === tab.value
                   ? "bg-black text-white"
-                  : "text-[#6e6e73] hover:bg-[#f5f5f7]"
+                  : "text-[#6e6e73] dark:text-slate-400 hover:bg-[#f5f5f7] dark:hover:bg-slate-800"
               }`}
             >
               {tab.label}
@@ -169,7 +169,7 @@ export default function StaffQueuePage() {
             </div>
           ) : (
             activeTickets.map((ticket) => (
-              <div key={ticket.id} className={`card p-8 group hover:bg-[#fafafa] relative ${ticket.priority === 'urgent' ? 'border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-pulse-glow' : ''}`}>
+              <div key={ticket.id} className={`card p-8 group hover:bg-[#fafafa] dark:hover:bg-slate-700/50 dark:bg-slate-800 dark:border-slate-700 relative ${ticket.priority === 'urgent' ? 'border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-pulse-glow' : ''}`}>
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-3">
@@ -185,22 +185,22 @@ export default function StaffQueuePage() {
                         }}
                         className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="badge badge-slate !px-3 !py-1">{ticket.type}</span>
-                      <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'}`}>
+                      <span className="badge badge-slate dark:bg-slate-700 dark:text-slate-300 !px-3 !py-1">{ticket.type}</span>
+                      <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate dark:bg-slate-700 dark:text-slate-300'}`}>
                         {ticket.status.replace("_", " ")}
                       </span>
                       <SlaBadge ticket={ticket} />
-                      <span className="text-sm text-[#6e6e73] font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
+                      <span className="text-sm text-[#6e6e73] dark:text-slate-400 font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold cursor-pointer group-hover:text-blue-600 transition-colors" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                      <h3 className="text-2xl font-bold cursor-pointer group-hover:text-blue-600 transition-colors dark:text-white" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                         {ticket.title}
                       </h3>
-                      <p className="text-lg text-[#6e6e73] mt-2 line-clamp-2">
+                      <p className="text-lg text-[#6e6e73] dark:text-slate-400 mt-2 line-clamp-2">
                         {ticket.description}
                       </p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-semibold text-black/60 pt-2">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-semibold text-black/60 dark:text-slate-400 pt-2">
                       <span className="flex items-center gap-2"><div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold">{ticket.creator?.name?.charAt(0) || '?'}</div> {ticket.creator?.name}</span>
                       <span>{timeAgo(ticket.createdAt)}</span>
                       {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold flex items-center gap-1"><span className="text-xl leading-none">!</span> URGENT</span>}
@@ -235,12 +235,12 @@ export default function StaffQueuePage() {
                 </div>
 
                 {resolvingId === ticket.id && (
-                  <form onSubmit={(e) => handleResolve(e, ticket.id)} className="mt-8 pt-8 border-t border-black/10 space-y-4">
+                  <form onSubmit={(e) => handleResolve(e, ticket.id)} className="mt-8 pt-8 border-t border-black/10 dark:border-white/10 space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold tracking-tight">Resolution Solution</label>
+                      <label className="text-sm font-bold tracking-tight dark:text-white">Resolution Solution</label>
                       <textarea
                         required
-                        className="input-field min-h-[120px] text-lg"
+                        className="input-field dark:bg-slate-800 dark:border-slate-700 dark:text-white min-h-[120px] text-lg"
                         placeholder="Explain how the issue was resolved..."
                         value={solution}
                         onChange={(e) => setSolution(e.target.value)}
@@ -259,15 +259,15 @@ export default function StaffQueuePage() {
       </div>
 
       <div className="space-y-8 mt-12 lg:mt-0">
-        <div className="card p-8 h-fit bg-[#f4f4f4]">
-          <h2 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-black/10">Recently Resolved</h2>
+        <div className="card p-8 h-fit bg-[#f4f4f4] dark:bg-slate-800 dark:border-slate-700">
+          <h2 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-black/10 dark:border-white/10 dark:text-white">Recently Resolved</h2>
           <div className="space-y-4">
             {resolvedTickets.slice(0, 5).map((ticket) => (
-              <div key={ticket.id} className="p-4 rounded-xl bg-white hover:bg-slate-50 cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
-                <p className="text-sm font-bold truncate mb-2">{ticket.title}</p>
+              <div key={ticket.id} className="p-4 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                <p className="text-sm font-bold truncate mb-2 dark:text-white">{ticket.title}</p>
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="text-green-600">Resolved</span>
-                  <span className="text-[#6e6e73]">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                  <span className="text-[#6e6e73] dark:text-slate-400">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}

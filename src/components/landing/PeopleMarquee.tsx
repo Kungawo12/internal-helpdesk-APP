@@ -117,7 +117,7 @@ function PersonCard({
 
   return (
     <div 
-      className="w-44 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden mx-3 flex-shrink-0 relative transition-all duration-500"
+      className="w-44 bg-white dark:bg-slate-900 rounded-3xl shadow-md border border-slate-100 dark:border-slate-800 overflow-hidden mx-3 flex-shrink-0 relative transition-all duration-500"
       style={{ 
         animation: isFlipped ? "none" : `float-up 3s ease-in-out infinite`,
         animationDelay: animDelay,
@@ -133,8 +133,8 @@ function PersonCard({
         {/* Info — bottom 40% */}
         <div className="p-3 text-center flex-1 flex flex-col justify-between">
           <div>
-            <p className="font-black text-sm text-slate-900 truncate">{character.name}</p>
-            <p className="text-[10px] text-slate-400 mb-1 truncate">{character.dept}</p>
+            <p className="font-black text-sm text-slate-900 dark:text-white truncate">{character.name}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-1 truncate">{character.dept}</p>
           </div>
           <div className="flex items-center justify-between">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleCls}`}>
@@ -142,7 +142,7 @@ function PersonCard({
             </span>
             <button 
               onClick={onFlip}
-              className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors"
+              className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               +
             </button>
@@ -157,14 +157,14 @@ function PersonCard({
             <img src={dicebearUrl} className="w-full h-full" alt={character.name} />
           </div>
           <div className="min-w-0">
-            <p className="font-black text-xs text-slate-900 truncate">{character.detailTitle}</p>
-            <p className="text-[10px] text-slate-400 truncate">{character.name}</p>
+            <p className="font-black text-xs text-slate-900 dark:text-white truncate">{character.detailTitle}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{character.name}</p>
           </div>
         </div>
         
         <ul className="space-y-1.5 flex-1 overflow-y-auto">
           {character.bullets.map((bullet, i) => (
-            <li key={i} className="text-[10px] text-slate-600 flex items-start gap-1">
+            <li key={i} className="text-[10px] text-slate-600 dark:text-slate-400 flex items-start gap-1">
               <span className="text-emerald-500">✓</span>
               <span>{bullet}</span>
             </li>
@@ -174,14 +174,14 @@ function PersonCard({
         <div className="flex items-center justify-between mt-2">
           <div className="flex gap-1 flex-wrap">
             {character.tags.map((tag, i) => (
-              <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded">
+              <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
                 {tag}
               </span>
             ))}
           </div>
           <button 
             onClick={onFlip}
-            className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors"
+            className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
             ✕
           </button>
@@ -197,7 +197,7 @@ export default function PeopleMarquee() {
   const [flippedPerson, setFlippedPerson] = useState<string | null>(null);
 
   return (
-    <section className="py-20 bg-white overflow-hidden">
+    <section className="py-20 bg-white dark:bg-slate-950 overflow-hidden">
       <style>{`
         @keyframes float-up {
           0%, 100% { transform: translateY(0); }
@@ -223,10 +223,10 @@ export default function PeopleMarquee() {
       {/* Section Header */}
       <div className="max-w-4xl mx-auto text-center px-6 mb-14">
         <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">Your whole team, one platform</p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
           Built for every person in your company
         </h2>
-        <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+        <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
           Employees, IT staff, HR teams and managers — everyone has a role-specific experience.
         </p>
       </div>

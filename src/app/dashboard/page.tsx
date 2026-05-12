@@ -68,12 +68,12 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 animate-fade-in">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <span className="badge badge-slate !px-4 !py-2 !text-sm">Employee Portal</span>
-            <span className="text-sm font-semibold text-[#6e6e73]">
+            <span className="badge badge-slate dark:bg-slate-700 dark:text-slate-300 !px-4 !py-2 !text-sm">Employee Portal</span>
+            <span className="text-sm font-semibold text-[#6e6e73] dark:text-slate-400">
               {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Welcome back,<br/>{session?.user?.name?.split(' ')[0] || "User"}</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight dark:text-white">Welcome back,<br/>{session?.user?.name?.split(' ')[0] || "User"}</h1>
         </div>
         <div className="flex flex-wrap gap-3">
           {role === "employee" && (
@@ -98,9 +98,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         {[
           { label: "Total Tracking", value: stats.total, style: "bg-black text-white", icon: "🎫" },
-          { label: "Needs Action", value: stats.open, style: "bg-white text-black", icon: "🔴" },
+          { label: "Needs Action", value: stats.open, style: "bg-white dark:bg-slate-800 text-black dark:text-white", icon: "🔴" },
           { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡" },
-          { label: "Resolved", value: stats.resolved, style: "bg-white text-black", icon: "✅" },
+          { label: "Resolved", value: stats.resolved, style: "bg-white dark:bg-slate-800 text-black dark:text-white", icon: "✅" },
         ].map((s, idx) => (
           <div key={idx} className={`card p-8 relative overflow-hidden ${s.style}`}>
             <div className="absolute top-6 right-6 text-2xl opacity-80">{s.icon}</div>
@@ -112,27 +112,27 @@ export default function DashboardPage() {
 
       {/* Divider */}
       <div className="flex items-center gap-4 animate-fade-in delay-200">
-        <div className="h-px bg-slate-200 flex-1" />
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Today's Activity</span>
-        <div className="h-px bg-slate-200 flex-1" />
+        <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1" />
+        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Today's Activity</span>
+        <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1" />
       </div>
 
       {/* Ticket Cards Grid (Replacing Table) */}
       <div className="space-y-8 animate-fade-in delay-300">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <h2 className="text-3xl font-extrabold tracking-tight">Active Stream</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight dark:text-white">Active Stream</h2>
           <div className="flex w-full md:w-auto gap-4">
             <input
               type="text"
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field max-w-xs"
+              className="input-field dark:bg-slate-800 dark:border-slate-700 dark:text-white max-w-xs"
             />
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input-field max-w-[160px]"
+              className="input-field dark:bg-slate-800 dark:border-slate-700 dark:text-white max-w-[160px]"
             >
               <option value="all">All</option>
               <option value="open">Open</option>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                 <div 
                   key={ticket.id} 
                   onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                  className={`card p-8 cursor-pointer group hover:bg-[#fafafa] relative ${borderClass}`}
+                  className={`card p-8 cursor-pointer group hover:bg-[#fafafa] dark:hover:bg-slate-700/50 dark:bg-slate-800 dark:border-slate-700 relative ${borderClass}`}
                 >
                   <div className={`absolute top-6 right-6 w-2.5 h-2.5 rounded-full ${
                     ticket.priority === 'urgent' ? 'bg-red-500' :
@@ -162,10 +162,10 @@ export default function DashboardPage() {
                   }`} />
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex gap-2">
-                      <span className="badge badge-slate !px-3 !py-1">{ticket.type}</span>
+                      <span className="badge badge-slate dark:bg-slate-700 dark:text-slate-300 !px-3 !py-1">{ticket.type}</span>
                       <span className={`badge !px-3 !py-1 ${
                           ticket.status === 'resolved' ? 'badge-green' : 
-                          ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'
+                          ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate dark:bg-slate-700 dark:text-slate-300'
                       }`}>
                         {ticket.status.replace("_", " ")}
                       </span>
@@ -173,21 +173,21 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 
-                <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">{ticket.title}</h3>
+                <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors dark:text-white">{ticket.title}</h3>
                 
-                <div className="flex items-center justify-between border-t border-black/5 pt-6 mt-12">
-                  <span className="text-sm font-bold text-[#6e6e73] font-mono">#{ticket.id.slice(0, 8)}</span>
-                  <span className="text-sm text-[#6e6e73] font-bold">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-6 mt-12">
+                  <span className="text-sm font-bold text-[#6e6e73] dark:text-slate-400 font-mono">#{ticket.id.slice(0, 8)}</span>
+                  <span className="text-sm text-[#6e6e73] dark:text-slate-400 font-bold">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
               );
             })}
           </div>
         ) : (
-           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 shadow-none">
+           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 dark:border-white/10 shadow-none">
              <div className="text-8xl mb-6 opacity-20">🎫</div>
-             <h3 className="text-3xl font-extrabold mb-4">No tickets yet</h3>
-             <p className="text-[#6e6e73] text-lg font-medium mb-6">Your support requests will appear here once submitted.</p>
+             <h3 className="text-3xl font-extrabold mb-4 dark:text-white">No tickets yet</h3>
+             <p className="text-[#6e6e73] dark:text-slate-400 text-lg font-medium mb-6">Your support requests will appear here once submitted.</p>
              {role === "employee" && (
                <Link href="/dashboard/create" className="text-blue-600 font-bold hover:underline">
                  Submit your first ticket →
