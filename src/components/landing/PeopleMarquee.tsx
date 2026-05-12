@@ -1,25 +1,112 @@
 "use client";
 
+import { useState } from "react";
+
 interface Character {
   name: string;
   role: string;
   dept: string;
   seed: string;
   bgColor: string;
+  detailTitle: string;
+  bullets: string[];
+  tags: string[];
 }
 
 const CHARACTERS: Character[] = [
-  { name: "Alex Chen", role: "IT Staff", dept: "Infrastructure", seed: "Alex", bgColor: "dce5f5" },
-  { name: "Maria Santos", role: "Employee", dept: "Operations", seed: "Maria", bgColor: "fde8d8" },
-  { name: "Jordan Kim", role: "HR Staff", dept: "People Ops", seed: "Jordan", bgColor: "fef3c7" },
-  { name: "Sam Patel", role: "Manager", dept: "IT Division", seed: "Sam", bgColor: "ede9fe" },
-  { name: "Priya Nair", role: "IT Staff", dept: "Security", seed: "Priya", bgColor: "dcfce7" },
-  { name: "Marcus Johnson", role: "Employee", dept: "Marketing", seed: "Marcus", bgColor: "fee2e2" },
-  { name: "Layla Ahmed", role: "HR Staff", dept: "Recruitment", seed: "Layla", bgColor: "e0f2fe" },
-  { name: "Emma Davis", role: "Manager", dept: "HR Division", seed: "Emma", bgColor: "fce7f3" },
+  { 
+    name: "Alex Chen", 
+    role: "IT Staff", 
+    dept: "Infrastructure", 
+    seed: "Alex", 
+    bgColor: "dce5f5",
+    detailTitle: "Infrastructure Support",
+    bullets: ["Resolves hardware & software issues", "Manages network access", "Maintains server stability"],
+    tags: ["Support", "IT"]
+  },
+  { 
+    name: "Maria Santos", 
+    role: "Employee", 
+    dept: "Operations", 
+    seed: "Maria", 
+    bgColor: "fde8d8",
+    detailTitle: "Employee Self-Service",
+    bullets: ["Finds answers in KB", "Submits HR requests", "Tracks ticket status"],
+    tags: ["Employee", "Help"]
+  },
+  { 
+    name: "Jordan Kim", 
+    role: "HR Staff", 
+    dept: "People Ops", 
+    seed: "Jordan", 
+    bgColor: "fef3c7",
+    detailTitle: "People Operations",
+    bullets: ["Manages onboarding tickets", "Resolves benefits inquiries", "Coordinates training"],
+    tags: ["HR", "People"]
+  },
+  { 
+    name: "Sam Patel", 
+    role: "Manager", 
+    dept: "IT Division", 
+    seed: "Sam", 
+    bgColor: "ede9fe",
+    detailTitle: "IT Division Management",
+    bullets: ["Oversees IT queue", "Tracks SLA compliance", "Allocates resources"],
+    tags: ["Management", "IT"]
+  },
+  { 
+    name: "Priya Nair", 
+    role: "IT Staff", 
+    dept: "Security", 
+    seed: "Priya", 
+    bgColor: "dcfce7",
+    detailTitle: "Cybersecurity Support",
+    bullets: ["Handles security alerts", "Investigates access issues", "Enforces security policies"],
+    tags: ["Security", "IT"]
+  },
+  { 
+    name: "Marcus Johnson", 
+    role: "Employee", 
+    dept: "Marketing", 
+    seed: "Marcus", 
+    bgColor: "fee2e2",
+    detailTitle: "Marketing Requests",
+    bullets: ["Submits creative tickets", "Requests tool access", "Tracks campaign support"],
+    tags: ["Marketing", "Employee"]
+  },
+  { 
+    name: "Layla Ahmed", 
+    role: "HR Staff", 
+    dept: "Recruitment", 
+    seed: "Layla", 
+    bgColor: "e0f2fe",
+    detailTitle: "Recruitment Coordination",
+    bullets: ["Manages candidate onboarding", "Handles interview logistics", "Schedules orientations"],
+    tags: ["HR", "Recruitment"]
+  },
+  { 
+    name: "Emma Davis", 
+    role: "Manager", 
+    dept: "HR Division", 
+    seed: "Emma", 
+    bgColor: "fce7f3",
+    detailTitle: "HR Division Management",
+    bullets: ["Oversees HR queue", "Tracks team performance", "Manages policy updates"],
+    tags: ["Management", "HR"]
+  },
 ];
 
-function PersonCard({ character, animDelay }: { character: Character; animDelay: string }) {
+function PersonCard({ 
+  character, 
+  animDelay, 
+  isFlipped, 
+  onFlip 
+}: { 
+  character: Character; 
+  animDelay: string; 
+  isFlipped: boolean;
+  onFlip: () => void;
+}) {
   const dicebearUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${character.seed}&backgroundColor=${character.bgColor}&backgroundType=solid`;
 
   const roleCls = 
@@ -30,23 +117,75 @@ function PersonCard({ character, animDelay }: { character: Character; animDelay:
 
   return (
     <div 
-      className="w-40 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden mx-3 flex-shrink-0"
+      className="w-44 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden mx-3 flex-shrink-0 relative transition-all duration-500"
       style={{ 
-        animation: `float-up 3s ease-in-out infinite`,
-        animationDelay: animDelay 
+        animation: isFlipped ? "none" : `float-up 3s ease-in-out infinite`,
+        animationDelay: animDelay,
+        height: "260px"
       }}
     >
-      {/* Character illustration — takes up top 60% of card */}
-      <div className="h-40 flex items-end justify-center" style={{ backgroundColor: `#${character.bgColor}` }}>
-        <img src={dicebearUrl} className="w-32 h-32" alt={character.name} />
+      {/* Character Card (Front) */}
+      <div className={`absolute inset-0 flex flex-col transition-opacity duration-500 ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+        {/* Character illustration — takes up top 60% of card */}
+        <div className="h-40 flex items-end justify-center" style={{ backgroundColor: `#${character.bgColor}` }}>
+          <img src={dicebearUrl} className="w-32 h-32" alt={character.name} />
+        </div>
+        {/* Info — bottom 40% */}
+        <div className="p-3 text-center flex-1 flex flex-col justify-between">
+          <div>
+            <p className="font-black text-sm text-slate-900 truncate">{character.name}</p>
+            <p className="text-[10px] text-slate-400 mb-1 truncate">{character.dept}</p>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleCls}`}>
+              {character.role}
+            </span>
+            <button 
+              onClick={onFlip}
+              className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors"
+            >
+              +
+            </button>
+          </div>
+        </div>
       </div>
-      {/* Info — bottom 40% */}
-      <div className="p-3 text-center">
-        <p className="font-black text-sm text-slate-900 truncate">{character.name}</p>
-        <p className="text-[10px] text-slate-400 mb-1 truncate">{character.dept}</p>
-        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleCls}`}>
-          {character.role}
-        </span>
+
+      {/* Detail Card (Back) */}
+      <div className={`absolute inset-0 flex flex-col p-4 transition-opacity duration-500 ${isFlipped ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-full overflow-hidden" style={{ backgroundColor: `#${character.bgColor}` }}>
+            <img src={dicebearUrl} className="w-full h-full" alt={character.name} />
+          </div>
+          <div className="min-w-0">
+            <p className="font-black text-xs text-slate-900 truncate">{character.detailTitle}</p>
+            <p className="text-[10px] text-slate-400 truncate">{character.name}</p>
+          </div>
+        </div>
+        
+        <ul className="space-y-1.5 flex-1 overflow-y-auto">
+          {character.bullets.map((bullet, i) => (
+            <li key={i} className="text-[10px] text-slate-600 flex items-start gap-1">
+              <span className="text-emerald-500">✓</span>
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex gap-1 flex-wrap">
+            {character.tags.map((tag, i) => (
+              <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <button 
+            onClick={onFlip}
+            className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -55,6 +194,7 @@ function PersonCard({ character, animDelay }: { character: Character; animDelay:
 export default function PeopleMarquee() {
   // Duplicate the array once for seamless loop
   const items = [...CHARACTERS, ...CHARACTERS];
+  const [flippedPerson, setFlippedPerson] = useState<string | null>(null);
 
   return (
     <section className="py-20 bg-white overflow-hidden">
@@ -74,6 +214,9 @@ export default function PeopleMarquee() {
         }
         .track-left:hover { 
           animation-play-state: paused; 
+        }
+        .track-paused {
+          animation-play-state: paused;
         }
       `}</style>
 
@@ -96,9 +239,15 @@ export default function PeopleMarquee() {
           maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)' 
         }}
       >
-        <div className="track-left flex py-4">
+        <div className={`track-left flex py-4 ${flippedPerson ? "track-paused" : ""}`}>
           {items.map((c, i) => (
-            <PersonCard key={i} character={c} animDelay={`${(i % CHARACTERS.length) * 0.4}s`} />
+            <PersonCard 
+              key={i} 
+              character={c} 
+              animDelay={`${i * 0.4}s`} 
+              isFlipped={flippedPerson === c.name}
+              onFlip={() => setFlippedPerson(flippedPerson === c.name ? null : c.name)}
+            />
           ))}
         </div>
       </div>
