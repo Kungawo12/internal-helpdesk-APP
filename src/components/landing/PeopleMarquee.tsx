@@ -121,32 +121,31 @@ function PersonCard({
       style={{ 
         animation: isFlipped ? "none" : `float-up 3s ease-in-out infinite`,
         animationDelay: animDelay,
-        height: "260px"
+        height: "280px"
       }}
     >
       {/* Character Card (Front) */}
       <div className={`absolute inset-0 flex flex-col transition-opacity duration-500 ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Character illustration — takes up top 60% of card */}
-        <div className="h-40 flex items-end justify-center" style={{ backgroundColor: `#${character.bgColor}` }}>
-          <img src={dicebearUrl} className="w-32 h-32" alt={character.name} />
+        <div className="h-48 flex items-end justify-center relative" style={{ backgroundColor: `#${character.bgColor}` }}>
+          <img src={dicebearUrl} className="w-36 h-36" alt={character.name} />
+          {/* Subtle gradient overlay */}
+          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
         </div>
+        
+        {/* Flip button (Absolute top-right) */}
+        <button 
+          onClick={onFlip}
+          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 shadow-sm transition-colors z-10"
+        >
+          +
+        </button>
+
         {/* Info — bottom 40% */}
-        <div className="p-3 text-center flex-1 flex flex-col justify-between">
-          <div>
-            <p className="font-black text-sm text-slate-900 dark:text-white truncate">{character.name}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-1 truncate">{character.dept}</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${roleCls}`}>
-              {character.role}
-            </span>
-            <button 
-              onClick={onFlip}
-              className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              +
-            </button>
-          </div>
+        <div className="p-4 text-center flex-1 flex flex-col justify-center items-center">
+          <span className={`text-xs font-bold px-3 py-1 rounded-full ${roleCls}`}>
+            {character.role}
+          </span>
         </div>
       </div>
 

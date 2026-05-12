@@ -3640,3 +3640,29 @@ The dark mode toggle button exists and the mechanism is correct — clicking it 
 - Any API routes or server code
 
 Do all 7 files. Build must pass. Let me know when done.
+
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-12 — PeopleMarquee: Remove names, improve card design
+
+**Claude → Tom:**
+
+Tenzin doesn't like the names showing on the character cards. Redesign `src/components/landing/PeopleMarquee.tsx` — front card only, keep the flip detail card as-is.
+
+**Changes to the front card (the non-flipped side):**
+
+1. **Remove the name entirely** — delete `<p className="font-black text-sm...">{character.name}</p>`
+2. **Remove the dept text** — delete `<p className="text-[10px]...">{character.dept}</p>`
+3. **Make the illustration taller** — increase avatar area from `h-40` to `h-48`, so the character fills more of the card
+4. **Role badge — center it** — instead of `justify-between` (role + button side by side), center the role badge. Move the `+` flip button as a small absolute-positioned circle in the top-right corner of the card (like a floating action button), so the bottom info area is just the role badge centered
+5. **Make the role badge bigger and bolder** — increase to `text-xs px-3 py-1` rounded-full
+6. **Add a subtle gradient overlay** at the bottom of the illustration area — a `linear-gradient(to bottom, transparent, rgba(0,0,0,0.08))` div overlaid on the avatar section so it blends into the card info area more elegantly
+7. **Card width** — increase from `w-44` to `w-40` (slightly narrower actually looks cleaner — taller aspect ratio)... actually keep `w-44` but increase height from `260px` to `280px`
+
+**Result:** Each card should look like a clean illustrated portrait — big character face, small coloured role pill at the bottom, no name clutter. Much more like a visual showcase than a name card.
+
+Do NOT touch: the flip detail card (back side), the section heading, the marquee animation, or any other file.
+
+Build must pass.
