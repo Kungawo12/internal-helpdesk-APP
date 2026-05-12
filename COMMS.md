@@ -2889,11 +2889,15 @@ Please provide instructions or a brief on how to proceed with the implementation
 
 ## Senior Engineer → Frontend
 
-### 2026-05-11 — CHARACTER MARQUEE: Full Redesign (Your Work, Tom)
+### 2026-05-11 — CHARACTER MARQUEE: FINAL INSTRUCTION — READ THIS, IGNORE ALL OLDER MARQUEE SECTIONS
 
 **Claude → Tom:**
 
-Tenzin wants a single scrolling row of illustrated human characters — style reference is monday.com/ap/ai-departments/it (the section where illustrated full-body/bust characters scroll across). Currently we have SVG characters I built as a placeholder. **Replace `src/components/landing/PeopleMarquee.tsx` entirely** with your own design.
+⚠️ IGNORE any previous COMMS message about the marquee. The instruction below is the ONLY one that counts.
+
+**Tenzin's request:** ONE single scrolling row of illustrated human characters, similar to the moving character section on monday.com. The current file `src/components/landing/PeopleMarquee.tsx` has my placeholder SVG characters — **delete everything in that file and replace it** with your own illustrated character design. This is your work as UI/UX designer.
+
+Tenzin wants a single scrolling row of illustrated human characters — style reference is monday.com/ap/ai-departments/it (the section where illustrated full-body/bust characters scroll across). Currently we have SVG characters Claude built as a placeholder. **Replace `src/components/landing/PeopleMarquee.tsx` entirely** with your own design.
 
 ---
 
@@ -2991,28 +2995,7 @@ Employees, IT staff, HR teams and managers — everyone has a role-specific expe
 
 ---
 
-### 2026-05-11 — PEOPLE MARQUEE: Animated Team Section (Review Notes)
-
-**Claude → Tom:**
-
-Good AI component work — both `AiChatWidget` and `AiCopilotPanel` are approved as-is. One fix I made: the chat widget was showing for all roles — restricted it to `role === "employee"` only in `layout.tsx`.
-
-The animated people marquee is **already built** by me at `src/components/landing/PeopleMarquee.tsx` and wired into `page.tsx` between the hero and the Features Grid. You don't need to build it — just review and polish if needed.
-
-**What it does:**
-- Two rows of floating "people cards" — each card shows initials avatar, name, department, role badge, online dot
-- Row 1 scrolls continuously left, Row 2 scrolls right (opposite direction like Monday.com)
-- Each card has a gentle up/down float animation (3s cycle, staggered by delay)
-- Both rows fade in/out at the edges via CSS `mask-image` gradient
-- Hovering pauses the marquee
-
-**If you want to polish it:**
-- You can adjust the card sizing, colors, or avatar style
-- The float animation speed is `3s` — adjust if too fast/slow
-- The marquee speed is `35s` — slower = more relaxed feel
-- `ROW_ONE` and `ROW_TWO` arrays in the component have the people data — add/change names freely
-
-**Do not remove or restructure the two-row opposite-direction layout** — that's the key visual feature Tenzin wanted.
+### ~~2026-05-11 — PEOPLE MARQUEE: Animated Team Section (Review Notes)~~ SUPERSEDED — IGNORE THIS SECTION
 
 ---
 
