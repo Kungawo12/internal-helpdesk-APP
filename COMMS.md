@@ -2889,6 +2889,108 @@ Please provide instructions or a brief on how to proceed with the implementation
 
 ## Senior Engineer → Frontend
 
+### 2026-05-11 — CHARACTER MARQUEE: Full Redesign (Your Work, Tom)
+
+**Claude → Tom:**
+
+Tenzin wants a single scrolling row of illustrated human characters — style reference is monday.com/ap/ai-departments/it (the section where illustrated full-body/bust characters scroll across). Currently we have SVG characters I built as a placeholder. **Replace `src/components/landing/PeopleMarquee.tsx` entirely** with your own design.
+
+---
+
+#### What Tenzin wants
+- **One row** of illustrated human character cards scrolling continuously (left direction)
+- Characters should look like real illustrated people — similar to monday.com's style
+- Each card shows the person's character illustration, name, role badge, department
+- Smooth continuous loop, no gaps
+- Gentle float/bob animation on each card
+
+#### What to build
+
+**Reference style:** Monday.com uses full-body or bust illustrated characters with:
+- Distinct face shapes, hair styles, skin tones
+- Casual-professional outfits
+- Friendly, approachable feel
+- Slightly 3D-looking flat illustration style
+
+**Since we can't use Monday's actual images**, use this free illustrated avatar library which matches that style exactly:
+
+**Option A — Notion-style illustrated avatars (recommended):**
+Use `https://api.dicebear.com/9.x/notionists/svg?seed=NAME&backgroundColor=HEXCOLOR` — these generate bust/face illustrations with actual human features, hair, clothing. Much more human-looking than adventurer style.
+
+Example seeds that look good: `Alex`, `Maria`, `Jordan`, `Sam`, `Priya`, `Marcus`, `Emma`, `David`
+
+Background colors to use (one per card, cycle through):
+`dce5f5`, `fde8d8`, `fef3c7`, `ede9fe`, `dcfce7`, `fee2e2`, `e0f2fe`, `fce7f3`
+
+**Option B — Custom SVG illustrations:**
+Draw your own — bust-style characters (head + shoulders) with:
+- Round head, colored hair, simple face (eyes, smile)
+- Colored shirt/top matching their role
+- No text in the SVG
+
+**Card structure:**
+```tsx
+<div className="w-40 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden mx-3 flex-shrink-0"
+     style={{ animationDelay: '...' }}>
+  {/* Character illustration — takes up top 60% of card */}
+  <div className="h-40 flex items-end justify-center" style={{ background: 'light pastel matching character' }}>
+    <img src={dicebearUrl} className="w-32 h-32" alt={name} />
+  </div>
+  {/* Info — bottom 40% */}
+  <div className="p-3 text-center">
+    <p className="font-black text-sm text-slate-900">{name}</p>
+    <p className="text-[10px] text-slate-400">{dept}</p>
+    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">{role}</span>
+  </div>
+</div>
+```
+
+**Characters to include (8 total):**
+| Name | Role | Dept | Seed |
+|------|------|------|------|
+| Alex Chen | IT Staff | Infrastructure | Alex |
+| Maria Santos | Employee | Operations | Maria |
+| Jordan Kim | HR Staff | People Ops | Jordan |
+| Sam Patel | Manager | IT Division | Sam |
+| Priya Nair | IT Staff | Security | Priya |
+| Marcus Johnson | Employee | Marketing | Marcus |
+| Layla Ahmed | HR Staff | Recruitment | Layla |
+| Emma Davis | Manager | HR Division | Emma |
+
+**Marquee — ONE ROW, scrolling left:**
+```tsx
+// Duplicate the array once for seamless loop
+const items = [...CHARACTERS, ...CHARACTERS];
+
+<div style={{ maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)' }}>
+  <div className="track-left flex py-4">
+    {items.map((c, i) => <PersonCard key={i} character={c} animDelay={`${i * 0.4}s`} />)}
+  </div>
+</div>
+```
+
+CSS:
+```css
+@keyframes float-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes slide-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.track-left { width: max-content; animation: slide-left 40s linear infinite; }
+.track-left:hover { animation-play-state: paused; }
+```
+
+#### Section header (keep this):
+```
+[small blue label] Your whole team, one platform
+
+Built for every person in your company
+Employees, IT staff, HR teams and managers — everyone has a role-specific experience.
+```
+
+**File:** `src/components/landing/PeopleMarquee.tsx` — rewrite the whole thing.
+
+**Do not touch** `src/app/page.tsx` — the `<PeopleMarquee />` import is already wired in.
+
+---
+
 ### 2026-05-11 — PEOPLE MARQUEE: Animated Team Section (Review Notes)
 
 **Claude → Tom:**
