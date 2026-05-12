@@ -13,7 +13,7 @@ type PendingFile = {
 function CreateTicketForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const typeParam = searchParams.get("type") as "IT" | "HR" | null;
+  const typeParam = searchParams.get("type") as "IT" | "HR" | "Software" | null;
 
   // Core fields
   const [title, setTitle] = useState("");
@@ -25,10 +25,9 @@ function CreateTicketForm() {
   const [searchingKb, setSearchingKb] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
 
-  // IT-specific fields
-  const [category, setCategory] = useState<"Incident" | "Service Request" | "">("");
-  const [softwareName, setSoftwareName] = useState("");
-  const [affectedSystem, setAffectedSystem] = useState("");
+  // Software bug fields
+  const [appName, setAppName] = useState("");
+  const [bugSteps, setBugSteps] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   // File upload state
@@ -131,9 +130,6 @@ function CreateTicketForm() {
     setTitle(t.titlePrefix ? t.titlePrefix + title : title);
     setDescription(t.bodyTemplate);
     setPriority(t.priority);
-    if (t.category && typeParam === "IT") {
-      setCategory(t.category);
-    }
   };
 
   // Drag-and-drop handlers
@@ -160,7 +156,7 @@ function CreateTicketForm() {
           description,
           type: typeParam,
           priority,
-          ...(typeParam === "IT" && { category: category || null, softwareName, affectedSystem, errorMessage }),
+          ...(typeParam === "Software" && { softwareName: appName, errorMessage }),
         }),
       });
 
@@ -201,7 +197,7 @@ function CreateTicketForm() {
           <p className="text-xl text-slate-500">Select the type of support you need to get started.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             href="/dashboard/create?type=IT"
             className="card p-10 text-center hover:scale-[1.02] transition-transform cursor-pointer border-2 hover:border-blue-400 group"
@@ -209,7 +205,7 @@ function CreateTicketForm() {
             <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">🖥️</div>
             <h2 className="text-2xl font-bold mb-3">IT Support</h2>
             <p className="text-slate-600 font-medium leading-relaxed">
-              Software crashes, errors, access issues, or system problems.
+              Hardware, network, access issues, or system problems.
             </p>
           </Link>
 
@@ -221,6 +217,17 @@ function CreateTicketForm() {
             <h2 className="text-2xl font-bold mb-3">HR Support</h2>
             <p className="text-slate-600 font-medium leading-relaxed">
               Wages, holidays, policies, or general HR queries.
+            </p>
+          </Link>
+
+          <Link
+            href="/dashboard/create?type=Software"
+            className="card p-10 text-center hover:scale-[1.02] transition-transform cursor-pointer border-2 hover:border-purple-400 group"
+          >
+            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">🐛</div>
+            <h2 className="text-2xl font-bold mb-3">Software Bug</h2>
+            <p className="text-slate-600 font-medium leading-relaxed">
+              Report a bug or unexpected behaviour in any application.
             </p>
           </Link>
         </div>
@@ -318,6 +325,8 @@ function CreateTicketForm() {
                 placeholder={
                   typeParam === "IT"
                     ? "Describe what happened, when it started, and any steps you've already tried…"
+                    : typeParam === "Software"
+                    ? "Describe the bug — what you expected to happen vs what actually happened…"
                     : "Provide all relevant details to help us resolve this quickly…"
                 }
                 value={description}
@@ -326,85 +335,49 @@ function CreateTicketForm() {
             </div>
           </div>
 
-          {/* IT-specific fields */}
-          {typeParam === "IT" && (
+          {/* Software Bug fields */}
+          {typeParam === "Software" && (
             <div className="card p-8 space-y-6">
               <div>
-                <h2 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-1">Software Details</h2>
-                <p className="text-xs text-slate-400 font-medium">Helps IT diagnose your issue faster — fill in what you know.</p>
+                <h2 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-1">Bug Details</h2>
+                <p className="text-xs text-slate-400 font-medium">Help the team reproduce and fix the issue faster.</p>
               </div>
 
-              {/* Category */}
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
-                  Ticket Type
+                  Application / System Name <span className="text-slate-300 normal-case font-medium">(required)</span>
                 </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {(["Incident", "Service Request"] as const).map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setCategory(cat)}
-                      className={`py-3 px-4 rounded-xl border-2 text-sm font-bold transition-all text-left ${
-                        category === cat
-                          ? "bg-blue-600 border-blue-600 text-white shadow-lg"
-                          : "bg-white border-slate-200 text-slate-500 hover:border-slate-300"
-                      }`}
-                    >
-                      <span className="block text-xs font-black uppercase tracking-widest mb-0.5 opacity-70">
-                        {cat === "Incident" ? "Something broke" : "Need something new"}
-                      </span>
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  required
+                  className="input-field"
+                  placeholder="e.g. Helpdesk Portal, CRM System, Payroll App"
+                  value={appName}
+                  onChange={(e) => setAppName(e.target.value)}
+                />
               </div>
 
-              {/* Software Name + Affected System */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
-                    Affected Software / App
-                  </label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="e.g. Microsoft Teams, Chrome, SAP"
-                    value={softwareName}
-                    onChange={(e) => setSoftwareName(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
-                    Operating System / Platform
-                  </label>
-                  <select
-                    value={affectedSystem}
-                    onChange={(e) => setAffectedSystem(e.target.value)}
-                    className="input-field"
-                  >
-                    <option value="">Select platform…</option>
-                    <option value="Windows 11">Windows 11</option>
-                    <option value="Windows 10">Windows 10</option>
-                    <option value="macOS">macOS</option>
-                    <option value="Web Browser">Web Browser</option>
-                    <option value="Mobile (iOS)">Mobile (iOS)</option>
-                    <option value="Mobile (Android)">Mobile (Android)</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Error Message */}
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
-                  Error Message <span className="text-slate-300 normal-case font-medium">(if any — copy & paste the exact text)</span>
+                  Steps to Reproduce <span className="text-slate-300 normal-case font-medium">(what did you do before it broke?)</span>
+                </label>
+                <textarea
+                  rows={4}
+                  className="input-field resize-none !py-3"
+                  placeholder={"1. Logged in\n2. Clicked on 'Submit Report'\n3. Page showed blank screen"}
+                  value={bugSteps}
+                  onChange={(e) => setBugSteps(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+                  Error Message <span className="text-slate-300 normal-case font-medium">(copy & paste the exact text if any)</span>
                 </label>
                 <textarea
                   rows={3}
                   className="input-field resize-none font-mono text-xs !py-3"
-                  placeholder={'e.g. "Something went wrong. Error code: 0x800704EC"'}
+                  placeholder={'e.g. "Unhandled error: cannot read property of undefined"'}
                   value={errorMessage}
                   onChange={(e) => setErrorMessage(e.target.value)}
                 />

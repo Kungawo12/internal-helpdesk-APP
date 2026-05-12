@@ -57,7 +57,7 @@ model Ticket {
   id              String   @id @default(cuid())
   title           String
   description     String
-  type            String   // "IT" or "HR"
+  type            String   // "IT" | "HR" | "Software"
   status          String   @default("open") // open, in_progress, resolved, closed
   priority        String   @default("medium") // low, medium, high, urgent
   solution        String?

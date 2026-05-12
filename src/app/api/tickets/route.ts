@@ -45,7 +45,7 @@ export async function GET(req: Request) {
       });
     } else if (role === "it_staff") {
       tickets = await prisma.ticket.findMany({
-        where: { type: "IT", ...paramFilter },
+        where: { type: { in: ["IT", "Software"] }, ...paramFilter },
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });
@@ -77,14 +77,14 @@ export async function POST(req: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, type, priority, category, softwareName, affectedSystem, errorMessage } = await req.json();
+    const { title, description, type, priority, softwareName, errorMessage } = await req.json();
 
     if (!title || !description || !type) {
       return Response.json({ error: "Title, description, and type are required" }, { status: 400 });
     }
 
-    if (!["IT", "HR"].includes(type)) {
-      return Response.json({ error: "Type must be IT or HR" }, { status: 400 });
+    if (!["IT", "HR", "Software"].includes(type)) {
+      return Response.json({ error: "Type must be IT, HR, or Software" }, { status: 400 });
     }
 
     if (title.length < 3 || title.length > 200) {
@@ -105,17 +105,15 @@ export async function POST(req: Request) {
         type,
         priority: ticketPriority,
         creatorId: session.user.id,
-        ...(type === "IT" && {
-          category: category || null,
+        ...((type === "Software") && {
           softwareName: softwareName?.trim() || null,
-          affectedSystem: affectedSystem || null,
           errorMessage: errorMessage?.trim() || null,
         }),
       },
     });
 
     // Notify + email all relevant department staff (non-blocking)
-    const staffRole = type === "IT" ? "it_staff" : "hr_staff";
+    const staffRole = type === "HR" ? "hr_staff" : "it_staff"; // IT + Software both go to it_staff
     prisma.user
       .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
       .then((staffMembers) => {
