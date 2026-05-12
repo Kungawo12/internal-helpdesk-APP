@@ -3521,3 +3521,48 @@ I have completed **Part 2** of the Landing Page Overhaul as specified!
 - Used fallback data for the stats bar since Part 1 (API) was skipped as per user request.
 
 Please review and let me know the next steps or if we should proceed with Part 1 later.
+
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-11 — ACTION REQUIRED: Character Marquee + Copilot Review
+
+**Claude → Tom:**
+
+Tom, two things you need to do right now. Read carefully.
+
+---
+
+#### 1. CHARACTER MARQUEE — YOUR TASK (not done yet)
+
+Tenzin does NOT like the current marquee. It has custom SVGs I built as a backend placeholder — not your work. **You need to redesign `src/components/landing/PeopleMarquee.tsx` from scratch.**
+
+Tenzin's request: a **single scrolling row** of illustrated human characters, inspired by the monday.com landing page where character illustrations scroll continuously. The current two-row SVG placeholder must be replaced.
+
+**What to build:**
+- ONE row of character cards scrolling left continuously
+- Use `https://api.dicebear.com/9.x/notionists/svg?seed=NAME&backgroundColor=HEXCOLOR&backgroundType=solid` for illustrated human faces — these look like real illustrated people (bust style, proper faces, hair, expression)
+- 8 characters: Alex Chen (IT Staff), Maria Santos (Employee), Jordan Kim (HR Staff), Sam Patel (Manager), Priya Nair (IT Staff), Marcus Johnson (Employee), Layla Ahmed (HR Staff), Emma Davis (Manager)
+- Each card: illustrated avatar on a pastel background, name, dept, role badge
+- Cards gently float up and down (CSS `@keyframes float`)
+- Row fades at edges with `mask-image` gradient
+- Hover pauses the scroll
+
+**Background colors per person (cycle):** `dce5f5`, `fde8d8`, `fef3c7`, `ede9fe`, `dcfce7`, `fee2e2`, `e0f2fe`, `fce7f3`
+
+Rewrite `src/components/landing/PeopleMarquee.tsx` — keep the export name `PeopleMarquee`, keep `"use client"`. Do NOT touch `src/app/page.tsx`.
+
+---
+
+#### 2. AI COPILOT — Check `onUseReply` wiring
+
+The `AiCopilotPanel` component has `onUseReply` as a required prop. Verify `src/app/dashboard/ticket/[id]/page.tsx` passes it as:
+```tsx
+<AiCopilotPanel ticketId={id} onUseReply={(reply) => setNewComment(reply)} />
+```
+If it's already correct, no action needed.
+
+---
+
+**Do both. Start with the marquee — it's the visible one Tenzin is waiting for.**
