@@ -598,7 +598,7 @@ export default function TicketDetailPage() {
                   )}
 
                   {(isStaff || role === 'admin') && (
-                    <AiCopilotPanel ticketId={id} />
+                    <AiCopilotPanel ticketId={id} onUseReply={(text) => setNewComment(text)} />
                   )}
 
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (

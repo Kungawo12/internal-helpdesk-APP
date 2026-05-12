@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 interface Message {
   role: "user" | "assistant";
@@ -8,12 +9,13 @@ interface Message {
 }
 
 export default function AiChatWidget() {
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hello! I'm your Helpdesk Assistant. How can I help you today?" },
+    { role: "assistant", content: "Hi! I'm your IT & HR assistant. Ask me anything — I'll look it up in the Knowledge Base." },
   ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -24,13 +26,16 @@ export default function AiChatWidget() {
     if (open) scrollToBottom();
   }, [messages, open]);
 
+  // Only show this widget when role === 'employee'
+  if (session?.user?.role !== "employee") return null;
+
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || streaming) return;
 
     const userMessage = input.trim();
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setInput("");
-    setLoading(true);
+    setStreaming(true);
 
     try {
       const res = await fetch("/api/ai/chat", {
@@ -38,7 +43,7 @@ export default function AiChatWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: userMessage,
-          history: messages.slice(-6), // Send last 6 messages as history
+          history: messages.slice(-6),
         }),
       });
 
@@ -53,7 +58,7 @@ export default function AiChatWidget() {
         { role: "assistant", content: "Sorry, I'm having trouble connecting right now. Please try again." },
       ]);
     } finally {
-      setLoading(false);
+      setStreaming(false);
     }
   };
 
@@ -61,107 +66,70 @@ export default function AiChatWidget() {
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Window */}
       {open && (
-        <div className="absolute bottom-16 right-0 w-80 sm:w-96 h-[500px] bg-[#0f172a] text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-800 backdrop-blur-xl">
+        <div className="absolute bottom-20 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden transition-all" style={{ height: '480px' }}>
           {/* Header */}
-          <div className="px-6 py-4 bg-[#1e293b] flex items-center justify-between border-b border-slate-800">
+          <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-xl flex items-center justify-center text-lg">
-                🤖
+              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm font-bold">
+                AI
               </div>
               <div>
-                <h3 className="font-bold text-sm">Helpdesk AI</h3>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Online</span>
-                </div>
+                <p className="font-bold text-sm">Helpdesk Assistant</p>
+                <p className="text-xs text-white/70">Ask me anything</p>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="text-slate-400 hover:text-white transition-colors"
-            >
+            <button onClick={() => setOpen(false)} className="text-white/80 hover:text-white">
               ✕
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-                    msg.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-[#1e293b] text-slate-200"
-                  }`}
-                >
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === 'user'
+                    ? 'bg-blue-600 text-white rounded-br-sm'
+                    : 'bg-slate-100 text-slate-800 rounded-bl-sm'
+                }`}>
                   {msg.content}
                 </div>
               </div>
             ))}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-[#1e293b] text-slate-200 rounded-2xl px-4 py-2.5 text-sm flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" />
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]" />
-                </div>
-              </div>
-            )}
+            {streaming && <div className="text-sm text-slate-400 italic px-2">Typing...</div>}
             <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-slate-800 bg-[#0a0f1e]">
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder="Type a message..."
-                className="flex-1 bg-[#1e293b] text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-slate-700"
-              />
-              <button
-                onClick={handleSend}
-                disabled={loading || !input.trim()}
-                className="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                ➔
-              </button>
-            </div>
+          <div className="p-3 border-t border-slate-100 flex gap-2">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+              placeholder="Ask about IT, HR, passwords..."
+              className="flex-1 text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-400"
+            />
+            <button 
+              onClick={handleSend} 
+              disabled={streaming || !input.trim()} 
+              className="px-3 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold disabled:opacity-40"
+            >
+              Send
+            </button>
           </div>
         </div>
       )}
 
       {/* Toggle Button */}
-      {!open && (
-        <div className="flex items-center gap-3">
-          <div className="bg-white text-slate-800 text-xs font-black px-4 py-2.5 rounded-2xl shadow-xl border border-slate-100 whitespace-nowrap">
-            AI Assistant
-            <span className="ml-2 inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-          </div>
-          <button
-            onClick={() => setOpen(true)}
-            className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-2xl hover:bg-blue-700 transition-all hover:scale-105 active:scale-95"
-            aria-label="Open AI Chat"
-          >
-            🤖
-          </button>
-        </div>
-      )}
-      {open && (
-        <button
-          onClick={() => setOpen(false)}
-          className="w-14 h-14 bg-slate-800 text-white rounded-2xl flex items-center justify-center text-xl shadow-2xl hover:bg-slate-700 transition-all"
-          aria-label="Close AI Chat"
-        >
-          ✕
-        </button>
-      )}
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-all"
+        aria-label="Toggle AI Chat"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      </button>
     </div>
   );
 }
