@@ -204,12 +204,12 @@ function CreateTicketForm() {
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
           <Link
             href="/dashboard/create?type=IT"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🖥️</div>
             <div className="flex-1 text-left">
-              <h2 className="text-xl font-bold mb-1 dark:text-white">IT Support</h2>
-              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+              <h2 className="text-xl font-bold mb-1 ">IT Support</h2>
+              <p className="text-slate-600  font-medium text-sm">
                 Hardware, network, access issues, or system problems.
               </p>
             </div>
@@ -218,12 +218,12 @@ function CreateTicketForm() {
 
           <Link
             href="/dashboard/create?type=HR"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">👥</div>
             <div className="flex-1 text-left">
-              <h2 className="text-xl font-bold mb-1 dark:text-white">HR Support</h2>
-              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+              <h2 className="text-xl font-bold mb-1 ">HR Support</h2>
+              <p className="text-slate-600  font-medium text-sm">
                 Wages, holidays, policies, or general HR queries.
               </p>
             </div>
@@ -232,12 +232,12 @@ function CreateTicketForm() {
 
           <Link
             href="/dashboard/create?type=Software"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-purple-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-purple-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🐛</div>
             <div className="flex-1 text-left">
-              <h2 className="text-xl font-bold mb-1 dark:text-white">Software Bug</h2>
-              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+              <h2 className="text-xl font-bold mb-1 ">Software Bug</h2>
+              <p className="text-slate-600  font-medium text-sm">
                 Report a bug or unexpected behaviour in any application.
               </p>
             </div>
@@ -280,7 +280,7 @@ function CreateTicketForm() {
           {/* Title + Description */}
           <div className="card p-8 space-y-6">
             <div>
-              <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Issue Details</h2>
+              <h2 className="text-sm font-black text-slate-700  uppercase tracking-wider mb-1">Issue Details</h2>
               <p className="text-xs text-slate-400 font-medium">Provide the basic information about your request.</p>
             </div>
 
@@ -492,7 +492,7 @@ function CreateTicketForm() {
                   </button>
                 ))}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 ">
                 <p><strong>Low:</strong> minor inconvenience, can wait a few days</p>
                 <p><strong>Medium:</strong> affecting your work but workaround exists</p>
                 <p><strong>High:</strong> blocking your work right now</p>
@@ -544,6 +544,12 @@ function CreateTicketForm() {
                 HR queries are processed within 24–48 business hours.
               </p>
             )}
+          </div>
+
+          <div className="hidden lg:block bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-6">
+            <h3 className="font-bold text-slate-900 mb-2">Need immediate help?</h3>
+            <p className="text-sm text-slate-600 mb-6">If your issue is critical and blocking work, please call the IT helpline at ext. 4500.</p>
+            <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80" alt="Support" className="rounded-2xl" />
           </div>
         </div>
       </form>

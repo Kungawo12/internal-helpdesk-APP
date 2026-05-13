@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import AiChatWidget from "@/components/dashboard/AiChatWidget";
-import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface Notification {
   id: string;
@@ -127,7 +126,6 @@ export default function DashboardLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const role = session?.user?.role;
   const navItems = [
@@ -140,7 +138,7 @@ export default function DashboardLayout({
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc] dark:bg-[#0a0f1e] transition-colors duration-300">
+    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc]  transition-colors duration-300">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div 
@@ -151,13 +149,13 @@ export default function DashboardLayout({
       
       {/* Sidebar - Desktop */}
       <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
-        <div className="bg-white/90 dark:bg-slate-900/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-800/60 transition-colors duration-300">
+        <div className="bg-white/90  rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60  transition-colors duration-300">
           <div className="mb-14 px-2">
             <Link href="/dashboard" className="flex items-center gap-4 group">
               <div className="w-12 h-12 bg-[#0f172a] rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
                 H
               </div>
-              <span className="font-extrabold text-3xl tracking-tighter text-[#0f172a] dark:text-white transition-colors">Helpdesk</span>
+              <span className="font-extrabold text-3xl tracking-tighter text-[#0f172a]  transition-colors">Helpdesk</span>
             </Link>
           </div>
 
@@ -169,7 +167,7 @@ export default function DashboardLayout({
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
                     ? "bg-[#0f172a] text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-[#0f172a] dark:hover:text-white"
+                    : "text-[#475569]  hover:bg-white  hover:text-[#0f172a] "
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -181,13 +179,13 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800/60 dark:to-slate-700/60 rounded-3xl p-5 border border-white/50 dark:border-slate-700/50 shadow-inner">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50   rounded-3xl p-5 border border-white/50  shadow-inner">
               <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
-                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-white  text-blue-600  flex items-center justify-center font-black text-sm border border-blue-200  shadow-sm">
                   {session?.user?.name?.charAt(0)}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-black text-[#0f172a] dark:text-white truncate">{session?.user?.name}</span>
+                  <span className="text-sm font-black text-[#0f172a]  truncate">{session?.user?.name}</span>
                   <div className="flex items-center gap-2 mt-0.5">
                      <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
                      <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">
@@ -210,31 +208,17 @@ export default function DashboardLayout({
       {/* Main Content Area */}
       <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
         {/* Top bar — desktop only */}
-        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow hover:bg-slate-50 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? "🌙" : "☀️"}
-          </button>
+        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100  bg-white/60  sticky top-0 z-30 transition-colors">
           <NotificationBell />
         </div>
 
         {/* Mobile Header */}
-        <header className="lg:hidden h-20 bg-white/90 dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
+        <header className="lg:hidden h-20 bg-white/90  flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100  transition-colors">
            <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center font-bold text-white text-lg">H</div>
             <span className="font-extrabold text-xl text-[#0f172a]">Helpdesk</span>
           </Link>
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow hover:bg-slate-50 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? "🌙" : "☀️"}
-            </button>
             <NotificationBell />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

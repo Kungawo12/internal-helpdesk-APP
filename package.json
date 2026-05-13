@@ -12,7 +12,8 @@
     "bug-finder": "node --env-file=.env scripts/bug-finder.mjs",
     "bug-watch": "node --env-file=.env scripts/bug-watchdog.mjs",
     "ux-test": "node --env-file=.env scripts/ux-tester.mjs",
-    "ux-design-test": "node --env-file=.env scripts/ux-design-tester.mjs"
+    "ux-design-test": "node --env-file=.env scripts/ux-design-tester.mjs",
+    "seed-kb": "node --env-file=.env scripts/seed-kb.mjs"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

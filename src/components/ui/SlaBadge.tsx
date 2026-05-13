@@ -22,10 +22,10 @@ export default function SlaBadge({ ticket }: SlaBadgeProps) {
   const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
   
   const cls = breached
-    ? "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800"
+    ? "bg-red-50 text-red-700 border border-red-200   "
     : atRisk
-    ? "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800"
-    : "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800";
+    ? "bg-amber-50 text-amber-700 border border-amber-200   "
+    : "bg-emerald-50 text-emerald-700 border border-emerald-200   ";
     
   const title = breached
     ? "SLA Breached: this ticket is past its resolution deadline"

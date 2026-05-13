@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
           ],
         } : {}),
       },
-      select: { id: true, title: true, type: true, tags: true, views: true, published: true, createdAt: true, author: { select: { name: true } } },
+      select: { id: true, title: true, content: true, type: true, tags: true, views: true, published: true, createdAt: true, author: { select: { name: true } } },
       orderBy: { views: "desc" },
     });
 
