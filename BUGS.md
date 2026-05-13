@@ -379,3 +379,594 @@
 **Fix:** Complete the `handleSubmit` function by implementing the ticket creation logic and ensure that appropriate error handling and user feedback are included.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 12-13 |
+
+**Description:** The fetchNotifications function does not handle errors when the fetch request fails. If the API endpoint is down or returns an error, the application will not inform the user or handle the state appropriately, which could lead to a poor user experience.
+
+**Fix:** Add error handling to the fetchNotifications function to catch any errors during the fetch and update the state or notify the user accordingly.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 45-46 |
+
+**Description:** The application directly uses user input (ticket IDs) in the API endpoint without any validation or sanitization. This could lead to security vulnerabilities such as SQL injection or unauthorized access if the API is not properly secured.
+
+**Fix:** Implement input validation and sanitization for the ticket IDs before using them in the API calls. Additionally, ensure that the API has proper authentication and authorization checks in place.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Incomplete function definition
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 1-40 (incomplete function) |
+
+**Description:** The `handlePostComment` function is incomplete and ends abruptly, which will lead to a syntax error when the code is executed. This will prevent the component from functioning properly, especially the comment posting feature.
+
+**Fix:** Complete the `handlePostComment` function by ensuring it properly handles the final logic, including setting `isPostingComment` to false and any necessary cleanup or state updates.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/api/public/stats/route.ts`
+
+### 1. 🟠 Missing error handling for database operations
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/public/stats/route.ts` |
+| **Line** | 12-22 |
+
+**Description:** The code does not handle potential errors that may arise from database operations, such as connection issues or query failures. If any of the `prisma` calls fail, the catch block will execute, but it will not provide any information about the error, making debugging difficult.
+
+**Fix:** Implement specific error handling for each database operation to log or return meaningful error messages, which can help in diagnosing issues when they occur.
+
+---
+### 2. 🟡 Potential incorrect calculation of average resolution time
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/api/public/stats/route.ts` |
+| **Line** | 17-20 |
+
+**Description:** The calculation of average resolution time assumes that `updatedAt` is equivalent to `resolvedAt`, which may not always be true. If the `updatedAt` field is updated for reasons other than resolution, the average resolution time could be skewed.
+
+**Fix:** Consider adding a separate field for resolution time or ensure that the logic accurately reflects the resolution process, possibly by checking for a specific status change or event.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/api/tickets/route.ts`
+
+### 1. 🟠 Authorization Bypass for Ticket Access
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/tickets/route.ts` |
+| **Line** | 19-52 |
+
+**Description:** The current implementation allows users with the role "it_staff" or "hr_staff" to access tickets based on type without verifying if they should have access to specific tickets. This could lead to unauthorized access to sensitive ticket information that should be restricted to certain users or departments.
+
+**Fix:** Implement additional checks to ensure that users can only access tickets they are authorized to view, potentially by checking against department or team membership or by adding more granular access control rules.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:54 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🔴 Incomplete ticket creation logic
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 1-1 |
+
+**Description:** The `handleSubmit` function is incomplete and does not include the logic for creating a ticket after the fetch call. This can lead to the form not functioning as intended, resulting in user frustration and potential data loss.
+
+**Fix:** Complete the `handleSubmit` function by adding the logic to handle the response from the ticket creation API and any subsequent actions, such as redirecting the user or displaying success/error messages.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:55 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential Null Reference on Session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 27 |
+
+**Description:** The code accesses `session.user.role` without checking if `session` or `session.user` is null or undefined. If the session is not available, this will throw a runtime error, potentially breaking the application for users who are not authenticated.
+
+**Fix:** Add a check to ensure `session` and `session.user` are defined before accessing `role`. For example, use optional chaining: `const role = session?.user?.role || "guest";`.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:55 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🟠 Incomplete JSX rendering
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 1-50 |
+
+**Description:** The JSX rendering is incomplete, as the return statement is cut off, which will lead to a syntax error when the component is rendered. This can cause the entire page to fail to load, resulting in a poor user experience.
+
+**Fix:** Ensure that the return statement is completed with the necessary JSX elements, including any closing tags and additional content that should be rendered.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:55 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🔴 Incomplete function implementation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 109-110 |
+
+**Description:** The `handlePostComment` function is incomplete and ends abruptly without closing the function. This will lead to a syntax error and prevent the component from rendering properly. The application will crash when trying to execute this function.
+
+**Fix:** Complete the `handlePostComment` function by ensuring it has a proper closing brace and any necessary logic to reset the state after posting a comment.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:55 UTC
+> **Triggered by change in:** `src/components/landing/PeopleMarquee.tsx`
+
+### 1. 🟠 Incomplete JSX in Detail Card
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/landing/PeopleMarquee.tsx` |
+| **Line** | 60-61 |
+
+**Description:** The JSX for the Detail Card (Back) is incomplete, which will lead to a syntax error during compilation. This will prevent the component from rendering correctly, resulting in a broken UI.
+
+**Fix:** Complete the JSX structure for the Detail Card by ensuring all elements are properly closed and the component returns a valid JSX structure.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 12 May 2026, 14:55 UTC
+> **Triggered by change in:** `src/components/tickets/AiCopilotPanel.tsx`
+
+### 1. 🟠 Improper role check logic
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/tickets/AiCopilotPanel.tsx` |
+| **Line** | 15 |
+
+**Description:** The role check logic incorrectly evaluates the condition for user roles. The current condition checks if the role is not equal to "it_staff", "hr_staff", and "admin" separately, which will always return true for any role that is not "admin". This means that users with "it_staff" or "hr_staff" roles will not be able to access the component.
+
+**Fix:** Change the condition to use logical OR (`||`) correctly by checking if the role is equal to any of the allowed roles: `if (role !== "it_staff" && role !== "hr_staff" && role !== "admin")`. Alternatively, use an array to check if the role is included in the allowed roles.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:03 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 10-11 |
+
+**Description:** The fetch call to "/api/notifications" does not include any authentication or authorization checks, which could allow unauthorized users to access notification data. This could lead to sensitive information exposure if the notifications contain private user data.
+
+**Fix:** Ensure that the API endpoint checks for user authentication and authorization before returning notification data. Use server-side session validation to restrict access.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:03 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 10-11 |
+
+**Description:** The `fetchNotifications` function makes a call to the `/api/notifications` endpoint without any authentication or authorization checks. This could allow unauthorized users to access notification data, leading to potential data leaks or exposure of sensitive information.
+
+**Fix:** Ensure that the API endpoint is secured by implementing authentication checks on the server-side and returning appropriate error responses for unauthorized access.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:04 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential null reference on session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 32 |
+
+**Description:** The code accesses `session.user.role` without checking if `session` or `session.user` is null or undefined. If the session is not available, this will lead to a runtime error and crash the component.
+
+**Fix:** Add a null check for `session` and `session.user` before accessing `role`, or provide a fallback value to prevent the error.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:04 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential null reference for session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 26 |
+
+**Description:** The code assumes that `session` will always be defined when accessing `session.user.role`. If the session is null or undefined, this will lead to a runtime error. This can happen if the user is not authenticated or if there is an issue with the session retrieval.
+
+**Fix:** Add a check to ensure `session` is defined before accessing `session.user.role`. You can use optional chaining (e.g., `session?.user?.role`) or a conditional statement to handle the case when the session is not available.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:05 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🟠 Incomplete code causing potential runtime error
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 1-40 |
+
+**Description:** The code snippet is incomplete, cutting off in the middle of the JSX return statement. This can lead to a runtime error when the component is rendered, as it does not return valid JSX. The incomplete code can cause the application to crash or behave unexpectedly.
+
+**Fix:** Ensure that the entire component is properly defined and that the return statement is complete, including all necessary JSX elements and closing tags.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:05 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🟠 Insecure API Call
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 46-48 |
+
+**Description:** The `handleBulkClose` function makes a PATCH request to the API without any authentication or authorization checks. This could allow unauthorized users to close tickets, leading to potential data integrity issues and abuse of the system.
+
+**Fix:** Implement authentication and authorization checks on the server-side API endpoint to ensure that only authorized users can perform actions like closing tickets.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:06 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API endpoint usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 49-50 |
+
+**Description:** The application directly uses the `fetch` API to call an endpoint for resolving tickets without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data integrity issues and abuse of the system.
+
+**Fix:** Implement authentication and authorization checks on the API endpoints to ensure that only authorized users can perform actions like resolving tickets. Additionally, consider using a library for handling API requests that includes these security measures.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:07 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Incomplete function definition
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 107-108 |
+
+**Description:** The `handlePostComment` function is incomplete and does not properly handle the case when the response is not okay. This can lead to unhandled errors and a poor user experience when posting comments fails.
+
+**Fix:** Complete the `handlePostComment` function by adding error handling for the case when `res.ok` is false, and ensure to reset the `isPostingComment` state in the `finally` block.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:07 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 53-54, 78-79, 92-93 |
+
+**Description:** The fetch requests for attachments, comments, and audit logs do not handle errors properly. If the fetch fails (e.g., network issues, server errors), the application will not inform the user or take any corrective action, leading to a poor user experience.
+
+**Fix:** Implement error handling for each fetch request by updating the state to reflect the error and displaying an appropriate message to the user.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:08 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Incomplete API request handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 1-60 |
+
+**Description:** The `handlePostComment` function is incomplete, which means that if a user attempts to post a comment, the request will not be sent, and the application will not handle the response or any potential errors. This can lead to a poor user experience and confusion, as users may think their comment was submitted when it was not.
+
+**Fix:** Complete the `handlePostComment` function by adding the necessary logic to handle the API request and response, including error handling and updating the state accordingly.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:10 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🔴 Incomplete ticket creation logic
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 83-85 |
+
+**Description:** The `handleSubmit` function is incomplete and does not include the logic to handle the ticket creation process fully. This can lead to the application failing silently without creating a ticket when the form is submitted.
+
+**Fix:** Complete the `handleSubmit` function by ensuring that the ticket creation logic is fully implemented, including handling the response and potential errors from the API call.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:11 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Incomplete error handling in file upload
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 83-84 |
+
+**Description:** The `addFiles` function does not handle errors that may occur during the file reading process. If the FileReader encounters an error, the user will not be notified, which can lead to confusion about whether the file was uploaded successfully or not.
+
+**Fix:** Implement error handling in the FileReader's `onerror` event to set an error state that can be displayed to the user.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:12 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Missing error handling for article fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 51-52 |
+
+**Description:** The `fetchArticleDetail` function does not handle the case where the fetch request fails (i.e., `res.ok` is false). If the fetch fails, `selectedArticle` will remain null, and the user will not receive any feedback about the error, potentially leading to confusion.
+
+**Fix:** Add error handling logic to notify the user or log the error when the fetch fails, similar to how it's done in the `fetchArticles` function.
+
+---
+### 2. 🟡 Potential for infinite loop in useEffect
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 36-37 |
+
+**Description:** The `useEffect` that fetches articles does not include `page` in its dependency array. If `page` is updated elsewhere in the component, the articles will not be fetched again, potentially leading to stale data being displayed.
+
+**Fix:** Include `page` in the dependency array of the `useEffect` that calls `fetchArticles` to ensure articles are fetched whenever the page changes.
+
+---
+### 3. 🟡 Incorrect type handling for filterType
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 10 |
+
+**Description:** The `filterType` state is initialized as a string with the value "All", but it is later used in a conditional check against specific string literals ("IT", "HR", "general"). This could lead to unexpected behavior if the filterType is set to an unsupported value.
+
+**Fix:** Change the type of `filterType` to a union type that includes "All" along with the other types, or handle the unsupported value case explicitly in the logic.
+
+---
+### 4. 🟢 Missing key prop in mapped elements
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 75 |
+
+**Description:** When mapping over `selectedArticle.tags`, the key prop is set to `tag`, which may not be unique if tags can have the same name. This can lead to rendering issues and performance problems in React.
+
+**Fix:** Use a unique identifier for the key prop, such as the index of the tag in the array or a combination of the tag name and its index.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:13 UTC
+> **Triggered by change in:** `src/app/page.tsx`
+
+### 1. 🟠 Incomplete CSS class name
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/page.tsx` |
+| **Line** | 82 |
+
+**Description:** The CSS class name for the button in the navbar is incomplete, ending with 'dark:bord' which likely should be 'dark:border'. This will cause a runtime error as the class name is not valid, leading to potential layout issues or styling not being applied correctly.
+
+**Fix:** Complete the class name by changing 'dark:bord' to 'dark:border' to ensure the button styles are applied correctly.
+
+---
+### 2. 🟡 Missing error handling for fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/page.tsx` |
+| **Line** | 50-54 |
+
+**Description:** The fetch call to the API does not handle cases where the response is not successful (e.g., 404 or 500 errors). This could lead to the application using stale fallback data without informing the user of the issue.
+
+**Fix:** Add a check for the response status before calling `r.json()`, and handle errors appropriately, possibly by updating the UI to inform the user that the data could not be fetched.
+
+---
+### 3. 🟡 Potential memory leak with setInterval
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/page.tsx` |
+| **Line** | 66-69 |
+
+**Description:** The `setInterval` function is set up to change the active card every 3 seconds, but if the component unmounts before the interval is cleared, it could lead to a memory leak or unexpected behavior.
+
+**Fix:** Ensure that the interval is cleared in the cleanup function of the `useEffect` to prevent any potential memory leaks.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:15 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential Null Reference on Session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 28 |
+
+**Description:** The code accesses `session.user.role` without checking if `session` or `session.user` is null or undefined. If the user is not authenticated, this could lead to a runtime error when trying to access `role`, causing the application to crash.
+
+**Fix:** Add a null check for `session` and `session.user` before accessing `role`, or provide a fallback value to ensure the application does not crash.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:16 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential Null Reference on Session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 26 |
+
+**Description:** The code accesses `session.user.role` without checking if `session` or `session.user` is null or undefined. If the user is not authenticated, this will lead to a runtime error, causing the application to crash.
+
+**Fix:** Add a null check for `session` and `session.user` before accessing `role`, or provide a fallback value to prevent the application from crashing.
+
+---

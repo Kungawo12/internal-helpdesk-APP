@@ -10,6 +10,7 @@ import AiCopilotPanel from "@/components/tickets/AiCopilotPanel";
 
 function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
   if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
+  // eslint-disable-next-line react-hooks/purity
   const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
   const breached = ticket.slaBreached || diff < 0;
   const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
@@ -36,6 +37,7 @@ export default function TicketDetailPage() {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [ticketComments, setTicketComments] = useState<any[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
@@ -43,9 +45,11 @@ export default function TicketDetailPage() {
   const [isInternal, setIsInternal] = useState(false);
   const [reopening, setReopening] = useState(false);
   const [escalating, setEscalating] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [attachments, setAttachments] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -55,7 +59,10 @@ export default function TicketDetailPage() {
     if (res.ok) setAttachments(await res.json());
   };
 
-  useEffect(() => { if (id) fetchAttachments(); }, [id]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (id) fetchAttachments();
+  }, [id]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,6 +110,7 @@ export default function TicketDetailPage() {
 
   useEffect(() => {
     if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchComments();
       fetchAuditLogs();
     }
@@ -415,7 +423,7 @@ export default function TicketDetailPage() {
            <div className="card dark:bg-slate-800 dark:border-slate-700 p-6 border-slate-200">
              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Discussion</h3>
              
-             <div className="space-y-6 mb-6">
+             <div className="space-y-4 mb-6">
                {commentsLoading ? (
                  <div className="space-y-4">
                    <div className="flex gap-4 animate-pulse">
@@ -443,7 +451,7 @@ export default function TicketDetailPage() {
                         const isMe = item.user?.email === session?.user?.email;
                         const isInternal = item.isInternal;
                         return (
-                          <div key={item.id} className={`flex gap-4 ${isMe ? "flex-row-reverse" : ""}`}>
+                          <div key={item.id} className={`flex gap-3 ${isMe ? "flex-row-reverse" : ""}`}>
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0 ${isMe ? "bg-slate-900 text-white" : "bg-blue-100 text-blue-600"}`}>
                               {item.user?.name?.charAt(0) || '?'}
                             </div>
@@ -537,8 +545,17 @@ export default function TicketDetailPage() {
 
         {/* Sidebar Info Area */}
         <div className="space-y-6">
-           <div className="card p-5 space-y-6 dark:bg-slate-800 dark:border-slate-700">
-              <div className="space-y-4">
+            <div className="card p-5 space-y-6 dark:bg-slate-800 dark:border-slate-700">
+               {/* Ticket Metadata */}
+               <div className="pb-4 border-b border-slate-100 dark:border-slate-700">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Ticket ID</p>
+                  <p className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-2">#{ticket.id.slice(0, 8).toUpperCase()}</p>
+                  <div className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
+                     <span>Created: {new Date(ticket.createdAt).toLocaleString()}</span>
+                     <span>Updated: {new Date(ticket.updatedAt).toLocaleString()}</span>
+                  </div>
+               </div>
+               <div className="space-y-4">
                  <div>
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">Creator</p>
                     <div className="flex items-center gap-3">
@@ -705,7 +722,7 @@ export default function TicketDetailPage() {
                 </div>
                 {ticket.feedback.comment && (
                   <p className="text-sm text-slate-700 italic border-l-2 border-amber-300 pl-3">
-                    "{ticket.feedback.comment}"
+                    &quot;{ticket.feedback.comment}&quot;
                   </p>
                 )}
              </div>

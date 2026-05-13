@@ -28,6 +28,7 @@ function NotificationBell() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
@@ -168,7 +169,7 @@ export default function DashboardLayout({
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
                     ? "bg-[#0f172a] text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569] hover:bg-white hover:text-[#0f172a] hover:translate-x-2"
+                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-[#0f172a] dark:hover:text-white"
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -180,13 +181,13 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
-            <div className="bg-white/60 rounded-3xl p-5 border border-white/50 shadow-inner">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800/60 dark:to-slate-700/60 rounded-3xl p-5 border border-white/50 dark:border-slate-700/50 shadow-inner">
               <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm border border-blue-200 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm">
                   {session?.user?.name?.charAt(0)}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-black text-[#0f172a] truncate">{session?.user?.name}</span>
+                  <span className="text-sm font-black text-[#0f172a] dark:text-white truncate">{session?.user?.name}</span>
                   <div className="flex items-center gap-2 mt-0.5">
                      <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
                      <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">

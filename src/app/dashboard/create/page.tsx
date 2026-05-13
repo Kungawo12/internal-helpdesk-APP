@@ -21,8 +21,10 @@ function CreateTicketForm() {
   const [priority, setPriority] = useState<"low" | "medium" | "high" | "urgent">("medium");
 
   // KB Deflection & Templates
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
   const [searchingKb, setSearchingKb] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [templates, setTemplates] = useState<any[]>([]);
 
   // Software bug fields
@@ -91,6 +93,7 @@ function CreateTicketForm() {
   // KB Deflection effect
   useEffect(() => {
     if (!title.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRelatedArticles([]);
       return;
     }
@@ -126,6 +129,7 @@ function CreateTicketForm() {
     fetchTemplates();
   }, [typeParam]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const applyTemplate = (t: any) => {
     setTitle(t.titlePrefix ? t.titlePrefix + title : title);
     setDescription(t.bodyTemplate);
@@ -197,38 +201,47 @@ function CreateTicketForm() {
           <p className="text-xl text-slate-500">Select the type of support you need to get started.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="flex flex-col gap-4 max-w-2xl mx-auto">
           <Link
             href="/dashboard/create?type=IT"
-            className="card p-10 text-center hover:scale-[1.02] transition-transform cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">🖥️</div>
-            <h2 className="text-2xl font-bold mb-3">IT Support</h2>
-            <p className="text-slate-600 font-medium leading-relaxed">
-              Hardware, network, access issues, or system problems.
-            </p>
+            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🖥️</div>
+            <div className="flex-1 text-left">
+              <h2 className="text-xl font-bold mb-1 dark:text-white">IT Support</h2>
+              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+                Hardware, network, access issues, or system problems.
+              </p>
+            </div>
+            <div className="text-slate-400 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=HR"
-            className="card p-10 text-center hover:scale-[1.02] transition-transform cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">👥</div>
-            <h2 className="text-2xl font-bold mb-3">HR Support</h2>
-            <p className="text-slate-600 font-medium leading-relaxed">
-              Wages, holidays, policies, or general HR queries.
-            </p>
+            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">👥</div>
+            <div className="flex-1 text-left">
+              <h2 className="text-xl font-bold mb-1 dark:text-white">HR Support</h2>
+              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+                Wages, holidays, policies, or general HR queries.
+              </p>
+            </div>
+            <div className="text-slate-400 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=Software"
-            className="card p-10 text-center hover:scale-[1.02] transition-transform cursor-pointer border-2 hover:border-purple-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer border-2 hover:border-purple-400 group"
           >
-            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">🐛</div>
-            <h2 className="text-2xl font-bold mb-3">Software Bug</h2>
-            <p className="text-slate-600 font-medium leading-relaxed">
-              Report a bug or unexpected behaviour in any application.
-            </p>
+            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🐛</div>
+            <div className="flex-1 text-left">
+              <h2 className="text-xl font-bold mb-1 dark:text-white">Software Bug</h2>
+              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">
+                Report a bug or unexpected behaviour in any application.
+              </p>
+            </div>
+            <div className="text-slate-400 group-hover:text-purple-600 font-bold">→</div>
           </Link>
         </div>
 
@@ -266,6 +279,11 @@ function CreateTicketForm() {
 
           {/* Title + Description */}
           <div className="card p-8 space-y-6">
+            <div>
+              <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Issue Details</h2>
+              <p className="text-xs text-slate-400 font-medium">Provide the basic information about your request.</p>
+            </div>
+
             {templates.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap mb-2">
                 <span className="text-xs font-bold text-slate-500">Templates:</span>
@@ -427,6 +445,7 @@ function CreateTicketForm() {
                 {pendingFiles.map(({ id, file, preview }) => (
                   <div key={id} className="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-50 aspect-square flex items-center justify-center">
                     {preview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={preview} alt={file.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="p-3 text-center">

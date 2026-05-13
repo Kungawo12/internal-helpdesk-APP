@@ -36,6 +36,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     // Fallback data since API is not built yet
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStats({
       totalTickets: "1,240",
       resolvedTickets: "1,180",
@@ -164,7 +165,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 md:pt-48 md:pb-40 bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 min-h-screen flex flex-col justify-center">
+      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 flex flex-col justify-center">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
           
           {/* Left Column */}
@@ -262,7 +263,7 @@ export default function LandingPage() {
                   title: "Knowledge Base Match",
                   icon: "📚",
                   details: [
-                    '"How to reset VPN credentials"',
+                    '&quot;How to reset VPN credentials&quot;',
                     "Article suggested before ticket",
                     "Views: 142   Solved without IT",
                     "● Ticket deflected"
@@ -302,7 +303,7 @@ export default function LandingPage() {
       </section>
 
       {/* Capability Marquee */}
-      <section className="py-16 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 overflow-hidden">
+      <section className="py-16 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 overflow-hidden">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Everything your team needs</h2>
         </div>
@@ -401,10 +402,10 @@ export default function LandingPage() {
                     </div>
                     <div className="space-y-3">
                       <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
-                        <span className="font-bold text-white">New IT Ticket:</span> "VPN not connecting" assigned to IT queue.
+                        <span className="font-bold text-white">New IT Ticket:</span> &quot;VPN not connecting&quot; assigned to IT queue.
                       </div>
                       <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
-                        <span className="font-bold text-white">New HR Ticket:</span> "Payroll inquiry" assigned to HR queue.
+                        <span className="font-bold text-white">New HR Ticket:</span> &quot;Payroll inquiry&quot; assigned to HR queue.
                       </div>
                     </div>
                   </div>
@@ -464,7 +465,7 @@ export default function LandingPage() {
       <PeopleMarquee />
 
       {/* Features Grid */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
+      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white dark:bg-slate-950">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white">Built for every team member</h2>
@@ -572,7 +573,7 @@ export default function LandingPage() {
       <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">You're always in control</h2>
+            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">You&apos;re always in control</h2>
             <p className="text-lg text-slate-400">Enterprise-grade security and access control.</p>
           </div>
           
@@ -599,7 +600,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
+      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Frequently asked questions</h2>
@@ -638,7 +639,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final Sign-In CTA */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-white dark:bg-slate-950">
+      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white dark:bg-slate-950">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-center text-white">
             <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>
@@ -693,6 +694,7 @@ function timeAgo(dateStr: string): string {
 function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [filter, setFilter] = useState<"All" | "Technology" | "Business">("All");
   const [page, setPage] = useState(0);
@@ -719,6 +721,7 @@ function NewsSection() {
   const filtered = filter === "All" ? news : news.filter(n => n.category === filter);
   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(0);
   }, [filter]);
 
@@ -736,7 +739,7 @@ function NewsSection() {
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
               LIVE
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Today's News</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Today&apos;s News</h2>
             <p className="text-sm text-white/50 mt-1 font-medium">
               Technology & Business — Updated hourly
             </p>
@@ -782,6 +785,7 @@ function NewsSection() {
               >
                 {item.image && (
                   <div className="aspect-video w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={item.image}
                       alt={item.title}

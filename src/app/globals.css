@@ -63,6 +63,13 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
   }
 
+  .dark .card {
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(12px);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
   .btn-primary {
     background: #0f172a;
     color: #ffffff;
@@ -114,6 +121,17 @@
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .dark .input-field {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .dark .input-field:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
 /* Auth page background orb animation */
 @keyframes pulse-glow-anim {
@@ -168,6 +186,12 @@
   .badge-amber { background: #fffbeb; color: #d97706; }
   .badge-red { background: #fef2f2; color: #dc2626; }
   .badge-slate { background: #f8fafc; color: #475569; }
+
+  .dark .badge-blue { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.1); }
+  .dark .badge-green { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.1); }
+  .dark .badge-amber { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.1); }
+  .dark .badge-red { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.1); }
+  .dark .badge-slate { background: rgba(71, 85, 105, 0.2); color: #94a3b8; border: 1px solid rgba(71, 85, 105, 0.1); }
 }
 
 /* Navbar */
