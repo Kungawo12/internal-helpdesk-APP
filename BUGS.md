@@ -970,3 +970,297 @@
 **Fix:** Add a null check for `session` and `session.user` before accessing `role`, or provide a fallback value to prevent the application from crashing.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:27 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Incomplete function definition
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 83 |
+
+**Description:** The function `handleStatusChange` is defined but not fully implemented, leading to potential runtime errors if this function is called. This can cause the application to crash or behave unexpectedly when attempting to change the status of a ticket.
+
+**Fix:** Complete the implementation of the `handleStatusChange` function to ensure it handles status changes correctly, or remove the function if it is not needed.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:27 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential Null Reference on Session
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 10-11 |
+
+**Description:** The code accesses `session.user.role` and `session.user.name` without checking if `session` or `session.user` is null or undefined. If the session is not available, this will lead to a runtime error, causing the application to crash.
+
+**Fix:** Add a null check for `session` and `session.user` before accessing their properties, or provide a fallback value to prevent the application from crashing.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:27 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 30-31 |
+
+**Description:** The application uses the `fetch` API to send requests to the `/api/tickets/${id}/resolve` endpoint without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data integrity issues and unauthorized access to sensitive information.
+
+**Fix:** Implement authentication and authorization checks on the API endpoint to ensure that only authorized users can perform actions like resolving tickets.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:27 UTC
+> **Triggered by change in:** `src/app/api/tickets/[id]/comments/route.ts`
+
+### 1. 🟠 Potential CSRF vulnerability in comment posting
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/tickets/[id]/comments/route.ts` |
+| **Line** | 58-59 |
+
+**Description:** The POST endpoint for adding comments does not include any CSRF protection mechanisms. This could allow an attacker to trick an authenticated user into making unwanted requests to this endpoint, potentially posting comments without the user's consent. This is especially concerning for actions that can be performed by users with elevated privileges, such as staff or admins.
+
+**Fix:** Implement CSRF protection by including a CSRF token in the request headers and validating it on the server side before processing the request.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:28 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🔴 Incomplete handleSubmit function
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 83-84 |
+
+**Description:** The handleSubmit function is incomplete and does not include any logic for processing the form submission, such as validating inputs, sending data to an API, or handling responses. This could lead to the form being submitted without any action taken, resulting in a poor user experience.
+
+**Fix:** Complete the handleSubmit function by adding logic to validate the form data, send it to the appropriate API endpoint, and handle the response or any errors that may occur.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:28 UTC
+> **Triggered by change in:** `src/app/api/tickets/[id]/assign/route.ts`
+
+### 1. 🟠 Authorization bypass via role check
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/tickets/[id]/assign/route.ts` |
+| **Line** | 13-17 |
+
+**Description:** The current role check only verifies if the user is an "admin". This allows any user with the "admin" role to assign tickets, potentially bypassing more granular permission checks. If the "admin" role is too broad or misconfigured, unauthorized users could exploit this to assign tickets inappropriately.
+
+**Fix:** Implement a more granular permission check that verifies if the user has specific permissions to assign tickets, possibly by checking against a list of allowed actions for the user's role.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:28 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Potential session data access issue
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 10-11 |
+
+**Description:** The code accesses `session?.user?.role` without checking if `session` is defined. If the session is null or undefined (e.g., user is not authenticated), this could lead to unexpected behavior or errors when trying to access `role`.
+
+**Fix:** Add a check to ensure `session` is defined before accessing `session.user.role`, or provide a fallback value.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:28 UTC
+> **Triggered by change in:** `src/app/api/cron/sla-check/route.ts`
+
+### 1. 🟠 Missing error handling for email sending
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/cron/sla-check/route.ts` |
+| **Line** | 83-84 |
+
+**Description:** The `sendSlaBreachEmail` function does not handle errors when sending emails. If an error occurs during the email sending process, it will be silently ignored, which can lead to undetected failures in notifying managers about SLA breaches.
+
+**Fix:** Implement error handling within the `sendSlaBreachEmail` function to log or handle errors appropriately, ensuring that any issues with sending emails are reported or retried.
+
+---
+### 2. 🟡 Potential exposure of sensitive information in logs
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/api/cron/sla-check/route.ts` |
+| **Line** | 60-61 |
+
+**Description:** The `logAudit` function is called with sensitive information such as ticket IDs and actions. If the audit logs are not properly secured, this could lead to exposure of sensitive information to unauthorized users.
+
+**Fix:** Ensure that the audit logs are secured and access-controlled, and consider redacting sensitive information before logging, if necessary.
+
+---
+### 3. 🟡 Inefficient database queries for already notified tickets
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/api/cron/sla-check/route.ts` |
+| **Line** | 54-55 |
+
+**Description:** The code checks for already notified tickets by querying the database for each at-risk ticket individually. This can lead to performance issues due to multiple database calls, especially if there are many at-risk tickets.
+
+**Fix:** Optimize the query by fetching all relevant audit logs in a single query before the loop, and then checking against that list to determine if notifications should be sent.
+
+---
+### 4. 🟡 Lack of validation for CRON_SECRET
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/api/cron/sla-check/route.ts` |
+| **Line** | 7-8 |
+
+**Description:** The code checks for the presence of the `CRON_SECRET` in the request headers but does not validate if the environment variable is set. If `CRON_SECRET` is undefined, the authorization check will always fail, potentially leading to confusion during debugging.
+
+**Fix:** Add a validation step to ensure that `process.env.CRON_SECRET` is defined before performing the authorization check, and log an error if it is not set.
+
+---
+### 5. 🟠 Potential race condition in updating tickets
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/api/cron/sla-check/route.ts` |
+| **Line** | 30-31 |
+
+**Description:** The code updates the `slaBreached` status for tickets that have breached SLA resolution time without ensuring that no other process is updating the same tickets concurrently. This could lead to inconsistent states if multiple instances of this function run simultaneously.
+
+**Fix:** Implement a locking mechanism or use database transactions to ensure that updates to the same tickets are handled safely and consistently.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:31 UTC
+> **Triggered by change in:** `src/components/tickets/AiCopilotPanel.tsx`
+
+### 1. 🟠 Improper role check logic
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/tickets/AiCopilotPanel.tsx` |
+| **Line** | 15 |
+
+**Description:** The role check logic incorrectly evaluates the user's role. The condition `role !== "it_staff" && role !== "hr_staff" && role !== "admin"` will return true if the role is any value other than the specified ones, including falsy values like `undefined`. This could lead to unauthorized users being able to access the AI Copilot functionality.
+
+**Fix:** Change the condition to check if the role is one of the allowed roles using an array or a set, e.g., `if (!["it_staff", "hr_staff", "admin"].includes(role)) return null;`.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 13 May 2026, 14:32 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch failures
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 36-38 |
+
+**Description:** The fetchArticles function does not handle the case where the fetch request fails (i.e., when res.ok is false). This could lead to the articles state being set to an empty array without any user feedback, making it difficult to diagnose issues with data retrieval.
+
+**Fix:** Add an error handling mechanism to provide feedback to the user when the fetch fails, such as setting an error state and displaying an error message in the UI.
+
+---
+### 2. 🟠 Potential null reference on selectedArticle type
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 97 |
+
+**Description:** The code assumes that selectedArticle will always have a type property when rendering the component. If selectedArticle is null or undefined, this will lead to a runtime error when trying to access selectedArticle.type.
+
+**Fix:** Add a conditional check to ensure selectedArticle is not null before accessing its properties, or provide a fallback value.
+
+---
+### 3. 🟡 Uncontrolled component for search query
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 20 |
+
+**Description:** The search query is not being controlled properly as there is no input field for the user to modify it. This could lead to confusion as the user may not know how to change the search query, and it may not reflect in the UI.
+
+**Fix:** Implement an input field for the search query and bind its value to the searchQuery state to ensure it is controlled.
+
+---
+### 4. 🟡 Missing dependency in useEffect for articleId
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 56 |
+
+**Description:** The useEffect that fetches article details based on the articleId does not include articleId as a dependency. This means that if the articleId changes, the effect will not re-run, potentially leading to stale data being displayed.
+
+**Fix:** Add articleId to the dependency array of the useEffect to ensure it re-runs whenever articleId changes.
+
+---
+### 5. 🟡 Inconsistent handling of filterType
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 30 |
+
+**Description:** The filterType state is initialized to "All", but the fetchArticles function does not handle the case where "All" is selected. This could lead to confusion as it may not fetch any articles when "All" is selected.
+
+**Fix:** Modify the fetchArticles function to handle the "All" case appropriately, ensuring that all articles are fetched when this filter is selected.
+
+---

@@ -492,6 +492,12 @@ function CreateTicketForm() {
                   </button>
                 ))}
               </div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <p><strong>Low:</strong> minor inconvenience, can wait a few days</p>
+                <p><strong>Medium:</strong> affecting your work but workaround exists</p>
+                <p><strong>High:</strong> blocking your work right now</p>
+                <p><strong>Urgent:</strong> critical system failure or data loss risk</p>
+              </div>
             </div>
 
             {error && (

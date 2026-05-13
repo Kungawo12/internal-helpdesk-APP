@@ -124,6 +124,35 @@ export default function ManagerDashboard() {
         </div>
       </div>
 
+      {/* Health at a Glance Banner */}
+      {(() => {
+        const slaBreachedCount = tickets.filter(t => t.slaBreached).length;
+        const openTicketsCount = stats.open;
+        
+        if (slaBreachedCount > 0) {
+          return (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-5 mb-6">
+              <h3 className="font-bold text-red-800 dark:text-red-300 mb-1">🔴 Critical: SLA Breaches Detected</h3>
+              <p className="text-sm text-red-700 dark:text-red-400">{slaBreachedCount} tickets have breached their SLA. Please assign or escalate immediately.</p>
+            </div>
+          );
+        } else if (openTicketsCount > 20) {
+          return (
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-5 mb-6">
+              <h3 className="font-bold text-amber-800 dark:text-amber-300 mb-1">🟠 Warning: High Ticket Volume</h3>
+              <p className="text-sm text-amber-700 dark:text-amber-400">There are {openTicketsCount} open tickets. Consider assigning more staff.</p>
+            </div>
+          );
+        } else {
+          return (
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-5 mb-6">
+              <h3 className="font-bold text-emerald-800 dark:text-emerald-300 mb-1">🟢 All Clear: Systems Normal</h3>
+              <p className="text-sm text-emerald-700 dark:text-emerald-400">SLA compliance is 100% and volume is manageable.</p>
+            </div>
+          );
+        }
+      })()}
+
       {/* Massive KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         <div className="card p-8 bg-black text-white">

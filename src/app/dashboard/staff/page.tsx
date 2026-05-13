@@ -4,23 +4,9 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { timeAgo } from "@/lib/utils";
+import SlaBadge from "@/components/ui/SlaBadge";
 
-function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
-  if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
-  // eslint-disable-next-line react-hooks/purity
-  const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
-  const breached = ticket.slaBreached || diff < 0;
-  const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
-  const cls = breached
-    ? "bg-red-50 text-red-700 border border-red-200"
-    : atRisk
-    ? "bg-amber-50 text-amber-700 border border-amber-200"
-    : "bg-emerald-50 text-emerald-700 border border-emerald-200";
-  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>;
-}
+
 
 export default function StaffQueuePage() {
   const router = useRouter();
@@ -167,16 +153,19 @@ export default function StaffQueuePage() {
 
         <div className="space-y-6">
           {activeTickets.length === 0 ? (
-            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 shadow-none">
-              <h3 className="text-2xl font-bold mb-2">All caught up!</h3>
-              <p className="text-[#6e6e73]">No open tickets in your queue.</p>
+            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 dark:border-white/10 shadow-none">
+              <div className="text-6xl mb-4 opacity-30">🎉</div>
+              <h3 className="text-2xl font-bold mb-2 dark:text-white">All caught up!</h3>
+              <p className="text-[#6e6e73] dark:text-slate-400">No open tickets in your queue.</p>
             </div>
           ) : (
             activeTickets.map((ticket) => (
               <div key={ticket.id} className={`card p-6 group hover:bg-[#fafafa] dark:hover:bg-slate-700/50 dark:bg-slate-800 dark:border-slate-700 relative border-l-4 ${
-                ticket.priority === 'urgent' ? 'border-l-red-500 border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] animate-pulse-glow' :
-                ticket.priority === 'high' ? 'border-l-orange-400' :
-                ticket.priority === 'medium' ? 'border-l-blue-400' : 'border-l-slate-300'
+                ticket.type === 'IT' ? 'border-l-blue-500' :
+                ticket.type === 'HR' ? 'border-l-amber-500' :
+                ticket.type === 'Software' ? 'border-l-purple-500' : 'border-l-slate-300'
+              } ${
+                ticket.priority === 'urgent' ? 'border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]' : ''
               }`}>
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                   <div className="space-y-4 flex-1">
@@ -193,7 +182,11 @@ export default function StaffQueuePage() {
                         }}
                         className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="badge badge-slate dark:bg-slate-700 dark:text-slate-300 !px-3 !py-1">{ticket.type}</span>
+                      <span className={`badge !px-3 !py-1 ${
+                        ticket.type === 'IT' ? 'badge-blue' :
+                        ticket.type === 'HR' ? 'badge-amber' :
+                        ticket.type === 'Software' ? 'badge-purple' : 'badge-slate dark:bg-slate-700 dark:text-slate-300'
+                      }`}>{ticket.type}</span>
                       <span className={`badge !px-3 !py-1 ${ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate dark:bg-slate-700 dark:text-slate-300'}`}>
                         {ticket.status.replace("_", " ")}
                       </span>

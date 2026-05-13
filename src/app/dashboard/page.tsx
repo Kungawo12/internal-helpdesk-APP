@@ -1,27 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useTickets } from "@/hooks/useTickets";
+import SlaBadge from "@/components/ui/SlaBadge";
 
-function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
-  if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
-  // eslint-disable-next-line react-hooks/purity
-  const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
-  const breached = ticket.slaBreached || diff < 0;
-  const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
-  const cls = breached
-    ? "bg-red-50 text-red-700 border border-red-200"
-    : atRisk
-    ? "bg-amber-50 text-amber-700 border border-amber-200"
-    : "bg-emerald-50 text-emerald-700 border border-emerald-200";
-  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>;
-}
+
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,6 +16,14 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const { tickets: allTickets, loading, error } = useTickets();
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem("dismissedOnboardingBanner");
+    if (!dismissed && role === "employee") {
+      setShowBanner(true);
+    }
+  }, [role]);
 
   const stats = useMemo(() => ({
     total: allTickets.length,
@@ -72,6 +66,23 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-12 max-w-[1400px] mx-auto pb-32">
+      {showBanner && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-5 relative">
+          <button 
+            onClick={() => {
+              localStorage.setItem("dismissedOnboardingBanner", "true");
+              setShowBanner(false);
+            }}
+            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          >
+            ✕
+          </button>
+          <h3 className="font-bold text-blue-800 dark:text-blue-300 mb-2">👋 Welcome to Helpdesk!</h3>
+          <p className="text-sm text-blue-700 dark:text-blue-400 mb-1">Need IT help? → Click <strong>IT Ticket</strong> above</p>
+          <p className="text-sm text-blue-700 dark:text-blue-400 mb-1">Have a question? → Go to <strong>Knowledge Base</strong></p>
+          <p className="text-sm text-blue-700 dark:text-blue-400">Track your requests → Scroll down</p>
+        </div>
+      )}
       {/* Cinematic Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 animate-fade-in">
         <div>

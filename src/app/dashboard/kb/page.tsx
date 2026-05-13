@@ -183,8 +183,10 @@ function KbPortal() {
               ))}
             </div>
           ) : visible.length === 0 ? (
-            <div className="text-center py-20 text-slate-400 dark:text-white/40 font-medium">
-              No articles found. Try a different search.
+            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 dark:border-white/10 shadow-none w-full">
+              <div className="text-6xl mb-4 opacity-30">📚</div>
+              <h3 className="text-2xl font-bold mb-2 dark:text-white">No articles found</h3>
+              <p className="text-[#6e6e73] dark:text-slate-400">Try a different search or browse categories.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

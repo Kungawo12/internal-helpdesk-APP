@@ -44,7 +44,7 @@ export default function AiCopilotPanel({ ticketId, onUseReply }: AiCopilotPanelP
 
       {!copilotData && !copilotLoading && (
         <button onClick={runCopilot} className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
-          ✦ Analyse ticket
+          ✦ Get AI Summary & Draft Reply
         </button>
       )}
 
@@ -63,10 +63,15 @@ export default function AiCopilotPanel({ ticketId, onUseReply }: AiCopilotPanelP
         <div className="space-y-4">
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase mb-1.5">Summary</p>
-            <p className="text-sm text-slate-700 leading-relaxed">{copilotData.summary}</p>
+            <div className="bg-white rounded-xl p-3 border border-blue-100 text-sm text-slate-700 leading-relaxed">
+              {copilotData.summary}
+            </div>
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase mb-1.5">Suggested Reply</p>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs font-bold text-slate-500 uppercase">Suggested Reply</p>
+              <span className="text-[10px] text-slate-400 font-semibold uppercase">AI-generated — review before sending</span>
+            </div>
             <div className="bg-white rounded-xl p-3 border border-blue-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
               {copilotData.suggestedReply}
             </div>

@@ -7,23 +7,9 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
 import AiCopilotPanel from "@/components/tickets/AiCopilotPanel";
+import SlaBadge from "@/components/ui/SlaBadge";
 
-function SlaBadge({ ticket }: { ticket: { slaResolutionDue: string | null; slaBreached: boolean; status: string } }) {
-  if (ticket.status === "resolved" || !ticket.slaResolutionDue) return null;
-  // eslint-disable-next-line react-hooks/purity
-  const diff = new Date(ticket.slaResolutionDue).getTime() - Date.now();
-  const breached = ticket.slaBreached || diff < 0;
-  const atRisk = !breached && diff < 60 * 60 * 1000; // < 1 hour
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const label = breached ? "Breached" : hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`;
-  const cls = breached
-    ? "bg-red-50 text-red-700 border border-red-200"
-    : atRisk
-    ? "bg-amber-50 text-amber-700 border border-amber-200"
-    : "bg-emerald-50 text-emerald-700 border border-emerald-200";
-  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>;
-}
+
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -620,7 +606,10 @@ export default function TicketDetailPage() {
 
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (
                    <div className="pt-4 border-t border-slate-100">
-                     <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
+                     <div className="flex items-center gap-1 mb-2">
+                       <p className="text-xs font-semibold text-slate-500 uppercase">SLA</p>
+                       <span className="text-xs text-slate-400 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
+                     </div>
                      <SlaBadge ticket={ticket} />
                      <p className="text-xs text-slate-400 mt-1">
                        Due: {new Date(ticket.slaResolutionDue).toLocaleString()}
@@ -629,7 +618,10 @@ export default function TicketDetailPage() {
                  )}
                  {ticket.status === "resolved" && (
                     <div className="pt-4 border-t border-slate-100">
-                      <p className="text-xs font-semibold text-slate-500 uppercase mb-2">SLA</p>
+                      <div className="flex items-center gap-1 mb-2">
+                        <p className="text-xs font-semibold text-slate-500 uppercase">SLA</p>
+                        <span className="text-xs text-slate-400 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
+                      </div>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.slaBreached ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
                         {ticket.slaBreached ? "⚠ Resolved after breach" : "✓ Resolved within SLA"}
                       </span>

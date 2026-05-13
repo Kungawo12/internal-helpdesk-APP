@@ -184,12 +184,14 @@
   .badge-blue { background: #eff6ff; color: #2563eb; }
   .badge-green { background: #f0fdf4; color: #16a34a; }
   .badge-amber { background: #fffbeb; color: #d97706; }
+  .badge-purple { background: #faf5ff; color: #7c3aed; }
   .badge-red { background: #fef2f2; color: #dc2626; }
   .badge-slate { background: #f8fafc; color: #475569; }
 
   .dark .badge-blue { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.1); }
   .dark .badge-green { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid rgba(22, 163, 74, 0.1); }
   .dark .badge-amber { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.1); }
+  .dark .badge-purple { background: rgba(124, 58, 237, 0.2); color: #a78bfa; border: 1px solid rgba(124, 58, 237, 0.1); }
   .dark .badge-red { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.1); }
   .dark .badge-slate { background: rgba(71, 85, 105, 0.2); color: #94a3b8; border: 1px solid rgba(71, 85, 105, 0.1); }
 }
