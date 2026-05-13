@@ -3797,3 +3797,104 @@ Current hovers that hurt UX:
 
 Build must pass after each file you update. Report back when done.
 
+
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-13 — UX REPORT ACTION ITEMS (From GPT-4o Customer Audit)
+
+**Claude → Tom:**
+
+We ran a full GPT-4o customer audit with 4 real user personas. Average score: **6.5/10**. Full report is in `UX_REPORT.md`. Here is exactly what you need to build. These are direct requests from simulated users.
+
+---
+
+### 🔴 CRITICAL — Fix These First
+
+#### 1. SLA Badge Tooltip (`src/components/SlaBadge` or wherever the badge renders)
+Every user was confused by SLA badges. Add a `title` tooltip on the badge element explaining what it means:
+- Breached badge → `title="SLA Breached: this ticket is past its resolution deadline"`
+- At Risk badge → `title="SLA At Risk: resolution deadline is within 1 hour"`
+- On Time badge → `title="On Track: within SLA deadline"`
+
+Also add a small `?` icon next to any SLA section heading that shows a popover with: "SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time."
+
+#### 2. Priority Helper on Create Ticket (`src/app/dashboard/create/page.tsx`)
+Sarah (new employee) didn't know what priority to pick. Under the priority dropdown/selector, add helper text:
+- **Low** — minor inconvenience, can wait a few days
+- **Medium** — affecting your work but you have a workaround
+- **High** — blocking your work right now
+- **Urgent** — critical system failure or data loss risk
+
+Show this as small grey `text-xs` text under the priority field, or as a tooltip on each option.
+
+---
+
+### 🟠 HIGH PRIORITY
+
+#### 3. Onboarding Banner for New Employees (`src/app/dashboard/page.tsx`)
+First-time users don't know where to start. Add a dismissable welcome banner at the top of the employee dashboard:
+
+```
+┌────────────────────────────────────────────────────────┐
+│ 👋 Welcome to Helpdesk!                          [✕]   │
+│ Need IT help? → New Ticket                             │
+│ Have a question? → Knowledge Base                      │
+│ Track your requests → scroll down                      │
+└────────────────────────────────────────────────────────┘
+```
+
+- Only show if role === "employee"
+- Store dismissal in `localStorage` so it doesn't reappear
+- Style: `bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-5`
+
+#### 4. Manager "Health at a Glance" (`src/app/dashboard/manager/page.tsx`)
+David (manager) couldn't see if things were OK or not in under 5 seconds. Add a single status banner at the very top of the manager page, before the stats:
+
+- If `slaBreached > 0`: red banner → "⚠️ {n} tickets have breached SLA — immediate attention required"
+- If `openTickets > 20`: amber banner → "📋 High ticket volume — {n} open tickets"
+- If everything is fine: green banner → "✅ All systems healthy — SLA compliance on track"
+
+Style: full-width rounded banner. One line. Big and obvious.
+
+#### 5. HR vs IT Visual Separation (`src/app/dashboard/staff/page.tsx`)
+Priya (HR) was worried about accidentally seeing IT tickets. Add a coloured left-border + badge to clearly distinguish:
+- IT tickets: blue left border + `IT` badge in blue
+- HR tickets: amber left border + `HR` badge in amber  
+- Software tickets: purple left border + `Software` badge in purple
+
+This should be visible immediately without opening the ticket.
+
+---
+
+### 🟡 DESIGN
+
+#### 6. Empty States — All Pages
+Replace plain italic text with proper empty states. Each needs: icon + heading + subtext + optional CTA button.
+
+Example for ticket list empty state:
+```
+        [🎫]
+   No tickets yet
+   You haven't raised any support tickets.
+   [+ New Ticket]
+```
+
+Apply to: dashboard ticket list, staff queue, KB articles, admin users table.
+
+#### 7. AI Copilot — Make it feel more useful (`src/components/tickets/AiCopilotPanel.tsx`)
+James (IT staff) said the AI Copilot felt "generic and gimmicky". Changes:
+- Change button label from "Analyse ticket" to "✦ Get AI Summary & Draft Reply"
+- After results show, display the summary in a `bg-slate-50 dark:bg-slate-800 rounded-xl p-4` card with a subtle left border in blue
+- Add a confidence label under the suggested reply: `text-xs text-slate-400 "AI-generated — review before sending"`
+- If the ticket has `softwareName` or `errorMessage`, show a small tag: `"Based on: {softwareName}"`
+
+---
+
+### DO NOT TOUCH
+- Any API files, lib files, middleware, schema
+- `COMMS.md`, `BUGS.md`, `UX_REPORT.md`
+
+Build must pass. Let me know when done.
+
