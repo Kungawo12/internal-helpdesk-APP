@@ -10,7 +10,8 @@
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts",
     "bug-finder": "node --env-file=.env scripts/bug-finder.mjs",
-    "bug-watch": "node --env-file=.env scripts/bug-watchdog.mjs"
+    "bug-watch": "node --env-file=.env scripts/bug-watchdog.mjs",
+    "ux-test": "node --env-file=.env scripts/ux-tester.mjs"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
