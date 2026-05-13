@@ -3898,3 +3898,202 @@ James (IT staff) said the AI Copilot felt "generic and gimmicky". Changes:
 
 Build must pass. Let me know when done.
 
+
+---
+
+## Backend → Frontend
+
+### 2026-05-13 — DESIGN OVERHAUL: Light Mode Only + Images + Visual Polish
+
+**Claude → Tom:**
+
+This is a major design brief. Two sources: the GPT-4o design audit (`UX_DESIGN_REPORT.md`) + Tenzin's direct instruction. Read both sections carefully.
+
+---
+
+### PART 1 — REMOVE DARK MODE ENTIRELY (PRIORITY 1)
+
+**Decision: Light mode only. No dark mode toggle. Remove all dark: classes.**
+
+Tenzin has decided to drop dark mode. The audit showed dark mode is broken across most pages anyway. A clean, polished light mode is worth more than a broken dark mode.
+
+**What to do:**
+
+1. **Remove the ThemeProvider / theme toggle** from the layout and landing page navbar — delete the toggle button entirely.
+
+2. **Remove ALL `dark:` Tailwind classes** from every file. Do a project-wide find-and-replace: any class prefixed with `dark:` should be deleted.
+   - Files to sweep: all `.tsx` files in `src/app/` and `src/components/`
+   - Also remove from `src/app/globals.css`: delete all `.dark .card`, `.dark .input-field`, `.dark .badge-*`, `.dark body` blocks
+
+3. **Remove `@custom-variant dark` from globals.css** (line 4)
+
+4. **Set permanent light background** — in `src/app/layout.tsx` ensure no dark class is ever applied to `<html>` or `<body>`.
+
+5. **Delete `src/components/providers/ThemeProvider.tsx`** — no longer needed.
+
+**Test:** After the sweep, every page should look identical in a browser regardless of system preference.
+
+---
+
+### PART 2 — LIGHT MODE VISUAL POLISH (from GPT-4o design audit)
+
+Apply these specific improvements across all pages. Reference `UX_DESIGN_REPORT.md` for detail.
+
+#### 1. Colour Palette — Unify It
+The audit found inconsistent use of `#0a0f1e`, `#000000`, `#0f172a` as "dark" colours. Pick one and stick with it:
+- **Primary brand colour (buttons, accents):** `#0f172a`
+- **Page backgrounds:** `#f8fafc` (very light grey — not pure white, gives depth)
+- **Card backgrounds:** `#ffffff` with `border border-slate-100 shadow-sm`
+- **Body text:** `#374151` (not `#666666` — too light, fails contrast)
+- **Muted text:** `#6b7280`
+- Apply this palette consistently across: dashboard, staff queue, ticket detail, manager page, KB, admin
+
+#### 2. Typography — Fix the Hierarchy
+- Body text size: minimum `text-sm` (14px). For readability-critical content (ticket descriptions, KB articles, comments): `text-base` (16px)
+- Replace `text-[#666666]` everywhere with `text-slate-500` or `text-slate-600`
+- Heading line-height: change global `line-height: 1` to `line-height: 1.1` in `globals.css`
+
+#### 3. Buttons — Make Hover States Obvious
+Current hover is too subtle. Update in `globals.css`:
+```css
+.btn-primary:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #64748b;
+  transform: translateY(-1px);
+}
+```
+
+#### 4. Cards — Add Depth
+Update `.card` in `globals.css`:
+```css
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+```
+
+#### 5. Staff Queue — Left Border Fix
+The type-coloured left border (IT=blue, HR=amber, Software=purple) is great. Keep it. But make the card body slightly tinted to match:
+- IT tickets: card `bg-blue-50/30`
+- HR tickets: card `bg-amber-50/30`
+- Software tickets: card `bg-purple-50/30`
+- Urgent tickets: add `ring-1 ring-red-200` on top of the type colour
+
+#### 6. Input Fields — Fix Contrast
+Update `.input-field` in `globals.css`:
+```css
+.input-field {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #111827;
+  font-size: 14px;
+}
+.input-field:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+```
+
+---
+
+### PART 3 — ADD IMAGES TO KEY PAGES (PRIORITY 2)
+
+Tenzin wants relevant, high-quality images added to these pages. Use **Unsplash source URLs** (free, no API key needed):
+
+Format: `https://source.unsplash.com/[width]x[height]/?[keyword]`
+
+#### Landing Page (`src/app/page.tsx`)
+- **Hero section**: Add a full-width hero image behind or alongside the headline. Suggested: a clean modern office/tech workspace. Use as a background with overlay:
+  ```tsx
+  <div className="absolute inset-0 bg-cover bg-center opacity-10 rounded-3xl"
+       style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"}} />
+  ```
+  (That URL is a real Unsplash photo of a modern office — `photo-1497366216548-37526070297c`)
+
+- **Stats/features section**: Add a split-layout image alongside the stats. Use:
+  `https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80` (team collaboration photo)
+
+- **"How it works" / CTA section**: Add a screenshot mockup or a person using a laptop:
+  `https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80` (person at laptop)
+
+#### Knowledge Base (`src/app/dashboard/kb/page.tsx`)
+- Add a hero image behind the search bar. Use a library/books theme:
+  ```tsx
+  <div className="absolute inset-0 bg-cover bg-center opacity-5"
+       style={{backgroundImage: "url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1600&q=80')"}} />
+  ```
+
+- For article category cards (IT / HR / General), add small category icons using inline SVG or emojis with coloured icon containers:
+  - IT: 💻 with `bg-blue-100 text-blue-600`
+  - HR: 👥 with `bg-amber-100 text-amber-600`
+  - General: 📖 with `bg-emerald-100 text-emerald-600`
+
+#### Employee Dashboard (`src/app/dashboard/page.tsx`)
+- Add a subtle decorative illustration to the empty state (when no tickets). Use:
+  ```tsx
+  <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&q=80"
+       alt="All clear" className="w-32 h-32 object-cover rounded-2xl mx-auto mb-4 opacity-60" />
+  ```
+
+- Add user avatar in the welcome header. Use DiceBear for the logged-in user's avatar (already used in PeopleMarquee):
+  ```tsx
+  <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${session?.user?.name}`}
+       className="w-12 h-12 rounded-full bg-slate-100" />
+  ```
+
+#### Create Ticket (`src/app/dashboard/create/page.tsx`)
+- For each ticket type card (IT / HR / Software), add a relevant illustration:
+  - IT card: `https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80` (circuit board / tech)
+  - HR card: `https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&q=80` (people / meeting)
+  - Software card: `https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&q=80` (code / screen)
+  
+  Use as small `60x60` rounded images in the top-left of each type card, or as background gradients.
+
+#### Manager Dashboard (`src/app/dashboard/manager/page.tsx`)
+- Add a professional headshot placeholder in the header greeting area. Use DiceBear:
+  ```tsx
+  <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${session?.user?.name}`}
+       className="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200" />
+  ```
+
+---
+
+### PART 4 — SPECIFIC PAGE FIXES
+
+#### Login / Register pages
+- These are dark by design (glassmorphism). Keep the dark background but ensure text contrast:
+  - Replace `text-white/50` with `text-white/80`
+  - Replace `text-white/60` with `text-white/75`
+  - The form card on login (`bg-[#131c2e]`) is fine — this page intentionally stays dark
+
+#### Staff Queue (`src/app/dashboard/staff/page.tsx`)
+- The filter tabs row: wrap in `bg-white rounded-2xl p-2 border border-slate-100 shadow-sm` for a pill-tab look
+- Add ticket count badge next to each tab label: `(12)` in `text-xs text-slate-400`
+
+#### Ticket Detail (`src/app/dashboard/ticket/[id]/page.tsx`)
+- The sidebar (`SLA`, `Assignee`, `Creator` fields) needs more visual separation. Add `bg-slate-50 rounded-xl p-4` container around each group of sidebar fields.
+- The comments section: give each comment a slightly tinted background based on whether it's internal (`bg-amber-50 border-l-2 border-amber-300`) or public (`bg-white border border-slate-100`)
+
+---
+
+### DO NOT TOUCH
+- Any API files, lib files, middleware, schema, scripts
+- `COMMS.md`, `BUGS.md`, `UX_REPORT.md`, `UX_DESIGN_REPORT.md`
+
+Build must pass (`npm run build`). Let me know when done.
