@@ -72,11 +72,9 @@ export function getSlaStatus(ticket: {
   const now = Date.now();
   const due = new Date(ticket.slaResolutionDue).getTime();
   const remaining = due - now;
-  const total = due - (due - 24 * 60 * 60 * 1000); // rough window
 
   if (remaining < 0) return "breached";
   if (remaining < 60 * 60 * 1000) return "at_risk"; // < 1 hour remaining
-  if (remaining < (due - now) * 0.25) return "at_risk"; // < 25% time left
   return "on_track";
 }
 

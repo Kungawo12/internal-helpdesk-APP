@@ -31,6 +31,18 @@ export async function GET(req: NextRequest) {
 
   if (!ticket) return Response.json({ error: "Ticket not found" }, { status: 404 });
 
+  // Role-based ticket type access
+  const role = session.user.role;
+  const canAccess =
+    role === "admin" ||
+    role === "manager" ||
+    (role === "it_staff" && ["IT", "Software"].includes(ticket.type)) ||
+    (role === "hr_staff" && ticket.type === "HR");
+
+  if (!canAccess) {
+    return Response.json({ error: "Access denied for this ticket type" }, { status: 403 });
+  }
+
   const commentHistory = ticket.comments.length > 0
     ? ticket.comments.map((c) => `${c.user.name}: ${c.content}`).join("\n")
     : "No comments yet.";

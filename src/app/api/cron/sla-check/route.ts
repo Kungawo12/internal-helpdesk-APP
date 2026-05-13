@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
-import { sendTicketCreatedEmail } from "@/lib/email";
+import { notify } from "@/lib/notify";
 
 // Vercel Cron — runs every 5 minutes (configured in vercel.json)
 // Protected by CRON_SECRET header
@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
       status: { notIn: ["resolved"] },
       slaFirstResponseDue: { lt: now },
       slaFirstResponseMet: false,
+      slaBreached: false,
     },
     select: { id: true },
   });
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Find tickets approaching breach (within 1 hour) — send at-risk warning once
+  // Find tickets approaching breach (within 1 hour) — send at-risk warning once per ticket
   const atRisk = await prisma.ticket.findMany({
     where: {
       status: { notIn: ["resolved"] },
@@ -85,9 +86,33 @@ export async function GET(req: NextRequest) {
       id: true,
       title: true,
       priority: true,
-      assignee: { select: { name: true, email: true } },
+      slaResolutionDue: true,
+      assigneeId: true,
+      assignee: { select: { id: true, name: true, email: true } },
     },
   });
+
+  // Notify each at-risk ticket exactly once by checking audit log for SLA_AT_RISK
+  for (const ticket of atRisk) {
+    const alreadyNotified = await prisma.auditLog.findFirst({
+      where: { ticketId: ticket.id, action: "SLA_AT_RISK" },
+    });
+    if (!alreadyNotified) {
+      logAudit(ticket.id, "system", "SLA_AT_RISK" as any, {
+        field: "slaResolutionDue",
+        newValue: ticket.slaResolutionDue?.toISOString(),
+      }).catch(() => {});
+
+      if (ticket.assignee?.id) {
+        notify(
+          ticket.assignee.id,
+          "TICKET_ESCALATED",
+          `⚠️ SLA at risk: "${ticket.title}" is due within 1 hour.`,
+          ticket.id
+        ).catch(() => {});
+      }
+    }
+  }
 
   return NextResponse.json({
     checked: new Date().toISOString(),

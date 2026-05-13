@@ -15,7 +15,27 @@ export async function GET(
     }
 
     const { id } = await params;
-    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(session.user.role);
+
+    const ticket = await prisma.ticket.findUnique({
+      where: { id },
+      select: { type: true, creatorId: true },
+    });
+    if (!ticket) {
+      return Response.json({ error: "Ticket not found" }, { status: 404 });
+    }
+
+    const { role, id: userId } = session.user;
+    const canAccess =
+      role === "admin" ||
+      (role === "it_staff" && ["IT", "Software"].includes(ticket.type)) ||
+      (role === "hr_staff" && ticket.type === "HR") ||
+      ticket.creatorId === userId;
+
+    if (!canAccess) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(role);
 
     const comments = await prisma.comment.findMany({
       where: {
@@ -53,7 +73,26 @@ export async function POST(
       return Response.json({ error: "Comment must be at least 2 characters" }, { status: 400 });
     }
 
-    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(session.user.role);
+    const ticketForPost = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: { type: true, creatorId: true },
+    });
+    if (!ticketForPost) {
+      return Response.json({ error: "Ticket not found" }, { status: 404 });
+    }
+
+    const postRole = session.user.role;
+    const canAccessPost =
+      postRole === "admin" ||
+      (postRole === "it_staff" && ["IT", "Software"].includes(ticketForPost.type)) ||
+      (postRole === "hr_staff" && ticketForPost.type === "HR") ||
+      ticketForPost.creatorId === session.user.id;
+
+    if (!canAccessPost) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(postRole);
     const internal = isStaffOrAbove && isInternal === true;
 
     // Fetch creator info for notification (only when staff posts a public reply)
