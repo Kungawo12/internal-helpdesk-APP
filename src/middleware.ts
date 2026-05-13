@@ -21,8 +21,12 @@ export async function middleware(req: NextRequest) {
   // Admin portal routes
   if (pathname.startsWith("/admin")) {
     if (pathname === "/admin/login" || pathname === "/admin/setup") return NextResponse.next();
+    // Accept NextAuth session with admin role (primary)
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (token?.role === "admin") return NextResponse.next();
+    // Fallback: legacy admin_token cookie
     if (await isValidAdminToken(req)) return NextResponse.next();
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });

@@ -3666,3 +3666,134 @@ Tenzin doesn't like the names showing on the character cards. Redesign `src/comp
 Do NOT touch: the flip detail card (back side), the section heading, the marquee animation, or any other file.
 
 Build must pass.
+
+---
+
+## Senior Engineer → Frontend
+
+### 2026-05-13 — FULL UI/UX OVERHAUL — Priority #1
+
+**Claude → Tom:**
+
+Tenzin presented the product and received feedback from an industry expert. The verdict:
+
+1. **Too much empty space** — pages feel sparse, unfinished
+2. **Dark mode breaks the entire design** — switching to dark mode kills the visual experience
+3. **Hover effects hurt UX** — current hover states are jarring or inconsistent
+4. **Customer visual experience must be the focus** — every interaction must feel premium
+
+This is your highest priority task. You own all UI/UX from this point forward. I (Claude/backend) will not touch frontend files.
+
+---
+
+### DARK MODE — Complete & Consistent
+
+Dark mode must look as good as light mode. It currently looks broken because:
+- White backgrounds disappear but content colours don't adapt
+- Some sections go fully black with no visual hierarchy
+- Cards lose all depth
+
+**Rules for dark mode across every page:**
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Page bg | `bg-[#f8fafc]` | `dark:bg-[#0a0f1e]` |
+| Card bg | `bg-white` | `dark:bg-slate-800/60` |
+| Card border | `border-slate-200` | `dark:border-slate-700/50` |
+| Primary text | `text-slate-900` | `dark:text-white` |
+| Secondary text | `text-slate-500` | `dark:text-slate-400` |
+| Input bg | `bg-white` | `dark:bg-slate-900` |
+| Input border | `border-slate-200` | `dark:border-slate-700` |
+| Sidebar | `bg-white/90` | `dark:bg-slate-900/90` |
+| Table rows | `hover:bg-slate-50` | `dark:hover:bg-slate-700/40` |
+
+Dark mode must work on: landing page, dashboard, ticket detail, staff queue, KB page, manager view, admin portal, create ticket, profile page.
+
+---
+
+### EMPTY SPACE — Fix Layout Density
+
+Pages feel empty. Fix:
+
+1. **Dashboard (`/dashboard/page.tsx`)**
+   - Stats row: add subtle coloured icon backgrounds (blue for IT, amber for HR, green for resolved)
+   - Ticket list: increase info density — show assignee avatar + SLA badge inline on each ticket row
+   - Add a "Quick Actions" card (New Ticket, View KB, etc.) for employees
+   - Fill the right side — add a "Recent Activity" mini-feed or KB article suggestions
+
+2. **Staff Queue (`/dashboard/staff/page.tsx`)**
+   - Replace generic filter dropdowns with a filter bar that shows active filters as pill tags
+   - Ticket cards need more visual weight — priority colour stripe on the left, SLA countdown badge
+
+3. **Ticket Detail (`/dashboard/ticket/[id]/page.tsx`)**
+   - Sidebar feels thin — add ticket metadata (created date, last updated, ticket ID in large mono font)
+   - The comment thread has too much vertical space between messages — tighten spacing
+
+4. **Create Ticket (`/dashboard/create/page.tsx`)**
+   - The 3-option selection screen (IT / HR / Software Bug) needs visual treatment — large cards with illustration/icon, not just text buttons
+   - Form fields: group them visually with subtle section backgrounds
+
+5. **Knowledge Base (`/dashboard/kb/page.tsx`)**
+   - Article cards: show a preview snippet (first 120 chars of content), view count with eye icon, and type badge
+   - Search bar: make it larger and centre it as the hero element
+
+6. **Landing page (`/app/page.tsx`)**
+   - Capability Marquee section: pill gap too large, cards too far apart — tighten
+   - Features section cards: add a subtle gradient background per role colour
+   - FAQ section: add a subtle pattern or gradient bg instead of plain white
+
+---
+
+### HOVER EFFECTS — Fix or Remove Bad Ones
+
+Current hovers that hurt UX:
+
+1. **Nav items** (`dashboard/layout.tsx`): `hover:translate-x-2` makes the nav jump sideways — replace with a subtle bg highlight only, no translate
+2. **Landing page feature cards**: `hover:shadow-lg hover:border-blue-100` is fine, but combine with a very subtle `hover:-translate-y-1` (1px only) for a lift feel
+3. **Ticket list rows**: `hover:bg-slate-50` is too faint in light mode — use `hover:bg-blue-50/40` instead
+4. **Buttons**: all `btn-primary` and `btn-secondary` need a consistent hover — add `hover:brightness-110` or a slightly lighter bg, NO translate on buttons
+5. **PeopleMarquee cards**: the `+` flip button hover is fine — keep it
+
+**Hover principle:** Hover should tell the user "this is clickable" with colour/shadow changes. Never translate/move elements more than 2px. No jarring size changes.
+
+---
+
+### VISUAL POLISH — Specific Fixes
+
+1. **All cards**: add `backdrop-blur-sm` and a very subtle `shadow-sm` — makes them feel premium
+2. **Status badges**: standardise across all pages:
+   - `open` → blue pill
+   - `in_progress` → amber pill
+   - `resolved` → green pill
+   - `closed` → slate pill
+   - `urgent` → red pill with pulsing dot
+3. **Priority indicators**: use left-border accent (4px) on ticket cards consistently
+4. **Empty states**: every empty state needs an icon, a heading, and a subtext — not just a plain text string
+5. **Loading states**: use skeleton cards (animated shimmer) instead of spinners where possible
+6. **Sidebar profile area** (`dashboard/layout.tsx`): make the user card slightly more prominent — maybe a gradient bg
+
+---
+
+### FILES TO UPDATE (in order of priority)
+
+1. `src/app/dashboard/layout.tsx` — hover fix on nav, sidebar profile card
+2. `src/app/dashboard/page.tsx` — density, quick actions, right column fill
+3. `src/app/dashboard/staff/page.tsx` — filter pills, ticket card density
+4. `src/app/dashboard/ticket/[id]/page.tsx` — sidebar metadata, comment spacing
+5. `src/app/dashboard/create/page.tsx` — type selection cards, form grouping
+6. `src/app/dashboard/kb/page.tsx` — article card previews, search hero
+7. `src/app/page.tsx` — landing page spacing, section backgrounds
+8. `src/app/globals.css` — ensure dark mode base styles are complete
+9. All pages: consistent dark mode as per table above
+
+---
+
+### DO NOT TOUCH
+- Any file in `src/app/api/`
+- `src/lib/` files
+- `src/middleware.ts`
+- `prisma/schema.prisma`
+- `COMMS.md`, `BUGS.md`
+
+Build must pass after each file you update. Report back when done.
+
