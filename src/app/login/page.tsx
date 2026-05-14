@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import KarmaStaffLogo from "@/components/ui/KarmaStaffLogo";
 
 export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false);
@@ -136,13 +137,11 @@ export default function LoginPage() {
           }}
         >
           {/* Logo */}
-          <div className="w-16 h-16 bg-orange-500/20 border border-orange-400/30 rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-[0_0_40px_rgba(249,115,22,0.2)]">
-            H
-          </div>
+          <KarmaStaffLogo size={72} />
+          <h1 className="text-2xl font-black mt-6 mb-1 tracking-tight">Welcome to Karma Staff</h1>
 
           {isRegister ? (
             <>
-              <h2 className="text-3xl font-black mb-3 tracking-tight">Welcome Back!</h2>
               <p className="text-white/50 text-sm mb-8 font-medium leading-relaxed">
                 Already have an account?<br />Sign in to continue.
               </p>
@@ -155,7 +154,6 @@ export default function LoginPage() {
             </>
           ) : (
             <>
-              <h2 className="text-3xl font-black mb-3 tracking-tight">Hello, Friend!</h2>
               <p className="text-white/50 text-sm mb-8 font-medium leading-relaxed">
                 New here? Create an account<br />and get started today.
               </p>
@@ -202,10 +200,10 @@ function FormInner({
 
       <div className="mb-7" style={fieldAnim(0, active)}>
         <h2 className="text-3xl font-extrabold text-white mb-1.5">
-          {isRegister ? "Create Account" : "Welcome Back"}
+          {isRegister ? "Create Account" : "Sign In"}
         </h2>
         <p className="text-white/50 text-sm font-medium">
-          {isRegister ? "Join the enterprise platform" : "Sign in to continue"}
+          {isRegister ? "Join Karma Staff platform" : "Sign in to continue"}
         </p>
       </div>
 

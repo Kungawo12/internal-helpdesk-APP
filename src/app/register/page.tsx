@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import KarmaStaffLogo from "@/components/ui/KarmaStaffLogo";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -51,12 +52,10 @@ export default function RegisterPage() {
       {/* Left Side Branding */}
       <div className="hidden lg:flex w-1/2 relative z-10 items-center justify-center p-12">
         <div className="max-w-lg text-white">
-          <div className="w-16 h-16 bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center font-bold text-3xl mb-8 shadow-2xl">
-            H
-          </div>
-          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight text-white">
-            Prism <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 animate-gradient-shift bg-[length:200%_auto]">Enterprise</span>
+          <KarmaStaffLogo size={80} />
+          <h1 className="text-5xl font-extrabold tracking-tight mt-8 mb-6 leading-tight text-white">
+            Welcome to<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 animate-gradient-shift bg-[length:200%_auto]">Karma Staff</span>
           </h1>
           <p className="text-xl text-white/70 font-medium leading-relaxed">
             The intelligent platform for managing internal operations, IT requests, and human resources effortlessly.
@@ -79,7 +78,7 @@ export default function RegisterPage() {
 
           <div className="mb-8">
             <h2 className="text-3xl font-extrabold mb-2 text-white">Create Account</h2>
-            <p className="text-white/60 font-medium">Join the enterprise helpdesk platform</p>
+            <p className="text-white/60 font-medium">Join Karma Staff platform</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
