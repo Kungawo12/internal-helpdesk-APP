@@ -44,7 +44,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 const STATUS_BADGE: Record<string, string> = {
   open: "bg-blue-100 text-blue-700", in_progress: "bg-amber-100 text-amber-700",
-  resolved: "bg-emerald-100 text-emerald-700", closed: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500",
+  resolved: "bg-emerald-100 text-emerald-700", closed: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500",
 };
 const PRIORITY_COLOR: Record<string, string> = {
   urgent: "bg-red-500", high: "bg-orange-400", medium: "bg-blue-400", low: "bg-slate-300",
@@ -94,7 +94,7 @@ function AdminDashboard({ name }: { name: string }) {
         <div>
           <div className="flex items-center gap-3 mb-3">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Admin Portal</span>
-            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-500">
               {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </span>
           </div>
@@ -113,7 +113,7 @@ function AdminDashboard({ name }: { name: string }) {
             className="card p-4 flex flex-col items-center gap-2 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors text-center group"
           >
             <span className="text-2xl">{item.icon}</span>
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors leading-tight">{item.label}</span>
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-500 group-hover:text-blue-600 transition-colors leading-tight">{item.label}</span>
           </Link>
         ))}
       </div>
@@ -152,7 +152,7 @@ function AdminDashboard({ name }: { name: string }) {
               return (
                 <div key={item.label}>
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500">{item.label}</span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-500">{item.label}</span>
                     <span className="text-sm font-extrabold text-slate-900 dark:text-white">{item.value} <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">({pct}%)</span></span>
                   </div>
                   <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -175,7 +175,7 @@ function AdminDashboard({ name }: { name: string }) {
               return (
                 <div key={priority}>
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500 capitalize">{priority}</span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-500 capitalize">{priority}</span>
                     <span className="text-sm font-extrabold text-slate-900 dark:text-white">{value} <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">({pct}%)</span></span>
                   </div>
                   <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -193,7 +193,7 @@ function AdminDashboard({ name }: { name: string }) {
           <div className="space-y-3">
             {stats.usersByRole.sort((a, b) => b.count - a.count).map((r) => (
               <div key={r.role} className="flex items-center justify-between py-1">
-                <span className={`text-sm font-bold ${ROLE_COLORS[r.role] || "text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>
+                <span className={`text-sm font-bold ${ROLE_COLORS[r.role] || "text-slate-500 dark:text-slate-500"}`}>
                   {r.role.replace("_", " ").toUpperCase()}
                 </span>
                 <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ function AdminDashboard({ name }: { name: string }) {
                         <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${rate >= 70 ? "bg-emerald-500" : rate >= 40 ? "bg-amber-400" : "bg-red-500"}`} style={{ width: `${rate}%` }} />
                         </div>
-                        <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 dark:text-slate-500 w-9 text-right">{rate}%</span>
+                        <span className="text-xs font-extrabold text-slate-500 dark:text-slate-500 w-9 text-right">{rate}%</span>
                       </div>
                     </td>
                   </tr>
@@ -288,7 +288,7 @@ function AdminDashboard({ name }: { name: string }) {
               </div>
               <div className="flex items-center gap-3 flex-shrink-0 ml-4">
                 <span className="text-xs font-bold text-slate-400 dark:text-slate-500">{ticket.type}</span>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_BADGE[ticket.status] || "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_BADGE[ticket.status] || "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500"}`}>
                   {ticket.status.replace("_", " ")}
                 </span>
               </div>
@@ -353,10 +353,10 @@ export default function DashboardPage() {
   }
 
   const statsList = [
-    { label: "Tickets Raised", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white/10" },
-    { label: "Pending", value: stats.open, style: "bg-white text-black", icon: "🔴", iconBg: "bg-red-50" },
-    { label: "Needs Action", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white/10" },
+    { label: "Total Tickets Created", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white/10" },
+    { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white/10" },
     { label: "Resolved", value: stats.resolved, style: "bg-white text-black", icon: "✅", iconBg: "bg-emerald-50" },
+    { label: "Pending", value: stats.open, style: "bg-white text-black", icon: "🔴", iconBg: "bg-red-50" },
   ];
 
   return (
@@ -367,7 +367,7 @@ export default function DashboardPage() {
                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&q=80')" }} />
           <div className="relative z-10">
             <button onClick={() => { localStorage.setItem("dismissedOnboardingBanner", "true"); setShowBanner(false); }}
-              className="absolute top-0 right-0 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500">✕</button>
+              className="absolute top-0 right-0 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-500">✕</button>
             <h3 className="font-bold text-blue-800 mb-2">👋 Welcome to Helpdesk!</h3>
             <p className="text-sm text-blue-700 mb-1">Need IT help? → Click <strong>IT Ticket</strong> above</p>
             <p className="text-sm text-blue-700 mb-1">Have a question? → Go to <strong>Knowledge Base</strong></p>
