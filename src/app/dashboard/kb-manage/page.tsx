@@ -115,19 +115,19 @@ export default function KbManagementPage() {
   if (loading && articles.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-slate-200 dark:border-white/10 border-t-red-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-white dark:bg-slate-900 rounded-3xl p-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Knowledge Base</h1>
-          <p className="text-white/30 mt-1 text-sm font-medium">Manage self-service articles</p>
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Knowledge Base</h1>
+          <p className="text-slate-400 dark:text-white/30 mt-1 text-sm font-medium">Manage self-service articles</p>
         </div>
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
@@ -138,7 +138,7 @@ export default function KbManagementPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-4">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4">
         <div className="flex gap-2">
           {["All", "IT", "HR", "general"].map((t) => (
             <button
@@ -146,8 +146,8 @@ export default function KbManagementPage() {
               onClick={() => setFilterType(t)}
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all capitalize ${
                 filterType === t
-                  ? "bg-red-500 text-white"
-                  : "bg-white/5 text-white/60 hover:bg-white/10"
+                  ? "bg-red-500 text-slate-900 dark:text-white"
+                  : "bg-slate-100 dark:bg-white/5 text-white/60 hover:bg-white/10"
               }`}
             >
               {t}
@@ -158,7 +158,7 @@ export default function KbManagementPage() {
           <input
             type="text"
             placeholder="Search articles..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+            className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -167,16 +167,16 @@ export default function KbManagementPage() {
 
       {/* New Article Form */}
       {isFormOpen && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 page-reveal">
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">Create New Article</h2>
+        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
+          <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Article</h2>
           <form onSubmit={handleCreateArticle} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Title</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Title</label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. How to connect to VPN"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -184,7 +184,7 @@ export default function KbManagementPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Type</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Type</label>
                 <div className="flex gap-3">
                   {(["IT", "HR", "general"] as const).map((t) => (
                     <button
@@ -193,8 +193,8 @@ export default function KbManagementPage() {
                       onClick={() => setFormData({ ...formData, type: t })}
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all capitalize ${
                         formData.type === t
-                          ? "bg-red-500 text-white border-red-600"
-                          : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                          ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                       }`}
                     >
                       {t}
@@ -204,10 +204,10 @@ export default function KbManagementPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Tags</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Tags</label>
                 <input
                   type="text"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="vpn, wifi, password (comma separated)"
                   value={formData.tags}
                   onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
@@ -220,7 +220,7 @@ export default function KbManagementPage() {
                   id="published"
                   checked={formData.published}
                   onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                  className="w-4 h-4 rounded border-white/10 bg-white/5 text-red-500 focus:ring-red-500/50"
+                  className="w-4 h-4 rounded border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-red-500 focus:ring-red-500/50"
                 />
                 <label htmlFor="published" className="text-sm font-bold text-white/70 cursor-pointer">
                   Publish immediately
@@ -228,11 +228,11 @@ export default function KbManagementPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Content</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Content</label>
                 <textarea
                   required
                   rows={10}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
                   placeholder="Write article content here (Markdown supported)..."
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
@@ -244,7 +244,7 @@ export default function KbManagementPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -262,27 +262,27 @@ export default function KbManagementPage() {
       {/* Article List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {articles.length === 0 ? (
-          <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-10 text-center text-white/40 italic">
+          <div className="md:col-span-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-400 dark:text-white/40 italic">
             No articles yet. Create the first one to help users self-serve.
           </div>
         ) : (
           articles.map((article) => (
-            <div key={article.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all flex flex-col justify-between">
+            <div key={article.id} className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TYPE_COLOR[article.type]}`}>
                     {article.type}
                   </span>
-                  <span className="text-xs text-white/30 flex items-center gap-1">
+                  <span className="text-xs text-slate-400 dark:text-white/30 flex items-center gap-1">
                     👁 {article.views}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{article.title}</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2">{article.title}</h3>
                 
                 {article.tags && (
                   <div className="flex flex-wrap gap-1 mb-4">
                     {article.tags.split(",").map((tag) => (
-                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-white/50">
+                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/5 text-white/50">
                         {tag.trim()}
                       </span>
                     ))}
@@ -290,8 +290,8 @@ export default function KbManagementPage() {
                 )}
               </div>
 
-              <div className="border-t border-white/5 pt-4 flex justify-between items-center mt-4">
-                <div className="text-xs text-white/30">
+              <div className="border-t border-slate-100 dark:border-white/5 pt-4 flex justify-between items-center mt-4">
+                <div className="text-xs text-slate-400 dark:text-white/30">
                   <p className="font-bold text-white/50">{article.author.name}</p>
                   <p>{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>

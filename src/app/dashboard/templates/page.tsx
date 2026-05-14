@@ -115,19 +115,19 @@ export default function TicketTemplatesPage() {
   if (loading && templates.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-slate-200 dark:border-white/10 border-t-red-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-white dark:bg-slate-900 rounded-3xl p-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Ticket Templates</h1>
-          <p className="text-white/30 mt-1 text-sm font-medium">Manage templates for common issues</p>
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Ticket Templates</h1>
+          <p className="text-slate-400 dark:text-white/30 mt-1 text-sm font-medium">Manage templates for common issues</p>
         </div>
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
@@ -139,16 +139,16 @@ export default function TicketTemplatesPage() {
 
       {/* Add Template Form */}
       {isFormOpen && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 page-reveal">
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">Create New Template</h2>
+        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
+          <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Template</h2>
           <form onSubmit={handleCreateTemplate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Name</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Name</label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. Password Reset"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -156,11 +156,11 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Description</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Description</label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. For standard password reset requests"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -168,7 +168,7 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Type</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Type</label>
                 <div className="flex gap-3">
                   {(["IT", "HR"] as const).map((t) => (
                     <button
@@ -177,8 +177,8 @@ export default function TicketTemplatesPage() {
                       onClick={() => setFormData({ ...formData, type: t })}
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all capitalize ${
                         formData.type === t
-                          ? "bg-red-500 text-white border-red-600"
-                          : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                          ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                       }`}
                     >
                       {t}
@@ -188,7 +188,7 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Priority</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Priority</label>
                 <div className="grid grid-cols-4 gap-2">
                   {(["low", "medium", "high", "urgent"] as const).map((p) => (
                     <button
@@ -197,8 +197,8 @@ export default function TicketTemplatesPage() {
                       onClick={() => setFormData({ ...formData, priority: p })}
                       className={`py-3 px-1 rounded-xl text-xs font-bold border transition-all capitalize ${
                         formData.priority === p
-                          ? "bg-red-500 text-white border-red-600"
-                          : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                          ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                       }`}
                     >
                       {p}
@@ -208,10 +208,10 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Category (Optional)</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Category (Optional)</label>
                 <input
                   type="text"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. Access"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -219,10 +219,10 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Title Prefix (Optional)</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Title Prefix (Optional)</label>
                 <input
                   type="text"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. [PW-RESET] "
                   value={formData.titlePrefix}
                   onChange={(e) => setFormData({ ...formData, titlePrefix: e.target.value })}
@@ -230,11 +230,11 @@ export default function TicketTemplatesPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Body Template</label>
+                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Body Template</label>
                 <textarea
                   required
                   rows={6}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
                   placeholder="Write the default body content for this template..."
                   value={formData.bodyTemplate}
                   onChange={(e) => setFormData({ ...formData, bodyTemplate: e.target.value })}
@@ -246,7 +246,7 @@ export default function TicketTemplatesPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -262,10 +262,10 @@ export default function TicketTemplatesPage() {
       )}
 
       {/* Templates Table */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-white/10 text-xs font-bold text-white/40 uppercase tracking-widest">
+            <tr className="border-b border-slate-200 dark:border-white/10 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Type</th>
               <th className="px-6 py-4">Priority</th>
@@ -278,7 +278,7 @@ export default function TicketTemplatesPage() {
           <tbody className="divide-y divide-white/5">
             {templates.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-10 text-center text-white/40 italic">
+                <td colSpan={7} className="px-6 py-10 text-center text-slate-400 dark:text-white/40 italic">
                   No templates found. Create one to help users.
                 </td>
               </tr>

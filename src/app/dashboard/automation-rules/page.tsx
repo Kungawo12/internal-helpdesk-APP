@@ -125,19 +125,19 @@ export default function AutomationRulesPage() {
   if (loading && rules.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-slate-200 dark:border-white/10 border-t-red-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-white dark:bg-slate-900 rounded-3xl p-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Automation Rules</h1>
-          <p className="text-white/30 mt-1 text-sm font-medium">Automate ticket workflows</p>
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Automation Rules</h1>
+          <p className="text-slate-400 dark:text-white/30 mt-1 text-sm font-medium">Automate ticket workflows</p>
         </div>
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
@@ -149,15 +149,15 @@ export default function AutomationRulesPage() {
 
       {/* New Rule Form */}
       {isFormOpen && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 page-reveal">
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">Create New Rule</h2>
+        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
+          <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Rule</h2>
           <form onSubmit={handleCreateRule} className="space-y-6">
             <div>
-              <label className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-2">Rule Name</label>
+              <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Rule Name</label>
               <input
                 type="text"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                 placeholder="e.g. Auto-assign IT Urgent"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -165,10 +165,10 @@ export default function AutomationRulesPage() {
             </div>
 
             <div>
-              <p className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-3">Conditions (leave blank to match any)</p>
+              <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-3">Conditions (leave blank to match any)</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-white/30 uppercase block mb-2">Ticket Type</label>
+                  <label className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase block mb-2">Ticket Type</label>
                   <div className="flex gap-2">
                     {["IT", "HR", ""].map((t) => (
                       <button
@@ -177,8 +177,8 @@ export default function AutomationRulesPage() {
                         onClick={() => setFormData({ ...formData, condTicketType: t || null })}
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                           formData.condTicketType === (t || null)
-                            ? "bg-red-500 text-white border-red-600"
-                            : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                            ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                         }`}
                       >
                         {t || "Any"}
@@ -188,7 +188,7 @@ export default function AutomationRulesPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-white/30 uppercase block mb-2">Priority</label>
+                  <label className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase block mb-2">Priority</label>
                   <div className="grid grid-cols-5 gap-2">
                     {["low", "medium", "high", "urgent", ""].map((p) => (
                       <button
@@ -197,8 +197,8 @@ export default function AutomationRulesPage() {
                         onClick={() => setFormData({ ...formData, condPriority: p || null })}
                         className={`py-2 px-1 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.condPriority === (p || null)
-                            ? "bg-red-500 text-white border-red-600"
-                            : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                            ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                         }`}
                       >
                         {p || "Any"}
@@ -208,7 +208,7 @@ export default function AutomationRulesPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-white/30 uppercase block mb-2">Status</label>
+                  <label className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase block mb-2">Status</label>
                   <div className="flex gap-2">
                     {["open", "in_progress", ""].map((s) => (
                       <button
@@ -217,8 +217,8 @@ export default function AutomationRulesPage() {
                         onClick={() => setFormData({ ...formData, condStatus: s || null })}
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.condStatus === (s || null)
-                            ? "bg-red-500 text-white border-red-600"
-                            : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                            ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                         }`}
                       >
                         {s || "Any"}
@@ -233,7 +233,7 @@ export default function AutomationRulesPage() {
                     id="unassigned"
                     checked={formData.condUnassigned}
                     onChange={(e) => setFormData({ ...formData, condUnassigned: e.target.checked })}
-                    className="w-4 h-4 rounded border-white/10 bg-white/5 text-red-500 focus:ring-red-500/50"
+                    className="w-4 h-4 rounded border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-red-500 focus:ring-red-500/50"
                   />
                   <label htmlFor="unassigned" className="text-sm font-bold text-white/70 cursor-pointer">
                     Unassigned only
@@ -243,7 +243,7 @@ export default function AutomationRulesPage() {
             </div>
 
             <div>
-              <p className="text-xs font-bold text-white/40 uppercase tracking-widest block mb-3">Action</p>
+              <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-3">Action</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {(["assign_to_role", "escalate_priority", "notify_admins"] as const).map((a) => (
                   <button
@@ -252,8 +252,8 @@ export default function AutomationRulesPage() {
                     onClick={() => setFormData({ ...formData, action: a, actionValue: null })}
                     className={`py-3 px-3 rounded-xl text-xs font-bold border transition-all ${
                       formData.action === a
-                        ? "bg-red-500 text-white border-red-600"
-                        : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                        ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                        : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                     }`}
                   >
                     {a.replace(/_/g, " ").toUpperCase()}
@@ -263,7 +263,7 @@ export default function AutomationRulesPage() {
 
               {formData.action === "assign_to_role" && (
                 <div className="mt-4">
-                  <label className="text-xs font-bold text-white/30 uppercase block mb-2">Role</label>
+                  <label className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase block mb-2">Role</label>
                   <div className="flex gap-2 max-w-xs">
                     {["it_staff", "hr_staff"].map((r) => (
                       <button
@@ -272,8 +272,8 @@ export default function AutomationRulesPage() {
                         onClick={() => setFormData({ ...formData, actionValue: r })}
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                           formData.actionValue === r
-                            ? "bg-red-500 text-white border-red-600"
-                            : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                            ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                         }`}
                       >
                         {r === "it_staff" ? "IT Staff" : "HR Staff"}
@@ -285,7 +285,7 @@ export default function AutomationRulesPage() {
 
               {formData.action === "escalate_priority" && (
                 <div className="mt-4">
-                  <label className="text-xs font-bold text-white/30 uppercase block mb-2">New Priority</label>
+                  <label className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase block mb-2">New Priority</label>
                   <div className="flex gap-2 max-w-sm">
                     {["low", "medium", "high", "urgent"].map((p) => (
                       <button
@@ -294,8 +294,8 @@ export default function AutomationRulesPage() {
                         onClick={() => setFormData({ ...formData, actionValue: p })}
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.actionValue === p
-                            ? "bg-red-500 text-white border-red-600"
-                            : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                            ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
+                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
                         }`}
                       >
                         {p}
@@ -312,7 +312,7 @@ export default function AutomationRulesPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -330,16 +330,16 @@ export default function AutomationRulesPage() {
       {/* Rules List */}
       <div className="space-y-4">
         {rules.length === 0 ? (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-10 text-center text-white/40 italic">
+          <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-400 dark:text-white/40 italic">
             No automation rules. Create one to start auto-assigning or escalating tickets.
           </div>
         ) : (
           rules.map((rule) => (
-            <div key={rule.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+            <div key={rule.id} className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-bold text-white">{rule.name}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{rule.name}</h3>
                     <button
                       onClick={() => handleToggleActive(rule.id, rule.active)}
                       className={`text-xs font-bold px-2 py-0.5 rounded-full ${
@@ -407,7 +407,7 @@ export default function AutomationRulesPage() {
       </div>
 
       {/* Info Note */}
-      <div className="bg-white/2 border border-white/5 rounded-2xl p-6">
+      <div className="bg-white/2 border border-slate-100 dark:border-white/5 rounded-2xl p-6">
         <p className="text-sm text-white/50 leading-relaxed">
           <span className="font-bold text-white/70">Note:</span> Rules run automatically when tickets are created or updated. All matching rules fire in order. Disable a rule with the toggle without deleting it.
         </p>
