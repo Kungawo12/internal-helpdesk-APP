@@ -20,6 +20,22 @@ function CreateTicketForm() {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high" | "urgent">("medium");
 
+  // IT-specific categorisation
+  const [category, setCategory] = useState("");
+  const [issueType, setIssueType] = useState("");
+
+  const IT_CATEGORIES = ["Hardware", "Network", "Access & Permissions", "Software"];
+  const IT_ISSUE_TYPES = [
+    "Microsoft Office 365",
+    "Internet Connectivity",
+    "VPN Connectivity",
+    "Clarity",
+    "Phone System",
+    "Headphones",
+    "Laptop Performance",
+    "Other",
+  ];
+
   // KB Deflection & Templates
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [relatedArticles, setRelatedArticles] = useState<any[]>([]);
@@ -157,7 +173,9 @@ function CreateTicketForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
-          description,
+          description: typeParam === "IT" && (category || issueType)
+            ? `Category: ${category}\nIssue Type: ${issueType}\n\n${description}`
+            : description,
           type: typeParam,
           priority,
           ...(typeParam === "Software" && { softwareName: appName, errorMessage }),
@@ -294,6 +312,40 @@ function CreateTicketForm() {
                     {t.name}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {/* IT: Category + Issue Type */}
+            {typeParam === "IT" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Category</label>
+                  <select
+                    required
+                    className="input-field"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value="">Select category…</option>
+                    {IT_CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Issue Type</label>
+                  <select
+                    required
+                    className="input-field"
+                    value={issueType}
+                    onChange={(e) => setIssueType(e.target.value)}
+                  >
+                    <option value="">Select issue type…</option>
+                    {IT_ISSUE_TYPES.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
 
@@ -548,7 +600,11 @@ function CreateTicketForm() {
 
           <div className="hidden lg:block bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-6">
             <h3 className="font-bold text-slate-900 mb-2">Need immediate help?</h3>
-            <p className="text-sm text-slate-600 mb-6">If your issue is critical and blocking work, please call the IT helpline at ext. 4500.</p>
+            <p className="text-sm text-slate-600 mb-4">For urgent issues, reach IT directly:</p>
+            <ul className="space-y-2 text-sm text-slate-700 font-medium mb-6">
+              <li>💬 <strong>Microsoft Teams</strong> — message IT Support directly</li>
+              <li>🏢 <strong>Visit the IT desk</strong> — ground floor, Room 101</li>
+            </ul>
             <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80" alt="Support" className="rounded-2xl" />
           </div>
         </div>

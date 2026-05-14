@@ -70,9 +70,9 @@ export default function DashboardPage() {
   }
 
   const statsList = [
-    { label: "Total Tracking", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white/10" },
-    { label: "Needs Action", value: stats.open, style: "bg-white  text-black ", icon: "🔴", iconBg: "bg-red-50 " },
-    { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white/10" },
+    { label: "Tickets Raised", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white/10" },
+    { label: "Pending", value: stats.open, style: "bg-white  text-black ", icon: "🔴", iconBg: "bg-red-50 " },
+    { label: "Needs Action", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white/10" },
     { label: "Resolved", value: stats.resolved, style: "bg-white  text-black ", icon: "✅", iconBg: "bg-emerald-50 " },
   ];
 
@@ -147,10 +147,10 @@ export default function DashboardPage() {
         <div className="h-px bg-slate-200  flex-1" />
       </div>
 
-      {/* Ticket Cards Grid + Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in delay-300">
-        {/* Left Column - Active Stream */}
-        <div className="lg:col-span-2 space-y-8">
+      {/* Ticket Cards Grid */}
+      <div className="animate-fade-in delay-300">
+        {/* Active Stream */}
+        <div className="space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <h2 className="text-3xl font-extrabold tracking-tight ">Active Stream</h2>
             <div className="flex w-full md:w-auto gap-4">
@@ -175,7 +175,7 @@ export default function DashboardPage() {
           </div>
 
           {tickets.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tickets.map((ticket) => {
                 let borderClass = "";
                 if (ticket.status === "open") borderClass = "ticket-card-open";
@@ -240,37 +240,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className="space-y-8">
-          {/* Quick Actions */}
-          <div className="card p-6 bg-white  ">
-            <h3 className="text-xl font-bold mb-4 ">Quick Actions</h3>
-            <div className="space-y-3">
-              <Link href="/dashboard/create" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50  transition-colors">
-                <span className="text-xl">➕</span>
-                <div>
-                  <p className="text-sm font-bold ">New Ticket</p>
-                  <p className="text-xs text-slate-500 ">Submit a new request</p>
-                </div>
-              </Link>
-              <Link href="/dashboard/kb" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50  transition-colors">
-                <span className="text-xl">📚</span>
-                <div>
-                  <p className="text-sm font-bold ">Browse KB</p>
-                  <p className="text-xs text-slate-500 ">Find answers yourself</p>
-                </div>
-              </Link>
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="card p-6 bg-white  ">
-            <h3 className="text-xl font-bold mb-4 ">Recent Activity</h3>
-            <div className="text-sm text-slate-500 ">
-              No recent activity to show.
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -44,14 +44,16 @@ export async function GET(req: NextRequest) {
       .map((a, i) => `[${i}] ${a.title} (${a.type}) — ${a.content.slice(0, 200)}`)
       .join("\n");
 
-    const prompt = `You are a helpdesk AI. A user searched for: "${q}"
+    const prompt = `You are a workplace helpdesk AI. You ONLY answer questions about IT support, HR policies, and software issues within this company. If a question is unrelated to workplace IT, HR, or software support, respond with: "I can only help with workplace IT, HR, and software support questions. Please raise a ticket if you need further assistance."
+
+A user searched for: "${q}"
 
 Here is the knowledge base index:
 ${index}
 
 Task:
-1. Write a brief direct answer (2-3 sentences) to the user's question based on the articles above. If no article is relevant, say so.
-2. Return the indexes (0-based) of the top 5 most relevant articles, ranked by relevance.
+1. Write a brief direct answer (2-3 sentences) based ONLY on the articles above. Do not use outside knowledge. If no article is relevant OR the question is off-topic, say so clearly.
+2. Return the indexes (0-based) of the top 5 most relevant articles, ranked by relevance. Return an empty array if nothing is relevant.
 
 Respond with JSON only:
 {
