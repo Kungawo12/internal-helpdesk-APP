@@ -84,8 +84,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0c1222] p-4 relative overflow-hidden">
       {/* Ambient glows */}
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-orange-600/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-orange-600/8 dark:bg-orange-600/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/8 dark:bg-blue-600/8 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Card */}
       <div className="relative w-full max-w-[860px] h-[540px] rounded-3xl overflow-hidden shadow-2xl z-10 flex">

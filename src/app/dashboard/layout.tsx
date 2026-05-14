@@ -95,7 +95,7 @@ function NotificationBell() {
       >
         🔔
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 dark:bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center">
             {unread > 9 ? "9+" : unread}
           </span>
         )}

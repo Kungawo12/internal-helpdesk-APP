@@ -124,7 +124,7 @@ export default function StaffQueuePage() {
             <span className="text-sm font-bold">{selectedIds.length} selected</span>
             <button
               onClick={handleBulkClose}
-              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/10 hover:bg-white dark:bg-slate-900/20 rounded-lg transition-colors"
+              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/10 hover:bg-white dark:hover:bg-slate-900/20 dark:bg-slate-900/20 rounded-lg transition-colors"
             >
               Close all
             </button>

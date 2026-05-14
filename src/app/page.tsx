@@ -164,7 +164,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 flex flex-col justify-center">
+      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-[#0a0f1e] dark:bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 flex flex-col justify-center">
         <div className="absolute inset-0 bg-cover bg-center opacity-10"
              style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"}} />
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -337,7 +337,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
+      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] dark:bg-[#0a0f1e] text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
@@ -369,7 +369,7 @@ export default function LandingPage() {
                   <h3 className="text-2xl font-bold">Employee submits a ticket</h3>
                   <p className="text-slate-400 dark:text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
-                <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="space-y-2">
                     <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Title</div>
                     <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
@@ -396,7 +396,7 @@ export default function LandingPage() {
                   <p className="text-slate-400 dark:text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
                 </div>
                 <div className="flex justify-center">
-                  <div className="relative bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
+                  <div className="relative bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="font-bold">Notifications</h4>
                       <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">2</div>
@@ -420,7 +420,7 @@ export default function LandingPage() {
                   <h3 className="text-2xl font-bold">Staff works and resolves</h3>
                   <p className="text-slate-400 dark:text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
                 </div>
-                <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="font-bold">Ticket #124</span>
                     <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
@@ -439,19 +439,19 @@ export default function LandingPage() {
                   <p className="text-slate-400 dark:text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">VPN Setup</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">142 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Printer Map</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">89 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Wifi Pass</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">204 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
+                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Holiday Cal</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">67 views</div>
                   </div>
