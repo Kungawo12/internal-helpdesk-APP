@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Admin dashboard now lives at /admin (no separate login required)
 export default function AdminRedirect() {
   const router = useRouter();
   useEffect(() => {
-    router.replace("/admin");
+    router.replace("/dashboard");
   }, [router]);
   return (
     <div className="flex items-center justify-center min-h-[400px]">
