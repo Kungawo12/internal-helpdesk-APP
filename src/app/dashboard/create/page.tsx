@@ -216,7 +216,7 @@ function CreateTicketForm() {
       <div className="max-w-4xl mx-auto py-12 px-6">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold tracking-tight mb-4">How can we help you?</h1>
-          <p className="text-xl text-slate-500 dark:text-slate-500">Select the type of support you need to get started.</p>
+          <p className="text-xl text-slate-500 dark:text-slate-400">Select the type of support you need to get started.</p>
         </div>
 
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
@@ -227,11 +227,11 @@ function CreateTicketForm() {
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🖥️</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">IT Support</h2>
-              <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Hardware, network, access issues, or system problems.
               </p>
             </div>
-            <div className="text-slate-400 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-400 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
@@ -241,11 +241,11 @@ function CreateTicketForm() {
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">👥</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">HR Support</h2>
-              <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Wages, holidays, policies, or general HR queries.
               </p>
             </div>
-            <div className="text-slate-400 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-400 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
@@ -255,16 +255,16 @@ function CreateTicketForm() {
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🐛</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">Software Bug</h2>
-              <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Report a bug or unexpected behaviour in any application.
               </p>
             </div>
-            <div className="text-slate-400 dark:text-slate-500 group-hover:text-purple-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-400 group-hover:text-purple-600 font-bold">→</div>
           </Link>
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/dashboard" className="text-slate-500 dark:text-slate-500 font-bold hover:text-slate-900 dark:text-white transition-colors">
+          <Link href="/dashboard" className="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors">
             ← Back to Dashboard
           </Link>
         </div>
@@ -286,7 +286,7 @@ function CreateTicketForm() {
             Submit {typeParam} Support Ticket
           </h1>
         </div>
-        <Link href="/dashboard/create" className="text-slate-500 dark:text-slate-500 font-bold hover:text-slate-900 dark:text-white transition-colors">
+        <Link href="/dashboard/create" className="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors">
           Change Type
         </Link>
       </div>
@@ -299,12 +299,12 @@ function CreateTicketForm() {
           <div className="card p-8 space-y-6">
             <div>
               <h2 className="text-sm font-black text-slate-700 dark:text-slate-300  uppercase tracking-wider mb-1">Issue Details</h2>
-              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Provide the basic information about your request.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400 font-medium">Provide the basic information about your request.</p>
             </div>
 
             {templates.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap mb-2">
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-500">Templates:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Templates:</span>
                 {templates.map(t => (
                   <button key={t.id} type="button"
                     onClick={() => applyTemplate(t)}
@@ -410,11 +410,11 @@ function CreateTicketForm() {
             <div className="card p-8 space-y-6">
               <div>
                 <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Bug Details</h2>
-                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Help the team reproduce and fix the issue faster.</p>
+                <p className="text-xs text-slate-400 dark:text-slate-400 font-medium">Help the team reproduce and fix the issue faster.</p>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 dark:text-slate-500 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Application / System Name <span className="text-slate-300 normal-case font-medium">(required)</span>
                 </label>
                 <input
@@ -428,7 +428,7 @@ function CreateTicketForm() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 dark:text-slate-500 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Steps to Reproduce <span className="text-slate-300 normal-case font-medium">(what did you do before it broke?)</span>
                 </label>
                 <textarea
@@ -441,7 +441,7 @@ function CreateTicketForm() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 dark:text-slate-500 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Error Message <span className="text-slate-300 normal-case font-medium">(copy & paste the exact text if any)</span>
                 </label>
                 <textarea
@@ -459,8 +459,8 @@ function CreateTicketForm() {
           <div className="card p-8 space-y-4">
             <div>
               <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Screenshots</h2>
-              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
-                Paste a screenshot with <kbd className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 px-1.5 py-0.5 rounded text-[11px] font-mono">Ctrl+V</kbd>, drag & drop, or click to browse. Max 10MB per file.
+              <p className="text-xs text-slate-400 dark:text-slate-400 font-medium">
+                Paste a screenshot with <kbd className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded text-[11px] font-mono">Ctrl+V</kbd>, drag & drop, or click to browse. Max 10MB per file.
               </p>
             </div>
 
@@ -478,7 +478,7 @@ function CreateTicketForm() {
               }`}
             >
               <div className="text-3xl">{isDragging ? "📥" : "📎"}</div>
-              <p className="text-sm font-semibold text-slate-500 dark:text-slate-500 text-center">
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 text-center">
                 {isDragging ? "Drop to attach" : "Drop files here, paste a screenshot, or click to browse"}
               </p>
               <input
@@ -502,7 +502,7 @@ function CreateTicketForm() {
                     ) : (
                       <div className="p-3 text-center">
                         <div className="text-2xl mb-1">📄</div>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-500 font-semibold truncate max-w-[80px]">{file.name}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold truncate max-w-[80px]">{file.name}</p>
                       </div>
                     )}
                     <button
@@ -537,14 +537,14 @@ function CreateTicketForm() {
                     className={`py-3 rounded-xl border-2 text-xs font-black uppercase tracking-widest transition-all ${
                       priority === p
                         ? "bg-blue-600 border-blue-600 text-white shadow-lg"
-                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-500 hover:border-slate-300"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300"
                     }`}
                   >
                     {p}
                   </button>
                 ))}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-500 ">
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 ">
                 <p><strong>Low:</strong> minor inconvenience, can wait a few days</p>
                 <p><strong>Medium:</strong> affecting your work but workaround exists</p>
                 <p><strong>High:</strong> blocking your work right now</p>
@@ -574,7 +574,7 @@ function CreateTicketForm() {
 
             <Link
               href="/dashboard"
-              className="block text-center text-sm font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-500 transition-colors"
+              className="block text-center text-sm font-bold text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:text-slate-400 transition-colors"
             >
               Cancel
             </Link>
@@ -585,11 +585,27 @@ function CreateTicketForm() {
             <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
               <span className="text-blue-400">ℹ</span> Before submitting
             </p>
-            <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
-              <li>• Restart your device and retry</li>
-              <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 hover:underline">known issues board</Link></li>
-              <li>• Search the IT knowledge base</li>
-            </ul>
+            {typeParam === "IT" && (
+              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+                <li>• Restart your device and retry</li>
+                <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 hover:underline">known issues board</Link></li>
+                <li>• Search the IT knowledge base</li>
+              </ul>
+            )}
+            {typeParam === "HR" && (
+              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+                <li>• Check your employee handbook first</li>
+                <li>• Review your payslip portal for payroll queries</li>
+                <li>• Confirm your query isn&apos;t covered in <Link href="/dashboard/kb" className="text-blue-400 hover:underline">HR policies</Link></li>
+              </ul>
+            )}
+            {typeParam === "Software" && (
+              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+                <li>• Clear your browser cache and retry</li>
+                <li>• Check if a colleague can reproduce the issue</li>
+                <li>• Note the exact error message and steps</li>
+              </ul>
+            )}
           </div>
 
           {/* Response times */}
@@ -597,27 +613,75 @@ function CreateTicketForm() {
             <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
               <span className="text-blue-400">⏱</span> Response times
             </p>
-            <div className="space-y-2 text-sm font-medium">
-              <div className="flex justify-between">
-                <span className="text-slate-300">Critical</span>
-                <span className="text-red-400 font-bold">1 hour</span>
+            {typeParam === "IT" && (
+              <div className="space-y-2 text-sm font-medium">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Critical</span>
+                  <span className="text-red-400 font-bold">1 hour</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">High</span>
+                  <span className="text-orange-400 font-bold">4 hours</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Medium</span>
+                  <span className="text-blue-400 font-bold">1 business day</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Low</span>
+                  <span className="text-emerald-400 font-bold">3 business days</span>
+                </div>
               </div>
-              <div className="h-px bg-slate-700" />
-              <div className="flex justify-between">
-                <span className="text-slate-300">High</span>
-                <span className="text-orange-400 font-bold">4 hours</span>
+            )}
+            {typeParam === "HR" && (
+              <div className="space-y-2 text-sm font-medium">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Grievance / Disciplinary</span>
+                  <span className="text-red-400 font-bold">Same day</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Payroll / Benefits</span>
+                  <span className="text-orange-400 font-bold">2 business days</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Leave / Absence</span>
+                  <span className="text-blue-400 font-bold">3 business days</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">General Query</span>
+                  <span className="text-emerald-400 font-bold">5 business days</span>
+                </div>
               </div>
-              <div className="h-px bg-slate-700" />
-              <div className="flex justify-between">
-                <span className="text-slate-300">Medium</span>
-                <span className="text-blue-400 font-bold">1 business day</span>
+            )}
+            {typeParam === "Software" && (
+              <div className="space-y-2 text-sm font-medium">
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Data loss / Security</span>
+                  <span className="text-red-400 font-bold">2 hours</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Feature blocked</span>
+                  <span className="text-orange-400 font-bold">1 business day</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Workaround exists</span>
+                  <span className="text-blue-400 font-bold">3 business days</span>
+                </div>
+                <div className="h-px bg-slate-700" />
+                <div className="flex justify-between">
+                  <span className="text-slate-300">Cosmetic / Minor</span>
+                  <span className="text-emerald-400 font-bold">1 week</span>
+                </div>
               </div>
-              <div className="h-px bg-slate-700" />
-              <div className="flex justify-between">
-                <span className="text-slate-300">Low</span>
-                <span className="text-emerald-400 font-bold">3 business days</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Urgent help */}
@@ -625,9 +689,21 @@ function CreateTicketForm() {
             <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
               <span className="text-blue-400">💬</span> Urgent help?
             </p>
-            <p className="text-sm text-slate-300 font-medium leading-relaxed">
-              Call IT support directly: <strong className="text-white">ext. 4357</strong> or visit <strong className="text-white">Desk 2B, Floor 3</strong>.
-            </p>
+            {typeParam === "IT" && (
+              <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                Call IT support directly: <strong className="text-white">ext. 4357</strong> or visit <strong className="text-white">Desk 2B, Floor 3</strong>.
+              </p>
+            )}
+            {typeParam === "HR" && (
+              <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                Speak to your HR Business Partner directly: <strong className="text-white">ext. 5200</strong> or visit <strong className="text-white">HR Office, Floor 2</strong>. For sensitive matters, request a private meeting.
+              </p>
+            )}
+            {typeParam === "Software" && (
+              <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                Report critical bugs to your team lead immediately. For data loss or security issues, call the IT helpdesk: <strong className="text-white">ext. 4357</strong> — do not wait for a ticket response.
+              </p>
+            )}
           </div>
         </div>
       </form>
