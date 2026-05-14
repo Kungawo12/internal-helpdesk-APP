@@ -457,7 +457,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <h3 className="text-lg font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">{ticket.title}</h3>
-                  <div className="flex items-center justify-between border-t border-black/5 pt-4 mt-4">
+                  <div className="flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-4 mt-4">
                     <div className="flex items-center gap-2">
                       {(() => {
                         const initial = ticket.assignee ? (ticket.assignee as any).name.charAt(0) : "U";
@@ -476,7 +476,7 @@ export default function DashboardPage() {
             })}
           </div>
         ) : (
-          <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 shadow-none">
+          <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 dark:border-white/20 shadow-none">
             <div className="text-8xl mb-6 opacity-20">🎫</div>
             <h3 className="text-3xl font-extrabold mb-4">No tickets yet</h3>
             <p className="text-[#6e6e73] text-lg font-medium mb-6">Your support requests will appear here once submitted.</p>

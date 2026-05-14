@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import PeopleMarquee from "@/components/landing/PeopleMarquee";
+import { useTheme } from "next-themes";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -13,6 +14,7 @@ if (typeof window !== "undefined") {
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -148,6 +150,13 @@ export default function LandingPage() {
           <span className={scrolled ? 'text-slate-900' : 'text-white'}>Helpdesk</span>
         </div>
         <div className="flex items-center gap-3 font-medium text-sm">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${scrolled ? "bg-slate-100 hover:bg-slate-200 text-slate-700" : "bg-white/10 hover:bg-white/20 text-white"}`}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
           <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center gap-2">
             Sign In <span>→</span>
           </Link>
