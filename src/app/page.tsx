@@ -185,7 +185,7 @@ export default function LandingPage() {
               <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
                 Sign In <span>→</span>
               </Link>
-              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900/5 hover:bg-white dark:bg-slate-900/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white/10 dark:bg-slate-900/5 hover:bg-white/20 dark:hover:bg-slate-900/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
                 ↓ See how it works
               </a>
             </div>
@@ -304,9 +304,9 @@ export default function LandingPage() {
       </section>
 
       {/* Capability Marquee */}
-      <section className="py-16 bg-slate-50  border-b border-slate-100 dark:border-slate-800  overflow-hidden">
+      <section className="py-16 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 overflow-hidden">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white ">Everything your team needs</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Everything your team needs</h2>
         </div>
         
         <div className="relative flex overflow-x-hidden">
@@ -316,7 +316,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50  border border-slate-200 dark:border-slate-700  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-full px-6 py-3 font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 dark:hover:border-blue-500/50 transition-colors">
                 {pill}
               </div>
             ))}
@@ -328,7 +328,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50  border border-slate-200 dark:border-slate-700  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-full px-6 py-3 font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 dark:hover:border-blue-500/50 transition-colors">
                 {pill}
               </div>
             ))}
@@ -569,7 +569,7 @@ export default function LandingPage() {
             </div>
             </div>
             <div className="hidden lg:block">
-              <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80" alt="Team collaboration" className="rounded-2xl object-cover h-[500px] w-full" />
+              <img src="/team_collaboration.png" alt="Team collaboration" className="rounded-2xl object-cover h-[500px] w-full" />
             </div>
           </div>
         </div>
@@ -587,7 +587,7 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="hidden lg:block">
-              <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80" alt="Person at laptop" className="rounded-2xl object-cover h-64 w-full" />
+              <img src="/person_at_laptop.png" alt="Person at laptop" className="rounded-2xl object-cover h-64 w-full" />
             </div>
           </div>
         </div>
