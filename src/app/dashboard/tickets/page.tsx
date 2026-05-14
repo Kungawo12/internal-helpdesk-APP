@@ -123,7 +123,7 @@ export default function AdminTicketsPage() {
               placeholder='Type "WIPE" to confirm'
               value={wipeConfirm}
               onChange={(e) => setWipeConfirm(e.target.value)}
-              className="bg-slate-100 dark:bg-white/5 border border-red-500/20 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/50 w-56"
+              className="bg-slate-100 dark:bg-slate-800/5 border border-red-500/20 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-white/20 focus:outline-none focus:border-red-500/50 w-56"
             />
             <button
               onClick={wipeAll}
@@ -143,13 +143,13 @@ export default function AdminTicketsPage() {
           placeholder="Search by title, creator, ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
+          className="flex-1 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{ backgroundColor: "#0f172a", color: "#94a3b8" }}
-          className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500/50"
+          className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500/50"
         >
           <option value="all">All Statuses</option>
           <option value="open">Open</option>
@@ -160,7 +160,7 @@ export default function AdminTicketsPage() {
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           style={{ backgroundColor: "#0f172a", color: "#94a3b8" }}
-          className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500/50"
+          className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500/50"
         >
           <option value="all">All Types</option>
           <option value="IT">IT</option>
@@ -169,10 +169,10 @@ export default function AdminTicketsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-slate-50 dark:bg-white/3 border border-slate-100 dark:border-white/8 rounded-2xl overflow-hidden">
+      <div className="bg-slate-50 dark:bg-slate-800/3 border border-slate-100 dark:border-white/8 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-white/5 text-xs uppercase tracking-widest text-slate-400 dark:text-white/30 bg-slate-100 dark:bg-white/5">
+            <tr className="border-b border-slate-100 dark:border-white/5 text-xs uppercase tracking-widest text-slate-400 dark:text-white/30 bg-slate-100 dark:bg-slate-800/5">
               <th className="px-6 py-4 font-bold">Ticket</th>
               <th className="px-6 py-4 font-bold hidden lg:table-cell">Creator</th>
               <th className="px-6 py-4 font-bold">Type</th>
@@ -184,7 +184,7 @@ export default function AdminTicketsPage() {
           </thead>
           <tbody>
             {filtered.map((ticket) => (
-              <tr key={ticket.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-white/5 transition-colors">
+              <tr key={ticket.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-slate-800/5 transition-colors">
                 <td className="px-6 py-4">
                   <p className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{ticket.title}</p>
                   <p className="text-xs text-white/20 font-mono mt-0.5">#{ticket.id.slice(0, 8)}</p>
@@ -199,7 +199,7 @@ export default function AdminTicketsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_COLORS[ticket.status] || "bg-white/10 text-slate-400 dark:text-white/40"}`}>
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_COLORS[ticket.status] || "bg-white dark:bg-slate-800/10 text-slate-400 dark:text-white/40"}`}>
                     {ticket.status.replace("_", " ")}
                   </span>
                 </td>

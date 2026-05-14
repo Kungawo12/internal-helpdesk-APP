@@ -149,7 +149,7 @@ export default function AutomationRulesPage() {
 
       {/* New Rule Form */}
       {isFormOpen && (
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Rule</h2>
           <form onSubmit={handleCreateRule} className="space-y-6">
             <div>
@@ -157,7 +157,7 @@ export default function AutomationRulesPage() {
               <input
                 type="text"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                 placeholder="e.g. Auto-assign IT Urgent"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -178,7 +178,7 @@ export default function AutomationRulesPage() {
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                           formData.condTicketType === (t || null)
                             ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                            : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                         }`}
                       >
                         {t || "Any"}
@@ -198,7 +198,7 @@ export default function AutomationRulesPage() {
                         className={`py-2 px-1 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.condPriority === (p || null)
                             ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                            : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                         }`}
                       >
                         {p || "Any"}
@@ -218,7 +218,7 @@ export default function AutomationRulesPage() {
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.condStatus === (s || null)
                             ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                            : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                         }`}
                       >
                         {s || "Any"}
@@ -233,7 +233,7 @@ export default function AutomationRulesPage() {
                     id="unassigned"
                     checked={formData.condUnassigned}
                     onChange={(e) => setFormData({ ...formData, condUnassigned: e.target.checked })}
-                    className="w-4 h-4 rounded border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 text-red-500 focus:ring-red-500/50"
+                    className="w-4 h-4 rounded border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/5 text-red-500 focus:ring-red-500/50"
                   />
                   <label htmlFor="unassigned" className="text-sm font-bold text-white/70 cursor-pointer">
                     Unassigned only
@@ -253,7 +253,7 @@ export default function AutomationRulesPage() {
                     className={`py-3 px-3 rounded-xl text-xs font-bold border transition-all ${
                       formData.action === a
                         ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                        : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                        : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                     }`}
                   >
                     {a.replace(/_/g, " ").toUpperCase()}
@@ -273,7 +273,7 @@ export default function AutomationRulesPage() {
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                           formData.actionValue === r
                             ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                            : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                         }`}
                       >
                         {r === "it_staff" ? "IT Staff" : "HR Staff"}
@@ -295,7 +295,7 @@ export default function AutomationRulesPage() {
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all capitalize ${
                           formData.actionValue === p
                             ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                            : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                            : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                         }`}
                       >
                         {p}
@@ -312,7 +312,7 @@ export default function AutomationRulesPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-slate-800/5 hover:bg-white dark:bg-slate-800/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -330,12 +330,12 @@ export default function AutomationRulesPage() {
       {/* Rules List */}
       <div className="space-y-4">
         {rules.length === 0 ? (
-          <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-400 dark:text-white/40 italic">
+          <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-400 dark:text-white/40 italic">
             No automation rules. Create one to start auto-assigning or escalating tickets.
           </div>
         ) : (
           rules.map((rule) => (
-            <div key={rule.id} className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+            <div key={rule.id} className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
@@ -407,7 +407,7 @@ export default function AutomationRulesPage() {
       </div>
 
       {/* Info Note */}
-      <div className="bg-white/2 border border-slate-100 dark:border-white/5 rounded-2xl p-6">
+      <div className="bg-white dark:bg-slate-800/2 border border-slate-100 dark:border-white/5 rounded-2xl p-6">
         <p className="text-sm text-white/50 leading-relaxed">
           <span className="font-bold text-white/70">Note:</span> Rules run automatically when tickets are created or updated. All matching rules fire in order. Disable a rule with the toggle without deleting it.
         </p>

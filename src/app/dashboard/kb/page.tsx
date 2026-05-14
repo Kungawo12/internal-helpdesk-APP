@@ -155,7 +155,7 @@ function KbPortal() {
       <div className="max-w-4xl mx-auto space-y-6 pb-16 page-reveal">
         <button
           onClick={() => setSelectedArticle(null)}
-          className="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors flex items-center gap-1.5"
+          className="text-sm font-semibold text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:text-white transition-colors flex items-center gap-1.5"
         >
           ← Back to Knowledge Base
         </button>
@@ -173,7 +173,7 @@ function KbPortal() {
           </h1>
 
           <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
-            <span className="font-semibold text-slate-600 dark:text-slate-400">{selectedArticle.author.name}</span>
+            <span className="font-semibold text-slate-600 dark:text-slate-500">{selectedArticle.author.name}</span>
             <span>·</span>
             <span>{new Date(selectedArticle.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</span>
           </div>
@@ -185,7 +185,7 @@ function KbPortal() {
           {selectedArticle.tags && (
             <div className="flex flex-wrap gap-1.5 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
               {selectedArticle.tags.split(",").map((tag) => (
-                <span key={tag} className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                <span key={tag} className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500 border border-slate-200 dark:border-slate-700">
                   #{tag.trim()}
                 </span>
               ))}
@@ -261,7 +261,7 @@ function KbPortal() {
           {aiSearching ? (
             <div className="px-6 py-8 flex items-center gap-3">
               <div className="w-4 h-4 border-2 border-orange-300 border-t-orange-600 rounded-full animate-spin" />
-              <span className="text-sm text-slate-500 dark:text-slate-400">Searching knowledge base with AI...</span>
+              <span className="text-sm text-slate-500 dark:text-slate-500">Searching knowledge base with AI...</span>
             </div>
           ) : aiResult && (
             <div className="p-6 space-y-5">
@@ -292,7 +292,7 @@ function KbPortal() {
                           </div>
                           <span className="text-slate-300 text-sm flex-shrink-0 group-hover:text-orange-400 transition-colors">→</span>
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 ml-12 line-clamp-1">
+                        <p className="text-xs text-slate-500 dark:text-slate-500 mt-1.5 ml-12 line-clamp-1">
                           {article.content?.slice(0, 120)}...
                         </p>
                       </button>
@@ -300,7 +300,7 @@ function KbPortal() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-slate-500">
                   No articles found. <a href="/dashboard/create" className="text-blue-600 underline">Raise a ticket</a> and our team will help.
                 </p>
               )}
@@ -336,7 +336,7 @@ function KbPortal() {
                 <button
                   key={i}
                   onClick={() => { setSearchInput(s.question); setSearchQuery(s.question); }}
-                  className="flex items-start gap-3 p-3 text-left rounded-xl hover:bg-slate-50 dark:bg-slate-800/50 transition-colors group border border-transparent hover:border-slate-200 dark:border-slate-700"
+                  className="flex items-start gap-3 p-3 text-left rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-colors group border border-transparent hover:border-slate-200 dark:border-slate-700"
                 >
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5 ${
                     s.category === "IT" ? TYPE_BADGE.IT : s.category === "HR" ? TYPE_BADGE.HR : TYPE_BADGE.general
@@ -363,12 +363,12 @@ function KbPortal() {
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 border ${
                   filterType === t
                     ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:bg-slate-800/50"
+                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
                 }`}
               >
                 {t === "IT" ? "💻" : t === "HR" ? "👥" : t === "general" ? "📖" : "🗂️"}
                 {t === "general" ? "General" : t}
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${filterType === t ? "bg-white dark:bg-slate-900/20" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${filterType === t ? "bg-white dark:bg-slate-900/20" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500"}`}>
                   {count}
                 </span>
               </button>
@@ -422,7 +422,7 @@ function KbPortal() {
                     </h3>
 
                     <div className={`overflow-hidden transition-all duration-300 ${expandedId === article.id ? "max-h-96" : "max-h-0"}`}>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-2 pb-3">
+                      <p className="text-sm text-slate-600 dark:text-slate-500 leading-relaxed pt-2 pb-3">
                         {article.content?.slice(0, 400)}{(article.content?.length ?? 0) > 400 ? "..." : ""}
                       </p>
                       <button onClick={() => fetchArticleDetail(article.id)} className="text-xs font-bold text-orange-600 hover:text-orange-500 transition-colors">
@@ -431,7 +431,7 @@ function KbPortal() {
                     </div>
 
                     {expandedId !== article.id && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-500 dark:text-slate-500 line-clamp-2 leading-relaxed">
                         {article.content?.slice(0, 90) ?? ""}...
                       </p>
                     )}
@@ -440,7 +440,7 @@ function KbPortal() {
                   <div className="px-5 pb-4 pt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
                     <div className="flex flex-wrap gap-1">
                       {article.tags?.split(",").slice(0, 2).map((tag) => (
-                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500">
                           #{tag.trim()}
                         </span>
                       ))}
@@ -462,7 +462,7 @@ function KbPortal() {
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:bg-slate-800/50 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-500 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 ← Prev
               </button>
@@ -470,7 +470,7 @@ function KbPortal() {
                 <button
                   key={i}
                   onClick={() => setPage(i)}
-                  className={`w-9 h-9 rounded-xl text-sm font-bold transition-all ${page === i ? "bg-slate-900 text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:bg-slate-800"}`}
+                  className={`w-9 h-9 rounded-xl text-sm font-bold transition-all ${page === i ? "bg-slate-900 text-white" : "text-slate-500 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-800"}`}
                 >
                   {i + 1}
                 </button>
@@ -478,7 +478,7 @@ function KbPortal() {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={page === totalPages - 1}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:bg-slate-800/50 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-500 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next →
               </button>
@@ -491,7 +491,7 @@ function KbPortal() {
       <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <p className="font-bold text-slate-800 dark:text-slate-200">Can&apos;t find what you&apos;re looking for?</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Our support team is ready to help. Raise a ticket and we&apos;ll get back to you.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500 mt-0.5">Our support team is ready to help. Raise a ticket and we&apos;ll get back to you.</p>
         </div>
         <a href="/dashboard/create" className="flex-shrink-0 px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-700 transition-colors">
           Raise a Ticket →

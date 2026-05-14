@@ -87,18 +87,18 @@ export default function ProfilePage() {
           </div>
           <div>
             <h2 className="text-2xl font-bold">{session?.user?.name}</h2>
-            <p className="text-[#6e6e73]">{session?.user?.email}</p>
+            <p className="text-slate-500 dark:text-slate-500">{session?.user?.email}</p>
             <div className="mt-2">
               <span className="badge badge-slate capitalize">{session?.user?.role?.replace("_", " ")}</span>
             </div>
           </div>
         </div>
 
-        <hr className="border-black/5" />
+        <hr className="border-slate-100 dark:border-slate-700" />
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-bold uppercase tracking-wider text-[#6e6e73]" htmlFor="name">
+            <label className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-500" htmlFor="name">
               Display Name
             </label>
             <input
@@ -111,13 +111,13 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div className="pt-4 border-t border-black/5">
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
             <h3 className="text-lg font-bold mb-4">Change Password</h3>
-            <p className="text-sm text-[#6e6e73] mb-4">Leave blank if you don't want to change it.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-500 mb-4">Leave blank if you don't want to change it.</p>
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-bold uppercase tracking-wider text-[#6e6e73]" htmlFor="currentPassword">
+                <label className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-500" htmlFor="currentPassword">
                   Current Password
                 </label>
                 <input
@@ -132,7 +132,7 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold uppercase tracking-wider text-[#6e6e73]" htmlFor="newPassword">
+                  <label className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-500" htmlFor="newPassword">
                     New Password
                   </label>
                   <input
@@ -145,7 +145,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold uppercase tracking-wider text-[#6e6e73]" htmlFor="confirmPassword">
+                  <label className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-500" htmlFor="confirmPassword">
                     Confirm New Password
                   </label>
                   <input

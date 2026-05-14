@@ -132,7 +132,7 @@ export default function SlaPoliciesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
         {policies.length === 0 ? (
           <div className="p-20 text-center">
             <p className="text-8xl mb-6 opacity-20">🕒</p>
@@ -143,7 +143,7 @@ export default function SlaPoliciesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/3">
+                <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/3">
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Name</th>
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Type</th>
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Priority</th>
@@ -154,7 +154,7 @@ export default function SlaPoliciesPage() {
               </thead>
               <tbody>
                 {policies.map((policy) => (
-                  <tr key={policy.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:bg-white/3 transition-colors">
+                  <tr key={policy.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/3 transition-colors">
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{policy.name}</td>
                     <td className="p-4">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TYPE_COLOR[policy.ticketType]}`}>
@@ -186,7 +186,7 @@ export default function SlaPoliciesPage() {
 
       {/* Add Policy Form */}
       {isFormOpen && (
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 mt-6 page-reveal">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 mt-6 page-reveal">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Add New Policy</h2>
           <form onSubmit={handleAddPolicy} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -195,7 +195,7 @@ export default function SlaPoliciesPage() {
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. IT Urgent Support"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -213,7 +213,7 @@ export default function SlaPoliciesPage() {
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all ${
                         formData.ticketType === t
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                       }`}
                     >
                       {t}
@@ -233,7 +233,7 @@ export default function SlaPoliciesPage() {
                       className={`py-3 px-2 rounded-xl text-xs font-bold border transition-all capitalize ${
                         formData.priority === p
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                       }`}
                     >
                       {p}
@@ -248,7 +248,7 @@ export default function SlaPoliciesPage() {
                   <input
                     type="number"
                     required
-                    className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                     placeholder="Minutes"
                     value={formData.firstResponseMinutes}
                     onChange={(e) => setFormData({ ...formData, firstResponseMinutes: parseInt(e.target.value) })}
@@ -260,7 +260,7 @@ export default function SlaPoliciesPage() {
                   <input
                     type="number"
                     required
-                    className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                     placeholder="Minutes"
                     value={formData.resolutionMinutes}
                     onChange={(e) => setFormData({ ...formData, resolutionMinutes: parseInt(e.target.value) })}
@@ -276,7 +276,7 @@ export default function SlaPoliciesPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-slate-800/5 hover:bg-white dark:bg-slate-800/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -292,7 +292,7 @@ export default function SlaPoliciesPage() {
       )}
 
       {/* Note */}
-      <div className="bg-white/2 border border-slate-100 dark:border-white/5 rounded-2xl p-6">
+      <div className="bg-white dark:bg-slate-800/2 border border-slate-100 dark:border-white/5 rounded-2xl p-6">
         <p className="text-sm text-white/50 leading-relaxed">
           <span className="font-bold text-white/70">Note:</span> Custom policies override built-in defaults. If no policy exists for a type+priority combo, the system falls back to hardcoded defaults (IT urgent: 1h/4h, IT high: 4h/8h, etc.).
         </p>

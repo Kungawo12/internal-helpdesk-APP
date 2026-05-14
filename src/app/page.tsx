@@ -127,7 +127,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen font-sans bg-white  text-slate-900  overflow-x-hidden">
+    <div ref={containerRef} className="min-h-screen font-sans bg-white dark:bg-slate-900  text-slate-900 dark:text-white  overflow-x-hidden">
       
       <style>{`
         @keyframes marquee {
@@ -144,15 +144,15 @@ export default function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white/95  backdrop-blur-md border-b border-slate-100  shadow-sm text-slate-900' : 'bg-transparent text-white'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white dark:bg-slate-900/95  backdrop-blur-md border-b border-slate-100 dark:border-slate-800  shadow-sm text-slate-900 dark:text-white' : 'bg-transparent text-white'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
-          <span className={scrolled ? 'text-slate-900' : 'text-white'}>Helpdesk</span>
+          <span className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'}>Helpdesk</span>
         </div>
         <div className="flex items-center gap-3 font-medium text-sm">
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${scrolled ? "bg-slate-100 hover:bg-slate-200 text-slate-700" : "bg-white/10 hover:bg-white/20 text-white"}`}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${scrolled ? "bg-slate-100 hover:bg-slate-200 text-slate-700" : "bg-white dark:bg-slate-900/10 hover:bg-white dark:bg-slate-900/20 text-white"}`}
             aria-label="Toggle theme"
           >
             {theme === "dark" ? "☀️" : "🌙"}
@@ -178,14 +178,14 @@ export default function LandingPage() {
             <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
               Deliver exceptional<br/>support at scale.
             </h1>
-            <p className="hero-element text-lg md:text-xl text-slate-400 max-w-2xl font-medium">
+            <p className="hero-element text-lg md:text-xl text-slate-400 dark:text-slate-500 max-w-2xl font-medium">
               Your IT and HR teams — augmented with smart automation, SLA enforcement, and real-time notifications — resolving issues faster than ever.
             </p>
             <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
               <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
                 Sign In <span>→</span>
               </Link>
-              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900/5 hover:bg-white dark:bg-slate-900/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
                 ↓ See how it works
               </a>
             </div>
@@ -196,24 +196,24 @@ export default function LandingPage() {
             <div className="hero-element grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
               <div>
                 <p className="text-3xl font-extrabold text-white">{stats.totalTickets}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Tickets Managed</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Tickets Managed</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.totalUsers}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Active Users</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Active Users</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.avgResolutionHours}h</p>
-                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Avg Resolution</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Avg Resolution</p>
               </div>
               {/* Fallback for mobile if grid collapses */}
               <div className="md:hidden">
                 <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
               </div>
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
                       <h3 className="font-bold text-lg text-white">{card.title}</h3>
                     </div>
                     <hr className="border-white/5 mb-4" />
-                    <ul className="space-y-2 text-sm text-slate-400 font-mono">
+                    <ul className="space-y-2 text-sm text-slate-400 dark:text-slate-500 font-mono">
                       {card.details.map((detail, i) => (
                         <li key={i} className={detail.startsWith('●') ? 'text-blue-400' : ''}>
                           {detail}
@@ -304,9 +304,9 @@ export default function LandingPage() {
       </section>
 
       {/* Capability Marquee */}
-      <section className="py-16 bg-slate-50  border-b border-slate-100  overflow-hidden">
+      <section className="py-16 bg-slate-50  border-b border-slate-100 dark:border-slate-800  overflow-hidden">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 ">Everything your team needs</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white ">Everything your team needs</h2>
         </div>
         
         <div className="relative flex overflow-x-hidden">
@@ -316,7 +316,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50  border border-slate-200  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50  border border-slate-200 dark:border-slate-700  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
                 {pill}
               </div>
             ))}
@@ -328,7 +328,7 @@ export default function LandingPage() {
               "📚 Knowledge Base", "📊 Manager Reports", "🤖 Automation Rules",
               "👥 Role-Based Access", "📧 Email Alerts"
             ].map((pill, idx) => (
-              <div key={idx} className="bg-slate-50  border border-slate-200  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
+              <div key={idx} className="bg-slate-50  border border-slate-200 dark:border-slate-700  rounded-full px-6 py-3 font-bold text-slate-700  text-sm flex items-center gap-2 whitespace-nowrap hover:border-blue-200 transition-colors">
                 {pill}
               </div>
             ))}
@@ -341,18 +341,18 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
-            <p className="text-lg text-slate-400">Four steps. Zero friction.</p>
+            <p className="text-lg text-slate-400 dark:text-slate-500">Four steps. Zero friction.</p>
           </div>
           
           {/* Tabs */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-white/5 border border-white/10 rounded-full p-1">
+            <div className="inline-flex bg-white dark:bg-slate-900/5 border border-white/10 rounded-full p-1">
               {["Request", "Notify", "Resolve", "Learn"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                    activeTab === tab ? 'bg-white text-slate-900' : 'text-white/60 hover:text-white'
+                    activeTab === tab ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   {tab}
@@ -367,21 +367,21 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Employee submits a ticket</h3>
-                  <p className="text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
                 <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="space-y-2">
-                    <div className="text-xs font-bold uppercase text-slate-500">Title</div>
-                    <div className="bg-white/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
+                    <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Title</div>
+                    <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500">Type</div>
-                      <div className="bg-white/5 rounded-lg p-3 text-white/40">IT</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Type</div>
+                      <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">IT</div>
                     </div>
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500">Priority</div>
-                      <div className="bg-white/5 rounded-lg p-3 text-white/40">High</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Priority</div>
+                      <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">High</div>
                     </div>
                   </div>
                   <button className="w-full bg-blue-600 text-white rounded-lg py-3 font-bold">Submit Ticket</button>
@@ -393,7 +393,7 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Staff are notified instantly</h3>
-                  <p className="text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
                 </div>
                 <div className="flex justify-center">
                   <div className="relative bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
@@ -402,10 +402,10 @@ export default function LandingPage() {
                       <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">2</div>
                     </div>
                     <div className="space-y-3">
-                      <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
+                      <div className="bg-white dark:bg-slate-900/5 p-3 rounded-lg text-sm text-slate-300">
                         <span className="font-bold text-white">New IT Ticket:</span> &quot;VPN not connecting&quot; assigned to IT queue.
                       </div>
-                      <div className="bg-white/5 p-3 rounded-lg text-sm text-slate-300">
+                      <div className="bg-white dark:bg-slate-900/5 p-3 rounded-lg text-sm text-slate-300">
                         <span className="font-bold text-white">New HR Ticket:</span> &quot;Payroll inquiry&quot; assigned to HR queue.
                       </div>
                     </div>
@@ -418,14 +418,14 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Staff works and resolves</h3>
-                  <p className="text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
                 </div>
                 <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="font-bold">Ticket #124</span>
                     <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
                   </div>
-                  <div className="bg-white/5 p-4 rounded-lg text-sm text-slate-300">
+                  <div className="bg-white dark:bg-slate-900/5 p-4 rounded-lg text-sm text-slate-300">
                     <span className="font-bold text-white">Solution:</span> Reset user credentials and updated VPN client config. Verified working.
                   </div>
                 </div>
@@ -436,24 +436,24 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Knowledge compounds over time</h3>
-                  <p className="text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">VPN Setup</div>
-                    <div className="text-xs text-slate-500">142 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">142 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Printer Map</div>
-                    <div className="text-xs text-slate-500">89 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">89 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Wifi Pass</div>
-                    <div className="text-xs text-slate-500">204 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">204 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Holiday Cal</div>
-                    <div className="text-xs text-slate-500">67 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">67 views</div>
                   </div>
                 </div>
               </div>
@@ -466,22 +466,22 @@ export default function LandingPage() {
       <PeopleMarquee />
 
       {/* Features Grid */}
-      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white ">
+      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white dark:bg-slate-900 ">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 ">Built for every team member</h2>
-            <p className="text-lg text-slate-500 ">Tailored experiences for employees, staff, and managers.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white ">Built for every team member</h2>
+            <p className="text-lg text-slate-500 dark:text-slate-500 ">Tailored experiences for employees, staff, and managers.</p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
               {/* Employee */}
-            <div className="bg-white  border border-slate-200  rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all" style={{ borderTop: '3px solid #2563eb' }}>
+            <div className="bg-white dark:bg-slate-900  border border-slate-200 dark:border-slate-700  rounded-3xl p-8 hover:shadow-lg hover:border-blue-100 transition-all" style={{ borderTop: '3px solid #2563eb' }}>
               <div className="w-12 h-12 bg-blue-100  rounded-xl flex items-center justify-center text-blue-600  mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900 ">Employee</h3>
-              <p className="text-slate-600  mb-6">Submit IT or HR requests in seconds. Track progress live.</p>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white ">Employee</h3>
+              <p className="text-slate-600 dark:text-slate-300  mb-6">Submit IT or HR requests in seconds. Track progress live.</p>
               <ul className="space-y-3 text-sm text-slate-700 ">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
@@ -507,12 +507,12 @@ export default function LandingPage() {
             </div>
 
             {/* IT & HR Staff */}
-            <div className="bg-white  border border-slate-200  rounded-3xl p-8 hover:shadow-lg hover:border-orange-100 transition-all" style={{ borderTop: '3px solid #f97316' }}>
+            <div className="bg-white dark:bg-slate-900  border border-slate-200 dark:border-slate-700  rounded-3xl p-8 hover:shadow-lg hover:border-orange-100 transition-all" style={{ borderTop: '3px solid #f97316' }}>
               <div className="w-12 h-12 bg-orange-100  rounded-xl flex items-center justify-center text-orange-500  mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900 ">IT & HR Staff</h3>
-              <p className="text-slate-600  mb-6">Manage your queue, document solutions, hit SLA targets.</p>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white ">IT & HR Staff</h3>
+              <p className="text-slate-600 dark:text-slate-300  mb-6">Manage your queue, document solutions, hit SLA targets.</p>
               <ul className="space-y-3 text-sm text-slate-700 ">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
@@ -538,12 +538,12 @@ export default function LandingPage() {
             </div>
 
             {/* Manager */}
-            <div className="bg-white  border border-slate-200  rounded-3xl p-8 hover:shadow-lg hover:border-purple-100 transition-all" style={{ borderTop: '3px solid #9333ea' }}>
+            <div className="bg-white dark:bg-slate-900  border border-slate-200 dark:border-slate-700  rounded-3xl p-8 hover:shadow-lg hover:border-purple-100 transition-all" style={{ borderTop: '3px solid #9333ea' }}>
               <div className="w-12 h-12 bg-purple-100  rounded-xl flex items-center justify-center text-purple-600  mb-6">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L3 18"></path></svg>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-slate-900 ">Manager</h3>
-              <p className="text-slate-600  mb-6">Full visibility into team performance and operational health.</p>
+              <h3 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white ">Manager</h3>
+              <p className="text-slate-600 dark:text-slate-300  mb-6">Full visibility into team performance and operational health.</p>
               <ul className="space-y-3 text-sm text-slate-700 ">
                 <li className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
@@ -576,12 +576,12 @@ export default function LandingPage() {
       </section>
 
       {/* Final Sign-In CTA */}
-      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white ">
+      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white dark:bg-slate-900 ">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-white grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="text-center lg:text-left">
               <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>
-              <p className="text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
+              <p className="text-slate-400 dark:text-slate-500 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
               <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
                 Sign In <span>→</span>
               </Link>
@@ -594,7 +594,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 px-6 py-8 md:px-12 border-t border-slate-900">
+      <footer className="bg-slate-950 text-slate-400 dark:text-slate-500 px-6 py-8 md:px-12 border-t border-slate-900">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm font-medium">
             &copy; {new Date().getFullYear()} Karma Staff Platform. All rights reserved.

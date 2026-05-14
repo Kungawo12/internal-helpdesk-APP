@@ -19,7 +19,7 @@ const ROLE_BADGE: Record<string, string> = {
   manager: "bg-purple-500/20 text-purple-400 border-purple-500/20",
   it_staff: "bg-blue-500/20 text-blue-400 border-blue-500/20",
   hr_staff: "bg-amber-500/20 text-amber-400 border-amber-500/20",
-  employee: "bg-slate-500/20 text-slate-400 border-slate-500/20",
+  employee: "bg-slate-500/20 text-slate-400 dark:text-slate-500 border-slate-500/20",
 };
 
 export default function AdminUsersPage() {
@@ -108,7 +108,7 @@ export default function AdminUsersPage() {
           placeholder="Search name, email, role..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-72 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
+          className="w-full md:w-72 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
         />
       </div>
 
@@ -118,10 +118,10 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="bg-slate-50 dark:bg-white/3 border border-slate-100 dark:border-white/8 rounded-2xl overflow-hidden">
+      <div className="bg-slate-50 dark:bg-slate-800/3 border border-slate-100 dark:border-white/8 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-white/5 text-xs uppercase tracking-widest text-slate-400 dark:text-white/30 bg-slate-100 dark:bg-white/5">
+            <tr className="border-b border-slate-100 dark:border-white/5 text-xs uppercase tracking-widest text-slate-400 dark:text-white/30 bg-slate-100 dark:bg-slate-800/5">
               <th className="px-6 py-4 font-bold">User</th>
               <th className="px-6 py-4 font-bold hidden md:table-cell">Tickets</th>
               <th className="px-6 py-4 font-bold">Role</th>
@@ -131,10 +131,10 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {filtered.map((user) => (
-              <tr key={user.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-white/5 transition-colors">
+              <tr key={user.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-slate-800/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-white/10 text-slate-900 dark:text-white flex items-center justify-center font-black text-sm flex-shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800/10 text-slate-900 dark:text-white flex items-center justify-center font-black text-sm flex-shrink-0">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>

@@ -139,7 +139,7 @@ export default function TicketTemplatesPage() {
 
       {/* Add Template Form */}
       {isFormOpen && (
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Template</h2>
           <form onSubmit={handleCreateTemplate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,7 +148,7 @@ export default function TicketTemplatesPage() {
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. Password Reset"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -160,7 +160,7 @@ export default function TicketTemplatesPage() {
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. For standard password reset requests"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -178,7 +178,7 @@ export default function TicketTemplatesPage() {
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all capitalize ${
                         formData.type === t
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                       }`}
                     >
                       {t}
@@ -198,7 +198,7 @@ export default function TicketTemplatesPage() {
                       className={`py-3 px-1 rounded-xl text-xs font-bold border transition-all capitalize ${
                         formData.priority === p
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-white/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                       }`}
                     >
                       {p}
@@ -211,7 +211,7 @@ export default function TicketTemplatesPage() {
                 <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Category (Optional)</label>
                 <input
                   type="text"
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. Access"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -222,7 +222,7 @@ export default function TicketTemplatesPage() {
                 <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Title Prefix (Optional)</label>
                 <input
                   type="text"
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
                   placeholder="e.g. [PW-RESET] "
                   value={formData.titlePrefix}
                   onChange={(e) => setFormData({ ...formData, titlePrefix: e.target.value })}
@@ -234,7 +234,7 @@ export default function TicketTemplatesPage() {
                 <textarea
                   required
                   rows={6}
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
+                  className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors font-mono text-sm"
                   placeholder="Write the default body content for this template..."
                   value={formData.bodyTemplate}
                   onChange={(e) => setFormData({ ...formData, bodyTemplate: e.target.value })}
@@ -246,7 +246,7 @@ export default function TicketTemplatesPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-slate-100 dark:bg-white/5 hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-slate-800/5 hover:bg-white dark:bg-slate-800/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -262,7 +262,7 @@ export default function TicketTemplatesPage() {
       )}
 
       {/* Templates Table */}
-      <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-slate-200 dark:border-white/10 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">
@@ -284,7 +284,7 @@ export default function TicketTemplatesPage() {
               </tr>
             ) : (
               templates.map((template) => (
-                <tr key={template.id} className="text-sm text-white/80 hover:bg-white/2 transition-colors">
+                <tr key={template.id} className="text-sm text-white/80 hover:bg-white dark:bg-slate-800/2 transition-colors">
                   <td className="px-6 py-4 font-bold">{template.name}</td>
                   <td className="px-6 py-4">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${

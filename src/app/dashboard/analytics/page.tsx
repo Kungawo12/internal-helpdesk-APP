@@ -101,24 +101,24 @@ export default function AnalyticsPage() {
 
       {/* Section 1 - KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-1">SLA Compliance</p>
           <p className={`text-3xl font-extrabold ${complianceColor}`}>{data.sla.complianceRate}%</p>
           <p className="text-xs text-slate-400 dark:text-white/30 mt-1">target: 80%</p>
         </div>
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-1">SLA Breached</p>
           <p className={`text-3xl font-extrabold ${data.sla.totalBreached > 0 ? "text-red-400" : "text-slate-900 dark:text-white"}`}>
             {data.sla.totalBreached}
           </p>
           <p className="text-xs text-slate-400 dark:text-white/30 mt-1">active tickets past deadline</p>
         </div>
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-1">MTTR (Overall)</p>
           <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.mttr.all}h</p>
           <p className="text-xs text-slate-400 dark:text-white/30 mt-1">mean time to resolution</p>
         </div>
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-1">Resolved Tickets</p>
           <p className="text-3xl font-extrabold text-emerald-400">
             {data.byDepartment.IT.resolved + data.byDepartment.HR.resolved}
@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Section 2 - Weekly Volume */}
-      <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+      <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
         <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-6">Weekly Ticket Volume</h2>
         <div className="flex items-end gap-2 h-40">
           {data.weeklyVolume.map((w) => (
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
       {/* Section 3 - 3-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column A - MTTR by Department */}
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-4">MTTR by Department</h2>
           <div className="space-y-4">
             {[
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
                   <span className="text-white/60">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.value}h</span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-white/5 rounded-full h-2">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
                   <div
                     className="bg-red-500 rounded-full h-2 transition-all"
                     style={{ width: `${(r.value / maxMttr) * 100}%` }}
@@ -172,7 +172,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Column B - Open Ticket Age */}
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-4">Open Ticket Age</h2>
           <div className="space-y-4">
             {[
@@ -187,7 +187,7 @@ export default function AnalyticsPage() {
                   <span className="text-white/60">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.count}</span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-white/5 rounded-full h-2">
+                <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
                   <div
                     className={`${r.color} rounded-full h-2 transition-all`}
                     style={{ width: `${(r.count / maxAgeCount) * 100}%` }}
@@ -199,7 +199,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Column C - SLA by Department */}
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-4">SLA by Department</h2>
           <div className="space-y-6">
             {([ "IT", "HR" ] as const).map((dept) => {
@@ -214,15 +214,15 @@ export default function AnalyticsPage() {
                     </span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="bg-slate-50 dark:bg-white/3 p-2 rounded-lg">
+                    <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
                       <p className="text-slate-400 dark:text-white/40 mb-0.5">Total</p>
                       <p className="font-bold text-slate-900 dark:text-white">{d.total}</p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-white/3 p-2 rounded-lg">
+                    <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
                       <p className="text-slate-400 dark:text-white/40 mb-0.5">Resolved</p>
                       <p className="font-bold text-emerald-400">{d.resolved}</p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-white/3 p-2 rounded-lg">
+                    <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
                       <p className="text-slate-400 dark:text-white/40 mb-0.5">Breached</p>
                       <p className="font-bold text-red-400">{d.breached}</p>
                     </div>
@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Column D - CSAT */}
-        <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 col-span-1 lg:col-span-3">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 col-span-1 lg:col-span-3">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-6">Customer Satisfaction</h2>
           
           {data.csat.totalRated === 0 ? (
@@ -269,7 +269,7 @@ export default function AnalyticsPage() {
                   return (
                     <div key={star} className="flex items-center gap-3">
                       <span className="text-xs font-bold text-white/60 w-4">{star}★</span>
-                      <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-white dark:bg-slate-800/10 rounded-full overflow-hidden">
                         <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-xs text-slate-400 dark:text-white/40 w-6 text-right">{count}</span>
@@ -283,8 +283,8 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Section 4 - Top Resolvers */}
-      <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/3">
+      <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
+        <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/3">
           <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Top Resolvers</h2>
         </div>
         {data.topResolvers.length === 0 ? (
@@ -295,7 +295,7 @@ export default function AnalyticsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/3">
+                <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/3">
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest w-16">Rank</th>
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Name</th>
                   <th className="p-4 text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest">Role</th>
@@ -304,7 +304,7 @@ export default function AnalyticsPage() {
               </thead>
               <tbody>
                 {data.topResolvers.map((r, i) => (
-                  <tr key={r.name} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:bg-white/3 transition-colors">
+                  <tr key={r.name} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/3 transition-colors">
                     <td className="p-4 font-bold text-slate-400 dark:text-white/40">{i + 1}.</td>
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{r.name}</td>
                     <td className="p-4">

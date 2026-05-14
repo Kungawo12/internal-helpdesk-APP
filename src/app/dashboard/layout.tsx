@@ -90,7 +90,7 @@ function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={handleOpen}
-        className="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow hover:bg-slate-50 transition-colors"
+        className="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         aria-label="Notifications"
       >
         🔔
@@ -102,9 +102,9 @@ function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-            <span className="text-sm font-black text-slate-900">Notifications</span>
+        <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+            <span className="text-sm font-black text-slate-900 dark:text-white">Notifications</span>
             {notifications.some((n) => !n.read) && (
               <button onClick={markAllRead} className="text-xs text-blue-600 font-bold hover:underline">
                 Mark all read
@@ -113,7 +113,7 @@ function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
             {notifications.length === 0 ? (
-              <p className="text-sm text-slate-400 text-center py-8">No notifications yet</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-8">No notifications yet</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -122,12 +122,12 @@ function NotificationBell() {
                     if (n.ticketId) router.push(`/dashboard/ticket/${n.ticketId}`);
                     setOpen(false);
                   }}
-                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
+                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
                 >
                   <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                       {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -178,7 +178,7 @@ export default function DashboardLayout({
       
       {/* Sidebar - Desktop */}
       <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
-        <div className="bg-white/90 dark:bg-slate-800/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-700/60 transition-colors duration-300">
+        <div className="bg-white dark:bg-slate-800/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-700/60 transition-colors duration-300">
           <div className="mb-14 px-2">
             <Link href="/dashboard" className="flex items-center gap-4 group">
               <div className="w-12 h-12 bg-[#0f172a] dark:bg-blue-600 rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
@@ -196,7 +196,7 @@ export default function DashboardLayout({
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
                     ? "bg-[#0f172a] dark:bg-blue-600 text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
+                    : "text-[#475569] dark:text-slate-500 hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -237,15 +237,15 @@ export default function DashboardLayout({
       {/* Main Content Area */}
       <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
         {/* Top bar — desktop only */}
-        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
+        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
           <ThemeToggle />
           <NotificationBell />
         </div>
 
         {/* Mobile Header */}
-        <header className="lg:hidden h-20 bg-white/90 dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
+        <header className="lg:hidden h-20 bg-white dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
            <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0f172a] dark:bg-white rounded-xl flex items-center justify-center font-bold text-white dark:text-[#0f172a] text-lg">H</div>
+            <div className="w-10 h-10 bg-[#0f172a] dark:bg-slate-800 rounded-xl flex items-center justify-center font-bold text-white dark:text-white text-lg">H</div>
             <span className="font-extrabold text-xl text-[#0f172a] dark:text-white">Helpdesk</span>
           </Link>
           <div className="flex items-center gap-3">
@@ -262,7 +262,7 @@ export default function DashboardLayout({
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-white pt-24 px-8 overflow-y-auto">
+          <div className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-800 pt-24 px-8 overflow-y-auto">
              <nav className="space-y-3">
                 {navItems.map((item) => (
                   <Link
@@ -270,14 +270,14 @@ export default function DashboardLayout({
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                      pathname === item.path ? "bg-[#0f172a] text-white shadow-2xl" : "text-slate-500"
+                      pathname === item.path ? "bg-[#0f172a] text-white shadow-2xl" : "text-slate-500 dark:text-slate-500"
                     }`}
                   >
                     <span className="text-3xl">{item.icon}</span>
                     <span className="text-lg">{item.label}</span>
                   </Link>
                 ))}
-                <div className="pt-8 mt-8 border-t border-slate-100">
+                <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800">
                    <button
                     onClick={() => signOut({ callbackUrl: "/" })}
                     className="w-full flex items-center gap-6 px-8 py-5 rounded-[24px] font-black text-red-600 bg-red-50"

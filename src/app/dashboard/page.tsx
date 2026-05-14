@@ -75,7 +75,7 @@ function AdminDashboard({ name }: { name: string }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-10 h-10 border-4 border-black/10 border-t-black rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-slate-200 dark:border-slate-700 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -110,7 +110,7 @@ function AdminDashboard({ name }: { name: string }) {
           <Link
             key={item.href}
             href={item.href}
-            className="card p-4 flex flex-col items-center gap-2 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors text-center group"
+            className="card p-4 flex flex-col items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-colors text-center group"
           >
             <span className="text-2xl">{item.icon}</span>
             <span className="text-xs font-bold text-slate-600 dark:text-slate-500 group-hover:text-blue-600 transition-colors leading-tight">{item.label}</span>
@@ -232,7 +232,7 @@ function AdminDashboard({ name }: { name: string }) {
               {stats.staffPerformance.sort((a, b) => b.resolved - a.resolved).map((staff) => {
                 const rate = staff.assigned > 0 ? Math.round((staff.resolved / staff.assigned) * 100) : 0;
                 return (
-                  <tr key={staff.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
+                  <tr key={staff.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${getAvatarColor(staff.name.charAt(0))}`}>
@@ -278,7 +278,7 @@ function AdminDashboard({ name }: { name: string }) {
         </div>
         <div className="divide-y divide-slate-100">
           {stats.recentTickets.map((ticket) => (
-            <div key={ticket.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
+            <div key={ticket.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50 transition-colors">
               <div className="flex items-center gap-4 min-w-0">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PRIORITY_COLOR[ticket.priority] || "bg-slate-300"}`} />
                 <div className="min-w-0">
@@ -339,7 +339,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px]">
-        <div className="w-12 h-12 border-[4px] border-black/10 border-t-black rounded-full animate-spin" />
+        <div className="w-12 h-12 border-[4px] border-slate-200 dark:border-slate-700 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -353,10 +353,10 @@ export default function DashboardPage() {
   }
 
   const statsList = [
-    { label: "Total Tickets Created", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white/10" },
-    { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white/10" },
-    { label: "Resolved", value: stats.resolved, style: "bg-white text-black", icon: "✅", iconBg: "bg-emerald-50" },
-    { label: "Pending", value: stats.open, style: "bg-white text-black", icon: "🔴", iconBg: "bg-red-50" },
+    { label: "Total Tickets Created", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white dark:bg-slate-800/10" },
+    { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white dark:bg-slate-800/10" },
+    { label: "Resolved", value: stats.resolved, style: "bg-white dark:bg-slate-800 text-black", icon: "✅", iconBg: "bg-emerald-50" },
+    { label: "Pending", value: stats.open, style: "bg-white dark:bg-slate-800 text-black", icon: "🔴", iconBg: "bg-red-50" },
   ];
 
   return (
@@ -381,7 +381,7 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Employee Portal</span>
-            <span className="text-sm font-semibold text-[#6e6e73]">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-500">
               {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </span>
           </div>
@@ -467,9 +467,9 @@ export default function DashboardPage() {
                           </div>
                         );
                       })()}
-                      <span className="text-sm font-bold text-[#6e6e73] font-mono">#{ticket.id.slice(0, 8)}</span>
+                      <span className="text-sm font-bold text-slate-500 dark:text-slate-500 font-mono">#{ticket.id.slice(0, 8)}</span>
                     </div>
-                    <span className="text-sm text-[#6e6e73] font-bold">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-500 font-bold">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               );
@@ -479,7 +479,7 @@ export default function DashboardPage() {
           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10 dark:border-white/20 shadow-none">
             <div className="text-8xl mb-6 opacity-20">🎫</div>
             <h3 className="text-3xl font-extrabold mb-4">No tickets yet</h3>
-            <p className="text-[#6e6e73] text-lg font-medium mb-6">Your support requests will appear here once submitted.</p>
+            <p className="text-slate-500 dark:text-slate-500 text-lg font-medium mb-6">Your support requests will appear here once submitted.</p>
             {role === "employee" && (
               <Link href="/dashboard/create" className="text-blue-600 font-bold hover:underline">
                 Submit your first ticket →

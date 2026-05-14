@@ -96,7 +96,7 @@ export default function ManagerDashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] space-y-4">
-        <div className="w-12 h-12 border-[4px] border-black/10 border-t-black rounded-full animate-spin" />
+        <div className="w-12 h-12 border-[4px] border-slate-200 dark:border-slate-700 border-t-black rounded-full animate-spin" />
       </div>
     );
   }
@@ -116,7 +116,7 @@ export default function ManagerDashboard() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Manager Portal</span>
-            <span className="text-sm font-semibold text-[#6e6e73]">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-500">
               {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
@@ -176,15 +176,15 @@ export default function ManagerDashboard() {
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-[#6e6e73]  uppercase tracking-widest mb-4">Resolution</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Resolution</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgResTime}h</p>
-          <p className="text-sm text-[#6e6e73]  font-medium">Average Time to Close</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">Average Time to Close</p>
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-[#6e6e73]  uppercase tracking-widest mb-4">Quality</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Quality</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgSatisfaction}</p>
-          <p className="text-sm text-[#6e6e73]  font-medium">CSAT out of 5.0</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">CSAT out of 5.0</p>
         </div>
       </div>
 
@@ -193,7 +193,7 @@ export default function ManagerDashboard() {
         <div className="lg:col-span-2 card p-8 md:p-10 space-y-8  ">
           <h3 className="text-2xl font-bold tracking-tight ">Department Activity</h3>
           <div className="space-y-6">
-            <div className="bg-[#f5f5f7]  p-6 rounded-[24px]">
+            <div className="bg-slate-50 dark:bg-slate-800  p-6 rounded-[24px]">
               <div className="flex justify-between items-end mb-3">
                 <span className="text-lg font-bold ">IT Operations</span>
                 <span className="text-2xl font-extrabold ">{stats.itCount}</span>
@@ -201,13 +201,13 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-black  h-4 rounded-full" style={{ width: `${(stats.itCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-[#6e6e73] ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
                 <span>Open: {stats.itOpen}</span>
                 <span>Resolved: {stats.itResolved}</span>
               </div>
             </div>
             
-            <div className="bg-[#f5f5f7]  p-6 rounded-[24px]">
+            <div className="bg-slate-50 dark:bg-slate-800  p-6 rounded-[24px]">
               <div className="flex justify-between items-end mb-3">
                 <span className="text-lg font-bold ">HR Operations</span>
                 <span className="text-2xl font-extrabold ">{stats.hrCount}</span>
@@ -215,7 +215,7 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-blue-600 h-4 rounded-full" style={{ width: `${(stats.hrCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-[#6e6e73] ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
                 <span>Open: {stats.hrOpen}</span>
                 <span>Resolved: {stats.hrResolved}</span>
               </div>
@@ -233,10 +233,10 @@ export default function ManagerDashboard() {
           ) : (
             <div className="flex items-end h-[200px] gap-4">
                {[
-                  { label: "Low", value: stats.priority.low, color: "bg-white/30" },
-                  { label: "Med", value: stats.priority.medium, color: "bg-white/50" },
-                  { label: "High", value: stats.priority.high, color: "bg-white/75" },
-                  { label: "Urgent", value: stats.priority.urgent, color: "bg-white" },
+                  { label: "Low", value: stats.priority.low, color: "bg-white dark:bg-slate-800/30" },
+                  { label: "Med", value: stats.priority.medium, color: "bg-white dark:bg-slate-800/50" },
+                  { label: "High", value: stats.priority.high, color: "bg-white dark:bg-slate-800/75" },
+                  { label: "Urgent", value: stats.priority.urgent, color: "bg-white dark:bg-slate-800" },
                ].map((p, idx) => (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-3">
                      <div className="text-xl font-bold">{p.value}</div>
@@ -255,7 +255,7 @@ export default function ManagerDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-black/10  text-xs uppercase tracking-widest text-[#6e6e73] ">
+              <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
                 <th className="pb-3 font-bold">Staff Member</th>
                 <th className="pb-3 font-bold text-center">Open</th>
                 <th className="pb-3 font-bold text-center">In Progress</th>
@@ -266,7 +266,7 @@ export default function ManagerDashboard() {
             </thead>
             <tbody>
               {workload.map(s => (
-                <tr key={s.id} className="border-b border-black/5  hover:bg-[#f5f5f7]  transition-colors">
+                <tr key={s.id} className="border-b border-slate-100 dark:border-slate-700  hover:bg-slate-50 dark:hover:bg-slate-800  transition-colors">
                   <td className="py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-black  text-white flex items-center justify-center text-xs font-bold">
@@ -274,7 +274,7 @@ export default function ManagerDashboard() {
                       </div>
                       <div>
                         <p className="font-bold text-sm ">{s.name}</p>
-                        <p className="text-xs text-[#6e6e73]  capitalize">{s.role.replace("_", " ")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-500  capitalize">{s.role.replace("_", " ")}</p>
                       </div>
                     </div>
                   </td>
@@ -290,13 +290,13 @@ export default function ManagerDashboard() {
                   <td className="py-4 text-center">
                     <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 dark:text-slate-500 "}`}>{s.slaBreached}</span>
                   </td>
-                  <td className="py-4 text-center text-sm text-[#6e6e73]  font-medium">
+                  <td className="py-4 text-center text-sm text-slate-500 dark:text-slate-500  font-medium">
                     {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
                   </td>
                 </tr>
               ))}
               {workload.length === 0 && (
-                <tr><td colSpan={6} className="py-10 text-center text-[#6e6e73]  italic">No staff members found.</td></tr>
+                <tr><td colSpan={6} className="py-10 text-center text-slate-500 dark:text-slate-500  italic">No staff members found.</td></tr>
               )}
             </tbody>
           </table>
@@ -321,7 +321,7 @@ export default function ManagerDashboard() {
                       style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
                     />
                     {d.count > 0 && (
-                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
                         {d.count}
                       </span>
                     )}
@@ -344,7 +344,7 @@ export default function ManagerDashboard() {
                   {report.sla.complianceRate != null ? `${report.sla.complianceRate}%` : "—"}
                 </p>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-white dark:bg-slate-800/10 rounded-full h-2 overflow-hidden">
                 <div
                   className="h-2 rounded-full bg-emerald-400"
                   style={{ width: `${report.sla.complianceRate ?? 0}%` }}
@@ -370,11 +370,11 @@ export default function ManagerDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight ">Active Manifest</h2>
           <div className="flex w-full md:w-auto gap-4">
-            <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10   ">🔄 Refresh</button>
+            <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-slate-200 dark:border-slate-700   ">🔄 Refresh</button>
             <a
               href="/api/tickets/export"
               download
-              className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-black/10   "
+              className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-slate-200 dark:border-slate-700   "
             >
               ⬇ Export CSV
             </a>
@@ -399,10 +399,10 @@ export default function ManagerDashboard() {
         </div>
 
         {filteredTickets.length > 0 ? (
-          <div className="bg-white dark:bg-slate-900  rounded-[40px] border border-black/10  overflow-hidden">
+          <div className="bg-white dark:bg-slate-900  rounded-[40px] border border-slate-200 dark:border-slate-700  overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-black/10  text-xs uppercase tracking-widest text-[#6e6e73] ">
+                <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
                   <th className="p-6 font-bold">Ticket</th>
                   <th className="p-6 font-bold hidden md:table-cell">Creator</th>
                   <th className="p-6 font-bold">Status</th>
@@ -416,14 +416,14 @@ export default function ManagerDashboard() {
                   <tr 
                     key={ticket.id} 
                     onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                    className="border-b border-black/5  hover:bg-[#f4f4f4]  cursor-pointer transition-colors group"
+                    className="border-b border-slate-100 dark:border-slate-700  hover:bg-[#f4f4f4]  cursor-pointer transition-colors group"
                   >
                     <td className="p-6">
                       <div className="flex items-center gap-4">
                         {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
                         <div>
                            <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
-                           <p className="text-sm text-[#6e6e73] ">{ticket.type}</p>
+                           <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
                         </div>
                       </div>
                     </td>
@@ -457,7 +457,7 @@ export default function ManagerDashboard() {
                         }
                       </select>
                     </td>
-                    <td className="p-6 hidden lg:table-cell text-sm text-[#6e6e73]  font-semibold">
+                    <td className="p-6 hidden lg:table-cell text-sm text-slate-500 dark:text-slate-500  font-semibold">
                       {new Date(ticket.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-6 text-right">
@@ -469,9 +469,9 @@ export default function ManagerDashboard() {
             </table>
           </div>
         ) : (
-          <div className="card p-20 text-center bg-transparent border-dashed border-2 border-black/10  shadow-none">
+          <div className="card p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
             <h3 className="text-2xl font-bold mb-2 ">No tickets found</h3>
-            <p className="text-[#6e6e73] ">Adjust your filters to see more results.</p>
+            <p className="text-slate-500 dark:text-slate-500 ">Adjust your filters to see more results.</p>
           </div>
         )}
       </div>
