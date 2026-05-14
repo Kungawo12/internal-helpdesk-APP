@@ -352,7 +352,7 @@ export default function LandingPage() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                    activeTab === tab ? 'bg-slate-900 dark:bg-slate-900 text-white' : 'text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white'
+                    activeTab === tab ? 'bg-slate-900 dark:bg-slate-900 text-white' : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {tab}
@@ -578,10 +578,10 @@ export default function LandingPage() {
       {/* Final Sign-In CTA */}
       <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white dark:bg-slate-900 ">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-white grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="bg-slate-100 dark:bg-gradient-to-br dark:from-slate-900 dark:to-[#0a0f1e] border border-slate-200 dark:border-white/10 rounded-3xl p-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="text-center lg:text-left">
-              <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>
-              <p className="text-slate-400 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
+              <h2 className="text-3xl font-extrabold mb-4 text-slate-900 dark:text-white">Already part of the team?</h2>
+              <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
               <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
                 Sign In <span>→</span>
               </Link>
@@ -594,7 +594,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 dark:text-slate-400 px-6 py-8 md:px-12 border-t border-slate-900">
+      <footer className="bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 px-6 py-8 md:px-12 border-t border-slate-200 dark:border-slate-900">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm font-medium">
             &copy; {new Date().getFullYear()} Karma Staff Platform. All rights reserved.
