@@ -144,15 +144,15 @@ export default function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white dark:bg-slate-900/95  backdrop-blur-md border-b border-slate-100 dark:border-slate-800  shadow-sm text-slate-900 dark:text-white' : 'bg-transparent text-white'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm text-slate-900 dark:text-white' : 'bg-white/80 dark:bg-transparent backdrop-blur-sm text-slate-900 dark:text-white'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
-          <span className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'}>Helpdesk</span>
+          <span className="text-slate-900 dark:text-white">Helpdesk</span>
         </div>
         <div className="flex items-center gap-3 font-medium text-sm">
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${scrolled ? "bg-slate-100 hover:bg-slate-200 text-slate-700" : "bg-white dark:bg-slate-900/10 hover:bg-white dark:bg-slate-900/20 text-white"}`}
+            className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? "☀️" : "🌙"}
@@ -164,55 +164,55 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-[#0a0f1e] dark:bg-[#0a0f1e] text-white overflow-hidden px-6 md:px-12 flex flex-col justify-center">
-        <div className="absolute inset-0 bg-cover bg-center opacity-10"
+      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-white dark:bg-[#0a0f1e] overflow-hidden px-6 md:px-12 flex flex-col justify-center">
+        <div className="absolute inset-0 bg-cover bg-center opacity-0 dark:opacity-10"
              style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"}} />
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-          
+
           {/* Left Column */}
           <div className="space-y-8">
-            <div className="hero-element inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">
-              <span className="status-pulse bg-blue-400 w-1.5 h-1.5" />
+            <div className="hero-element inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-widest">
+              <span className="status-pulse bg-blue-500 dark:bg-blue-400 w-1.5 h-1.5" />
               Internal IT & HR Support Platform
             </div>
-            <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+            <h1 className="hero-element text-slate-900 dark:text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
               Deliver exceptional<br/>support at scale.
             </h1>
-            <p className="hero-element text-lg md:text-xl text-slate-400 dark:text-slate-400 max-w-2xl font-medium">
+            <p className="hero-element text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl font-medium">
               Your IT and HR teams — augmented with smart automation, SLA enforcement, and real-time notifications — resolving issues faster than ever.
             </p>
             <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
               <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
                 Sign In <span>→</span>
               </Link>
-              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white/10 dark:bg-slate-900/5 hover:bg-white/20 dark:hover:bg-slate-900/10 text-white rounded-xl font-bold text-lg transition-all border border-white/10 flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-700 dark:bg-white/10 dark:hover:bg-white/20 text-white rounded-xl font-bold text-lg transition-all border border-slate-900 dark:border-white/10 flex items-center justify-center gap-2">
                 ↓ See how it works
               </a>
             </div>
 
-            <hr className="border-white/10 my-8" />
+            <hr className="border-slate-200 dark:border-white/10 my-8" />
 
             {/* Stats Bar */}
             <div className="hero-element grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
               <div>
-                <p className="text-3xl font-extrabold text-white">{stats.totalTickets}</p>
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.totalTickets}</p>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Tickets Managed</p>
               </div>
-              <div className="border-l border-white/10 pl-6 hidden md:block">
-                <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
+              <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.resolvedTickets}</p>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
               </div>
-              <div className="border-l border-white/10 pl-6 hidden md:block">
-                <p className="text-3xl font-extrabold text-white">{stats.totalUsers}</p>
+              <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.totalUsers}</p>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Active Users</p>
               </div>
-              <div className="border-l border-white/10 pl-6 hidden md:block">
-                <p className="text-3xl font-extrabold text-white">{stats.avgResolutionHours}h</p>
+              <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.avgResolutionHours}h</p>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Avg Resolution</p>
               </div>
               {/* Fallback for mobile if grid collapses */}
               <div className="md:hidden">
-                <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.resolvedTickets}</p>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function LandingPage() {
           <div className="relative h-[400px] flex items-center justify-center">
             {/* Background glow */}
             <div className="glow-orb w-[400px] h-[400px] bg-blue-600/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-            
+
             <div className="relative w-full max-w-md">
               {[
                 {
@@ -273,13 +273,13 @@ export default function LandingPage() {
               ].map((card, idx) => {
                 const isActive = activeCard === idx;
                 const isNext = (activeCard + 1) % 4 === idx;
-                
+
                 return (
                   <div
                     key={card.id}
-                    className={`absolute top-0 left-0 w-full bg-[#111827] border border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-in-out ${
-                      isActive ? 'opacity-100 transform-none z-30' : 
-                      isNext ? 'opacity-40 translate-y-5 scale-95 z-20' : 
+                    className={`absolute top-0 left-0 w-full bg-slate-800 dark:bg-[#111827] border border-slate-700 dark:border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-in-out ${
+                      isActive ? 'opacity-100 transform-none z-30' :
+                      isNext ? 'opacity-40 translate-y-5 scale-95 z-20' :
                       'opacity-0 -translate-y-5 scale-90 z-10'
                     }`}
                   >
@@ -288,7 +288,7 @@ export default function LandingPage() {
                       <h3 className="font-bold text-lg text-white">{card.title}</h3>
                     </div>
                     <hr className="border-white/5 mb-4" />
-                    <ul className="space-y-2 text-sm text-slate-400 dark:text-slate-400 font-mono">
+                    <ul className="space-y-2 text-sm text-slate-400 font-mono">
                       {card.details.map((detail, i) => (
                         <li key={i} className={detail.startsWith('●') ? 'text-blue-400' : ''}>
                           {detail}
@@ -337,22 +337,22 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] dark:bg-[#0a0f1e] text-white">
+      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-slate-100 dark:bg-[#0a0f1e]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
-            <p className="text-lg text-slate-400 dark:text-slate-400">Four steps. Zero friction.</p>
+            <h2 className="text-slate-900 dark:text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
+            <p className="text-lg text-slate-500 dark:text-slate-400">Four steps. Zero friction.</p>
           </div>
-          
+
           {/* Tabs */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-white dark:bg-slate-900/5 border border-white/10 rounded-full p-1">
+            <div className="inline-flex bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full p-1">
               {["Request", "Notify", "Resolve", "Learn"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                    activeTab === tab ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white' : 'text-white/60 hover:text-white'
+                    activeTab === tab ? 'bg-slate-900 dark:bg-slate-900 text-white' : 'text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {tab}
@@ -362,7 +362,7 @@ export default function LandingPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-[#111827] border border-white/10 rounded-3xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
+          <div className="bg-slate-800 dark:bg-[#111827] border border-slate-700 dark:border-white/10 rounded-3xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
             {activeTab === "Request" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">

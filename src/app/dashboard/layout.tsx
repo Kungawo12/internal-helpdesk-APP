@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import KarmaStaffLogo from "@/components/ui/KarmaStaffLogo";
 import { useState, useEffect, useRef } from "react";
 import AiChatWidget from "@/components/dashboard/AiChatWidget";
 import { useTheme } from "next-themes";
@@ -150,6 +151,19 @@ export default function DashboardLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-200 dark:border-slate-700 border-t-black dark:border-t-white rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const role = session?.user?.role;
   const navItems = [
@@ -180,11 +194,9 @@ export default function DashboardLayout({
       <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
         <div className="bg-white dark:bg-slate-800/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-700/60 transition-colors duration-300">
           <div className="mb-14 px-2">
-            <Link href="/dashboard" className="flex items-center gap-4 group">
-              <div className="w-12 h-12 bg-[#0f172a] dark:bg-blue-600 rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
-                H
-              </div>
-              <span className="font-extrabold text-3xl tracking-tighter text-[#0f172a] dark:text-white transition-colors">Helpdesk</span>
+            <Link href="/dashboard" className="flex items-center gap-3 group">
+              <KarmaStaffLogo size={40} className="group-hover:scale-105 transition-transform duration-500 drop-shadow-xl" />
+              <span className="font-extrabold text-2xl tracking-tighter text-[#0f172a] dark:text-white transition-colors">Karma Staff</span>
             </Link>
           </div>
 
@@ -195,8 +207,8 @@ export default function DashboardLayout({
                 href={item.path}
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
-                    ? "bg-[#0f172a] dark:bg-blue-600 text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
+                    ? "bg-blue-600 dark:bg-blue-600 text-white shadow-2xl shadow-blue-900/20 scale-[1.02]"
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -225,7 +237,7 @@ export default function DashboardLayout({
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="w-full py-3 rounded-2xl bg-[#0f172a] dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#1e293b] dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
+                className="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-slate-700 dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
               >
                 Sign Out
               </button>
@@ -244,9 +256,9 @@ export default function DashboardLayout({
 
         {/* Mobile Header */}
         <header className="lg:hidden h-20 bg-white dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
-           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0f172a] dark:bg-slate-800 rounded-xl flex items-center justify-center font-bold text-white dark:text-white text-lg">H</div>
-            <span className="font-extrabold text-xl text-[#0f172a] dark:text-white">Helpdesk</span>
+           <Link href="/dashboard" className="flex items-center gap-2">
+            <KarmaStaffLogo size={28} className="drop-shadow-md dark:brightness-200 dark:grayscale transition-all duration-300" />
+            <span className="font-extrabold text-xl text-[#0f172a] dark:text-white">Karma Staff</span>
           </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />

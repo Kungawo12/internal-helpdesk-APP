@@ -353,10 +353,10 @@ export default function DashboardPage() {
   }
 
   const statsList = [
-    { label: "Total Tickets Created", value: stats.total, style: "bg-black text-white", icon: "🎫", iconBg: "bg-white dark:bg-slate-800/10" },
-    { label: "In Progress", value: stats.inProgress, style: "bg-blue-600 text-white", icon: "⚡", iconBg: "bg-white dark:bg-slate-800/10" },
-    { label: "Resolved", value: stats.resolved, style: "bg-white dark:bg-slate-800 text-black", icon: "✅", iconBg: "bg-emerald-50" },
-    { label: "Pending", value: stats.open, style: "bg-white dark:bg-slate-800 text-black", icon: "🔴", iconBg: "bg-red-50" },
+    { label: "Total Tickets Created", value: stats.total, bgCls: "bg-slate-900 dark:bg-slate-900", textCls: "text-white", icon: "🎫", iconBg: "bg-white/20" },
+    { label: "In Progress", value: stats.inProgress, bgCls: "bg-blue-600 dark:bg-blue-900", textCls: "text-white", icon: "⚡", iconBg: "bg-white/20" },
+    { label: "Resolved", value: stats.resolved, bgCls: "bg-white dark:bg-slate-800", textCls: "text-slate-900 dark:text-white", icon: "✅", iconBg: "bg-emerald-50 dark:bg-emerald-900/20" },
+    { label: "Pending", value: stats.open, bgCls: "bg-white dark:bg-slate-800", textCls: "text-slate-900 dark:text-white", icon: "🔴", iconBg: "bg-red-50 dark:bg-red-900/20" },
   ];
 
   return (
@@ -404,10 +404,10 @@ export default function DashboardPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         {statsList.map((s, idx) => (
-          <div key={idx} className={`card p-8 relative overflow-hidden ${s.style}`}>
+          <div key={idx} className={`rounded-2xl p-8 relative overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 transition-all ${s.bgCls}`}>
             <div className={`absolute top-6 right-6 w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center text-xl`}>{s.icon}</div>
-            <p className="text-sm font-bold opacity-60 uppercase tracking-widest mb-4">{s.label}</p>
-            <p className="text-6xl font-extrabold">{s.value}</p>
+            <p className={`text-sm font-bold opacity-70 uppercase tracking-widest mb-4 ${s.textCls}`}>{s.label}</p>
+            <p className={`text-6xl font-extrabold ${s.textCls}`}>{s.value}</p>
           </div>
         ))}
       </div>

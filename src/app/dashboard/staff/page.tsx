@@ -120,11 +120,11 @@ export default function StaffQueuePage() {
         </div>
 
         {selectedIds.length > 0 && (
-          <div className="flex items-center gap-3 p-4 bg-slate-800 dark:bg-slate-900 text-white rounded-2xl mb-6 page-reveal">
+          <div className="flex items-center gap-3 p-4 bg-blue-600 dark:bg-slate-900 text-white rounded-2xl mb-6 page-reveal">
             <span className="text-sm font-bold">{selectedIds.length} selected</span>
             <button
               onClick={handleBulkClose}
-              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/10 hover:bg-white dark:hover:bg-slate-900/20 dark:bg-slate-900/20 rounded-lg transition-colors"
+              className="text-xs font-bold px-3 py-1.5 bg-white/20 hover:bg-white/30 dark:bg-slate-900/10 dark:hover:bg-slate-900/20 rounded-lg transition-colors"
             >
               Close all
             </button>
