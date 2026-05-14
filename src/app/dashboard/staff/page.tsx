@@ -78,8 +78,8 @@ export default function StaffQueuePage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-      <div className="w-8 h-8 border-[3px] border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-      <p className="text-sm text-slate-500">Loading queue...</p>
+      <div className="w-8 h-8 border-[3px] border-slate-200 dark:border-slate-700 border-t-blue-600 rounded-full animate-spin" />
+      <p className="text-sm text-slate-500 dark:text-slate-400">Loading queue...</p>
     </div>
   );
 
@@ -99,7 +99,7 @@ export default function StaffQueuePage() {
             <div className="flex items-center gap-4">
               <p className="text-xl text-[#6e6e73]  font-medium">Assigned service requests awaiting resolution</p>
               {activeTickets.length > 0 && (
-                <label className="flex items-center gap-1 text-sm text-slate-500  font-bold cursor-pointer">
+                <label className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400  font-bold cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedIds.length === activeTickets.length}
@@ -110,7 +110,7 @@ export default function StaffQueuePage() {
                         setSelectedIds([]);
                       }
                     }}
-                    className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 rounded border-slate-200 dark:border-slate-700 text-blue-600 focus:ring-blue-500"
                   />
                   Select All
                 </label>
@@ -124,7 +124,7 @@ export default function StaffQueuePage() {
             <span className="text-sm font-bold">{selectedIds.length} selected</span>
             <button
               onClick={handleBulkClose}
-              className="text-xs font-bold px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/10 hover:bg-white dark:bg-slate-900/20 rounded-lg transition-colors"
             >
               Close all
             </button>
@@ -156,7 +156,7 @@ export default function StaffQueuePage() {
               }`}
             >
               {tab.label}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === tab.value ? "bg-white/20 text-white" : "bg-slate-100  text-slate-600 "}`}>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === tab.value ? "bg-white dark:bg-slate-900/20 text-white" : "bg-slate-100 dark:bg-slate-800  text-slate-600 dark:text-slate-400 "}`}>
                 {tab.count}
               </span>
             </button>
@@ -172,7 +172,7 @@ export default function StaffQueuePage() {
             </div>
           ) : (
             activeTickets.map((ticket) => (
-              <div key={ticket.id} className={`card p-6 group hover:bg-[#fafafa]    relative border-l-4 ${
+              <div key={ticket.id} className={`card p-6 group hover:bg-[#fafafa] dark:hover:bg-slate-800/50    relative border-l-4 ${
                 ticket.type === 'IT' ? 'border-l-blue-500' :
                 ticket.type === 'HR' ? 'border-l-amber-500' :
                 ticket.type === 'Software' ? 'border-l-purple-500' : 'border-l-slate-300'
@@ -192,7 +192,7 @@ export default function StaffQueuePage() {
                             setSelectedIds(selectedIds.filter(id => id !== ticket.id));
                           }
                         }}
-                        className="w-4 h-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500"
+                        className="w-4 h-4 rounded border-slate-200 dark:border-slate-700 text-blue-600 focus:ring-blue-500"
                       />
                       <span className={`badge !px-3 !py-1 ${
                         ticket.type === 'IT' ? 'badge-blue' :
@@ -286,7 +286,7 @@ export default function StaffQueuePage() {
           <h2 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-black/10  ">Recently Resolved</h2>
           <div className="space-y-4">
             {resolvedTickets.slice(0, 5).map((ticket) => (
-              <div key={ticket.id} className="p-4 rounded-xl bg-white  hover:bg-slate-50  cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+              <div key={ticket.id} className="p-4 rounded-xl bg-white dark:bg-slate-900  hover:bg-slate-50 dark:bg-slate-800/50  cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                 <p className="text-sm font-bold truncate mb-2 ">{ticket.title}</p>
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="text-green-600">Resolved</span>

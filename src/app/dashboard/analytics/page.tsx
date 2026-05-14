@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
       : "text-red-400";
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal">
+    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-slate-900 rounded-3xl p-8">
       {/* Header */}
       <div>
         <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>

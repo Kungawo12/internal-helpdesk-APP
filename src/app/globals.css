@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary: #0f172a;
@@ -18,6 +19,11 @@
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+  }
+  
+  .dark body {
+    background: #0f172a;
+    color: #f1f5f9;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -51,9 +57,19 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   }
   
+  .dark .card {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  }
+
   .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  
+  .dark .card:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   }
 
   .btn-primary {
@@ -68,11 +84,21 @@
     align-items: center;
     justify-content: center;
   }
+  
+  .dark .btn-primary {
+    background: #3b82f6;
+    color: #ffffff;
+  }
 
   .btn-primary:hover {
     background: #1e293b;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  }
+  
+  .dark .btn-primary:hover {
+    background: #60a5fa;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   }
   
   .btn-secondary {
@@ -89,10 +115,20 @@
     justify-content: center;
   }
   
+  .dark .btn-secondary {
+    color: #f1f5f9;
+    border-color: #475569;
+  }
+  
   .btn-secondary:hover {
     background: #f1f5f9;
     border-color: #64748b;
     transform: translateY(-1px);
+  }
+  
+  .dark .btn-secondary:hover {
+    background: #334155;
+    border-color: #94a3b8;
   }
 
   .input-field {
@@ -106,10 +142,21 @@
     transition: all 0.2s ease;
   }
   
+  .dark .input-field {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+  }
+  
   .input-field:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+  }
+  
+  .dark .input-field:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
   }
 
 /* Auth page background orb animation */

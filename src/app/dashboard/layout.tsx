@@ -157,10 +157,13 @@ export default function DashboardLayout({
     { label: "New Ticket", path: "/dashboard/create", icon: "➕", show: role === "employee" },
     { label: "Knowledge Base", path: "/dashboard/kb", icon: "📚", show: role === "employee" },
     { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
-    { label: "Users", path: "/admin/users", icon: "👥", show: role === "admin" },
-    { label: "All Tickets", path: "/admin/tickets", icon: "🎫", show: role === "admin" },
-    { label: "Analytics", path: "/admin/analytics", icon: "📊", show: role === "admin" },
-    { label: "Settings", path: "/admin/sla-policies", icon: "⚙️", show: role === "admin" },
+    { label: "Users", path: "/dashboard/users", icon: "👥", show: role === "admin" },
+    { label: "All Tickets", path: "/dashboard/tickets", icon: "🎫", show: role === "admin" },
+    { label: "Analytics", path: "/dashboard/analytics", icon: "📊", show: role === "admin" },
+    { label: "KB Manage", path: "/dashboard/kb-manage", icon: "📖", show: role === "admin" },
+    { label: "Automation", path: "/dashboard/automation-rules", icon: "⚡", show: role === "admin" },
+    { label: "Templates", path: "/dashboard/templates", icon: "📝", show: role === "admin" },
+    { label: "SLA Policies", path: "/dashboard/sla-policies", icon: "⚙️", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
   return (

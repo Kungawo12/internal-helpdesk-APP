@@ -233,9 +233,9 @@ export default function ManagerDashboard() {
           ) : (
             <div className="flex items-end h-[200px] gap-4">
                {[
-                  { label: "Low", value: stats.priority.low, color: "bg-white/20" },
-                  { label: "Med", value: stats.priority.medium, color: "bg-white/40" },
-                  { label: "High", value: stats.priority.high, color: "bg-white/70" },
+                  { label: "Low", value: stats.priority.low, color: "bg-white/30" },
+                  { label: "Med", value: stats.priority.medium, color: "bg-white/50" },
+                  { label: "High", value: stats.priority.high, color: "bg-white/75" },
                   { label: "Urgent", value: stats.priority.urgent, color: "bg-white" },
                ].map((p, idx) => (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-3">
@@ -279,7 +279,7 @@ export default function ManagerDashboard() {
                     </div>
                   </td>
                   <td className="py-4 text-center">
-                    <span className={`font-bold text-sm ${s.open > 5 ? "text-red-500" : "text-slate-700 "}`}>{s.open}</span>
+                    <span className={`font-bold text-sm ${s.open > 5 ? "text-red-500" : "text-slate-700 dark:text-slate-300 "}`}>{s.open}</span>
                   </td>
                   <td className="py-4 text-center">
                     <span className="font-bold text-sm text-amber-600 ">{s.inProgress}</span>
@@ -288,7 +288,7 @@ export default function ManagerDashboard() {
                     <span className="font-bold text-sm text-emerald-600 ">{s.resolved}</span>
                   </td>
                   <td className="py-4 text-center">
-                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 "}`}>{s.slaBreached}</span>
+                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 dark:text-slate-500 "}`}>{s.slaBreached}</span>
                   </td>
                   <td className="py-4 text-center text-sm text-[#6e6e73]  font-medium">
                     {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
@@ -321,11 +321,11 @@ export default function ManagerDashboard() {
                       style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
                     />
                     {d.count > 0 && (
-                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500  opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         {d.count}
                       </span>
                     )}
-                    <span className="text-[9px] text-slate-400  font-medium rotate-45 origin-left mt-1 hidden sm:block">
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500  font-medium rotate-45 origin-left mt-1 hidden sm:block">
                       {new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
                   </div>
@@ -399,7 +399,7 @@ export default function ManagerDashboard() {
         </div>
 
         {filteredTickets.length > 0 ? (
-          <div className="bg-white  rounded-[40px] border border-black/10  overflow-hidden">
+          <div className="bg-white dark:bg-slate-900  rounded-[40px] border border-black/10  overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-black/10  text-xs uppercase tracking-widest text-[#6e6e73] ">

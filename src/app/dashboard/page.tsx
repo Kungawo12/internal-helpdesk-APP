@@ -40,11 +40,11 @@ type AdminStats = {
 
 const ROLE_COLORS: Record<string, string> = {
   admin: "text-red-500", manager: "text-purple-500",
-  it_staff: "text-blue-500", hr_staff: "text-amber-500", employee: "text-slate-400",
+  it_staff: "text-blue-500", hr_staff: "text-amber-500", employee: "text-slate-400 dark:text-slate-500",
 };
 const STATUS_BADGE: Record<string, string> = {
   open: "bg-blue-100 text-blue-700", in_progress: "bg-amber-100 text-amber-700",
-  resolved: "bg-emerald-100 text-emerald-700", closed: "bg-slate-100 text-slate-500",
+  resolved: "bg-emerald-100 text-emerald-700", closed: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500",
 };
 const PRIORITY_COLOR: Record<string, string> = {
   urgent: "bg-red-500", high: "bg-orange-400", medium: "bg-blue-400", low: "bg-slate-300",
@@ -81,7 +81,7 @@ function AdminDashboard({ name }: { name: string }) {
   }
 
   if (!stats) {
-    return <p className="text-slate-400 text-center py-20">Failed to load admin stats.</p>;
+    return <p className="text-slate-400 dark:text-slate-500 text-center py-20">Failed to load admin stats.</p>;
   }
 
   const resolutionRate = stats.totalTickets > 0
@@ -94,7 +94,7 @@ function AdminDashboard({ name }: { name: string }) {
         <div>
           <div className="flex items-center gap-3 mb-3">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Admin Portal</span>
-            <span className="text-sm font-semibold text-slate-500">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500">
               {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </span>
           </div>
@@ -110,10 +110,10 @@ function AdminDashboard({ name }: { name: string }) {
           <Link
             key={item.href}
             href={item.href}
-            className="card p-4 flex flex-col items-center gap-2 hover:bg-slate-50 transition-colors text-center group"
+            className="card p-4 flex flex-col items-center gap-2 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors text-center group"
           >
             <span className="text-2xl">{item.icon}</span>
-            <span className="text-xs font-bold text-slate-600 group-hover:text-blue-600 transition-colors leading-tight">{item.label}</span>
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500 group-hover:text-blue-600 transition-colors leading-tight">{item.label}</span>
           </Link>
         ))}
       </div>
@@ -129,9 +129,9 @@ function AdminDashboard({ name }: { name: string }) {
           { label: "SLA At Risk", value: stats.slaAtRiskCount, sub: "due within 1 hour", accent: stats.slaAtRiskCount > 0 ? "text-amber-600" : "" },
         ].map((k) => (
           <div key={k.label} className="card p-6">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">{k.label}</p>
-            <p className={`text-4xl font-extrabold mb-1 ${k.accent || "text-slate-900"}`}>{k.value}</p>
-            <p className="text-xs text-slate-400 font-medium">{k.sub}</p>
+            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">{k.label}</p>
+            <p className={`text-4xl font-extrabold mb-1 ${k.accent || "text-slate-900 dark:text-white"}`}>{k.value}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{k.sub}</p>
           </div>
         ))}
       </div>
@@ -140,7 +140,7 @@ function AdminDashboard({ name }: { name: string }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Status */}
         <div className="card p-6">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">Ticket Status</h2>
+          <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-5">Ticket Status</h2>
           <div className="space-y-4">
             {[
               { label: "Open", value: stats.openTickets, color: "bg-blue-500" },
@@ -152,10 +152,10 @@ function AdminDashboard({ name }: { name: string }) {
               return (
                 <div key={item.label}>
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-sm font-bold text-slate-600">{item.label}</span>
-                    <span className="text-sm font-extrabold text-slate-900">{item.value} <span className="text-slate-400 font-normal text-xs">({pct}%)</span></span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500">{item.label}</span>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-white">{item.value} <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">({pct}%)</span></span>
                   </div>
-                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className={`h-full ${item.color} rounded-full`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
@@ -166,7 +166,7 @@ function AdminDashboard({ name }: { name: string }) {
 
         {/* Priority */}
         <div className="card p-6">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">By Priority</h2>
+          <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-5">By Priority</h2>
           <div className="space-y-4">
             {["urgent", "high", "medium", "low"].map((priority) => {
               const found = stats.priorityBreakdown.find((p) => p.priority === priority);
@@ -175,10 +175,10 @@ function AdminDashboard({ name }: { name: string }) {
               return (
                 <div key={priority}>
                   <div className="flex justify-between mb-1.5">
-                    <span className="text-sm font-bold text-slate-600 capitalize">{priority}</span>
-                    <span className="text-sm font-extrabold text-slate-900">{value} <span className="text-slate-400 font-normal text-xs">({pct}%)</span></span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-400 dark:text-slate-500 capitalize">{priority}</span>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-white">{value} <span className="text-slate-400 dark:text-slate-500 font-normal text-xs">({pct}%)</span></span>
                   </div>
-                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className={`h-full ${PRIORITY_COLOR[priority]} rounded-full`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
@@ -189,23 +189,23 @@ function AdminDashboard({ name }: { name: string }) {
 
         {/* Users by Role */}
         <div className="card p-6">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5">Users by Role</h2>
+          <h2 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-5">Users by Role</h2>
           <div className="space-y-3">
             {stats.usersByRole.sort((a, b) => b.count - a.count).map((r) => (
               <div key={r.role} className="flex items-center justify-between py-1">
-                <span className={`text-sm font-bold ${ROLE_COLORS[r.role] || "text-slate-500"}`}>
+                <span className={`text-sm font-bold ${ROLE_COLORS[r.role] || "text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>
                   {r.role.replace("_", " ").toUpperCase()}
                 </span>
                 <div className="flex items-center gap-3">
-                  <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className="h-full bg-slate-400 rounded-full" style={{ width: `${Math.round((r.count / stats.totalUsers) * 100)}%` }} />
                   </div>
-                  <span className="text-sm font-extrabold text-slate-900 w-4 text-right">{r.count}</span>
+                  <span className="text-sm font-extrabold text-slate-900 dark:text-white w-4 text-right">{r.count}</span>
                 </div>
               </div>
             ))}
           </div>
-          <Link href="/admin/users" className="mt-5 block text-xs text-slate-400 hover:text-blue-600 font-bold transition-colors">
+          <Link href="/admin/users" className="mt-5 block text-xs text-slate-400 dark:text-slate-500 hover:text-blue-600 font-bold transition-colors">
             Manage roles →
           </Link>
         </div>
@@ -214,13 +214,13 @@ function AdminDashboard({ name }: { name: string }) {
       {/* Staff Performance */}
       {stats.staffPerformance.length > 0 && (
         <div className="card overflow-hidden">
-          <div className="px-6 py-5 border-b border-slate-100">
-            <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Staff Performance</h2>
-            <p className="text-xs text-slate-400 mt-1">IT &amp; HR staff — tickets assigned vs resolved</p>
+          <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Staff Performance</h2>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">IT &amp; HR staff — tickets assigned vs resolved</p>
           </div>
           <table className="w-full text-left">
             <thead>
-              <tr className="text-xs uppercase tracking-widest text-slate-400 bg-slate-50 border-b border-slate-100">
+              <tr className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                 <th className="px-6 py-3 font-bold">Staff Member</th>
                 <th className="px-6 py-3 font-bold text-center">Assigned</th>
                 <th className="px-6 py-3 font-bold text-center hidden md:table-cell">In Progress</th>
@@ -232,29 +232,29 @@ function AdminDashboard({ name }: { name: string }) {
               {stats.staffPerformance.sort((a, b) => b.resolved - a.resolved).map((staff) => {
                 const rate = staff.assigned > 0 ? Math.round((staff.resolved / staff.assigned) * 100) : 0;
                 return (
-                  <tr key={staff.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                  <tr key={staff.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${getAvatarColor(staff.name.charAt(0))}`}>
                           {staff.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{staff.name}</p>
-                          <p className={`text-xs font-bold ${ROLE_COLORS[staff.role] || "text-slate-400"}`}>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{staff.name}</p>
+                          <p className={`text-xs font-bold ${ROLE_COLORS[staff.role] || "text-slate-400 dark:text-slate-500"}`}>
                             {staff.role.replace("_", " ").toUpperCase()}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center"><span className="text-sm font-extrabold text-slate-900">{staff.assigned}</span></td>
+                    <td className="px-6 py-4 text-center"><span className="text-sm font-extrabold text-slate-900 dark:text-white">{staff.assigned}</span></td>
                     <td className="px-6 py-4 text-center hidden md:table-cell"><span className="text-sm font-extrabold text-amber-500">{staff.inProgress}</span></td>
                     <td className="px-6 py-4 text-center"><span className="text-sm font-extrabold text-emerald-600">{staff.resolved}</span></td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${rate >= 70 ? "bg-emerald-500" : rate >= 40 ? "bg-amber-400" : "bg-red-500"}`} style={{ width: `${rate}%` }} />
                         </div>
-                        <span className="text-xs font-extrabold text-slate-500 w-9 text-right">{rate}%</span>
+                        <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 dark:text-slate-500 w-9 text-right">{rate}%</span>
                       </div>
                     </td>
                   </tr>
@@ -267,28 +267,28 @@ function AdminDashboard({ name }: { name: string }) {
 
       {/* Recent Activity */}
       <div className="card overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
           <div>
-            <h2 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Recent Activity</h2>
-            <p className="text-xs text-slate-400 mt-1">Last 10 tickets submitted</p>
+            <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Recent Activity</h2>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Last 10 tickets submitted</p>
           </div>
-          <Link href="/admin/tickets" className="text-xs font-bold text-slate-400 hover:text-blue-600 transition-colors">
+          <Link href="/admin/tickets" className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-blue-600 transition-colors">
             View all →
           </Link>
         </div>
         <div className="divide-y divide-slate-100">
           {stats.recentTickets.map((ticket) => (
-            <div key={ticket.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            <div key={ticket.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
               <div className="flex items-center gap-4 min-w-0">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${PRIORITY_COLOR[ticket.priority] || "bg-slate-300"}`} />
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900 truncate">{ticket.title}</p>
-                  <p className="text-xs text-slate-400">{ticket.creator.name} · {new Date(ticket.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{ticket.title}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">{ticket.creator.name} · {new Date(ticket.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                <span className="text-xs font-bold text-slate-400">{ticket.type}</span>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_BADGE[ticket.status] || "bg-slate-100 text-slate-500"}`}>
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">{ticket.type}</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${STATUS_BADGE[ticket.status] || "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>
                   {ticket.status.replace("_", " ")}
                 </span>
               </div>
@@ -367,7 +367,7 @@ export default function DashboardPage() {
                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&q=80')" }} />
           <div className="relative z-10">
             <button onClick={() => { localStorage.setItem("dismissedOnboardingBanner", "true"); setShowBanner(false); }}
-              className="absolute top-0 right-0 text-slate-400 hover:text-slate-600">✕</button>
+              className="absolute top-0 right-0 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500">✕</button>
             <h3 className="font-bold text-blue-800 mb-2">👋 Welcome to Helpdesk!</h3>
             <p className="text-sm text-blue-700 mb-1">Need IT help? → Click <strong>IT Ticket</strong> above</p>
             <p className="text-sm text-blue-700 mb-1">Have a question? → Go to <strong>Knowledge Base</strong></p>
@@ -415,7 +415,7 @@ export default function DashboardPage() {
       {/* Divider */}
       <div className="flex items-center gap-4 animate-fade-in delay-200">
         <div className="h-px bg-slate-200 flex-1" />
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Today&apos;s Activity</span>
+        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Today&apos;s Activity</span>
         <div className="h-px bg-slate-200 flex-1" />
       </div>
 
@@ -443,7 +443,7 @@ export default function DashboardPage() {
                 : ticket.status === "resolved" ? "ticket-card-resolved" : "";
               return (
                 <div key={ticket.id} onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                  className={`card p-6 cursor-pointer group hover:bg-[#fafafa] relative ${borderClass}`}>
+                  className={`card p-6 cursor-pointer group hover:bg-[#fafafa] dark:hover:bg-slate-800/50 relative ${borderClass}`}>
                   <div className={`absolute top-6 right-6 w-2.5 h-2.5 rounded-full ${
                     ticket.priority === "urgent" ? "bg-red-500" : ticket.priority === "high" ? "bg-orange-400" : "bg-slate-300"
                   }`} />

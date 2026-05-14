@@ -216,55 +216,55 @@ function CreateTicketForm() {
       <div className="max-w-4xl mx-auto py-12 px-6">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold tracking-tight mb-4">How can we help you?</h1>
-          <p className="text-xl text-slate-500">Select the type of support you need to get started.</p>
+          <p className="text-xl text-slate-500 dark:text-slate-400">Select the type of support you need to get started.</p>
         </div>
 
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
           <Link
             href="/dashboard/create?type=IT"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🖥️</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">IT Support</h2>
-              <p className="text-slate-600  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Hardware, network, access issues, or system problems.
               </p>
             </div>
-            <div className="text-slate-400 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=HR"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">👥</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">HR Support</h2>
-              <p className="text-slate-600  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Wages, holidays, policies, or general HR queries.
               </p>
             </div>
-            <div className="text-slate-400 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=Software"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50  transition-colors cursor-pointer border-2 hover:border-purple-400 group"
+            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-purple-400 group"
           >
             <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🐛</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">Software Bug</h2>
-              <p className="text-slate-600  font-medium text-sm">
+              <p className="text-slate-600 dark:text-slate-400  font-medium text-sm">
                 Report a bug or unexpected behaviour in any application.
               </p>
             </div>
-            <div className="text-slate-400 group-hover:text-purple-600 font-bold">→</div>
+            <div className="text-slate-400 dark:text-slate-500 group-hover:text-purple-600 font-bold">→</div>
           </Link>
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/dashboard" className="text-slate-500 font-bold hover:text-slate-900 transition-colors">
+          <Link href="/dashboard" className="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors">
             ← Back to Dashboard
           </Link>
         </div>
@@ -282,11 +282,11 @@ function CreateTicketForm() {
               {typeParam} Support
             </span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Submit {typeParam} Support Ticket
           </h1>
         </div>
-        <Link href="/dashboard/create" className="text-slate-500 font-bold hover:text-slate-900 transition-colors">
+        <Link href="/dashboard/create" className="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors">
           Change Type
         </Link>
       </div>
@@ -298,17 +298,17 @@ function CreateTicketForm() {
           {/* Title + Description */}
           <div className="card p-8 space-y-6">
             <div>
-              <h2 className="text-sm font-black text-slate-700  uppercase tracking-wider mb-1">Issue Details</h2>
-              <p className="text-xs text-slate-400 font-medium">Provide the basic information about your request.</p>
+              <h2 className="text-sm font-black text-slate-700 dark:text-slate-300  uppercase tracking-wider mb-1">Issue Details</h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Provide the basic information about your request.</p>
             </div>
 
             {templates.length > 0 && (
               <div className="flex items-center gap-2 flex-wrap mb-2">
-                <span className="text-xs font-bold text-slate-500">Templates:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Templates:</span>
                 {templates.map(t => (
                   <button key={t.id} type="button"
                     onClick={() => applyTemplate(t)}
-                    className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 transition-all">
+                    className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all">
                     {t.name}
                   </button>
                 ))}
@@ -319,7 +319,7 @@ function CreateTicketForm() {
             {typeParam === "IT" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Category</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Category</label>
                   <select
                     required
                     className="input-field"
@@ -333,7 +333,7 @@ function CreateTicketForm() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Issue Type</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Issue Type</label>
                   <select
                     required
                     className="input-field"
@@ -350,7 +350,7 @@ function CreateTicketForm() {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 {typeParam === "IT" ? "Issue Title" : "Request Title"}
               </label>
               <input
@@ -385,7 +385,7 @@ function CreateTicketForm() {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Detailed Description
               </label>
               <textarea
@@ -409,12 +409,12 @@ function CreateTicketForm() {
           {typeParam === "Software" && (
             <div className="card p-8 space-y-6">
               <div>
-                <h2 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-1">Bug Details</h2>
-                <p className="text-xs text-slate-400 font-medium">Help the team reproduce and fix the issue faster.</p>
+                <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Bug Details</h2>
+                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Help the team reproduce and fix the issue faster.</p>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Application / System Name <span className="text-slate-300 normal-case font-medium">(required)</span>
                 </label>
                 <input
@@ -428,7 +428,7 @@ function CreateTicketForm() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Steps to Reproduce <span className="text-slate-300 normal-case font-medium">(what did you do before it broke?)</span>
                 </label>
                 <textarea
@@ -441,7 +441,7 @@ function CreateTicketForm() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+                <label className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Error Message <span className="text-slate-300 normal-case font-medium">(copy & paste the exact text if any)</span>
                 </label>
                 <textarea
@@ -458,9 +458,9 @@ function CreateTicketForm() {
           {/* Screenshot Upload */}
           <div className="card p-8 space-y-4">
             <div>
-              <h2 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-1">Screenshots</h2>
-              <p className="text-xs text-slate-400 font-medium">
-                Paste a screenshot with <kbd className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[11px] font-mono">Ctrl+V</kbd>, drag & drop, or click to browse. Max 10MB per file.
+              <h2 className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Screenshots</h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                Paste a screenshot with <kbd className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded text-[11px] font-mono">Ctrl+V</kbd>, drag & drop, or click to browse. Max 10MB per file.
               </p>
             </div>
 
@@ -474,11 +474,11 @@ function CreateTicketForm() {
               className={`relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed py-10 px-6 cursor-pointer transition-all select-none ${
                 isDragging
                   ? "border-blue-500 bg-blue-50 scale-[1.01]"
-                  : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                  : "border-slate-200 dark:border-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-800/50"
               }`}
             >
               <div className="text-3xl">{isDragging ? "📥" : "📎"}</div>
-              <p className="text-sm font-semibold text-slate-500 text-center">
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 text-center">
                 {isDragging ? "Drop to attach" : "Drop files here, paste a screenshot, or click to browse"}
               </p>
               <input
@@ -495,14 +495,14 @@ function CreateTicketForm() {
             {pendingFiles.length > 0 && (
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {pendingFiles.map(({ id, file, preview }) => (
-                  <div key={id} className="relative group rounded-xl overflow-hidden border border-slate-200 bg-slate-50 aspect-square flex items-center justify-center">
+                  <div key={id} className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 aspect-square flex items-center justify-center">
                     {preview ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={preview} alt={file.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="p-3 text-center">
                         <div className="text-2xl mb-1">📄</div>
-                        <p className="text-[10px] text-slate-500 font-semibold truncate max-w-[80px]">{file.name}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold truncate max-w-[80px]">{file.name}</p>
                       </div>
                     )}
                     <button
@@ -527,7 +527,7 @@ function CreateTicketForm() {
           <div className="card p-8 space-y-8">
             {/* Priority */}
             <div className="space-y-4">
-              <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Priority Level</label>
+              <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Priority Level</label>
               <div className="grid grid-cols-2 gap-3">
                 {(["low", "medium", "high", "urgent"] as const).map((p) => (
                   <button
@@ -537,14 +537,14 @@ function CreateTicketForm() {
                     className={`py-3 rounded-xl border-2 text-xs font-black uppercase tracking-widest transition-all ${
                       priority === p
                         ? "bg-blue-600 border-blue-600 text-white shadow-lg"
-                        : "bg-white border-slate-200 text-slate-500 hover:border-slate-300"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300"
                     }`}
                   >
                     {p}
                   </button>
                 ))}
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 ">
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500 dark:text-slate-400 ">
                 <p><strong>Low:</strong> minor inconvenience, can wait a few days</p>
                 <p><strong>Medium:</strong> affecting your work but workaround exists</p>
                 <p><strong>High:</strong> blocking your work right now</p>
@@ -574,7 +574,7 @@ function CreateTicketForm() {
 
             <Link
               href="/dashboard"
-              className="block text-center text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
+              className="block text-center text-sm font-bold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 transition-colors"
             >
               Cancel
             </Link>
