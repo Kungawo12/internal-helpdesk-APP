@@ -51,13 +51,13 @@ const PRIORITY_COLOR: Record<string, string> = {
 };
 
 const ADMIN_NAV = [
-  { label: "Manage Users", href: "/admin/users", icon: "👥" },
-  { label: "All Tickets", href: "/admin/tickets", icon: "🎫" },
-  { label: "SLA Policies", href: "/admin/sla-policies", icon: "⏱" },
-  { label: "Analytics", href: "/admin/analytics", icon: "📊" },
-  { label: "Knowledge Base", href: "/admin/kb", icon: "📚" },
-  { label: "Automation Rules", href: "/admin/automation-rules", icon: "⚡" },
-  { label: "Templates", href: "/admin/templates", icon: "📄" },
+  { label: "Manage Users", href: "/dashboard/users", icon: "👥" },
+  { label: "All Tickets", href: "/dashboard/tickets", icon: "🎫" },
+  { label: "SLA Policies", href: "/dashboard/sla-policies", icon: "⏱" },
+  { label: "Analytics", href: "/dashboard/analytics", icon: "📊" },
+  { label: "Knowledge Base", href: "/dashboard/kb-manage", icon: "📚" },
+  { label: "Automation Rules", href: "/dashboard/automation-rules", icon: "⚡" },
+  { label: "Templates", href: "/dashboard/templates", icon: "📄" },
 ];
 
 // ─── Admin Dashboard ──────────────────────────────────────────────────────────
@@ -205,7 +205,7 @@ function AdminDashboard({ name }: { name: string }) {
               </div>
             ))}
           </div>
-          <Link href="/admin/users" className="mt-5 block text-xs text-slate-400 dark:text-slate-500 hover:text-blue-600 font-bold transition-colors">
+          <Link href="/dashboard/users" className="mt-5 block text-xs text-slate-400 dark:text-slate-500 hover:text-blue-600 font-bold transition-colors">
             Manage roles →
           </Link>
         </div>
@@ -272,7 +272,7 @@ function AdminDashboard({ name }: { name: string }) {
             <h2 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Recent Activity</h2>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Last 10 tickets submitted</p>
           </div>
-          <Link href="/admin/tickets" className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-blue-600 transition-colors">
+          <Link href="/dashboard/tickets" className="text-xs font-bold text-slate-400 dark:text-slate-500 hover:text-blue-600 transition-colors">
             View all →
           </Link>
         </div>

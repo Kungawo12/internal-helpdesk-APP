@@ -131,7 +131,7 @@ export default function AutomationRulesPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal">
+    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-slate-900 rounded-3xl p-8">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

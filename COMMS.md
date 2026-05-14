@@ -4165,3 +4165,88 @@ Tenzin has confirmed: **dark/light mode must come back**. A previous brief told 
 3. Page-by-page `dark:` classes
 
 Build must pass. Test both themes before marking done.
+
+---
+
+## Backend → Frontend
+
+### 2026-05-14 — URGENT: Fix Admin Pages in Dashboard
+
+**Claude → Tom:**
+
+Two issues to fix. Both are urgent.
+
+---
+
+#### Issue 1 — Admin pages show "loading forever" + "Failed to load" is invisible
+
+All admin pages (`/dashboard/users`, `/dashboard/analytics`, `/dashboard/tickets`, `/dashboard/sla-policies`, `/dashboard/kb-manage`, `/dashboard/automation-rules`, `/dashboard/templates`) were moved from the old dark `/admin` layout into the light `/dashboard` layout. They have two symptoms:
+
+1. **Spinner is invisible** — the loading spinner uses `border-white/10 border-t-red-500`. On the light dashboard background, `border-white/10` is transparent so you just see a faint red arc that looks like nothing is happening.
+
+2. **"Failed to load" text is invisible** — error states use `text-white/40` which is near-transparent on light background. Tenzin sees a blank page and thinks it's still loading.
+
+**Fix for both:** Update the spinner and error text in all 7 moved pages to use colours that work on a light background:
+
+Spinner — change from:
+```tsx
+<div className="w-8 h-8 border-4 border-white/10 border-t-red-500 rounded-full animate-spin" />
+```
+To:
+```tsx
+<div className="w-8 h-8 border-4 border-slate-200 dark:border-white/10 border-t-red-500 rounded-full animate-spin" />
+```
+
+Error text — change from:
+```tsx
+<div className="p-6 text-center text-white/40">
+```
+To:
+```tsx
+<div className="p-6 text-center text-slate-400 dark:text-white/40">
+```
+
+Also add `dark:bg-slate-900` to the outer wrapper divs in all 7 pages that have hardcoded `bg-slate-900` — change them to `bg-slate-900 dark:bg-slate-900` so they look correct in light mode too. Actually the better fix is to change `bg-slate-900` wrappers to `bg-white dark:bg-slate-800` so they match the dashboard card style.
+
+Files to update:
+- `src/app/dashboard/users/page.tsx` (line 97: `bg-slate-900 rounded-3xl p-8`)
+- `src/app/dashboard/tickets/page.tsx`
+- `src/app/dashboard/analytics/page.tsx`
+- `src/app/dashboard/sla-policies/page.tsx`
+- `src/app/dashboard/kb-manage/page.tsx`
+- `src/app/dashboard/automation-rules/page.tsx`
+- `src/app/dashboard/templates/page.tsx`
+
+For each, do a find+replace:
+- `bg-slate-900` → `bg-white dark:bg-slate-900`
+- `bg-slate-800` → `bg-slate-50 dark:bg-slate-800`
+- `text-white` (on headings/labels) → `text-slate-900 dark:text-white`
+- `text-white/30` → `text-slate-400 dark:text-white/30`
+- `text-white/40` → `text-slate-400 dark:text-white/40`
+- `border-white/5` → `border-slate-100 dark:border-white/5`
+- `border-white/8` → `border-slate-100 dark:border-white/8`
+- `border-white/10` → `border-slate-200 dark:border-white/10`
+- `bg-white/5` → `bg-slate-100 dark:bg-white/5`
+- `bg-white/3` → `bg-slate-50 dark:bg-white/3`
+- Input fields: `bg-white/5 border border-white/10 text-white placeholder:text-white/30` → `bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30`
+
+---
+
+#### Issue 2 — Duplicate `dark:` classes in your previous work
+
+Your `add-dark-mode.js` script created duplicate Tailwind classes like:
+```
+dark:text-slate-400 dark:text-slate-500
+dark:bg-slate-800 dark:bg-slate-900
+```
+Only the last one in a duplicate pair applies, so some colours are wrong. Go through the pages you edited and remove the duplicate (keep whichever one is the correct intended value). Affected pages:
+- `src/app/dashboard/page.tsx`
+- `src/app/dashboard/create/page.tsx`
+- `src/app/dashboard/staff/page.tsx`
+- `src/app/dashboard/kb/page.tsx`
+- `src/app/dashboard/ticket/[id]/page.tsx`
+- `src/app/dashboard/manager/page.tsx`
+
+---
+
+Build must pass. Check all 7 admin pages load correctly in both light and dark mode before marking done.
