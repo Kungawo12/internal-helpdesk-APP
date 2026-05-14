@@ -4366,3 +4366,161 @@ For each page, toggle theme and confirm:
 - [ ] Build passes with zero errors
 
 This is a full ownership task. Do not send partial work back. Fix every file completely.
+
+---
+
+## Backend → Frontend
+
+### 2026-05-14 — CRITICAL: Everything Is Broken — Stop and Fix Properly
+
+**Claude → Tom:**
+
+Tenzin has tested the app and everything is broken. This is not a minor issue — the whole app is in a bad state. Stop whatever you are doing and fix these two critical problems first.
+
+---
+
+### PROBLEM 1 — Pages Keep Loading Forever (Dashboard + All Other Pages)
+
+Multiple pages are stuck in an infinite loading spinner. This is the most urgent issue because Tenzin cannot use the app at all.
+
+**Most likely causes — check all of these:**
+
+1. **API fetch is failing silently** — the page fetches data, the API returns an error or throws, but `setLoading(false)` is never called because it's only in the success path. Every single `useEffect` fetch must call `setLoading(false)` in BOTH the success and error/catch path:
+   ```tsx
+   // WRONG — loading never ends if fetch fails:
+   useEffect(() => {
+     fetch("/api/...")
+       .then(r => r.json())
+       .then(data => { setData(data); setLoading(false); });
+   }, []);
+
+   // CORRECT:
+   useEffect(() => {
+     fetch("/api/...")
+       .then(r => r.json())
+       .then(data => { setData(data); setLoading(false); })
+       .catch(() => setLoading(false));  // ← THIS LINE IS MANDATORY
+   }, []);
+   ```
+
+2. **Session not loading** — if a page uses `useSession()` and waits for `session` before fetching, but the session check itself is hanging, the page will spin forever. Make sure pages handle the `status === "loading"` case with a timeout fallback.
+
+3. **`useTickets` hook hanging** — the employee dashboard uses `useTickets`. If that hook's fetch fails without setting loading to false, the whole dashboard spins. Check `src/hooks/useTickets.ts` — make sure the catch block sets loading to false.
+
+**Action:** Go through every page that has a `loading` state. Confirm `setLoading(false)` is called in EVERY code path — success, error, and catch. No exceptions.
+
+---
+
+### PROBLEM 2 — Dark/Light Mode Is Completely Broken
+
+Despite multiple attempts to fix this, Tenzin reports text is still not changing when switching themes, and many elements look terrible in both modes.
+
+**You need to start from scratch on the approach. Here is exactly what to do:**
+
+#### Step 1 — Verify ThemeProvider is working
+
+Open `src/app/layout.tsx`. It must look exactly like this:
+```tsx
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+Key points:
+- `suppressHydrationWarning` on `<html>` — required for next-themes
+- `defaultTheme="light"` — start in light mode
+- `enableSystem={false}` — don't follow OS preference, let user control it
+
+#### Step 2 — Verify globals.css dark mode setup
+
+The first few lines of `src/app/globals.css` must have:
+```css
+@custom-variant dark (&:is(.dark *));
+```
+This is how Tailwind v4 handles dark mode with `next-themes`. Without this line, NO `dark:` classes will work at all. Double-check it is there and has not been accidentally removed.
+
+#### Step 3 — The correct approach for every page
+
+**Do NOT mix dark-only pages with light-mode ones.** Every page must work in BOTH modes.
+
+The rule is simple:
+- Default (no prefix) = light mode
+- `dark:` prefix = dark mode
+
+Example of a correctly styled element:
+```tsx
+// Card
+<div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
+  <h2 className="text-slate-900 dark:text-white font-bold">Title</h2>
+  <p className="text-slate-500 dark:text-slate-400">Body text</p>
+</div>
+```
+
+#### Step 4 — Fix every page systematically
+
+For each page, do a find-and-replace pass:
+
+**Backgrounds:**
+- `bg-slate-900` alone → `bg-white dark:bg-slate-900`
+- `bg-slate-800` alone → `bg-slate-100 dark:bg-slate-800`
+- `bg-white/5` alone → `bg-slate-100 dark:bg-white/5`
+- `bg-white/3` alone → `bg-slate-50 dark:bg-white/3`
+
+**Text:**
+- `text-white` alone on body text → `text-slate-900 dark:text-white`
+- `text-white/30` → `text-slate-400 dark:text-white/30`
+- `text-white/40` → `text-slate-400 dark:text-white/40`
+- `text-white/50` → `text-slate-500 dark:text-white/50`
+- `text-[#6e6e73]` → `text-slate-500 dark:text-slate-400`
+- `text-[#0f172a]` → `text-slate-900 dark:text-white`
+- `text-[#475569]` → `text-slate-600 dark:text-slate-300`
+- `text-slate-500 dark:text-slate-500` → `text-slate-500 dark:text-slate-400` (same color in both modes = broken, always make dark mode lighter)
+
+**Borders:**
+- `border-white/5` alone → `border-slate-100 dark:border-white/5`
+- `border-white/10` alone → `border-slate-200 dark:border-white/10`
+- `border-black/5` → `border-slate-100 dark:border-white/8`
+- `border-black/10` → `border-slate-200 dark:border-white/10`
+
+**Inputs:**
+- `bg-white/5 text-white placeholder:text-white/25` → `bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25`
+
+#### Step 5 — Special case: pages with dark-only full backgrounds
+
+Several admin pages (analytics, tickets, users, automation-rules, templates, sla-policies, kb-manage) have outer wrapper divs with `bg-slate-900 rounded-3xl p-8`. These were designed for a dark-only admin panel. Change all of them to:
+```tsx
+<div className="bg-white dark:bg-slate-900 rounded-3xl p-8">
+```
+
+---
+
+### PROBLEM 3 — Duplicate `dark:` classes still present
+
+You have classes like `text-slate-500 dark:text-slate-500` everywhere — this means the text is the exact same grey in both light and dark mode, which is wrong. In dark mode it should always be LIGHTER than in light mode:
+- Light mode: `text-slate-500` (medium grey)  
+- Dark mode: `dark:text-slate-400` (lighter grey, readable on dark bg)
+
+Search for `dark:text-slate-500` and replace with `dark:text-slate-400` throughout.
+
+---
+
+### Delivery Requirements
+
+1. Fix loading issues first — Tenzin must be able to see pages
+2. Fix dark/light mode second — every page must be readable in both themes
+3. Run `npm run build` — zero errors
+4. Test by manually toggling between light and dark mode on every page
+5. Do not push partial fixes — push only when everything works
+
+This is blocking Tenzin from using the app. Treat it as P0.
