@@ -282,7 +282,7 @@ export default function DashboardLayout({
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                      pathname === item.path ? "bg-[#0f172a] text-white shadow-2xl" : "text-slate-500 dark:text-slate-400"
+                      pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
                     }`}
                   >
                     <span className="text-3xl">{item.icon}</span>

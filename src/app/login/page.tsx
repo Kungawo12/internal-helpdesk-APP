@@ -82,7 +82,7 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0c1222] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-[#0c1222] p-4 relative overflow-hidden">
       {/* Ambient glows */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-orange-600/8 dark:bg-orange-600/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/8 dark:bg-blue-600/8 rounded-full blur-[140px] pointer-events-none" />
@@ -92,7 +92,7 @@ export default function LoginPage() {
 
         {/* ── LOGIN FORM — slides out left when switching to register ── */}
         <div
-          className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col justify-center px-10 py-8 bg-[#131c2e] z-20"
+          className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col justify-center px-10 py-8 bg-white dark:bg-[#131c2e] z-20"
           style={slide(!isRegister)}
         >
           <FormInner
@@ -191,7 +191,7 @@ function FormInner({
 
   return (
     <div className="max-w-sm mx-auto w-full">
-      <Link href="/" className="flex items-center gap-2 mb-6 text-white/40 hover:text-white transition-colors w-fit">
+      <Link href="/" className="flex items-center gap-2 mb-6 text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-white transition-colors w-fit">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
@@ -199,10 +199,10 @@ function FormInner({
       </Link>
 
       <div className="mb-7" style={fieldAnim(0, active)}>
-        <h2 className="text-3xl font-extrabold text-white mb-1.5">
+        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1.5">
           {isRegister ? "Create Account" : "Sign In"}
         </h2>
-        <p className="text-white/50 text-sm font-medium">
+        <p className="text-slate-500 dark:text-white/50 text-sm font-medium">
           {isRegister ? "Join Karma Staff platform" : "Sign in to continue"}
         </p>
       </div>
@@ -210,29 +210,29 @@ function FormInner({
       <form onSubmit={onSubmit} className="space-y-4">
         {isRegister && (
           <div style={fieldAnim(1, active)}>
-            <label className="block text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-widest">Full Name</label>
+            <label className="block text-[11px] font-bold text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-widest">Full Name</label>
             <input
               type="text" required value={name} onChange={e => setName(e.target.value)}
               placeholder="John Doe"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+              className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
             />
           </div>
         )}
 
         <div style={fieldAnim(isRegister ? 2 : 1, active)}>
-          <label className="block text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-widest">Email Address</label>
+          <label className="block text-[11px] font-bold text-slate-500 dark:text-white/50 mb-1.5 uppercase tracking-widest">Email Address</label>
           <input
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
           />
         </div>
 
         <div style={fieldAnim(isRegister ? 3 : 2, active)}>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-widest">Password</label>
+            <label className="block text-[11px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest">Password</label>
             {!isRegister && (
-              <Link href="/forgot-password" className="text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors">
+              <Link href="/forgot-password" className="text-xs font-bold text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300 transition-colors">
                 Forgot?
               </Link>
             )}
@@ -240,19 +240,19 @@ function FormInner({
           <input
             type="password" required value={password} onChange={e => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none focus:border-orange-400/70 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
           />
         </div>
 
         {error && (
-          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-red-500/15 border border-red-500/30 rounded-xl">
-            <p className="text-xs text-red-300 font-bold text-center">{error}</p>
+          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-red-50 dark:bg-red-500/15 border border-red-200 dark:border-red-500/30 rounded-xl">
+            <p className="text-xs text-red-600 dark:text-red-300 font-bold text-center">{error}</p>
           </div>
         )}
 
         {success && (
-          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-xl">
-            <p className="text-xs text-emerald-300 font-bold text-center">{success}</p>
+          <div style={fieldAnim(isRegister ? 4 : 3, active)} className="p-3 bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 rounded-xl">
+            <p className="text-xs text-emerald-700 dark:text-emerald-300 font-bold text-center">{success}</p>
           </div>
         )}
 
@@ -267,9 +267,9 @@ function FormInner({
       </form>
 
       {/* Mobile-only toggle */}
-      <p className="mt-5 text-center text-xs text-white/40 font-medium md:hidden">
+      <p className="mt-5 text-center text-xs text-slate-500 dark:text-white/40 font-medium md:hidden">
         {isRegister ? "Already have an account? " : "Don't have an account? "}
-        <button onClick={onSwitch} className="text-white font-bold hover:underline">
+        <button onClick={onSwitch} className="text-slate-900 dark:text-white font-bold hover:underline">
           {isRegister ? "Sign In" : "Sign Up"}
         </button>
       </p>

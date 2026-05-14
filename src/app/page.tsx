@@ -362,26 +362,26 @@ export default function LandingPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="bg-slate-800 dark:bg-[#111827] border border-slate-700 dark:border-white/10 rounded-3xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 rounded-3xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
             {activeTab === "Request" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Employee submits a ticket</h3>
-                  <p className="text-slate-400 dark:text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Employee submits a ticket</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
-                <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                <div className="bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
                   <div className="space-y-2">
                     <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Title</div>
-                    <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
+                    <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">E.g., VPN not connecting</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Type</div>
-                      <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">IT</div>
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">IT</div>
                     </div>
                     <div className="space-y-2">
                       <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Priority</div>
-                      <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">High</div>
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">High</div>
                     </div>
                   </div>
                   <button className="w-full bg-blue-600 text-white rounded-lg py-3 font-bold">Submit Ticket</button>
@@ -392,21 +392,21 @@ export default function LandingPage() {
             {activeTab === "Notify" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Staff are notified instantly</h3>
-                  <p className="text-slate-400 dark:text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Staff are notified instantly</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
                 </div>
                 <div className="flex justify-center">
-                  <div className="relative bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
+                  <div className="relative bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 max-w-sm w-full">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-bold">Notifications</h4>
+                      <h4 className="font-bold text-slate-900 dark:text-white">Notifications</h4>
                       <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">2</div>
                     </div>
                     <div className="space-y-3">
-                      <div className="bg-white dark:bg-slate-900/5 p-3 rounded-lg text-sm text-slate-300">
-                        <span className="font-bold text-white">New IT Ticket:</span> &quot;VPN not connecting&quot; assigned to IT queue.
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/5 p-3 rounded-lg text-sm text-slate-600 dark:text-slate-300">
+                        <span className="font-bold text-slate-900 dark:text-white">New IT Ticket:</span> &quot;VPN not connecting&quot; assigned to IT queue.
                       </div>
-                      <div className="bg-white dark:bg-slate-900/5 p-3 rounded-lg text-sm text-slate-300">
-                        <span className="font-bold text-white">New HR Ticket:</span> &quot;Payroll inquiry&quot; assigned to HR queue.
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/5 p-3 rounded-lg text-sm text-slate-600 dark:text-slate-300">
+                        <span className="font-bold text-slate-900 dark:text-white">New HR Ticket:</span> &quot;Payroll inquiry&quot; assigned to HR queue.
                       </div>
                     </div>
                   </div>
@@ -417,16 +417,16 @@ export default function LandingPage() {
             {activeTab === "Resolve" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Staff works and resolves</h3>
-                  <p className="text-slate-400 dark:text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Staff works and resolves</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
                 </div>
-                <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
+                <div className="bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold">Ticket #124</span>
-                    <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
+                    <span className="font-bold text-slate-900 dark:text-white">Ticket #124</span>
+                    <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
                   </div>
-                  <div className="bg-white dark:bg-slate-900/5 p-4 rounded-lg text-sm text-slate-300">
-                    <span className="font-bold text-white">Solution:</span> Reset user credentials and updated VPN client config. Verified working.
+                  <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/5 p-4 rounded-lg text-sm text-slate-600 dark:text-slate-300">
+                    <span className="font-bold text-slate-900 dark:text-white">Solution:</span> Reset user credentials and updated VPN client config. Verified working.
                   </div>
                 </div>
               </div>
@@ -435,24 +435,24 @@ export default function LandingPage() {
             {activeTab === "Learn" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-bold">Knowledge compounds over time</h3>
-                  <p className="text-slate-400 dark:text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Knowledge compounds over time</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
-                    <div className="font-bold text-sm mb-1">VPN Setup</div>
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                    <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">VPN Setup</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">142 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
-                    <div className="font-bold text-sm mb-1">Printer Map</div>
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                    <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Printer Map</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">89 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
-                    <div className="font-bold text-sm mb-1">Wifi Pass</div>
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                    <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Wifi Pass</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">204 views</div>
                   </div>
-                  <div className="bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
-                    <div className="font-bold text-sm mb-1">Holiday Cal</div>
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                    <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Holiday Cal</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">67 views</div>
                   </div>
                 </div>
