@@ -19,7 +19,7 @@ const ROLE_BADGE: Record<string, string> = {
   manager: "bg-purple-500/20 text-purple-400 border-purple-500/20",
   it_staff: "bg-blue-500/20 text-blue-400 border-blue-500/20",
   hr_staff: "bg-amber-500/20 text-amber-400 border-amber-500/20",
-  employee: "bg-slate-500/20 text-slate-400 dark:text-slate-500 border-slate-500/20",
+  employee: "bg-slate-500/20 text-slate-400 dark:text-slate-400 border-slate-500/20",
 };
 
 export default function AdminUsersPage() {

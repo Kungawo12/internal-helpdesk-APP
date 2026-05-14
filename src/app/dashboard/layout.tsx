@@ -113,7 +113,7 @@ function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
             {notifications.length === 0 ? (
-              <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-8">No notifications yet</p>
+              <p className="text-sm text-slate-400 dark:text-slate-400 text-center py-8">No notifications yet</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -127,7 +127,7 @@ function NotificationBell() {
                   <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                    <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-0.5">
                       {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -196,7 +196,7 @@ export default function DashboardLayout({
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
                     ? "bg-[#0f172a] dark:bg-blue-600 text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569] dark:text-slate-500 hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
+                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -270,7 +270,7 @@ export default function DashboardLayout({
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                      pathname === item.path ? "bg-[#0f172a] text-white shadow-2xl" : "text-slate-500 dark:text-slate-500"
+                      pathname === item.path ? "bg-[#0f172a] text-white shadow-2xl" : "text-slate-500 dark:text-slate-400"
                     }`}
                   >
                     <span className="text-3xl">{item.icon}</span>

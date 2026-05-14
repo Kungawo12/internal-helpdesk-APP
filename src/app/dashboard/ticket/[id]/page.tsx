@@ -198,7 +198,7 @@ export default function TicketDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] space-y-4">
         <div className="w-8 h-8 border-[3px] border-slate-200 dark:border-slate-700 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-sm text-slate-500 dark:text-slate-500">Loading ticket details...</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading ticket details...</p>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export default function TicketDetailPage() {
       <div className="max-w-2xl mx-auto py-20 text-center space-y-4">
         <div className="text-4xl">⚠️</div>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Ticket Not Found</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-500">The requested ticket could not be retrieved.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">The requested ticket could not be retrieved.</p>
         <button onClick={() => router.back()} className="btn-secondary">Return to Dashboard</button>
       </div>
     );
@@ -224,12 +224,12 @@ export default function TicketDetailPage() {
       <div className="flex items-center justify-between">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:text-white   transition-colors"
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white   transition-colors"
         >
           <span>←</span> Back to Dashboard
         </button>
         <div className="flex items-center gap-3">
-           <span className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase">Status:</span>
+           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase">Status:</span>
            <span className={`badge ${
              ticket.status === 'resolved' ? 'badge-green' : 
              ticket.status === 'in_progress' ? 'badge-amber' : 'badge-slate'
@@ -259,14 +259,14 @@ export default function TicketDetailPage() {
                <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center ${ticket.status === 'in_progress' ? 'border-blue-600 bg-white dark:bg-slate-900' : ticket.status === 'resolved' ? 'border-blue-600 bg-blue-600' : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800'}`}>
                  <div className={`w-2.5 h-2.5 rounded-full ${ticket.status === 'in_progress' ? 'bg-blue-600' : ticket.status === 'resolved' ? 'bg-white dark:bg-slate-900' : 'bg-slate-300'}`} />
                </div>
-               <span className={`text-xs font-bold ${ticket.status === 'in_progress' ? 'text-blue-600' : ticket.status === 'resolved' ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}`}>In Progress</span>
+               <span className={`text-xs font-bold ${ticket.status === 'in_progress' ? 'text-blue-600' : ticket.status === 'resolved' ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-400'}`}>In Progress</span>
              </div>
              
              <div className="relative z-10 flex flex-col items-center gap-2">
                <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center ${ticket.status === 'resolved' ? 'border-green-500 bg-white dark:bg-slate-900' : 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800'}`}>
                  <div className={`w-2.5 h-2.5 rounded-full ${ticket.status === 'resolved' ? 'bg-green-500' : 'bg-slate-300'}`} />
                </div>
-               <span className={`text-xs font-bold ${ticket.status === 'resolved' ? 'text-green-600' : 'text-slate-400 dark:text-slate-500'}`}>Resolved</span>
+               <span className={`text-xs font-bold ${ticket.status === 'resolved' ? 'text-green-600' : 'text-slate-400 dark:text-slate-400'}`}>Resolved</span>
              </div>
            </div>
            <div className="card   p-6">
@@ -276,13 +276,13 @@ export default function TicketDetailPage() {
                  </div>
                  <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white  mb-1">{ticket.title}</h1>
-                    <p className="text-xs text-slate-500 dark:text-slate-500  font-mono">ID: #{ticket.id.toUpperCase()}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400  font-mono">ID: #{ticket.id.toUpperCase()}</p>
                  </div>
               </div>
 
               <div className="space-y-4">
                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white ">Problem Description</h3>
-                 <p className="text-sm text-slate-600 dark:text-slate-500  leading-relaxed whitespace-pre-wrap">
+                 <p className="text-sm text-slate-600 dark:text-slate-400  leading-relaxed whitespace-pre-wrap">
                     {ticket.description}
                  </p>
               </div>
@@ -294,26 +294,26 @@ export default function TicketDetailPage() {
                   <div className="grid grid-cols-2 gap-4">
                     {ticket.category && (
                       <div>
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500  uppercase tracking-wider mb-1">Type</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-400  uppercase tracking-wider mb-1">Type</p>
                         <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50  text-blue-700 ">{ticket.category}</span>
                       </div>
                     )}
                     {ticket.affectedSystem && (
                       <div>
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500  uppercase tracking-wider mb-1">Platform</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-400  uppercase tracking-wider mb-1">Platform</p>
                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 ">{ticket.affectedSystem}</p>
                       </div>
                     )}
                     {ticket.softwareName && (
                       <div className="col-span-2">
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500  uppercase tracking-wider mb-1">Affected Software</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-400  uppercase tracking-wider mb-1">Affected Software</p>
                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 ">{ticket.softwareName}</p>
                       </div>
                     )}
                   </div>
                   {ticket.errorMessage && (
                     <div>
-                      <p className="text-xs font-bold text-slate-400 dark:text-slate-500  uppercase tracking-wider mb-2">Error Message</p>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-400  uppercase tracking-wider mb-2">Error Message</p>
                       <pre className="text-xs text-slate-700 dark:text-slate-300  bg-slate-50 dark:bg-slate-800/50  border border-slate-200 dark:border-slate-700  rounded-lg p-3 whitespace-pre-wrap font-mono overflow-x-auto">{ticket.errorMessage}</pre>
                     </div>
                   )}
@@ -387,7 +387,7 @@ export default function TicketDetailPage() {
              {uploadError && <p className="text-sm text-red-500 mb-3">{uploadError}</p>}
 
              {attachments.length === 0 ? (
-               <p className="text-sm text-slate-400 dark:text-slate-500  italic">No attachments yet.</p>
+               <p className="text-sm text-slate-400 dark:text-slate-400  italic">No attachments yet.</p>
              ) : (
                <div className="space-y-2">
                  {attachments.map(a => (
@@ -396,9 +396,9 @@ export default function TicketDetailPage() {
                      <span className="text-2xl">{a.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? "🖼️" : a.filename.match(/\.pdf$/i) ? "📄" : "📎"}</span>
                      <div className="flex-1 min-w-0">
                        <p className="text-sm font-semibold text-slate-900 dark:text-white  truncate group-hover:text-blue-600">{a.filename}</p>
-                       <p className="text-xs text-slate-400 dark:text-slate-500 ">{(a.size / 1024).toFixed(1)} KB · {a.uploadedBy?.name} · {new Date(a.createdAt).toLocaleDateString()}</p>
+                       <p className="text-xs text-slate-400 dark:text-slate-400 ">{(a.size / 1024).toFixed(1)} KB · {a.uploadedBy?.name} · {new Date(a.createdAt).toLocaleDateString()}</p>
                      </div>
-                     <span className="text-slate-400 dark:text-slate-500  group-hover:text-blue-600 text-xs font-bold">↗</span>
+                     <span className="text-slate-400 dark:text-slate-400  group-hover:text-blue-600 text-xs font-bold">↗</span>
                    </a>
                  ))}
                </div>
@@ -429,7 +429,7 @@ export default function TicketDetailPage() {
                  </div>
                ) : timeline.length === 0 ? (
                  <div className="text-center py-8">
-                   <p className="text-sm text-slate-500 dark:text-slate-500  italic">No messages yet. Be the first to comment.</p>
+                   <p className="text-sm text-slate-500 dark:text-slate-400  italic">No messages yet. Be the first to comment.</p>
                  </div>
                ) : (
                  timeline.map((item) => {
@@ -444,7 +444,7 @@ export default function TicketDetailPage() {
                             <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[80%]`}>
                               <div className={`flex items-baseline gap-2 mb-1 ${isMe ? "flex-row-reverse" : ""}`}>
                                 <span className="font-bold text-sm text-slate-900 dark:text-white ">{isMe ? "You" : item.user?.name || 'Unknown User'}</span>
-                                <span className="text-xs text-slate-500 dark:text-slate-500 ">{timeAgo(item.createdAt)}</span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400 ">{timeAgo(item.createdAt)}</span>
                                 {isInternal && <span className="text-xs text-amber-600  font-bold">🔒 Staff Only</span>}
                               </div>
                               <p className={`text-sm p-3 rounded-2xl whitespace-pre-wrap ${
@@ -478,14 +478,14 @@ export default function TicketDetailPage() {
                           SLA_BREACHED: "🔴",
                         };
                         return (
-                          <div key={item.id} className="flex gap-4 items-center text-sm text-slate-500 dark:text-slate-500 ">
+                          <div key={item.id} className="flex gap-4 items-center text-sm text-slate-500 dark:text-slate-400 ">
                             <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 text-lg">
                               {icons[item.action] || "ℹ️"}
                             </div>
                             <div className="flex-1">
                               <span className="font-bold text-slate-700 dark:text-slate-300 ">{item.user?.name}</span>{" "}
                                 {actionLabels[item.action] || item.action}{" "}
-                              <span className="text-xs text-slate-400 dark:text-slate-500 ">· {timeAgo(item.createdAt)}</span>
+                              <span className="text-xs text-slate-400 dark:text-slate-400 ">· {timeAgo(item.createdAt)}</span>
                             </div>
                           </div>
                         );
@@ -496,7 +496,7 @@ export default function TicketDetailPage() {
              </div>
 
              <form onSubmit={handlePostComment} className="flex gap-3 items-start border-t border-slate-100 dark:border-slate-800  pt-6 sticky bottom-0 bg-white dark:bg-slate-900  z-10 pb-2">
-               <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800  text-slate-600 dark:text-slate-500  flex items-center justify-center font-bold flex-shrink-0">
+               <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800  text-slate-600 dark:text-slate-400  flex items-center justify-center font-bold flex-shrink-0">
                  {session?.user?.name?.charAt(0) || '?'}
                </div>
                <div className="flex-1 space-y-3">
@@ -509,7 +509,7 @@ export default function TicketDetailPage() {
                  />
                  <div className="flex justify-between items-center">
                    {isStaff && (
-                     <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-500  cursor-pointer">
+                     <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400  cursor-pointer">
                        <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                        <span>🔒 Internal note</span>
                      </label>
@@ -534,29 +534,29 @@ export default function TicketDetailPage() {
             <div className="card p-5 space-y-6  ">
                {/* Ticket Metadata */}
                <div className="pb-4 border-b border-slate-100 dark:border-slate-800 ">
-                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase mb-1">Ticket ID</p>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase mb-1">Ticket ID</p>
                   <p className="text-3xl font-mono font-bold text-slate-900 dark:text-white  mb-2">#{ticket.id.slice(0, 8).toUpperCase()}</p>
-                  <div className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-500 ">
+                  <div className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400 ">
                      <span>Created: {new Date(ticket.createdAt).toLocaleString()}</span>
                      <span>Updated: {new Date(ticket.updatedAt).toLocaleString()}</span>
                   </div>
                </div>
                <div className="space-y-4">
                  <div>
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase mb-2">Creator</p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase mb-2">Creator</p>
                     <div className="flex items-center gap-3">
                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                           {ticket.creator.name.charAt(0)}
                        </div>
                        <div className="flex flex-col">
                           <span className="font-medium text-sm text-slate-900 dark:text-white ">{ticket.creator.name}</span>
-                          <span className="text-xs text-slate-500 dark:text-slate-500 ">{ticket.creator.email}</span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400 ">{ticket.creator.email}</span>
                        </div>
                     </div>
                  </div>
 
                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 ">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase mb-2">Assignee</p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase mb-2">Assignee</p>
                     {ticket.assignee ? (
                        <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-blue-50  text-blue-600  flex items-center justify-center font-bold">
@@ -564,7 +564,7 @@ export default function TicketDetailPage() {
                           </div>
                           <div>
                              <span className="font-medium text-sm text-slate-900 dark:text-white  block">{ticket.assignee.name}</span>
-                             <span className="text-xs text-slate-500 dark:text-slate-500 ">{ticket.assignee.email}</span>
+                             <span className="text-xs text-slate-500 dark:text-slate-400 ">{ticket.assignee.email}</span>
                           </div>
                        </div>
                     ) : (
@@ -574,13 +574,13 @@ export default function TicketDetailPage() {
 
                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 ">
                     <div>
-                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase mb-1">Priority</p>
+                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase mb-1">Priority</p>
                        <p className={`font-medium text-sm ${
-                         ticket.priority === 'urgent' ? 'text-red-600' : ticket.priority === 'high' ? 'text-orange-500' : ticket.priority === 'medium' ? 'text-blue-600' : 'text-slate-500 dark:text-slate-500'
+                         ticket.priority === 'urgent' ? 'text-red-600' : ticket.priority === 'high' ? 'text-orange-500' : ticket.priority === 'medium' ? 'text-blue-600' : 'text-slate-500 dark:text-slate-400'
                        }`}>{ticket.priority}</p>
                     </div>
                     <div>
-                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-500  uppercase mb-1">Department</p>
+                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-400  uppercase mb-1">Department</p>
                        <p className="font-medium text-sm text-slate-900 dark:text-white ">{ticket.type}</p>
                     </div>
                  </div>
@@ -594,7 +594,7 @@ export default function TicketDetailPage() {
                       >
                         {escalating ? "Escalating..." : "⬆ Escalate Priority"}
                       </button>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-1.5">
+                      <p className="text-xs text-slate-400 dark:text-slate-400 text-center mt-1.5">
                         Current: <span className="font-bold capitalize">{ticket.priority}</span> → next level up
                       </p>
                     </div>
@@ -607,11 +607,11 @@ export default function TicketDetailPage() {
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (
                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                      <div className="flex items-center gap-1 mb-2">
-                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase">SLA</p>
-                       <span className="text-xs text-slate-400 dark:text-slate-500 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
+                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">SLA</p>
+                       <span className="text-xs text-slate-400 dark:text-slate-400 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
                      </div>
                      <SlaBadge ticket={ticket} />
-                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                     <p className="text-xs text-slate-400 dark:text-slate-400 mt-1">
                        Due: {new Date(ticket.slaResolutionDue).toLocaleString()}
                      </p>
                    </div>
@@ -619,8 +619,8 @@ export default function TicketDetailPage() {
                  {ticket.status === "resolved" && (
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                       <div className="flex items-center gap-1 mb-2">
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase">SLA</p>
-                        <span className="text-xs text-slate-400 dark:text-slate-500 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">SLA</p>
+                        <span className="text-xs text-slate-400 dark:text-slate-400 cursor-help" title="SLA = Service Level Agreement. This shows whether the ticket was handled within the agreed response time.">?</span>
                       </div>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ticket.slaBreached ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
                         {ticket.slaBreached ? "⚠ Resolved after breach" : "✓ Resolved within SLA"}
@@ -637,18 +637,18 @@ export default function TicketDetailPage() {
                       >
                         {reopening ? "Reopening..." : "↩ Reopen Ticket"}
                       </button>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-2">Issue not resolved? Reopen to submit again.</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-400 text-center mt-2">Issue not resolved? Reopen to submit again.</p>
                     </div>
                   )}
 
                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase mb-3">Timeline</p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-3">Timeline</p>
                     <div className="space-y-3">
                        <div className="flex gap-3">
                           <div className="w-0.5 bg-blue-200 mt-1" />
                           <div>
                              <p className="text-xs font-medium text-slate-900 dark:text-white">Created</p>
-                             <p className="text-xs text-slate-500 dark:text-slate-500">{new Date(ticket.createdAt).toLocaleString()}</p>
+                             <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(ticket.createdAt).toLocaleString()}</p>
                           </div>
                        </div>
                        {ticket.status === 'resolved' && (
@@ -656,7 +656,7 @@ export default function TicketDetailPage() {
                             <div className="w-0.5 bg-green-200 mt-1" />
                             <div>
                                <p className="text-xs font-medium text-green-700">Resolved</p>
-                               <p className="text-xs text-slate-500 dark:text-slate-500">{new Date(ticket.updatedAt).toLocaleString()}</p>
+                               <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(ticket.updatedAt).toLocaleString()}</p>
                             </div>
                          </div>
                        )}

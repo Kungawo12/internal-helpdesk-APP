@@ -116,7 +116,7 @@ export default function ManagerDashboard() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Manager Portal</span>
-            <span className="text-sm font-semibold text-slate-500 dark:text-slate-500">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
               {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
@@ -176,15 +176,15 @@ export default function ManagerDashboard() {
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Resolution</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-400  uppercase tracking-widest mb-4">Resolution</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgResTime}h</p>
-          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">Average Time to Close</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400  font-medium">Average Time to Close</p>
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Quality</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-400  uppercase tracking-widest mb-4">Quality</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgSatisfaction}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">CSAT out of 5.0</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400  font-medium">CSAT out of 5.0</p>
         </div>
       </div>
 
@@ -201,7 +201,7 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-black  h-4 rounded-full" style={{ width: `${(stats.itCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 ">
                 <span>Open: {stats.itOpen}</span>
                 <span>Resolved: {stats.itResolved}</span>
               </div>
@@ -215,7 +215,7 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-blue-600 h-4 rounded-full" style={{ width: `${(stats.hrCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 ">
                 <span>Open: {stats.hrOpen}</span>
                 <span>Resolved: {stats.hrResolved}</span>
               </div>
@@ -255,7 +255,7 @@ export default function ManagerDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
+              <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 ">
                 <th className="pb-3 font-bold">Staff Member</th>
                 <th className="pb-3 font-bold text-center">Open</th>
                 <th className="pb-3 font-bold text-center">In Progress</th>
@@ -274,7 +274,7 @@ export default function ManagerDashboard() {
                       </div>
                       <div>
                         <p className="font-bold text-sm ">{s.name}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-500  capitalize">{s.role.replace("_", " ")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400  capitalize">{s.role.replace("_", " ")}</p>
                       </div>
                     </div>
                   </td>
@@ -288,15 +288,15 @@ export default function ManagerDashboard() {
                     <span className="font-bold text-sm text-emerald-600 ">{s.resolved}</span>
                   </td>
                   <td className="py-4 text-center">
-                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 dark:text-slate-500 "}`}>{s.slaBreached}</span>
+                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 dark:text-slate-400 "}`}>{s.slaBreached}</span>
                   </td>
-                  <td className="py-4 text-center text-sm text-slate-500 dark:text-slate-500  font-medium">
+                  <td className="py-4 text-center text-sm text-slate-500 dark:text-slate-400  font-medium">
                     {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
                   </td>
                 </tr>
               ))}
               {workload.length === 0 && (
-                <tr><td colSpan={6} className="py-10 text-center text-slate-500 dark:text-slate-500  italic">No staff members found.</td></tr>
+                <tr><td colSpan={6} className="py-10 text-center text-slate-500 dark:text-slate-400  italic">No staff members found.</td></tr>
               )}
             </tbody>
           </table>
@@ -321,11 +321,11 @@ export default function ManagerDashboard() {
                       style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
                     />
                     {d.count > 0 && (
-                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         {d.count}
                       </span>
                     )}
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500  font-medium rotate-45 origin-left mt-1 hidden sm:block">
+                    <span className="text-[9px] text-slate-400 dark:text-slate-400  font-medium rotate-45 origin-left mt-1 hidden sm:block">
                       {new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
                   </div>
@@ -402,7 +402,7 @@ export default function ManagerDashboard() {
           <div className="bg-white dark:bg-slate-900  rounded-[40px] border border-slate-200 dark:border-slate-700  overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
+                <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 ">
                   <th className="p-6 font-bold">Ticket</th>
                   <th className="p-6 font-bold hidden md:table-cell">Creator</th>
                   <th className="p-6 font-bold">Status</th>
@@ -423,7 +423,7 @@ export default function ManagerDashboard() {
                         {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
                         <div>
                            <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
-                           <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
+                           <p className="text-sm text-slate-500 dark:text-slate-400 ">{ticket.type}</p>
                         </div>
                       </div>
                     </td>
@@ -457,7 +457,7 @@ export default function ManagerDashboard() {
                         }
                       </select>
                     </td>
-                    <td className="p-6 hidden lg:table-cell text-sm text-slate-500 dark:text-slate-500  font-semibold">
+                    <td className="p-6 hidden lg:table-cell text-sm text-slate-500 dark:text-slate-400  font-semibold">
                       {new Date(ticket.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-6 text-right">
@@ -471,7 +471,7 @@ export default function ManagerDashboard() {
         ) : (
           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
             <h3 className="text-2xl font-bold mb-2 ">No tickets found</h3>
-            <p className="text-slate-500 dark:text-slate-500 ">Adjust your filters to see more results.</p>
+            <p className="text-slate-500 dark:text-slate-400 ">Adjust your filters to see more results.</p>
           </div>
         )}
       </div>

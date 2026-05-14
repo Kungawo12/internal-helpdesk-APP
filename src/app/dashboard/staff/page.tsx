@@ -79,7 +79,7 @@ export default function StaffQueuePage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
       <div className="w-8 h-8 border-[3px] border-slate-200 dark:border-slate-700 border-t-blue-600 rounded-full animate-spin" />
-      <p className="text-sm text-slate-500 dark:text-slate-500">Loading queue...</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400">Loading queue...</p>
     </div>
   );
 
@@ -97,9 +97,9 @@ export default function StaffQueuePage() {
               )}
             </h1>
             <div className="flex items-center gap-4">
-              <p className="text-xl text-slate-500 dark:text-slate-500  font-medium">Assigned service requests awaiting resolution</p>
+              <p className="text-xl text-slate-500 dark:text-slate-400  font-medium">Assigned service requests awaiting resolution</p>
               {activeTickets.length > 0 && (
-                <label className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-500  font-bold cursor-pointer">
+                <label className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400  font-bold cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedIds.length === activeTickets.length}
@@ -152,11 +152,11 @@ export default function StaffQueuePage() {
               className={`px-4 py-2 text-sm font-bold rounded-full transition-colors whitespace-nowrap flex items-center gap-2 ${
                 statusFilter === tab.value
                   ? "bg-black text-white"
-                  : "text-slate-500 dark:text-slate-500  hover:bg-slate-50 dark:hover:bg-slate-800 "
+                  : "text-slate-500 dark:text-slate-400  hover:bg-slate-50 dark:hover:bg-slate-800 "
               }`}
             >
               {tab.label}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === tab.value ? "bg-white dark:bg-slate-900/20 text-white" : "bg-slate-100 dark:bg-slate-800  text-slate-600 dark:text-slate-500 "}`}>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${statusFilter === tab.value ? "bg-white dark:bg-slate-900/20 text-white" : "bg-slate-100 dark:bg-slate-800  text-slate-600 dark:text-slate-400 "}`}>
                 {tab.count}
               </span>
             </button>
@@ -168,7 +168,7 @@ export default function StaffQueuePage() {
             <div className="card p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
               <div className="text-6xl mb-4 opacity-30">🎉</div>
               <h3 className="text-2xl font-bold mb-2 ">All caught up!</h3>
-              <p className="text-slate-500 dark:text-slate-500 ">No open tickets in your queue.</p>
+              <p className="text-slate-500 dark:text-slate-400 ">No open tickets in your queue.</p>
             </div>
           ) : (
             activeTickets.map((ticket) => (
@@ -203,13 +203,13 @@ export default function StaffQueuePage() {
                         {ticket.status.replace("_", " ")}
                       </span>
                       <SlaBadge ticket={ticket} />
-                      <span className="text-sm text-slate-500 dark:text-slate-500  font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400  font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold cursor-pointer group-hover:text-blue-600 transition-colors " onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                         {ticket.title}
                       </h3>
-                      <p className="text-lg text-slate-500 dark:text-slate-500  mt-2 line-clamp-2">
+                      <p className="text-lg text-slate-500 dark:text-slate-400  mt-2 line-clamp-2">
                         {ticket.description}
                       </p>
                     </div>
@@ -290,12 +290,12 @@ export default function StaffQueuePage() {
                 <p className="text-sm font-bold truncate mb-2 ">{ticket.title}</p>
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="text-green-600">Resolved</span>
-                  <span className="text-slate-500 dark:text-slate-500 ">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                  <span className="text-slate-500 dark:text-slate-400 ">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}
             {resolvedTickets.length === 0 && (
-              <p className="text-center py-8 text-slate-500 dark:text-slate-500 font-medium">No recent resolutions</p>
+              <p className="text-center py-8 text-slate-500 dark:text-slate-400 font-medium">No recent resolutions</p>
             )}
           </div>
         </div>

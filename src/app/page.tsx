@@ -178,7 +178,7 @@ export default function LandingPage() {
             <h1 className="hero-element text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
               Deliver exceptional<br/>support at scale.
             </h1>
-            <p className="hero-element text-lg md:text-xl text-slate-400 dark:text-slate-500 max-w-2xl font-medium">
+            <p className="hero-element text-lg md:text-xl text-slate-400 dark:text-slate-400 max-w-2xl font-medium">
               Your IT and HR teams — augmented with smart automation, SLA enforcement, and real-time notifications — resolving issues faster than ever.
             </p>
             <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
@@ -196,24 +196,24 @@ export default function LandingPage() {
             <div className="hero-element grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
               <div>
                 <p className="text-3xl font-extrabold text-white">{stats.totalTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Tickets Managed</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Tickets Managed</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.totalUsers}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Active Users</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Active Users</p>
               </div>
               <div className="border-l border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-white">{stats.avgResolutionHours}h</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Avg Resolution</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Avg Resolution</p>
               </div>
               {/* Fallback for mobile if grid collapses */}
               <div className="md:hidden">
                 <p className="text-3xl font-extrabold text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
               </div>
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
                       <h3 className="font-bold text-lg text-white">{card.title}</h3>
                     </div>
                     <hr className="border-white/5 mb-4" />
-                    <ul className="space-y-2 text-sm text-slate-400 dark:text-slate-500 font-mono">
+                    <ul className="space-y-2 text-sm text-slate-400 dark:text-slate-400 font-mono">
                       {card.details.map((detail, i) => (
                         <li key={i} className={detail.startsWith('●') ? 'text-blue-400' : ''}>
                           {detail}
@@ -341,7 +341,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
-            <p className="text-lg text-slate-400 dark:text-slate-500">Four steps. Zero friction.</p>
+            <p className="text-lg text-slate-400 dark:text-slate-400">Four steps. Zero friction.</p>
           </div>
           
           {/* Tabs */}
@@ -367,20 +367,20 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Employee submits a ticket</h3>
-                  <p className="text-slate-400 dark:text-slate-500 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
+                  <p className="text-slate-400 dark:text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
                 <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="space-y-2">
-                    <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Title</div>
+                    <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Title</div>
                     <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">E.g., VPN not connecting</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Type</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Type</div>
                       <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">IT</div>
                     </div>
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Priority</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Priority</div>
                       <div className="bg-white dark:bg-slate-900/5 rounded-lg p-3 text-white/40">High</div>
                     </div>
                   </div>
@@ -393,7 +393,7 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Staff are notified instantly</h3>
-                  <p className="text-slate-400 dark:text-slate-500 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
+                  <p className="text-slate-400 dark:text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
                 </div>
                 <div className="flex justify-center">
                   <div className="relative bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 max-w-sm w-full">
@@ -418,7 +418,7 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Staff works and resolves</h3>
-                  <p className="text-slate-400 dark:text-slate-500 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
+                  <p className="text-slate-400 dark:text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
                 </div>
                 <div className="bg-[#0a0f1e] p-6 rounded-2xl border border-white/10 space-y-4">
                   <div className="flex justify-between items-center">
@@ -436,24 +436,24 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Knowledge compounds over time</h3>
-                  <p className="text-slate-400 dark:text-slate-500 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
+                  <p className="text-slate-400 dark:text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">VPN Setup</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-500">142 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">142 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Printer Map</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-500">89 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">89 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Wifi Pass</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-500">204 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">204 views</div>
                   </div>
                   <div className="bg-[#0a0f1e] p-4 rounded-xl border border-white/10">
                     <div className="font-bold text-sm mb-1">Holiday Cal</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-500">67 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">67 views</div>
                   </div>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white ">Built for every team member</h2>
-            <p className="text-lg text-slate-500 dark:text-slate-500 ">Tailored experiences for employees, staff, and managers.</p>
+            <p className="text-lg text-slate-500 dark:text-slate-400 ">Tailored experiences for employees, staff, and managers.</p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -581,7 +581,7 @@ export default function LandingPage() {
           <div className="bg-gradient-to-br from-slate-900 to-[#0a0f1e] border border-white/10 rounded-3xl p-16 text-white grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="text-center lg:text-left">
               <h2 className="text-3xl font-extrabold mb-4">Already part of the team?</h2>
-              <p className="text-slate-400 dark:text-slate-500 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
+              <p className="text-slate-400 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
               <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
                 Sign In <span>→</span>
               </Link>
@@ -594,7 +594,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 dark:text-slate-500 px-6 py-8 md:px-12 border-t border-slate-900">
+      <footer className="bg-slate-950 text-slate-400 dark:text-slate-400 px-6 py-8 md:px-12 border-t border-slate-900">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm font-medium">
             &copy; {new Date().getFullYear()} Karma Staff Platform. All rights reserved.
