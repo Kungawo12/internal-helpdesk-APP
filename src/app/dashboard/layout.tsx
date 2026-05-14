@@ -5,6 +5,30 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import AiChatWidget from "@/components/dashboard/AiChatWidget";
+import { useTheme } from "next-themes";
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-10 h-10" />;
+  }
+
+  return (
+    <button 
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? "☀️" : "🌙"}
+    </button>
+  );
+}
 
 interface Notification {
   id: string;
@@ -132,30 +156,32 @@ export default function DashboardLayout({
     { label: "Dashboard", path: "/dashboard", icon: "📊" },
     { label: "New Ticket", path: "/dashboard/create", icon: "➕", show: role === "employee" },
     { label: "Knowledge Base", path: "/dashboard/kb", icon: "📚", show: role === "employee" },
-    { label: "Company Overview", path: "/dashboard/manager", icon: "🏢", show: role === "admin" },
     { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
-    { label: "Admin Panel", path: "/admin", icon: "🛡️", show: role === "admin" },
+    { label: "Users", path: "/admin/users", icon: "👥", show: role === "admin" },
+    { label: "All Tickets", path: "/admin/tickets", icon: "🎫", show: role === "admin" },
+    { label: "Analytics", path: "/admin/analytics", icon: "📊", show: role === "admin" },
+    { label: "Settings", path: "/admin/sla-policies", icon: "⚙️", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
   return (
-    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc]  transition-colors duration-300">
+    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc] dark:bg-slate-900 transition-colors duration-300">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div 
-          className="w-full h-full bg-cover bg-center opacity-40" 
+          className="w-full h-full bg-cover bg-center opacity-40 dark:opacity-10 transition-opacity" 
           style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }} 
         />
       </div>
       
       {/* Sidebar - Desktop */}
       <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
-        <div className="bg-white/90  rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60  transition-colors duration-300">
+        <div className="bg-white/90 dark:bg-slate-800/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-700/60 transition-colors duration-300">
           <div className="mb-14 px-2">
             <Link href="/dashboard" className="flex items-center gap-4 group">
-              <div className="w-12 h-12 bg-[#0f172a] rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
+              <div className="w-12 h-12 bg-[#0f172a] dark:bg-blue-600 rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl group-hover:rotate-12 transition-transform duration-500">
                 H
               </div>
-              <span className="font-extrabold text-3xl tracking-tighter text-[#0f172a]  transition-colors">Helpdesk</span>
+              <span className="font-extrabold text-3xl tracking-tighter text-[#0f172a] dark:text-white transition-colors">Helpdesk</span>
             </Link>
           </div>
 
@@ -166,8 +192,8 @@ export default function DashboardLayout({
                 href={item.path}
                 className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
                   pathname === item.path 
-                    ? "bg-[#0f172a] text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
-                    : "text-[#475569]  hover:bg-white  hover:text-[#0f172a] "
+                    ? "bg-[#0f172a] dark:bg-blue-600 text-white shadow-2xl shadow-slate-900/20 scale-[1.02]" 
+                    : "text-[#475569] dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-[#0f172a] dark:hover:text-white"
                 }`}
               >
                 <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
@@ -179,13 +205,13 @@ export default function DashboardLayout({
           </nav>
 
           <div className="mt-auto">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50   rounded-3xl p-5 border border-white/50  shadow-inner">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/50 rounded-3xl p-5 border border-white/50 dark:border-slate-700 shadow-inner">
               <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
-                <div className="w-12 h-12 rounded-2xl bg-white  text-blue-600  flex items-center justify-center font-black text-sm border border-blue-200  shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm">
                   {session?.user?.name?.charAt(0)}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-black text-[#0f172a]  truncate">{session?.user?.name}</span>
+                  <span className="text-sm font-black text-[#0f172a] dark:text-white truncate">{session?.user?.name}</span>
                   <div className="flex items-center gap-2 mt-0.5">
                      <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
                      <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">
@@ -196,7 +222,7 @@ export default function DashboardLayout({
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="w-full py-3 rounded-2xl bg-[#0f172a] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#1e293b] hover:shadow-xl transition-all shadow-md"
+                className="w-full py-3 rounded-2xl bg-[#0f172a] dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#1e293b] dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
               >
                 Sign Out
               </button>
@@ -208,21 +234,23 @@ export default function DashboardLayout({
       {/* Main Content Area */}
       <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
         {/* Top bar — desktop only */}
-        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100  bg-white/60  sticky top-0 z-30 transition-colors">
+        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
+          <ThemeToggle />
           <NotificationBell />
         </div>
 
         {/* Mobile Header */}
-        <header className="lg:hidden h-20 bg-white/90  flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100  transition-colors">
+        <header className="lg:hidden h-20 bg-white/90 dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
            <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center font-bold text-white text-lg">H</div>
-            <span className="font-extrabold text-xl text-[#0f172a]">Helpdesk</span>
+            <div className="w-10 h-10 bg-[#0f172a] dark:bg-white rounded-xl flex items-center justify-center font-bold text-white dark:text-[#0f172a] text-lg">H</div>
+            <span className="font-extrabold text-xl text-[#0f172a] dark:text-white">Helpdesk</span>
           </Link>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <NotificationBell />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 shadow-xl"
+              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xl"
             >
               {isMobileMenuOpen ? "✕" : "☰"}
             </button>

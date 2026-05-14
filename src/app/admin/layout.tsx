@@ -113,7 +113,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
               </svg>
             </div>
             <div>
-              <p className="text-white font-extrabold text-sm leading-none">Admin Portal</p>
+              <p className="text-white font-extrabold text-sm leading-none">Helpdesk Admin</p>
               <p className="text-white/30 text-xs mt-0.5">{session.user.name}</p>
             </div>
           </div>
