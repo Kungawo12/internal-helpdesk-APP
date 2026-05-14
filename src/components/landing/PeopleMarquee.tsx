@@ -128,7 +128,7 @@ function PersonCard({
       <div className={`absolute inset-0 flex flex-col transition-opacity duration-500 ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Character illustration — takes up top 60% of card */}
         <div className="h-48 flex items-end justify-center relative" style={{ backgroundColor: `#${character.bgColor}` }}>
-          <img src={dicebearUrl} className="w-36 h-36" alt={character.name} />
+          <img src={dicebearUrl} className="w-36 h-36 object-contain pb-2" alt={character.name} />
           {/* Subtle gradient overlay */}
           <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
         </div>
