@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import PeopleMarquee from "@/components/landing/PeopleMarquee";
@@ -30,7 +30,6 @@ export default function LandingPage() {
   });
   const [activeTab, setActiveTab] = useState("Request");
   const [activeCard, setActiveCard] = useState(0);
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   useEffect(() => {
     // Fallback data since API is not built yet
@@ -567,75 +566,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust & Security */}
-      <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">You&apos;re always in control</h2>
-            <p className="text-lg text-slate-400">Enterprise-grade security and access control.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Role-Based Access", desc: "Employees see only their tickets. Staff see their department. Managers see everything. Admin controls it all.", icon: "lock" },
-              { title: "Audit Log", desc: "Every action logged — who changed what and when. Full accountability trail on every ticket.", icon: "list" },
-              { title: "SLA Enforcement", desc: "Response and resolution deadlines enforced automatically. Breach alerts before it's too late.", icon: "clock" },
-              { title: "Secure by Design", desc: "Session auth, bcrypt passwords, rate limiting on all public endpoints. Built on Neon PostgreSQL.", icon: "shield" }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-colors">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 mb-6">
-                  {item.icon === "lock" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>}
-                  {item.icon === "list" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>}
-                  {item.icon === "clock" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>}
-                  {item.icon === "shield" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>}
-                </div>
-                <h3 className="text-lg font-bold mb-2 text-white">{item.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-slate-50 ">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-slate-900  mb-4">Frequently asked questions</h2>
-            <p className="text-lg text-slate-500 ">Everything you need to know about the platform.</p>
-          </div>
-          
-          <div className="space-y-4">
-            {[
-              { q: "Who can use this platform?", a: "Any employee can submit IT or HR tickets. IT staff, HR staff, managers, and admins each have role-specific dashboards." },
-              { q: "How are tickets assigned?", a: "Tickets are routed to the right department (IT or HR) automatically. Staff can also be assigned manually by managers." },
-              { q: "What happens when a ticket is created?", a: "All active staff in the relevant department receive an in-app notification and email instantly." },
-              { q: "How does the Knowledge Base work?", a: "Articles are created by admin or staff and visible to employees. Employees can search before raising a ticket." },
-              { q: "Are SLAs enforced?", a: "Yes. Each ticket has response and resolution deadlines based on type and priority. Managers can see SLA compliance in their dashboard." },
-              { q: "Is my data secure?", a: "All passwords are bcrypt-hashed. Sessions use NextAuth. Rate limiting protects all auth endpoints. Database is Neon PostgreSQL." }
-            ].map((faq, idx) => (
-              <div key={idx} className="border-b border-slate-100 ">
-                <button
-                  onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                  className="w-full flex justify-between items-center py-6 text-left"
-                >
-                  <span className="font-bold text-slate-900 ">{faq.q}</span>
-                  <span className="text-slate-400 text-xl">{expandedFaq === idx ? '−' : '+'}</span>
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    expandedFaq === idx ? 'opacity-100 pb-6' : 'opacity-0'
-                  }`}
-                  style={{ maxHeight: expandedFaq === idx ? '200px' : '0px' }}
-                >
-                  <p className="text-slate-600  text-sm leading-relaxed">{faq.a}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Final Sign-In CTA */}
       <section className="reveal-section py-20 md:py-24 px-6 md:px-12 bg-white ">
         <div className="max-w-5xl mx-auto">
@@ -654,195 +584,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Live News Feed */}
-      <NewsSection />
-
       {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400 px-6 py-12 md:px-12 border-t border-slate-900">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 font-bold text-white text-xl">
-            <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-xs">H</div>
-            <span>Helpdesk</span>
-          </div>
-          <div className="text-sm font-medium">
-            &copy; {new Date().getFullYear()} Helpdesk Platform. All rights reserved.
-          </div>
+      <footer className="bg-slate-950 text-slate-400 px-6 py-8 md:px-12 border-t border-slate-900">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-sm font-medium">
+            &copy; {new Date().getFullYear()} Karma Staff Platform. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
-  );
-}
-
-// ─── Live News Feed Section ───────────────────────────────────────────────────
-interface NewsItem {
-  title: string;
-  link: string;
-  description: string;
-  pubDate: string;
-  source: string;
-  category: "Technology" | "Business";
-  image: string | null;
-}
-
-function timeAgo(dateStr: string): string {
-  if (!dateStr) return "";
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
-function NewsSection() {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [filter, setFilter] = useState<"All" | "Technology" | "Business">("All");
-  const [page, setPage] = useState(0);
-
-  const fetchNews = useCallback(async () => {
-    try {
-      const res = await fetch("/api/news");
-      if (res.ok) {
-        const data = await res.json();
-        setNews(data);
-        setLastUpdated(new Date());
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchNews();
-    const interval = setInterval(fetchNews, 3600000);
-    return () => clearInterval(interval);
-  }, [fetchNews]);
-
-  const filtered = filter === "All" ? news : news.filter(n => n.category === filter);
-  
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPage(0);
-  }, [filter]);
-
-  const CARDS_PER_PAGE = 9;
-  const totalPages = Math.ceil(filtered.length / CARDS_PER_PAGE);
-  const visible = filtered.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE);
-
-  return (
-    <section className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-[#0a0f1e] text-white">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 border-b border-white/10 pb-6">
-          <div className="relative">
-            <div className="inline-flex items-center gap-2 text-orange-500 text-xs font-bold mb-2 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-              LIVE
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">Today&apos;s News</h2>
-            <p className="text-sm text-white/50 mt-1 font-medium">
-              Technology & Business — Updated hourly
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {(["All", "Technology", "Business"] as const).map(f => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${filter === f ? "bg-orange-500 text-white border-orange-500" : "border border-white/20 text-white/60 hover:bg-white/10"}`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="bg-[#111827] rounded-2xl p-6 border border-white/10 animate-pulse">
-                <div className="aspect-video bg-white/5 rounded-xl mb-4" />
-                <div className="h-3 w-20 bg-white/10 rounded mb-3" />
-                <div className="h-5 bg-white/10 rounded mb-2" />
-                <div className="h-5 w-3/4 bg-white/10 rounded mb-4" />
-                <div className="h-3 bg-white/5 rounded mb-1.5" />
-                <div className="h-3 w-5/6 bg-white/5 rounded" />
-              </div>
-            ))}
-          </div>
-        ) : visible.length === 0 ? (
-          <div className="text-center py-20 text-white/40 font-medium">No news available right now. Check back shortly.</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visible.map((item, i) => (
-              <a
-                key={i}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-[#111827] rounded-2xl border border-white/8 hover:border-orange-400/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.08)] transition-all flex flex-col overflow-hidden"
-              >
-                {item.image && (
-                  <div className="aspect-video w-full overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                    />
-                  </div>
-                )}
-                <div className={`p-6 flex flex-col flex-1 ${!item.image ? "border-l-4 " + (item.category === "Technology" ? "border-orange-500" : "border-blue-500") : ""}`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full ${item.category === "Technology" ? "bg-orange-500/15 text-orange-400 border border-orange-400/20" : "bg-blue-500/15 text-blue-400 border border-blue-400/20"}`}>
-                      {item.category}
-                    </span>
-                    <span className="text-xs text-white/30 font-medium">{timeAgo(item.pubDate)}</span>
-                  </div>
-                  <h3 className="font-bold text-white leading-snug mb-3 group-hover:text-orange-400 transition-colors line-clamp-2 text-base">
-                    {item.title}
-                  </h3>
-                  {item.description && (
-                    <p className="text-sm text-white/50 leading-relaxed line-clamp-2 flex-1 mb-4">{item.description}</p>
-                  )}
-                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-                    <span className="text-xs font-bold text-white/40">{item.source}</span>
-                    <span className="text-white/20 group-hover:text-orange-400 transition-colors">↗</span>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-end mt-10 gap-4">
-            <button
-              onClick={() => setPage(p => Math.max(0, p - 1))}
-              disabled={page === 0}
-              className={`border border-white/20 text-white/70 px-5 py-2 rounded-full hover:bg-white/10 transition-all text-sm font-medium ${page === 0 ? "opacity-30 cursor-not-allowed" : ""}`}
-            >
-              ← Prev
-            </button>
-            <span className="text-white/50 text-sm font-medium">
-              {page + 1} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-              disabled={page === totalPages - 1}
-              className={`border border-white/20 text-white/70 px-5 py-2 rounded-full hover:bg-white/10 transition-all text-sm font-medium ${page === totalPages - 1 ? "opacity-30 cursor-not-allowed" : ""}`}
-            >
-              Next →
-            </button>
-          </div>
-        )}
-      </div>
-    </section>
   );
 }

@@ -580,32 +580,54 @@ function CreateTicketForm() {
             </Link>
           </div>
 
-          {/* Tip card */}
-          <div className="card p-6 bg-blue-50/50 border-blue-100">
-            <h3 className="text-[10px] font-black text-blue-800 uppercase tracking-widest mb-3">
-              {typeParam === "IT" ? "Tips for faster resolution" : "Notice"}
-            </h3>
-            {typeParam === "IT" ? (
-              <ul className="space-y-2 text-sm text-blue-900/70 font-medium leading-relaxed">
-                <li>• Include the exact error message if there is one</li>
-                <li>• A screenshot speeds up diagnosis significantly</li>
-                <li>• For urgent hardware issues, also visit the IT desk</li>
-              </ul>
-            ) : (
-              <p className="text-sm text-blue-900/70 font-medium leading-relaxed">
-                HR queries are processed within 24–48 business hours.
-              </p>
-            )}
+          {/* Before submitting */}
+          <div className="card p-5 space-y-2 bg-slate-800 border-slate-700">
+            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-400">ℹ</span> Before submitting
+            </p>
+            <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+              <li>• Restart your device and retry</li>
+              <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 hover:underline">known issues board</Link></li>
+              <li>• Search the IT knowledge base</li>
+            </ul>
           </div>
 
-          <div className="hidden lg:block bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-6">
-            <h3 className="font-bold text-slate-900 mb-2">Need immediate help?</h3>
-            <p className="text-sm text-slate-600 mb-4">For urgent issues, reach IT directly:</p>
-            <ul className="space-y-2 text-sm text-slate-700 font-medium mb-6">
-              <li>💬 <strong>Microsoft Teams</strong> — message IT Support directly</li>
-              <li>🏢 <strong>Visit the IT desk</strong> — ground floor, Room 101</li>
-            </ul>
-            <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80" alt="Support" className="rounded-2xl" />
+          {/* Response times */}
+          <div className="card p-5 space-y-3 bg-slate-800 border-slate-700">
+            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-400">⏱</span> Response times
+            </p>
+            <div className="space-y-2 text-sm font-medium">
+              <div className="flex justify-between">
+                <span className="text-slate-300">Critical</span>
+                <span className="text-red-400 font-bold">1 hour</span>
+              </div>
+              <div className="h-px bg-slate-700" />
+              <div className="flex justify-between">
+                <span className="text-slate-300">High</span>
+                <span className="text-orange-400 font-bold">4 hours</span>
+              </div>
+              <div className="h-px bg-slate-700" />
+              <div className="flex justify-between">
+                <span className="text-slate-300">Medium</span>
+                <span className="text-blue-400 font-bold">1 business day</span>
+              </div>
+              <div className="h-px bg-slate-700" />
+              <div className="flex justify-between">
+                <span className="text-slate-300">Low</span>
+                <span className="text-emerald-400 font-bold">3 business days</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Urgent help */}
+          <div className="card p-5 space-y-2 bg-slate-800 border-slate-700">
+            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-400">💬</span> Urgent help?
+            </p>
+            <p className="text-sm text-slate-300 font-medium leading-relaxed">
+              Call IT support directly: <strong className="text-white">ext. 4357</strong> or visit <strong className="text-white">Desk 2B, Floor 3</strong>.
+            </p>
           </div>
         </div>
       </form>
