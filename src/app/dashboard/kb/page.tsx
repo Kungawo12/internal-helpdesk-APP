@@ -362,7 +362,7 @@ function KbPortal() {
                 onClick={() => { setFilterType(t); setPage(0); }}
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 border ${
                   filterType === t
-                    ? "bg-slate-900 text-white border-slate-900"
+                    ? "bg-slate-800 dark:bg-slate-900 text-white border-slate-800 dark:border-slate-900"
                     : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
                 }`}
               >
@@ -493,7 +493,7 @@ function KbPortal() {
           <p className="font-bold text-slate-800 dark:text-slate-200">Can&apos;t find what you&apos;re looking for?</p>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Our support team is ready to help. Raise a ticket and we&apos;ll get back to you.</p>
         </div>
-        <a href="/dashboard/create" className="flex-shrink-0 px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-700 transition-colors">
+        <a href="/dashboard/create" className="flex-shrink-0 px-6 py-2.5 bg-slate-800 dark:bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-700 transition-colors">
           Raise a Ticket →
         </a>
       </div>

@@ -393,7 +393,7 @@ export default function DashboardPage() {
               <Link href="/dashboard/create?type=IT" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2">
                 🖥️ IT Ticket
               </Link>
-              <Link href="/dashboard/create?type=HR" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2 bg-slate-700 hover:bg-slate-800">
+              <Link href="/dashboard/create?type=HR" className="btn-primary !px-8 !py-3 text-base flex items-center gap-2 !bg-slate-700 hover:!bg-slate-800">
                 👥 HR Ticket
               </Link>
             </>

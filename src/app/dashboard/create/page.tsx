@@ -581,26 +581,26 @@ function CreateTicketForm() {
           </div>
 
           {/* Before submitting */}
-          <div className="card p-5 space-y-2 bg-slate-800 border-slate-700">
-            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-              <span className="text-blue-400">ℹ</span> Before submitting
+          <div className="card p-5 space-y-2 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-500 dark:text-blue-400">ℹ</span> Before submitting
             </p>
             {typeParam === "IT" && (
-              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                 <li>• Restart your device and retry</li>
                 <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 hover:underline">known issues board</Link></li>
                 <li>• Search the IT knowledge base</li>
               </ul>
             )}
             {typeParam === "HR" && (
-              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                 <li>• Check your employee handbook first</li>
                 <li>• Review your payslip portal for payroll queries</li>
                 <li>• Confirm your query isn&apos;t covered in <Link href="/dashboard/kb" className="text-blue-400 hover:underline">HR policies</Link></li>
               </ul>
             )}
             {typeParam === "Software" && (
-              <ul className="space-y-2 text-sm text-slate-300 font-medium leading-relaxed">
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                 <li>• Clear your browser cache and retry</li>
                 <li>• Check if a colleague can reproduce the issue</li>
                 <li>• Note the exact error message and steps</li>
@@ -609,29 +609,29 @@ function CreateTicketForm() {
           </div>
 
           {/* Response times */}
-          <div className="card p-5 space-y-3 bg-slate-800 border-slate-700">
-            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-              <span className="text-blue-400">⏱</span> Response times
+          <div className="card p-5 space-y-3 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-500 dark:text-blue-400">⏱</span> Response times
             </p>
             {typeParam === "IT" && (
               <div className="space-y-2 text-sm font-medium">
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Critical</span>
+                  <span className="text-slate-600 dark:text-slate-300">Critical</span>
                   <span className="text-red-400 font-bold">1 hour</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">High</span>
+                  <span className="text-slate-600 dark:text-slate-300">High</span>
                   <span className="text-orange-400 font-bold">4 hours</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Medium</span>
+                  <span className="text-slate-600 dark:text-slate-300">Medium</span>
                   <span className="text-blue-400 font-bold">1 business day</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Low</span>
+                  <span className="text-slate-600 dark:text-slate-300">Low</span>
                   <span className="text-emerald-400 font-bold">3 business days</span>
                 </div>
               </div>
@@ -639,22 +639,22 @@ function CreateTicketForm() {
             {typeParam === "HR" && (
               <div className="space-y-2 text-sm font-medium">
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Grievance / Disciplinary</span>
+                  <span className="text-slate-600 dark:text-slate-300">Grievance / Disciplinary</span>
                   <span className="text-red-400 font-bold">Same day</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Payroll / Benefits</span>
+                  <span className="text-slate-600 dark:text-slate-300">Payroll / Benefits</span>
                   <span className="text-orange-400 font-bold">2 business days</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Leave / Absence</span>
+                  <span className="text-slate-600 dark:text-slate-300">Leave / Absence</span>
                   <span className="text-blue-400 font-bold">3 business days</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">General Query</span>
+                  <span className="text-slate-600 dark:text-slate-300">General Query</span>
                   <span className="text-emerald-400 font-bold">5 business days</span>
                 </div>
               </div>
@@ -662,22 +662,22 @@ function CreateTicketForm() {
             {typeParam === "Software" && (
               <div className="space-y-2 text-sm font-medium">
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Data loss / Security</span>
+                  <span className="text-slate-600 dark:text-slate-300">Data loss / Security</span>
                   <span className="text-red-400 font-bold">2 hours</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Feature blocked</span>
+                  <span className="text-slate-600 dark:text-slate-300">Feature blocked</span>
                   <span className="text-orange-400 font-bold">1 business day</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Workaround exists</span>
+                  <span className="text-slate-600 dark:text-slate-300">Workaround exists</span>
                   <span className="text-blue-400 font-bold">3 business days</span>
                 </div>
-                <div className="h-px bg-slate-700" />
+                <div className="h-px bg-slate-200 dark:bg-slate-700" />
                 <div className="flex justify-between">
-                  <span className="text-slate-300">Cosmetic / Minor</span>
+                  <span className="text-slate-600 dark:text-slate-300">Cosmetic / Minor</span>
                   <span className="text-emerald-400 font-bold">1 week</span>
                 </div>
               </div>
@@ -685,23 +685,23 @@ function CreateTicketForm() {
           </div>
 
           {/* Urgent help */}
-          <div className="card p-5 space-y-2 bg-slate-800 border-slate-700">
-            <p className="text-xs font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-              <span className="text-blue-400">💬</span> Urgent help?
+          <div className="card p-5 space-y-2 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-blue-500 dark:text-blue-400">💬</span> Urgent help?
             </p>
             {typeParam === "IT" && (
-              <p className="text-sm text-slate-300 font-medium leading-relaxed">
-                Call IT support directly: <strong className="text-white">ext. 4357</strong> or visit <strong className="text-white">Desk 2B, Floor 3</strong>.
+              <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                Call IT support directly: <strong className="text-slate-900 dark:text-white">ext. 4357</strong> or visit <strong className="text-slate-900 dark:text-white">Desk 2B, Floor 3</strong>.
               </p>
             )}
             {typeParam === "HR" && (
-              <p className="text-sm text-slate-300 font-medium leading-relaxed">
-                Speak to your HR Business Partner directly: <strong className="text-white">ext. 5200</strong> or visit <strong className="text-white">HR Office, Floor 2</strong>. For sensitive matters, request a private meeting.
+              <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                Speak to your HR Business Partner directly: <strong className="text-slate-900 dark:text-white">ext. 5200</strong> or visit <strong className="text-slate-900 dark:text-white">HR Office, Floor 2</strong>. For sensitive matters, request a private meeting.
               </p>
             )}
             {typeParam === "Software" && (
-              <p className="text-sm text-slate-300 font-medium leading-relaxed">
-                Report critical bugs to your team lead immediately. For data loss or security issues, call the IT helpdesk: <strong className="text-white">ext. 4357</strong> — do not wait for a ticket response.
+              <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                Report critical bugs to your team lead immediately. For data loss or security issues, call the IT helpdesk: <strong className="text-slate-900 dark:text-white">ext. 4357</strong> — do not wait for a ticket response.
               </p>
             )}
           </div>

@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
 
         {filtered.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-white/20 font-semibold">No users found.</p>
+            <p className="text-slate-400 dark:text-white/20 font-semibold">No users found.</p>
           </div>
         )}
       </div>
