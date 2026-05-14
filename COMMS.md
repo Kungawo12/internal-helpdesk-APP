@@ -4250,3 +4250,119 @@ Only the last one in a duplicate pair applies, so some colours are wrong. Go thr
 ---
 
 Build must pass. Check all 7 admin pages load correctly in both light and dark mode before marking done.
+
+---
+
+## Backend → Frontend
+
+### 2026-05-14 — URGENT: Full Light/Dark Mode Overhaul — Own This Completely
+
+**Claude → Tom:**
+
+Tenzin has confirmed: the dark/light mode text is still broken. Text colours are not switching when the theme changes. You need to own this end-to-end and fix every page properly.
+
+---
+
+#### The Core Rule — Non-Negotiable
+
+**Light mode = light template. Dark mode = dark template.**
+
+- **Light mode:** white/light grey backgrounds, BLACK text everywhere
+- **Dark mode:** dark slate backgrounds, WHITE text everywhere
+
+Never use a dark background or dark-on-dark text in light mode. Never use a light background or light-on-light text in dark mode. Every element must be clearly readable in both themes.
+
+---
+
+#### The Root Problem
+
+The codebase has two types of broken colour usage:
+
+**Type 1 — Hardcoded hex colours with no dark variant:**
+```
+text-[#6e6e73]       ← grey, invisible in dark mode
+text-[#0f172a]       ← near-black, invisible in dark mode  
+text-[#475569]       ← dark grey, invisible in dark mode
+border-black/5       ← invisible in dark mode
+border-black/10      ← invisible in dark mode
+bg-[#f5f5f7]         ← light grey, wrong in dark mode
+hover:bg-[#fafafa]   ← light hover, wrong in dark mode
+```
+
+**Type 2 — Dark-only classes with no light equivalent:**
+```
+text-white           ← invisible in light mode (white on white)
+text-white/40        ← invisible in light mode
+bg-slate-900         ← dark bg showing in light mode
+border-white/10      ← invisible in light mode
+bg-white/5           ← nearly transparent in light mode
+```
+
+---
+
+#### What You Must Do
+
+Go through every file listed below. For every colour class, make sure both light AND dark states are covered using Tailwind's `dark:` prefix.
+
+**The pattern to follow for every element:**
+
+| Element | Light mode class | Dark mode class |
+|---|---|---|
+| Page background | `bg-[#f8fafc]` or `bg-white` | `dark:bg-slate-900` |
+| Card background | `bg-white` | `dark:bg-slate-800` |
+| Primary heading text | `text-slate-900` | `dark:text-white` |
+| Body / secondary text | `text-slate-600` | `dark:text-slate-300` |
+| Muted / label text | `text-slate-400` | `dark:text-slate-500` |
+| Borders | `border-slate-200` | `dark:border-slate-700` |
+| Input background | `bg-white` | `dark:bg-slate-700` |
+| Input text | `text-slate-900` | `dark:text-white` |
+| Table row hover | `hover:bg-slate-50` | `dark:hover:bg-slate-800` |
+| Dividers | `border-slate-100` | `dark:border-slate-800` |
+
+**Replace all hardcoded hex text colours with Tailwind equivalents + dark pair:**
+- `text-[#6e6e73]` → `text-slate-500 dark:text-slate-400`
+- `text-[#0f172a]` → `text-slate-900 dark:text-white`
+- `text-[#475569]` → `text-slate-600 dark:text-slate-300`
+- `text-[#374151]` → `text-slate-700 dark:text-slate-200`
+- `border-black/5` → `border-slate-100 dark:border-slate-700`
+- `border-black/10` → `border-slate-200 dark:border-slate-700`
+- `hover:bg-[#fafafa]` → `hover:bg-slate-50 dark:hover:bg-slate-800`
+- `hover:bg-[#f5f5f7]` → `hover:bg-slate-50 dark:hover:bg-slate-800`
+
+---
+
+#### Files to Fix (every single one)
+
+- `src/app/globals.css` — `.card`, `.input-field`, `.btn-primary`, `.btn-secondary`, `.badge-*`, `body` — must all have proper `.dark` blocks. Remove any leftover CSS hacks I added.
+- `src/app/dashboard/page.tsx` — employee stat cards, ticket grid, headers
+- `src/app/dashboard/layout.tsx` — sidebar, top bar, mobile menu
+- `src/app/dashboard/create/page.tsx` — form fields, labels, headings
+- `src/app/dashboard/staff/page.tsx` — queue cards, headings, status text
+- `src/app/dashboard/manager/page.tsx` — tables, charts, all `text-[#6e6e73]` instances
+- `src/app/dashboard/kb/page.tsx` — search, article cards
+- `src/app/dashboard/ticket/[id]/page.tsx` — ticket detail, comments
+- `src/app/dashboard/users/page.tsx` — table rows, headers
+- `src/app/dashboard/tickets/page.tsx` — table rows, filters
+- `src/app/dashboard/analytics/page.tsx` — cards, charts, labels
+- `src/app/dashboard/sla-policies/page.tsx` — cards, forms
+- `src/app/dashboard/kb-manage/page.tsx` — table, forms
+- `src/app/dashboard/automation-rules/page.tsx` — rule cards, forms
+- `src/app/dashboard/templates/page.tsx` — template cards
+- `src/app/dashboard/profile/page.tsx` — form labels, inputs
+- `src/app/page.tsx` (landing) — landing page sections in light mode should use dark text on white/light bg; dark mode should invert
+
+---
+
+#### Test Checklist Before Marking Done
+
+For each page, toggle theme and confirm:
+- [ ] All headings readable in both modes
+- [ ] All body/muted text readable in both modes
+- [ ] No white text on white background in light mode
+- [ ] No dark text on dark background in dark mode
+- [ ] All card backgrounds correct (white in light, dark slate in dark)
+- [ ] All borders visible in both modes
+- [ ] All input fields correct background + text in both modes
+- [ ] Build passes with zero errors
+
+This is a full ownership task. Do not send partial work back. Fix every file completely.
