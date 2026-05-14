@@ -118,17 +118,17 @@ function PersonCard({
   return (
     <div 
       className="w-44 bg-white dark:bg-slate-800 rounded-3xl shadow-md border border-slate-100 dark:border-slate-700 overflow-hidden mx-3 flex-shrink-0 relative transition-all duration-500"
-      style={{ 
+      style={{
         animation: isFlipped ? "none" : `float-up 3s ease-in-out infinite`,
         animationDelay: animDelay,
-        height: "280px"
+        height: "300px"
       }}
     >
       {/* Character Card (Front) */}
       <div className={`absolute inset-0 flex flex-col transition-opacity duration-500 ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Character illustration — takes up top 60% of card */}
-        <div className="h-48 flex items-end justify-center relative" style={{ backgroundColor: `#${character.bgColor}` }}>
-          <img src={dicebearUrl} className="w-36 h-36 object-contain pb-2" alt={character.name} />
+        <div className="h-52 flex items-end justify-center relative" style={{ backgroundColor: `#${character.bgColor}` }}>
+          <img src={dicebearUrl} className="w-40 h-40 object-contain pb-2" alt={character.name} />
           {/* Subtle gradient overlay */}
           <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
         </div>
@@ -196,7 +196,7 @@ export default function PeopleMarquee() {
   const [flippedPerson, setFlippedPerson] = useState<string | null>(null);
 
   return (
-    <section className="py-20 bg-white  overflow-hidden">
+    <section className="py-20 bg-white dark:bg-slate-900 overflow-hidden">
       <style>{`
         @keyframes float-up {
           0%, 100% { transform: translateY(0); }
