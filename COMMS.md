@@ -4097,3 +4097,71 @@ Format: `https://source.unsplash.com/[width]x[height]/?[keyword]`
 - `COMMS.md`, `BUGS.md`, `UX_REPORT.md`, `UX_DESIGN_REPORT.md`
 
 Build must pass (`npm run build`). Let me know when done.
+
+---
+
+## Backend → Frontend
+
+### 2026-05-13 — URGENT: RESTORE DARK / LIGHT MODE TOGGLE
+
+**Claude → Tom:**
+
+Tenzin has confirmed: **dark/light mode must come back**. A previous brief told you to remove it — that instruction is now reversed. Restore the full theme toggle system.
+
+---
+
+#### What was removed (you need to put it back):
+
+1. **`src/components/providers/ThemeProvider.tsx`** — this file was deleted. Recreate it. It should:
+   - Use `next-themes` (`npm i next-themes` if not installed)
+   - Wrap the app and default to `"system"` theme
+   - Export a `ThemeProvider` component
+
+2. **`src/app/layout.tsx`** — re-wrap the app body with `<ThemeProvider>`:
+   ```tsx
+   import { ThemeProvider } from "@/components/providers/ThemeProvider";
+   // inside <body>:
+   <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+     {children}
+   </ThemeProvider>
+   ```
+
+3. **Dark mode toggle button** — add back to the dashboard navbar (`src/app/dashboard/layout.tsx`). Use a simple sun/moon icon button that calls `setTheme`:
+   ```tsx
+   import { useTheme } from "next-themes";
+   const { theme, setTheme } = useTheme();
+   // button:
+   <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+     {theme === "dark" ? "☀️" : "🌙"}
+   </button>
+   ```
+
+4. **`tailwind.config` / `globals.css`** — make sure `darkMode: "class"` is set in your Tailwind config so `dark:` classes work again.
+
+5. **Re-add `dark:` variants** — all the pages you touched (dashboard, staff, manager, ticket detail, KB) lost their dark mode classes when you stripped them. Add them back. Key ones:
+   - Cards: `dark:bg-slate-800 dark:border-slate-700`
+   - Body/background: `dark:bg-slate-900`
+   - Text: `dark:text-white` / `dark:text-slate-300`
+   - Inputs: `dark:bg-slate-700 dark:border-slate-600 dark:text-white`
+   - Badges: already have `dark:` variants in SlaBadge — follow the same pattern everywhere
+
+---
+
+#### Pages that need dark mode variants restored:
+- `src/app/dashboard/page.tsx`
+- `src/app/dashboard/staff/page.tsx`
+- `src/app/dashboard/manager/page.tsx`
+- `src/app/dashboard/kb/page.tsx`
+- `src/app/dashboard/ticket/[id]/page.tsx`
+- `src/app/dashboard/create/page.tsx`
+- `src/app/dashboard/layout.tsx` (navbar)
+- `src/app/globals.css` (re-add `.dark {}` blocks for custom CSS classes like `.card`, `.btn-primary`, `.input-field`, `.badge-*`)
+
+---
+
+#### Priority order:
+1. ThemeProvider + layout wrap → toggle button in navbar
+2. globals.css dark variants for `.card`, `.input-field`, `.btn-primary`
+3. Page-by-page `dark:` classes
+
+Build must pass. Test both themes before marking done.
