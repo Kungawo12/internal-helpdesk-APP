@@ -258,7 +258,7 @@ export default function DashboardLayout({
           </Link>
           {/* Sign out */}
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => signOut({ redirect: false }).then(() => { window.location.href = "/"; })}
             className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-all shadow-sm"
             aria-label="Sign out"
             title="Sign Out"
@@ -306,7 +306,7 @@ export default function DashboardLayout({
               ))}
               <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800">
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut({ redirect: false }).then(() => { window.location.href = "/"; })}
                   className="w-full flex items-center gap-6 px-8 py-5 rounded-[24px] font-black text-red-600 bg-red-50"
                 >
                   <span>🚪</span> Sign Out
