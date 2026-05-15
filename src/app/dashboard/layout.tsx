@@ -47,8 +47,12 @@ function NotificationBell() {
   const ref = useRef<HTMLDivElement>(null);
 
   const fetchNotifications = async () => {
-    const res = await fetch("/api/notifications");
-    if (res.ok) setNotifications(await res.json());
+    try {
+      const res = await fetch("/api/notifications");
+      if (res.ok) setNotifications(await res.json());
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+    }
   };
 
   useEffect(() => {
@@ -91,12 +95,12 @@ function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={handleOpen}
-        className="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        className="relative w-10 h-10 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors"
         aria-label="Notifications"
       >
         🔔
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 dark:bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 dark:bg-red-500 text-slate-900 dark:text-white text-[10px] font-black rounded-full flex items-center justify-center">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -105,7 +109,7 @@ function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-            <span className="text-sm font-black text-slate-900 dark:text-white">Notifications</span>
+            <span className="text-sm font-black text-slate-900 dark:text-slate-900 dark:text-white">Notifications</span>
             {notifications.some((n) => !n.read) && (
               <button onClick={markAllRead} className="text-xs text-blue-600 font-bold hover:underline">
                 Mark all read
@@ -114,7 +118,7 @@ function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
             {notifications.length === 0 ? (
-              <p className="text-sm text-slate-400 dark:text-slate-400 text-center py-8">No notifications yet</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">No notifications yet</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -123,12 +127,12 @@ function NotificationBell() {
                     if (n.ticketId) router.push(`/dashboard/ticket/${n.ticketId}`);
                     setOpen(false);
                   }}
-                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
+                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
                 >
                   <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                       {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -151,6 +155,7 @@ export default function DashboardLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const role = session?.user?.role;
   const navItems = [
@@ -164,74 +169,116 @@ export default function DashboardLayout({
     { label: "KB Manage", path: "/dashboard/kb-manage", icon: "📖", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
+  const sidebarW = collapsed ? "w-20" : "w-80";
+  const mainPl = collapsed ? "lg:pl-20" : "lg:pl-80";
+
   return (
     <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc] dark:bg-slate-900 transition-colors duration-300">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div 
-          className="w-full h-full bg-cover bg-center opacity-40 dark:opacity-10 transition-opacity" 
-          style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }} 
+        <div
+          className="w-full h-full bg-cover bg-center opacity-40 dark:opacity-10 transition-opacity"
+          style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }}
         />
       </div>
-      
+
       {/* Sidebar - Desktop */}
-      <aside className="w-80 hidden lg:flex flex-col p-8 fixed top-0 bottom-0 left-0 z-40">
-        <div className="bg-white dark:bg-slate-800/90 rounded-[40px] h-full flex flex-col p-8 shadow-2xl border border-white/60 dark:border-slate-700/60 transition-colors duration-300">
-          <div className="mb-14 px-2">
-            <Link href="/dashboard" className="flex items-center gap-3 group">
-              <KarmaStaffLogo size={40} className="group-hover:scale-105 transition-transform duration-500 drop-shadow-xl" />
-              <span className="font-extrabold text-2xl tracking-tighter text-[#0f172a] dark:text-white transition-colors">Karma Staff</span>
+      <aside className={`${sidebarW} hidden lg:flex flex-col fixed top-0 bottom-0 left-0 z-40 transition-all duration-300 ${collapsed ? "p-3" : "p-8"}`}>
+        <div className="bg-white dark:bg-slate-800/90 rounded-[32px] h-full flex flex-col shadow-2xl border border-white/60 dark:border-slate-700/60 transition-all duration-300 overflow-hidden relative">
+
+          {/* Collapse toggle button */}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all shadow-sm"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Logo */}
+          <div className={`flex items-center transition-all duration-300 ${collapsed ? "justify-center pt-6 pb-8 px-0" : "px-8 pt-8 pb-10"}`}>
+            <Link href="/dashboard" className="flex items-center gap-3 group flex-shrink-0">
+              <KarmaStaffLogo size={collapsed ? 32 : 40} className="group-hover:scale-105 transition-transform duration-300 drop-shadow-xl flex-shrink-0" />
+              {!collapsed && (
+                <span className="font-extrabold text-xl tracking-tighter text-slate-900 dark:text-white transition-all duration-300 whitespace-nowrap overflow-hidden">
+                  Karma Staff
+                </span>
+              )}
             </Link>
           </div>
 
-          <nav className="flex-1 space-y-3">
+          {/* Nav */}
+          <nav className={`flex-1 space-y-2 ${collapsed ? "px-2" : "px-4"}`}>
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
-                className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 group ${
-                  pathname === item.path 
-                    ? "bg-blue-600 dark:bg-blue-600 text-white shadow-2xl shadow-blue-900/20 scale-[1.02]"
+                title={collapsed ? item.label : undefined}
+                className={`flex items-center rounded-2xl font-bold transition-all duration-300 group ${
+                  collapsed ? "justify-center px-0 py-3.5" : "gap-4 px-5 py-4"
+                } ${
+                  pathname === item.path
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
                     : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <span className={`text-2xl group-hover:scale-110 transition-transform ${pathname === item.path ? "" : "grayscale opacity-50"}`}>
+                <span className={`text-xl flex-shrink-0 transition-transform group-hover:scale-110 ${pathname === item.path ? "" : "grayscale opacity-60"}`}>
                   {item.icon}
                 </span>
-                <span className="text-sm tracking-tight">{item.label}</span>
+                {!collapsed && <span className="text-sm tracking-tight whitespace-nowrap">{item.label}</span>}
               </Link>
             ))}
           </nav>
 
-          <div className="mt-auto">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/50 rounded-3xl p-5 border border-white/50 dark:border-slate-700 shadow-inner">
-              <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
-                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm">
-                  {session?.user?.name?.charAt(0)}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-black text-[#0f172a] dark:text-white truncate">{session?.user?.name}</span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                     <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
-                     <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">
-                       {role?.replace("_", " ")}
-                     </span>
+          {/* User card */}
+          <div className={`mt-auto ${collapsed ? "px-2 pb-4" : "px-4 pb-6"}`}>
+            {collapsed ? (
+              <div className="flex flex-col items-center gap-3">
+                <Link href="/dashboard/profile" title={session?.user?.name || "Profile"}>
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm hover:scale-105 transition-transform">
+                    {session?.user?.name?.charAt(0)}
                   </div>
-                </div>
-              </Link>
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-slate-700 dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
-              >
-                Sign Out
-              </button>
-            </div>
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  title="Sign Out"
+                  className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm"
+                >
+                  🚪
+                </button>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/50 rounded-3xl p-5 border border-slate-100 dark:border-slate-700 shadow-inner">
+                <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
+                  <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm flex-shrink-0">
+                    {session?.user?.name?.charAt(0)}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-black text-slate-900 dark:text-white truncate">{session?.user?.name}</span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
+                      <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">
+                        {role?.replace("_", " ")}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-slate-700 dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div className="lg:pl-80 flex-1 flex flex-col min-h-screen relative z-10">
+      <div className={`${mainPl} flex-1 flex flex-col min-h-screen relative z-10 transition-all duration-300`}>
         {/* Top bar — desktop only */}
         <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
           <ThemeToggle />
@@ -240,9 +287,9 @@ export default function DashboardLayout({
 
         {/* Mobile Header */}
         <header className="lg:hidden h-20 bg-white dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
-           <Link href="/dashboard" className="flex items-center gap-2">
-            <KarmaStaffLogo size={28} className="drop-shadow-md dark:brightness-200 dark:grayscale transition-all duration-300" />
-            <span className="font-extrabold text-xl text-[#0f172a] dark:text-white">Karma Staff</span>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <KarmaStaffLogo size={28} className="drop-shadow-md" />
+            <span className="font-extrabold text-xl text-slate-900 dark:text-white">Karma Staff</span>
           </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -259,29 +306,29 @@ export default function DashboardLayout({
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-800 pt-24 px-8 overflow-y-auto">
-             <nav className="space-y-3">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    href={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                      pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
-                    }`}
-                  >
-                    <span className="text-3xl">{item.icon}</span>
-                    <span className="text-lg">{item.label}</span>
-                  </Link>
-                ))}
-                <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800">
-                   <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="w-full flex items-center gap-6 px-8 py-5 rounded-[24px] font-black text-red-600 bg-red-50"
-                  >
-                    <span>🚪</span> Sign Out
-                  </button>
-                </div>
-             </nav>
+            <nav className="space-y-3">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
+                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
+                  }`}
+                >
+                  <span className="text-3xl">{item.icon}</span>
+                  <span className="text-lg">{item.label}</span>
+                </Link>
+              ))}
+              <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full flex items-center gap-6 px-8 py-5 rounded-[24px] font-black text-red-600 bg-red-50"
+                >
+                  <span>🚪</span> Sign Out
+                </button>
+              </div>
+            </nav>
           </div>
         )}
 
