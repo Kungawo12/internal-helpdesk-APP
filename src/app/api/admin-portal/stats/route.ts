@@ -45,31 +45,35 @@ export async function GET(req: NextRequest) {
       prisma.ticket.groupBy({ by: ["priority"], _count: { priority: true } }),
     ]);
 
-    // Staff performance: for each it_staff/hr_staff, count assigned and resolved
-    const staffUsers = await prisma.user.findMany({
-      where: { role: { in: ["it_staff", "hr_staff"] }, active: true },
-      select: { id: true, name: true, role: true, email: true },
-    });
+    // Staff performance: single query with groupBy instead of N+1 per-staff loops
+    const [staffUsers, staffTicketGroups] = await Promise.all([
+      prisma.user.findMany({
+        where: { role: { in: ["it_staff", "hr_staff"] }, active: true },
+        select: { id: true, name: true, role: true, email: true },
+      }),
+      prisma.ticket.groupBy({
+        by: ["assigneeId", "status"],
+        where: { assigneeId: { not: null } },
+        _count: { id: true },
+      }),
+    ]);
 
-    const staffPerformance = await Promise.all(
-      staffUsers.map(async (staff) => {
-        const [assigned, resolved, inProgress] = await Promise.all([
-          prisma.ticket.count({ where: { assigneeId: staff.id } }),
-          prisma.ticket.count({ where: { assigneeId: staff.id, status: "resolved" } }),
-          prisma.ticket.count({ where: { assigneeId: staff.id, status: "in_progress" } }),
-        ]);
-        return {
-          id: staff.id,
-          name: staff.name,
-          role: staff.role,
-          email: staff.email,
-          assigned,
-          resolved,
-          inProgress,
-          open: assigned - resolved - inProgress,
-        };
-      })
-    );
+    const staffPerformance = staffUsers.map((staff) => {
+      const groups = staffTicketGroups.filter((g) => g.assigneeId === staff.id);
+      const assigned = groups.reduce((sum, g) => sum + g._count.id, 0);
+      const resolved = groups.find((g) => g.status === "resolved")?._count.id ?? 0;
+      const inProgress = groups.find((g) => g.status === "in_progress")?._count.id ?? 0;
+      return {
+        id: staff.id,
+        name: staff.name,
+        role: staff.role,
+        email: staff.email,
+        assigned,
+        resolved,
+        inProgress,
+        open: assigned - resolved - inProgress,
+      };
+    });
 
     // Recent activity: last 10 tickets
     const recentTickets = await prisma.ticket.findMany({

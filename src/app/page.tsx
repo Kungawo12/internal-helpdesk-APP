@@ -277,7 +277,7 @@ export default function LandingPage() {
                 return (
                   <div
                     key={card.id}
-                    className={`absolute top-0 left-0 w-full bg-slate-800 dark:bg-[#111827] border border-slate-700 dark:border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-in-out ${
+                    className={`absolute top-0 left-0 w-full bg-slate-100 dark:bg-[#111827] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-2xl transition-all duration-500 ease-in-out ${
                       isActive ? 'opacity-100 transform-none z-30' :
                       isNext ? 'opacity-40 translate-y-5 scale-95 z-20' :
                       'opacity-0 -translate-y-5 scale-90 z-10'
@@ -285,12 +285,12 @@ export default function LandingPage() {
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-2xl">{card.icon}</span>
-                      <h3 className="font-bold text-lg text-white">{card.title}</h3>
+                      <h3 className="font-bold text-lg text-slate-900 dark:text-white">{card.title}</h3>
                     </div>
-                    <hr className="border-white/5 mb-4" />
-                    <ul className="space-y-2 text-sm text-slate-400 font-mono">
+                    <hr className="border-slate-200 dark:border-white/5 mb-4" />
+                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 font-mono">
                       {card.details.map((detail, i) => (
-                        <li key={i} className={detail.startsWith('●') ? 'text-blue-400' : ''}>
+                        <li key={i} className={detail.startsWith('●') ? 'text-blue-600 dark:text-blue-400' : ''}>
                           {detail}
                         </li>
                       ))}

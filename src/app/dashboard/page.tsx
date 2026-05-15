@@ -353,10 +353,10 @@ export default function DashboardPage() {
   }
 
   const statsList = [
-    { label: "Total Tickets Created", value: stats.total, bgCls: "bg-slate-900 dark:bg-slate-900", textCls: "text-white", icon: "🎫", iconBg: "bg-white/20" },
-    { label: "In Progress", value: stats.inProgress, bgCls: "bg-blue-600 dark:bg-blue-900", textCls: "text-white", icon: "⚡", iconBg: "bg-white/20" },
-    { label: "Resolved", value: stats.resolved, bgCls: "bg-white dark:bg-slate-800", textCls: "text-slate-900 dark:text-white", icon: "✅", iconBg: "bg-emerald-50 dark:bg-emerald-900/20" },
-    { label: "Pending", value: stats.open, bgCls: "bg-white dark:bg-slate-800", textCls: "text-slate-900 dark:text-white", icon: "🔴", iconBg: "bg-red-50 dark:bg-red-900/20" },
+    { label: "Total Tickets Created", value: stats.total, bgCls: "bg-slate-100 dark:bg-slate-800", borderCls: "border-slate-200 dark:border-slate-700", textCls: "text-slate-900 dark:text-white", icon: "🎫", iconBg: "bg-slate-200 dark:bg-slate-700" },
+    { label: "In Progress", value: stats.inProgress, bgCls: "bg-blue-50 dark:bg-blue-900/40", borderCls: "border-blue-100 dark:border-blue-800", textCls: "text-blue-700 dark:text-blue-100", icon: "⚡", iconBg: "bg-blue-100 dark:bg-blue-800/50" },
+    { label: "Resolved", value: stats.resolved, bgCls: "bg-emerald-50 dark:bg-slate-800", borderCls: "border-emerald-100 dark:border-slate-700", textCls: "text-emerald-700 dark:text-white", icon: "✅", iconBg: "bg-emerald-100 dark:bg-emerald-900/20" },
+    { label: "Pending", value: stats.open, bgCls: "bg-rose-50 dark:bg-slate-800", borderCls: "border-rose-100 dark:border-slate-700", textCls: "text-rose-700 dark:text-white", icon: "🔴", iconBg: "bg-rose-100 dark:bg-red-900/20" },
   ];
 
   return (
@@ -404,7 +404,7 @@ export default function DashboardPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
         {statsList.map((s, idx) => (
-          <div key={idx} className={`rounded-2xl p-8 relative overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 transition-all ${s.bgCls}`}>
+          <div key={idx} className={`rounded-2xl p-8 relative overflow-hidden shadow-sm border transition-all ${s.bgCls} ${s.borderCls}`}>
             <div className={`absolute top-6 right-6 w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center text-xl`}>{s.icon}</div>
             <p className={`text-sm font-bold opacity-70 uppercase tracking-widest mb-4 ${s.textCls}`}>{s.label}</p>
             <p className={`text-6xl font-extrabold ${s.textCls}`}>{s.value}</p>

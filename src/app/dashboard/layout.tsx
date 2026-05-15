@@ -151,19 +151,6 @@ export default function DashboardLayout({
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-900 flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-slate-200 dark:border-slate-700 border-t-black dark:border-t-white rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   const role = session?.user?.role;
   const navItems = [

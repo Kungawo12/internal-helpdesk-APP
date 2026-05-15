@@ -10,13 +10,11 @@ export function useTickets(filters?: {
   q?: string;
 }) {
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTickets = useCallback(async () => {
     try {
-      setLoading(true);
-      
       let url = "/api/tickets";
       if (filters) {
         const params = new URLSearchParams();
@@ -24,7 +22,7 @@ export function useTickets(filters?: {
         if (filters.type && filters.type !== "all") params.append("type", filters.type);
         if (filters.priority && filters.priority !== "all") params.append("priority", filters.priority);
         if (filters.q) params.append("q", filters.q);
-        
+
         const queryString = params.toString();
         if (queryString) url += `?${queryString}`;
       }
@@ -37,7 +35,7 @@ export function useTickets(filters?: {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Critical protocol failure");
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
     }
   }, [filters?.status, filters?.type, filters?.priority, filters?.q]);
 
@@ -47,5 +45,5 @@ export function useTickets(filters?: {
     return () => clearInterval(interval);
   }, [fetchTickets]);
 
-  return { tickets, loading, error, refresh: fetchTickets };
+  return { tickets, loading: initialLoading, error, refresh: fetchTickets };
 }

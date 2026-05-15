@@ -87,6 +87,13 @@ model Ticket {
   comments     Comment[]
   attachments  Attachment[]
   auditLogs    AuditLog[]
+
+  @@index([creatorId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([type])
+  @@index([assigneeId, status])
+  @@index([type, status])
 }
 
 model Comment {
@@ -219,4 +226,6 @@ model Notification {
 
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
