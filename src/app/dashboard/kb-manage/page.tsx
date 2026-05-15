@@ -127,7 +127,7 @@ export default function KbManagementPage() {
         <div>
           <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
           <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Knowledge Base</h1>
-          <p className="text-slate-400 dark:text-white/30 mt-1 text-sm font-medium">Manage self-service articles</p>
+          <p className="text-slate-500 dark:text-white/30 mt-1 text-sm font-medium">Manage self-service articles</p>
         </div>
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
@@ -168,11 +168,11 @@ export default function KbManagementPage() {
       {/* New Article Form */}
       {isFormOpen && (
         <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 page-reveal">
-          <h2 className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest mb-5">Create New Article</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-5">Create New Article</h2>
           <form onSubmit={handleCreateArticle} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Title</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest block mb-2">Title</label>
                 <input
                   type="text"
                   required
@@ -184,7 +184,7 @@ export default function KbManagementPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Type</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest block mb-2">Type</label>
                 <div className="flex gap-3">
                   {(["IT", "HR", "general"] as const).map((t) => (
                     <button
@@ -204,7 +204,7 @@ export default function KbManagementPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Tags</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest block mb-2">Tags</label>
                 <input
                   type="text"
                   className="w-full bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-red-500/50 transition-colors"
@@ -228,7 +228,7 @@ export default function KbManagementPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest block mb-2">Content</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest block mb-2">Content</label>
                 <textarea
                   required
                   rows={10}
@@ -262,7 +262,7 @@ export default function KbManagementPage() {
       {/* Article List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {articles.length === 0 ? (
-          <div className="md:col-span-2 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-400 dark:text-white/40 italic">
+          <div className="md:col-span-2 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-10 text-center text-slate-500 dark:text-white/40 italic">
             No articles yet. Create the first one to help users self-serve.
           </div>
         ) : (
@@ -273,7 +273,7 @@ export default function KbManagementPage() {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TYPE_COLOR[article.type]}`}>
                     {article.type}
                   </span>
-                  <span className="text-xs text-slate-400 dark:text-white/30 flex items-center gap-1">
+                  <span className="text-xs text-slate-500 dark:text-white/30 flex items-center gap-1">
                     👁 {article.views}
                   </span>
                 </div>
@@ -282,7 +282,7 @@ export default function KbManagementPage() {
                 {article.tags && (
                   <div className="flex flex-wrap gap-1 mb-4">
                     {article.tags.split(",").map((tag) => (
-                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/5 text-slate-400 dark:text-white/50">
+                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/50">
                         {tag.trim()}
                       </span>
                     ))}
@@ -291,7 +291,7 @@ export default function KbManagementPage() {
               </div>
 
               <div className="border-t border-slate-100 dark:border-white/5 pt-4 flex justify-between items-center mt-4">
-                <div className="text-xs text-slate-400 dark:text-white/30">
+                <div className="text-xs text-slate-500 dark:text-white/30">
                   <p className="font-bold text-slate-500 dark:text-white/50">{article.author.name}</p>
                   <p>{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>

@@ -144,9 +144,9 @@ export default function LandingPage() {
       `}</style>
 
       {/* Navbar */}
-      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm text-slate-900 dark:text-white' : 'bg-white/80 dark:bg-transparent backdrop-blur-sm text-slate-900 dark:text-white'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-300 ${scrolled ? 'bg-white dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm text-slate-900 dark:text-white' : 'bg-white dark:bg-transparent backdrop-blur-sm text-slate-900 dark:text-white'}`}>
         <div className="font-bold tracking-tight text-2xl flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">H</div>
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-slate-900 dark:text-white font-bold text-lg">H</div>
           <span className="text-slate-900 dark:text-white">Helpdesk</span>
         </div>
         <div className="flex items-center gap-3 font-medium text-sm">
@@ -157,14 +157,14 @@ export default function LandingPage() {
           >
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
-          <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center gap-2">
+          <Link href="/login" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white rounded-lg transition-colors flex items-center gap-2">
             Sign In <span>→</span>
           </Link>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-white dark:bg-[#0a0f1e] overflow-hidden px-6 md:px-12 flex flex-col justify-center">
+      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 bg-white dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] overflow-hidden px-6 md:px-12 flex flex-col justify-center">
         <div className="absolute inset-0 bg-cover bg-center opacity-0 dark:opacity-10"
              style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"}} />
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -178,14 +178,14 @@ export default function LandingPage() {
             <h1 className="hero-element text-slate-900 dark:text-white text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
               Deliver exceptional<br/>support at scale.
             </h1>
-            <p className="hero-element text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl font-medium">
+            <p className="hero-element text-lg md:text-xl text-slate-500 dark:text-slate-500 max-w-2xl font-medium">
               Your IT and HR teams — augmented with smart automation, SLA enforcement, and real-time notifications — resolving issues faster than ever.
             </p>
             <div className="hero-element flex flex-col sm:flex-row items-center gap-4">
-              <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
+              <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
                 Sign In <span>→</span>
               </Link>
-              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-700 dark:bg-white/10 dark:hover:bg-white/20 text-white rounded-xl font-bold text-lg transition-all border border-slate-900 dark:border-white/10 flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-900 hover:bg-slate-700 dark:bg-slate-900/10 dark:hover:bg-white dark:bg-slate-900/20 text-slate-900 dark:text-white rounded-xl font-bold text-lg transition-all border border-slate-900 dark:border-white/10 flex items-center justify-center gap-2">
                 ↓ See how it works
               </a>
             </div>
@@ -196,24 +196,24 @@ export default function LandingPage() {
             <div className="hero-element grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
               <div>
                 <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.totalTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Tickets Managed</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Tickets Managed</p>
               </div>
               <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
               </div>
               <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.totalUsers}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Active Users</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Active Users</p>
               </div>
               <div className="border-l border-slate-200 dark:border-white/10 pl-6 hidden md:block">
                 <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.avgResolutionHours}h</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Avg Resolution</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Avg Resolution</p>
               </div>
               {/* Fallback for mobile if grid collapses */}
               <div className="md:hidden">
                 <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.resolvedTickets}</p>
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mt-1">Issues Resolved</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-500 uppercase mt-1">Issues Resolved</p>
               </div>
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function LandingPage() {
                       <h3 className="font-bold text-lg text-slate-900 dark:text-white">{card.title}</h3>
                     </div>
                     <hr className="border-slate-200 dark:border-white/5 mb-4" />
-                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 font-mono">
+                    <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-500 font-mono">
                       {card.details.map((detail, i) => (
                         <li key={i} className={detail.startsWith('●') ? 'text-blue-600 dark:text-blue-400' : ''}>
                           {detail}
@@ -337,22 +337,22 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-slate-100 dark:bg-[#0a0f1e]">
+      <section id="how-it-works" className="reveal-section py-24 md:py-32 px-6 md:px-12 bg-slate-100 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-slate-900 dark:text-white text-3xl md:text-4xl font-extrabold tracking-tight mb-4">From request to resolution</h2>
-            <p className="text-lg text-slate-500 dark:text-slate-400">Four steps. Zero friction.</p>
+            <p className="text-lg text-slate-500 dark:text-slate-500">Four steps. Zero friction.</p>
           </div>
 
           {/* Tabs */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full p-1">
+            <div className="inline-flex bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-full p-1">
               {["Request", "Notify", "Resolve", "Learn"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${
-                    activeTab === tab ? 'bg-slate-900 dark:bg-slate-900 text-white' : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white'
+                    activeTab === tab ? 'bg-slate-900 dark:bg-slate-900 text-slate-900 dark:text-white' : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:text-white dark:hover:text-slate-900 dark:text-white'
                   }`}
                 >
                   {tab}
@@ -367,24 +367,24 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Employee submits a ticket</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
+                  <p className="text-slate-500 dark:text-slate-500 text-lg">IT or HR request form with smart fields — category, priority auto-suggested, SLA attached instantly.</p>
                 </div>
-                <div className="bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
+                <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
                   <div className="space-y-2">
-                    <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Title</div>
-                    <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">E.g., VPN not connecting</div>
+                    <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Title</div>
+                    <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-500 dark:text-white/40">E.g., VPN not connecting</div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Type</div>
-                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">IT</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Type</div>
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-500 dark:text-white/40">IT</div>
                     </div>
                     <div className="space-y-2">
-                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Priority</div>
-                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-400 dark:text-white/40">High</div>
+                      <div className="text-xs font-bold uppercase text-slate-500 dark:text-slate-500">Priority</div>
+                      <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/10 rounded-lg p-3 text-slate-500 dark:text-white/40">High</div>
                     </div>
                   </div>
-                  <button className="w-full bg-blue-600 text-white rounded-lg py-3 font-bold">Submit Ticket</button>
+                  <button className="w-full bg-blue-600 text-slate-900 dark:text-white rounded-lg py-3 font-bold">Submit Ticket</button>
                 </div>
               </div>
             )}
@@ -393,13 +393,13 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Staff are notified instantly</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
+                  <p className="text-slate-500 dark:text-slate-500 text-lg">In-app notification bell + email fires to every active IT or HR staff member the moment a ticket is created.</p>
                 </div>
                 <div className="flex justify-center">
-                  <div className="relative bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 max-w-sm w-full">
+                  <div className="relative bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 max-w-sm w-full">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="font-bold text-slate-900 dark:text-white">Notifications</h4>
-                      <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">2</div>
+                      <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-slate-900 dark:text-white font-bold">2</div>
                     </div>
                     <div className="space-y-3">
                       <div className="bg-white dark:bg-slate-900/5 border border-slate-200 dark:border-white/5 p-3 rounded-lg text-sm text-slate-600 dark:text-slate-300">
@@ -418,9 +418,9 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Staff works and resolves</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
+                  <p className="text-slate-500 dark:text-slate-500 text-lg">Staff marks in-progress, posts updates, then resolves with a documented solution. Employee gets email confirmation.</p>
                 </div>
-                <div className="bg-slate-50 dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
+                <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-6 rounded-2xl border border-slate-200 dark:border-white/10 space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-slate-900 dark:text-white">Ticket #124</span>
                     <span className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">Resolved</span>
@@ -436,24 +436,24 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Knowledge compounds over time</h3>
-                  <p className="text-slate-500 dark:text-slate-400 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
+                  <p className="text-slate-500 dark:text-slate-500 text-lg">Every resolution builds the Knowledge Base. Employees find answers before raising tickets. Fewer tickets, faster outcomes.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
                     <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">VPN Setup</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">142 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">142 views</div>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
                     <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Printer Map</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">89 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">89 views</div>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
                     <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Wifi Pass</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">204 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">204 views</div>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
+                  <div className="bg-slate-50 dark:bg-[#0a0f1e] dark:bg-[#0a0f1e] p-4 rounded-xl border border-slate-200 dark:border-white/10">
                     <div className="font-bold text-sm mb-1 text-slate-900 dark:text-white">Holiday Cal</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400">67 views</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-500">67 views</div>
                   </div>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-slate-900 dark:text-white ">Built for every team member</h2>
-            <p className="text-lg text-slate-500 dark:text-slate-400 ">Tailored experiences for employees, staff, and managers.</p>
+            <p className="text-lg text-slate-500 dark:text-slate-500 ">Tailored experiences for employees, staff, and managers.</p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -581,8 +581,8 @@ export default function LandingPage() {
           <div className="bg-slate-100 dark:bg-gradient-to-br dark:from-slate-900 dark:to-[#0a0f1e] border border-slate-200 dark:border-white/10 rounded-3xl p-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="text-center lg:text-left">
               <h2 className="text-3xl font-extrabold mb-4 text-slate-900 dark:text-white">Already part of the team?</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
-              <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
+              <p className="text-slate-500 dark:text-slate-500 mb-8 max-w-lg mx-auto lg:mx-0">Sign in to access your dashboard and tickets.</p>
+              <Link href="/login" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-blue-900/20 inline-flex items-center gap-2">
                 Sign In <span>→</span>
               </Link>
             </div>
@@ -594,7 +594,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 px-6 py-8 md:px-12 border-t border-slate-200 dark:border-slate-900">
+      <footer className="bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-500 px-6 py-8 md:px-12 border-t border-slate-200 dark:border-slate-900">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-sm font-medium">
             &copy; {new Date().getFullYear()} Karma Staff Platform. All rights reserved.

@@ -66,7 +66,7 @@ export default function AiChatWidget() {
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Window */}
       {open && (
-        <div className="absolute bottom-20 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden transition-all" style={{ height: '480px' }}>
+        <div className="absolute bottom-20 right-0 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 flex flex-col overflow-hidden transition-all" style={{ height: '480px' }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
             <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export default function AiChatWidget() {
                 <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-blue-600 text-white rounded-br-sm'
-                    : 'bg-slate-100 text-slate-800 rounded-bl-sm'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-sm'
                 }`}>
                   {msg.content}
                 </div>
@@ -101,13 +101,13 @@ export default function AiChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="p-3 border-t border-slate-100 flex gap-2">
+          <div className="p-3 border-t border-slate-100 dark:border-white/5 flex gap-2">
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
               placeholder="Ask about IT, HR, passwords..."
-              className="flex-1 text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-400"
+              className="flex-1 text-sm px-3 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white focus:outline-none focus:border-blue-400"
             />
             <button 
               onClick={handleSend} 

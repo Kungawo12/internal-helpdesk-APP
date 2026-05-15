@@ -157,7 +157,7 @@ function PersonCard({
           </div>
           <div className="min-w-0">
             <p className="font-black text-xs text-slate-900 dark:text-white truncate">{character.detailTitle}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{character.name}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-400 truncate">{character.name}</p>
           </div>
         </div>
         

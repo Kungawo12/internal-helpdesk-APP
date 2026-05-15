@@ -109,7 +109,7 @@ function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-            <span className="text-sm font-black text-slate-900 dark:text-slate-900 dark:text-white">Notifications</span>
+            <span className="text-sm font-black text-slate-900 dark:text-white">Notifications</span>
             {notifications.some((n) => !n.read) && (
               <button onClick={markAllRead} className="text-xs text-blue-600 font-bold hover:underline">
                 Mark all read
@@ -118,7 +118,7 @@ function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
             {notifications.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">No notifications yet</p>
+              <p className="text-sm text-slate-500 dark:text-slate-500 text-center py-8">No notifications yet</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -132,7 +132,7 @@ function NotificationBell() {
                   <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-500 mt-0.5">
                       {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -221,7 +221,7 @@ export default function DashboardLayout({
                 } ${
                   pathname === item.path
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
+                    : "text-slate-500 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:text-white dark:hover:text-white"
                 }`}
               >
                 <span className={`text-xl flex-shrink-0 transition-transform group-hover:scale-110 ${pathname === item.path ? "" : "grayscale opacity-60"}`}>
@@ -232,57 +232,41 @@ export default function DashboardLayout({
             ))}
           </nav>
 
-          {/* User card */}
-          <div className={`mt-auto ${collapsed ? "px-2 pb-4" : "px-4 pb-6"}`}>
-            {collapsed ? (
-              <div className="flex flex-col items-center gap-3">
-                <Link href="/dashboard/profile" title={session?.user?.name || "Profile"}>
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm hover:scale-105 transition-transform">
-                    {session?.user?.name?.charAt(0)}
-                  </div>
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  title="Sign Out"
-                  className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm"
-                >
-                  🚪
-                </button>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/50 rounded-3xl p-5 border border-slate-100 dark:border-slate-700 shadow-inner">
-                <Link href="/dashboard/profile" className="flex items-center gap-4 mb-5 hover:opacity-80 transition-opacity cursor-pointer">
-                  <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 shadow-sm flex-shrink-0">
-                    {session?.user?.name?.charAt(0)}
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-black text-slate-900 dark:text-white truncate">{session?.user?.name}</span>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="status-pulse bg-emerald-500 w-1.5 h-1.5" />
-                      <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">
-                        {role?.replace("_", " ")}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full py-3 rounded-2xl bg-slate-900 dark:bg-slate-700 text-white text-[11px] font-black uppercase tracking-widest hover:bg-slate-700 dark:hover:bg-slate-600 hover:shadow-xl transition-all shadow-md"
-                >
-                  Sign Out
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className={`${mainPl} flex-1 flex flex-col min-h-screen relative z-10 transition-all duration-300`}>
         {/* Top bar — desktop only */}
-        <div className="hidden lg:flex items-center justify-end gap-4 px-12 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
+        <div className="hidden lg:flex items-center justify-end gap-3 px-8 py-3 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 sticky top-0 z-30 transition-colors">
           <ThemeToggle />
           <NotificationBell />
+          {/* Divider */}
+          <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1" />
+          {/* Profile */}
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 flex-shrink-0">
+              {session?.user?.name?.charAt(0)}
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-bold text-slate-900 dark:text-white">{session?.user?.name?.split(" ")[0]}</span>
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{role?.replace("_", " ")}</span>
+            </div>
+          </Link>
+          {/* Sign out */}
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-all shadow-sm"
+            aria-label="Sign out"
+            title="Sign Out"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
 
         {/* Mobile Header */}
@@ -313,7 +297,7 @@ export default function DashboardLayout({
                   href={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
+                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-500"
                   }`}
                 >
                   <span className="text-3xl">{item.icon}</span>

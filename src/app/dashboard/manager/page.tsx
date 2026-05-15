@@ -39,12 +39,16 @@ export default function ManagerDashboard() {
   }, []);
 
   const assignTicket = async (ticketId: string, assigneeId: string | null) => {
-    await fetch(`/api/tickets/${ticketId}/assign`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ assigneeId }),
-    });
-    refresh();
+    try {
+      await fetch(`/api/tickets/${ticketId}/assign`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assigneeId }),
+      });
+      refresh();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const stats = useMemo(() => {
@@ -116,7 +120,7 @@ export default function ManagerDashboard() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="badge badge-slate !px-4 !py-2 !text-sm">Manager Portal</span>
-            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-500">
               {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
@@ -155,36 +159,36 @@ export default function ManagerDashboard() {
 
       {/* Massive KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
-        <div className="relative card p-8 bg-black text-white overflow-hidden">
+        <div className="relative card p-8 bg-black text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-10"
                style={{backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252728f?w=800&q=80')"}} />
           <div className="relative z-10">
-            <p className="text-sm font-bold text-white/60 uppercase tracking-widest mb-4">Volume</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-white/60 uppercase tracking-widest mb-4">Volume</p>
             <p className="text-6xl font-extrabold mb-2">{stats.total}</p>
-            <p className="text-sm text-white/80 font-medium">Total Tickets Tracked</p>
+            <p className="text-sm text-slate-700 dark:text-white/80 font-medium">Total Tickets Tracked</p>
           </div>
         </div>
         
-        <div className="relative card p-8 bg-blue-600 text-white overflow-hidden">
+        <div className="relative card p-8 bg-blue-600 text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-10"
                style={{backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252728f?w=800&q=80')"}} />
           <div className="relative z-10">
-            <p className="text-sm font-bold text-white/60 uppercase tracking-widest mb-4">Active</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-white/60 uppercase tracking-widest mb-4">Active</p>
             <p className="text-6xl font-extrabold mb-2">{stats.open + stats.inProgress}</p>
-            <p className="text-sm text-white/80 font-medium">Require Attention</p>
+            <p className="text-sm text-slate-700 dark:text-white/80 font-medium">Require Attention</p>
           </div>
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400  uppercase tracking-widest mb-4">Resolution</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Resolution</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgResTime}h</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400  font-medium">Average Time to Close</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">Average Time to Close</p>
         </div>
 
         <div className="card p-8  ">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400  uppercase tracking-widest mb-4">Quality</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-500  uppercase tracking-widest mb-4">Quality</p>
           <p className="text-6xl font-extrabold mb-2 text-black ">{stats.avgSatisfaction}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400  font-medium">CSAT out of 5.0</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500  font-medium">CSAT out of 5.0</p>
         </div>
       </div>
 
@@ -201,7 +205,7 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-black  h-4 rounded-full" style={{ width: `${(stats.itCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
                 <span>Open: {stats.itOpen}</span>
                 <span>Resolved: {stats.itResolved}</span>
               </div>
@@ -215,7 +219,7 @@ export default function ManagerDashboard() {
               <div className="w-full bg-black/5  rounded-full h-4 overflow-hidden">
                 <div className="bg-blue-600 h-4 rounded-full" style={{ width: `${(stats.hrCount / (stats.total || 1)) * 100}%` }}></div>
               </div>
-              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 ">
+              <div className="flex gap-6 mt-4 text-sm font-semibold text-slate-500 dark:text-slate-500 ">
                 <span>Open: {stats.hrOpen}</span>
                 <span>Resolved: {stats.hrResolved}</span>
               </div>
@@ -223,10 +227,10 @@ export default function ManagerDashboard() {
           </div>
         </div>
 
-        <div className="card p-8 md:p-10 space-y-8 bg-black text-white">
+        <div className="card p-8 md:p-10 space-y-8 bg-black text-slate-900 dark:text-white">
           <h3 className="text-2xl font-bold tracking-tight">Priority</h3>
           {stats.total === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[200px] text-white/50">
+            <div className="flex flex-col items-center justify-center h-[200px] text-slate-500 dark:text-white/50">
               <span className="text-4xl mb-2">📊</span>
               <p className="text-sm font-medium">No priority data available</p>
             </div>
@@ -241,7 +245,7 @@ export default function ManagerDashboard() {
                   <div key={idx} className="flex-1 flex flex-col items-center gap-3">
                      <div className="text-xl font-bold">{p.value}</div>
                      <div className={`w-full rounded-xl ${p.color} animate-bar-grow`} style={{ height: `${Math.max((p.value / (stats.total || 1)) * 100, 5)}%` }}></div>
-                     <span className="text-xs font-bold uppercase tracking-wider text-white/50">{p.label}</span>
+                     <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-white/50">{p.label}</span>
                   </div>
                ))}
             </div>
@@ -255,7 +259,7 @@ export default function ManagerDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 ">
+              <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
                 <th className="pb-3 font-bold">Staff Member</th>
                 <th className="pb-3 font-bold text-center">Open</th>
                 <th className="pb-3 font-bold text-center">In Progress</th>
@@ -266,15 +270,15 @@ export default function ManagerDashboard() {
             </thead>
             <tbody>
               {workload.map(s => (
-                <tr key={s.id} className="border-b border-slate-100 dark:border-slate-700  hover:bg-slate-50 dark:hover:bg-slate-800  transition-colors">
+                <tr key={s.id} className="border-b border-slate-100 dark:border-slate-700  hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800  transition-colors">
                   <td className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-black  text-white flex items-center justify-center text-xs font-bold">
+                      <div className="w-8 h-8 rounded-full bg-black  text-slate-900 dark:text-white flex items-center justify-center text-xs font-bold">
                         {s.name.charAt(0)}
                       </div>
                       <div>
                         <p className="font-bold text-sm ">{s.name}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400  capitalize">{s.role.replace("_", " ")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-500  capitalize">{s.role.replace("_", " ")}</p>
                       </div>
                     </div>
                   </td>
@@ -288,15 +292,15 @@ export default function ManagerDashboard() {
                     <span className="font-bold text-sm text-emerald-600 ">{s.resolved}</span>
                   </td>
                   <td className="py-4 text-center">
-                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-400 dark:text-slate-400 "}`}>{s.slaBreached}</span>
+                    <span className={`font-bold text-sm ${s.slaBreached > 0 ? "text-red-500" : "text-slate-500 dark:text-slate-500 "}`}>{s.slaBreached}</span>
                   </td>
-                  <td className="py-4 text-center text-sm text-slate-500 dark:text-slate-400  font-medium">
+                  <td className="py-4 text-center text-sm text-slate-500 dark:text-slate-500  font-medium">
                     {s.avgResolutionHours != null ? `${s.avgResolutionHours}h` : "—"}
                   </td>
                 </tr>
               ))}
               {workload.length === 0 && (
-                <tr><td colSpan={6} className="py-10 text-center text-slate-500 dark:text-slate-400  italic">No staff members found.</td></tr>
+                <tr><td colSpan={6} className="py-10 text-center text-slate-500 dark:text-slate-500  italic">No staff members found.</td></tr>
               )}
             </tbody>
           </table>
@@ -321,11 +325,11 @@ export default function ManagerDashboard() {
                       style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
                     />
                     {d.count > 0 && (
-                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
                         {d.count}
                       </span>
                     )}
-                    <span className="text-[9px] text-slate-400 dark:text-slate-400  font-medium rotate-45 origin-left mt-1 hidden sm:block">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-500  font-medium rotate-45 origin-left mt-1 hidden sm:block">
                       {new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                     </span>
                   </div>
@@ -335,11 +339,11 @@ export default function ManagerDashboard() {
           </div>
 
           {/* SLA + avg resolution */}
-          <div className="card p-8 md:p-10 space-y-6 bg-black text-white">
+          <div className="card p-8 md:p-10 space-y-6 bg-black text-slate-900 dark:text-white">
             <h3 className="text-2xl font-bold tracking-tight">SLA Health</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Compliance Rate</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-white/50 mb-1">Compliance Rate</p>
                 <p className="text-5xl font-extrabold">
                   {report.sla.complianceRate != null ? `${report.sla.complianceRate}%` : "—"}
                 </p>
@@ -350,12 +354,12 @@ export default function ManagerDashboard() {
                   style={{ width: `${report.sla.complianceRate ?? 0}%` }}
                 />
               </div>
-              <div className="flex gap-6 text-sm font-semibold text-white/70">
+              <div className="flex gap-6 text-sm font-semibold text-slate-600 dark:text-white/70">
                 <span>✅ {report.sla.compliant} on time</span>
                 <span>🔴 {report.sla.breached} breached</span>
               </div>
-              <div className="pt-4 border-t border-white/10">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Avg Resolution</p>
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-white/50 mb-1">Avg Resolution</p>
                 <p className="text-3xl font-extrabold">
                   {report.avgResolutionHours != null ? `${report.avgResolutionHours}h` : "—"}
                 </p>
@@ -402,7 +406,7 @@ export default function ManagerDashboard() {
           <div className="bg-white dark:bg-slate-900  rounded-[40px] border border-slate-200 dark:border-slate-700  overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 ">
+                <tr className="border-b border-slate-200 dark:border-slate-700  text-xs uppercase tracking-widest text-slate-500 dark:text-slate-500 ">
                   <th className="p-6 font-bold">Ticket</th>
                   <th className="p-6 font-bold hidden md:table-cell">Creator</th>
                   <th className="p-6 font-bold">Status</th>
@@ -423,13 +427,13 @@ export default function ManagerDashboard() {
                         {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
                         <div>
                            <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
-                           <p className="text-sm text-slate-500 dark:text-slate-400 ">{ticket.type}</p>
+                           <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
                         </div>
                       </div>
                     </td>
                     <td className="p-6 hidden md:table-cell">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-black  text-white flex items-center justify-center text-xs font-bold">
+                        <div className="w-8 h-8 rounded-full bg-black  text-slate-900 dark:text-white flex items-center justify-center text-xs font-bold">
                           {ticket.creator?.name?.charAt(0) || '?'}
                         </div>
                         <span className="text-sm font-bold ">{ticket.creator?.name}</span>
@@ -457,7 +461,7 @@ export default function ManagerDashboard() {
                         }
                       </select>
                     </td>
-                    <td className="p-6 hidden lg:table-cell text-sm text-slate-500 dark:text-slate-400  font-semibold">
+                    <td className="p-6 hidden lg:table-cell text-sm text-slate-500 dark:text-slate-500  font-semibold">
                       {new Date(ticket.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-6 text-right">
@@ -471,7 +475,7 @@ export default function ManagerDashboard() {
         ) : (
           <div className="card p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
             <h3 className="text-2xl font-bold mb-2 ">No tickets found</h3>
-            <p className="text-slate-500 dark:text-slate-400 ">Adjust your filters to see more results.</p>
+            <p className="text-slate-500 dark:text-slate-500 ">Adjust your filters to see more results.</p>
           </div>
         )}
       </div>

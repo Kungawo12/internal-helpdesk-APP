@@ -60,8 +60,8 @@ function ResetPasswordForm() {
   return (
     <>
       <div className="mb-8">
-        <h2 className="text-3xl font-extrabold mb-2 text-white">Set New Password</h2>
-        <p className="text-white/60 font-medium">Choose a strong password for your account</p>
+        <h2 className="text-3xl font-extrabold mb-2 text-slate-900 dark:text-white">Set New Password</h2>
+        <p className="text-slate-500 dark:text-white/60 font-medium">Choose a strong password for your account</p>
       </div>
 
       {success ? (
@@ -71,17 +71,17 @@ function ResetPasswordForm() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="text-sm text-white/80 font-medium">Password reset successfully! Redirecting to sign in...</p>
+          <p className="text-sm text-slate-700 dark:text-white/80 font-medium">Password reset successfully! Redirecting to sign in...</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-bold text-white/80 mb-2 uppercase tracking-wide">New Password</label>
+            <label className="block text-sm font-bold text-slate-700 dark:text-white/80 mb-2 uppercase tracking-wide">New Password</label>
             <input
               type="password"
               required
               minLength={6}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
+              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
               placeholder="At least 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -89,11 +89,11 @@ function ResetPasswordForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-white/80 mb-2 uppercase tracking-wide">Confirm Password</label>
+            <label className="block text-sm font-bold text-slate-700 dark:text-white/80 mb-2 uppercase tracking-wide">Confirm Password</label>
             <input
               type="password"
               required
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
+              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/40 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:bg-white/10 transition-all"
               placeholder="Repeat your password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
@@ -133,15 +133,15 @@ export default function ResetPasswordPage() {
 
       {/* Left Side Branding */}
       <div className="hidden lg:flex w-1/2 relative z-10 items-center justify-center p-12">
-        <div className="max-w-lg text-white">
+        <div className="max-w-lg text-slate-900 dark:text-white">
           <div className="w-16 h-16 bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center font-bold text-3xl mb-8 shadow-2xl">
             H
           </div>
-          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight text-white">
+          <h1 className="text-6xl font-extrabold tracking-tight mb-6 leading-tight text-slate-900 dark:text-white">
             Prism <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 animate-gradient-shift bg-[length:200%_auto]">Enterprise</span>
           </h1>
-          <p className="text-xl text-white/70 font-medium leading-relaxed">
+          <p className="text-xl text-slate-600 dark:text-white/70 font-medium leading-relaxed">
             The intelligent platform for managing internal operations, IT requests, and human resources effortlessly.
           </p>
         </div>
@@ -149,10 +149,10 @@ export default function ResetPasswordPage() {
 
       {/* Right Side Glassmorphic Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-white">
+        <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-slate-900 dark:text-white">
           <Link
             href="/login"
-            className="flex items-center gap-2 mb-8 text-white/60 hover:text-white transition-colors w-fit"
+            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-white/60 hover:text-slate-900 dark:text-white transition-colors w-fit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

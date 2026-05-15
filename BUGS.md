@@ -5681,3 +5681,791 @@
 **Fix:** Implement authentication and authorization checks on the API endpoints to ensure that only authorized users can access or modify the data.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:42 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟢 Incomplete input class name
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 88 |
+
+**Description:** The class name for the input element is incomplete, as it ends with `classNa` without a proper value. This will lead to a rendering issue where the input may not have the intended styles applied.
+
+**Fix:** Complete the class name by providing a valid CSS class string, such as `className="border rounded p-2"` to ensure proper styling of the input element.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:42 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 81-90 |
+
+**Description:** The `handleResolve` function does not handle errors that may occur during the resolution of a ticket. If the fetch request fails, the user will not receive any feedback about the failure, which can lead to confusion and a poor user experience.
+
+**Fix:** Add error handling to the `handleResolve` function to notify the user of any issues that occur during the fetch request, such as displaying an error message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/forgot-password/page.tsx`
+
+### 1. 🟠 Missing email validation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/forgot-password/page.tsx` |
+| **Line** | 15-16 |
+
+**Description:** The application does not validate the email format before sending the request to the server. This could lead to unnecessary API calls and potential confusion for users if they enter an invalid email address. Additionally, it could expose the application to unnecessary load or errors from the server.
+
+**Fix:** Implement a simple email validation check using a regular expression before sending the request. If the email is invalid, set an appropriate error message and prevent the API call.
+
+---
+### 2. 🟡 Potential information leakage in error messages
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/forgot-password/page.tsx` |
+| **Line** | 23-25 |
+
+**Description:** The error handling logic directly uses the error message returned from the server, which could potentially expose sensitive information about the server's internal workings or user accounts. This can lead to security vulnerabilities if attackers gain insights into the system.
+
+**Fix:** Modify the error handling to log the server error for debugging purposes but display a generic error message to the user, such as "An error occurred while processing your request."
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/users/page.tsx`
+
+### 1. 🟠 Incomplete role handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/users/page.tsx` |
+| **Line** | 13-14 |
+
+**Description:** The `ROLE_BADGE` object does not include a badge style for the "manager" role, which is referenced in the `ROLES` array. This inconsistency can lead to undefined behavior or styling issues when rendering user roles, particularly if a user with the "manager" role is present.
+
+**Fix:** Add a corresponding entry for the "manager" role in the `ROLE_BADGE` object to ensure consistent styling and prevent potential rendering issues.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Insecure Wipe Confirmation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 66-67 |
+
+**Description:** The wipeAll function allows users to delete all tickets by simply typing "WIPE". This could lead to accidental or malicious data loss if an unauthorized user gains access to the admin portal. There is no additional authentication or confirmation mechanism in place to ensure that the user is authorized to perform this action.
+
+**Fix:** Implement an additional authentication step or confirmation dialog that requires the user to enter a password or perform a secondary verification before allowing the wipe operation.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/profile/page.tsx`
+
+### 1. 🟠 Incomplete input element for new password
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 82 |
+
+**Description:** The input element for the new password is incorrectly defined as `<inp>` instead of `<input>`, which will cause a rendering error and prevent the user from entering a new password. This could lead to a poor user experience and hinder functionality.
+
+**Fix:** Change `<inp>` to `<input>` to ensure the new password input field is correctly rendered.
+
+---
+### 2. 🟡 Potential session update failure
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 54 |
+
+**Description:** The `update` function from `useSession` is called to update the session with the new name, but there is no error handling for this operation. If the session update fails, the user may not be informed, leading to confusion about whether the profile was updated successfully.
+
+**Fix:** Wrap the `update` call in a try-catch block to handle any potential errors and inform the user if the session update fails.
+
+---
+### 3. 🟡 Missing validation for email format
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 29 |
+
+**Description:** There is no validation for the user's email format before submission. If the email is invalid, it could lead to issues when processing the request on the server side, potentially causing unexpected errors.
+
+**Fix:** Implement a regex check for the email format before submission and set an appropriate error message if the format is invalid.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/analytics/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/analytics/page.tsx` |
+| **Line** | 12-13 |
+
+**Description:** The fetch call to "/api/admin-portal/analytics" does not handle potential security issues such as Cross-Site Scripting (XSS) or Cross-Site Request Forgery (CSRF). If the API does not validate requests properly, it could lead to unauthorized data exposure or manipulation.
+
+**Fix:** Ensure that the API endpoint implements proper authentication and authorization checks. Additionally, consider using secure headers and validating input to prevent XSS and CSRF attacks.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure File Upload Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 56-57 |
+
+**Description:** The application allows users to upload files without validating their types or contents. This could lead to security vulnerabilities, such as the execution of malicious files if a user uploads a harmful script disguised as an image. Additionally, the file size limit is only enforced on the client side, which can be bypassed.
+
+**Fix:** Implement server-side validation for file types and contents, and ensure that file size limits are enforced on the server as well. Use a library to sanitize file uploads and check for allowed MIME types before processing them.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/register/page.tsx`
+
+### 1. 🟢 Incomplete Email Label
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/register/page.tsx` |
+| **Line** | 81 |
+
+**Description:** The label for the email input field is incomplete, reading "Email Addre" instead of "Email Address". This can lead to confusion for users filling out the form, potentially resulting in incorrect input.
+
+**Fix:** Update the label text to "Email Address" to ensure clarity for users.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 83-90 |
+
+**Description:** The `handleResolve` function attempts to resolve a ticket but does not handle errors if the fetch request fails. This could lead to a poor user experience as users would not be informed of any issues that occur during the resolution process.
+
+**Fix:** Add error handling within the `handleResolve` function to catch and log any errors that occur during the fetch request, and potentially display an error message to the user.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API Call
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 45-46 |
+
+**Description:** The API calls made in the `handleBulkClose`, `handleStatusChange`, and `handleResolve` functions do not include any authentication or authorization tokens. This exposes the application to unauthorized access, allowing any user to manipulate ticket statuses without proper permissions.
+
+**Fix:** Implement authentication checks and include necessary tokens in the headers of the fetch requests to ensure that only authorized users can perform these actions.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:43 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 28-29 |
+
+**Description:** The fetchNotifications function does not handle errors when the fetch request fails. If the API is down or returns an error, the application will not provide any feedback to the user, potentially leading to confusion.
+
+**Fix:** Add error handling to the fetchNotifications function to catch any errors and provide user feedback, such as logging the error or displaying a notification.
+
+---
+### 2. 🟠 Potential XSS vulnerability in notification rendering
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 88-89 |
+
+**Description:** The notification messages are rendered directly from the API response without any sanitization. If the API returns malicious content, it could lead to cross-site scripting (XSS) attacks.
+
+**Fix:** Sanitize the notification message content before rendering it to ensure that any potentially harmful scripts are removed.
+
+---
+### 3. 🟡 Uncontrolled component for notifications
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 63-64 |
+
+**Description:** The notifications state is updated directly from the API response without considering the possibility of duplicate notifications. This could lead to the same notification being displayed multiple times if the API returns the same data.
+
+**Fix:** Implement a mechanism to check for duplicates before updating the notifications state, ensuring that each notification is unique.
+
+---
+### 4. 🟢 Missing accessibility features for notifications
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 78-79 |
+
+**Description:** The notification button does not have a proper aria-live region or role to announce updates to screen readers, which can hinder accessibility for users relying on assistive technologies.
+
+**Fix:** Add an aria-live region to the notification area and ensure that the button has an appropriate role to enhance accessibility.
+
+---
+### 5. 🟡 Inefficient polling for notifications
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 34-35 |
+
+**Description:** The notifications are fetched every 30 seconds regardless of user activity, which can lead to unnecessary network requests and performance issues. This could be optimized based on user interactions.
+
+**Fix:** Implement a more efficient polling strategy, such as fetching notifications only when the user is active or when the notification bell is opened.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 24-25 |
+
+**Description:** The application fetches tickets from an API endpoint without any authentication or authorization checks. This could allow unauthorized users to access sensitive ticket information, leading to potential data leaks or unauthorized actions.
+
+**Fix:** Implement authentication and authorization checks on the API endpoint to ensure that only authorized users can access ticket data.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/analytics/page.tsx`
+
+### 1. 🟠 Incomplete MTTR Card Rendering
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/analytics/page.tsx` |
+| **Line** | 69-70 |
+
+**Description:** The MTTR card rendering is incomplete, as the closing tags and subsequent content are missing. This will lead to a syntax error and prevent the component from rendering properly, causing the entire analytics page to fail.
+
+**Fix:** Ensure that the MTTR card is fully defined by completing the JSX structure, including closing tags and any additional content that should follow.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 36-41 |
+
+**Description:** The app uses the `fetch` API to send requests to the `/api/tickets/${id}/resolve` endpoint without any authentication or authorization checks. This could allow unauthorized users to resolve tickets, potentially leading to data integrity issues and unauthorized access to sensitive information.
+
+**Fix:** Implement authentication and authorization checks on the API endpoint to ensure that only authorized users can perform actions such as resolving tickets.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 88-90 |
+
+**Description:** The `handleResolve` function does not handle errors that may occur during the ticket resolution process. If the fetch request fails, the user will not receive any feedback, which can lead to confusion about whether the action was successful or not.
+
+**Fix:** Add error handling logic to inform the user of any issues that occur during the resolution process, such as displaying an error message or logging the error.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure Fetch URL
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 78-79 |
+
+**Description:** The fetch requests to the API endpoints (`/api/kb/related` and `/api/ticket-templates`) do not validate or sanitize the `typeParam` and `title` parameters. This could lead to potential security vulnerabilities such as Server-Side Request Forgery (SSRF) or injection attacks if the parameters are manipulated.
+
+**Fix:** Validate and sanitize the `typeParam` and `title` before using them in the fetch requests. Consider using a library like `validator` to ensure the parameters conform to expected formats.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/kb-manage/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb-manage/page.tsx` |
+| **Line** | 54-55 |
+
+**Description:** The application does not handle potential errors from the API responses adequately. If the API returns an error (e.g., 4xx or 5xx status codes), the user is not informed, and the application may behave unexpectedly without any feedback. This could lead to confusion and a poor user experience.
+
+**Fix:** Implement error handling that provides user feedback when API calls fail, such as displaying an error message or notification.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for notification fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 27-29 |
+
+**Description:** The fetchNotifications function does not handle the case where the fetch request fails (e.g., network issues or server errors). If the request fails, the notifications state remains empty, which could lead to a poor user experience as users may not be aware of any notifications.
+
+**Fix:** Implement error handling to notify users of the failure, possibly by setting an error state or displaying a message in the UI.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:46 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API endpoint usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 36-39 |
+
+**Description:** The application uses the `fetch` API to call an endpoint for resolving tickets without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data integrity issues and abuse of the system.
+
+**Fix:** Implement authentication and authorization checks on the server-side API endpoints to ensure that only authorized users can perform actions like resolving tickets.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:48 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for notification fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 30-32 |
+
+**Description:** The `fetchNotifications` function does not handle the case where the fetch request fails (e.g., network issues or server errors). If the request fails, the component will not update the notifications state, potentially leading to stale data being displayed to the user.
+
+**Fix:** Implement error handling to update the state or notify the user when the fetch fails, ensuring that the UI reflects the current state accurately.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:52 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for notification fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 30-34 |
+
+**Description:** The `fetchNotifications` function does not handle the case when the fetch request fails (e.g., network issues or server errors). If the fetch fails, the notifications state will remain empty, and the user will not be informed of any issues. This could lead to a poor user experience as users may think there are no notifications when there might be an issue fetching them.
+
+**Fix:** Implement error handling to update the state or notify the user when the fetch fails. You could set an error state and display an appropriate message in the UI.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:53 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 75-80 |
+
+**Description:** The `handleResolve` function does not handle errors that may occur during the ticket resolution process. If the fetch request fails, the user will not receive any feedback, which can lead to confusion about whether the action was successful or not.
+
+**Fix:** Add error handling logic to notify the user if the resolution fails, such as setting an error state and displaying an error message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:53 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure File Upload Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 56-57 |
+
+**Description:** The application allows users to upload files without validating their types or contents, which can lead to security vulnerabilities such as uploading malicious files. This can compromise the server and user data if the files are executed or processed without proper checks.
+
+**Fix:** Implement file type validation on the server-side and ensure that only allowed file types are processed. Additionally, consider scanning uploaded files for malware before storing or processing them.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:53 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🟠 Missing Error Handling for Fetch Requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 52-54, 69-71, 83-85 |
+
+**Description:** The fetch requests in the `handleBulkClose`, `handleStatusChange`, and `handleResolve` functions do not handle HTTP errors properly. If the server responds with an error status (e.g., 404, 500), the application will not provide feedback to the user, which can lead to confusion about whether the action was successful.
+
+**Fix:** Check the response status of the fetch requests and throw an error if the status is not in the range of 200-299. You can then catch this error and display an appropriate message to the user.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:53 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Insecure API Fetching
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 38-39 |
+
+**Description:** The fetch requests to the API do not handle potential security issues such as Cross-Site Scripting (XSS) or Cross-Site Request Forgery (CSRF). If the API does not validate or sanitize inputs properly, it could lead to vulnerabilities where malicious data could be injected or sensitive information could be exposed.
+
+**Fix:** Implement proper input validation and sanitization on the server-side API. Additionally, consider using CSRF tokens for state-changing requests to enhance security.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/profile/page.tsx`
+
+### 1. 🟠 Incomplete input element for new password
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 83 |
+
+**Description:** The input element for the new password is incorrectly defined as `<inp>` instead of `<input>`, which will lead to a rendering error and prevent users from entering a new password. This could hinder the functionality of the password update feature.
+
+**Fix:** Change `<inp>` to `<input>` to ensure the input field is rendered correctly and users can enter their new password.
+
+---
+### 2. 🟡 Potential session data access before initialization
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 7-8 |
+
+**Description:** The `useSession` hook may not have the session data immediately available, which can lead to accessing `session.user.name` before it is defined. This could result in a runtime error if the session is not yet loaded when the component first renders.
+
+**Fix:** Use a loading state or check if `session` is defined before accessing its properties to prevent potential errors during the initial render.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/analytics/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/analytics/page.tsx` |
+| **Line** | 12-13 |
+
+**Description:** The fetch request to the API endpoint "/api/admin-portal/analytics" does not include any error handling for HTTP response statuses. If the API returns a non-200 status (e.g., 404 or 500), the application will still attempt to process the response as JSON, potentially leading to runtime errors or displaying incorrect data.
+
+**Fix:** Implement a check for the response status before calling `r.json()`, and handle non-200 responses appropriately by updating the UI to reflect the error.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/components/landing/PeopleMarquee.tsx`
+
+### 1. 🟠 Incomplete component rendering
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/landing/PeopleMarquee.tsx` |
+| **Line** | 69 |
+
+**Description:** The `PersonCard` component is incomplete, as the rendering of the detail card (back) is cut off. This can lead to a broken UI and prevent users from accessing important information about the characters.
+
+**Fix:** Ensure that the complete JSX for the detail card is included and properly closed. Review the component to ensure all necessary elements are rendered.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 20-30 |
+
+**Description:** The fetchTickets and wipeAll functions do not handle errors properly. If the fetch request fails, the user will not receive any feedback about the failure, which could lead to confusion about whether the action was successful or not.
+
+**Fix:** Implement error handling that updates the UI to inform the user of any errors that occur during the fetch requests, such as displaying an error message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure File Upload Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 56-57 |
+
+**Description:** The application allows users to upload files without validating the file type or content. This could lead to security vulnerabilities, such as uploading malicious files that could be executed on the server or client-side. Additionally, the application does not restrict file types, which could allow for unintended file uploads.
+
+**Fix:** Implement file type validation on the server-side and restrict uploads to only safe file types. Consider using a library to scan files for malware before processing them.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/users/page.tsx`
+
+### 1. 🟠 Insecure API endpoint exposure
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/users/page.tsx` |
+| **Line** | 22-23 |
+
+**Description:** The application fetches user data from an API endpoint without any authentication or authorization checks. This could allow unauthorized users to access sensitive user information, leading to potential data breaches.
+
+**Fix:** Implement authentication and authorization checks on the API endpoint to ensure that only authorized users can access the user data.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 38-39 |
+
+**Description:** The application uses the `fetch` API to send requests to the `/api/tickets/${id}/resolve` endpoint without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data integrity issues and unauthorized access to sensitive information.
+
+**Fix:** Implement authentication and authorization checks on the server-side for the API endpoints to ensure that only authorized users can perform actions on tickets.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 88-90 |
+
+**Description:** The `handleResolve` function does not handle errors that may occur during the ticket resolution process. If the fetch request fails, the user will not receive any feedback about the failure, which can lead to confusion and a poor user experience.
+
+**Fix:** Add error handling logic within the `catch` block of the `handleResolve` function to inform the user of any issues that arise during the resolution process.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/kb-manage/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint Exposure
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb-manage/page.tsx` |
+| **Line** | 41-42 |
+
+**Description:** The application directly exposes API endpoints for fetching, creating, updating, and deleting articles without any authentication or authorization checks. This could allow unauthorized users to manipulate the knowledge base articles, leading to data breaches or malicious content being added.
+
+**Fix:** Implement authentication and authorization checks for all API endpoints to ensure that only authorized users can access or modify the articles.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:56 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Potential XSS vulnerability in search query
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 1-60 |
+
+**Description:** The application directly uses user input (search query) in the URL for fetching AI search results without sanitization. This could lead to Cross-Site Scripting (XSS) attacks if an attacker crafts a malicious search query that gets executed in the context of the application.
+
+**Fix:** Ensure that user input is properly sanitized and validated before being used in the URL. Consider using a library like `DOMPurify` to clean the input or validate it against a whitelist of acceptable characters.
+
+---
