@@ -53,11 +53,8 @@ const PRIORITY_COLOR: Record<string, string> = {
 const ADMIN_NAV = [
   { label: "Manage Users", href: "/dashboard/users", icon: "👥" },
   { label: "All Tickets", href: "/dashboard/tickets", icon: "🎫" },
-  { label: "SLA Policies", href: "/dashboard/sla-policies", icon: "⏱" },
   { label: "Analytics", href: "/dashboard/analytics", icon: "📊" },
   { label: "Knowledge Base", href: "/dashboard/kb-manage", icon: "📚" },
-  { label: "Automation Rules", href: "/dashboard/automation-rules", icon: "⚡" },
-  { label: "Templates", href: "/dashboard/templates", icon: "📄" },
 ];
 
 // ─── Admin Dashboard ──────────────────────────────────────────────────────────

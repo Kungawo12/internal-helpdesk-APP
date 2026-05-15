@@ -147,7 +147,7 @@ export default function KbManagementPage() {
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all capitalize ${
                 filterType === t
                   ? "bg-red-500 text-slate-900 dark:text-white"
-                  : "bg-slate-100 dark:bg-slate-800/5 text-white/60 hover:bg-white dark:bg-slate-800/10"
+                  : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60 hover:bg-white dark:bg-slate-800/10"
               }`}
             >
               {t}
@@ -194,7 +194,7 @@ export default function KbManagementPage() {
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all capitalize ${
                         formData.type === t
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-slate-800/5 text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
                       }`}
                     >
                       {t}
@@ -222,7 +222,7 @@ export default function KbManagementPage() {
                   onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
                   className="w-4 h-4 rounded border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/5 text-red-500 focus:ring-red-500/50"
                 />
-                <label htmlFor="published" className="text-sm font-bold text-white/70 cursor-pointer">
+                <label htmlFor="published" className="text-sm font-bold text-slate-600 dark:text-white/70 cursor-pointer">
                   Publish immediately
                 </label>
               </div>
@@ -282,7 +282,7 @@ export default function KbManagementPage() {
                 {article.tags && (
                   <div className="flex flex-wrap gap-1 mb-4">
                     {article.tags.split(",").map((tag) => (
-                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/5 text-white/50">
+                      <span key={tag} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/5 text-slate-400 dark:text-white/50">
                         {tag.trim()}
                       </span>
                     ))}
@@ -292,7 +292,7 @@ export default function KbManagementPage() {
 
               <div className="border-t border-slate-100 dark:border-white/5 pt-4 flex justify-between items-center mt-4">
                 <div className="text-xs text-slate-400 dark:text-white/30">
-                  <p className="font-bold text-white/50">{article.author.name}</p>
+                  <p className="font-bold text-slate-500 dark:text-white/50">{article.author.name}</p>
                   <p>{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="flex gap-2">

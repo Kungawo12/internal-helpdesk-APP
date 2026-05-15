@@ -19,7 +19,7 @@ const ROLE_BADGE: Record<string, string> = {
   manager: "bg-purple-500/20 text-purple-400 border-purple-500/20",
   it_staff: "bg-blue-500/20 text-blue-400 border-blue-500/20",
   hr_staff: "bg-amber-500/20 text-amber-400 border-amber-500/20",
-  employee: "bg-slate-500/20 text-slate-400 dark:text-slate-400 border-slate-500/20",
+  employee: "bg-slate-500/20 text-slate-500 dark:text-slate-400 border-slate-500/20",
 };
 
 export default function AdminUsersPage() {
@@ -30,9 +30,14 @@ export default function AdminUsersPage() {
   const [error, setError] = useState("");
 
   const fetchUsers = async () => {
-    const res = await fetch("/api/admin-portal/users");
-    if (res.ok) setUsers(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin-portal/users");
+      if (res.ok) setUsers(await res.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchUsers(); }, []);
@@ -108,7 +113,7 @@ export default function AdminUsersPage() {
           placeholder="Search name, email, role..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-72 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
+          className="w-full md:w-72 bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
         />
       </div>
 

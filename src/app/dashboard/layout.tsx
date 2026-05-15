@@ -162,9 +162,6 @@ export default function DashboardLayout({
     { label: "All Tickets", path: "/dashboard/tickets", icon: "🎫", show: role === "admin" },
     { label: "Analytics", path: "/dashboard/analytics", icon: "📊", show: role === "admin" },
     { label: "KB Manage", path: "/dashboard/kb-manage", icon: "📖", show: role === "admin" },
-    { label: "Automation", path: "/dashboard/automation-rules", icon: "⚡", show: role === "admin" },
-    { label: "Templates", path: "/dashboard/templates", icon: "📝", show: role === "admin" },
-    { label: "SLA Policies", path: "/dashboard/sla-policies", icon: "⚙️", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
   return (

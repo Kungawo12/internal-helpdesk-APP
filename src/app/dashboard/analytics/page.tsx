@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
             ].map((r) => (
               <div key={r.label}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-white/60">{r.label}</span>
+                  <span className="text-slate-500 dark:text-white/60">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.value}h</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
             ].map((r) => (
               <div key={r.label}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-white/60">{r.label}</span>
+                  <span className="text-slate-500 dark:text-white/60">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.count}</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
                   <p className="text-xs text-slate-400 dark:text-white/40 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
                   <div className="flex gap-0.5 mt-2">
                     {[1,2,3,4,5].map(s => (
-                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-white/20"}`}>★</span>
+                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-slate-200 dark:text-white/20"}`}>★</span>
                     ))}
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function AnalyticsPage() {
                   const pct = data.csat.totalRated > 0 ? (count / data.csat.totalRated) * 100 : 0;
                   return (
                     <div key={star} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-white/60 w-4">{star}★</span>
+                      <span className="text-xs font-bold text-slate-500 dark:text-white/60 w-4">{star}★</span>
                       <div className="flex-1 h-2 bg-white dark:bg-slate-800/10 rounded-full overflow-hidden">
                         <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>

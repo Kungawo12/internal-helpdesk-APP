@@ -5624,3 +5624,60 @@
 **Fix:** Change the button label from "Close al" to "Close all" to ensure clarity in the user interface.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:40 UTC
+> **Triggered by change in:** `src/app/dashboard/users/page.tsx`
+
+### 1. 🟠 Incomplete role handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/users/page.tsx` |
+| **Line** | 9-10 |
+
+**Description:** The `ROLE_BADGE` object does not include a badge for the "manager" role, which is referenced in the `ROLE_BADGE` but not defined in the `ROLES` array. This inconsistency can lead to unexpected behavior or errors when trying to render user roles.
+
+**Fix:** Remove the "manager" entry from the `ROLE_BADGE` or add "manager" to the `ROLES` array to ensure consistency across the application.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:41 UTC
+> **Triggered by change in:** `src/app/dashboard/analytics/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch response
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/analytics/page.tsx` |
+| **Line** | 16-20 |
+
+**Description:** The fetch request does not validate the response status before attempting to parse the JSON. If the response is not successful (e.g., 404 or 500), it will still attempt to call `r.json()`, which could lead to runtime errors or unexpected behavior.
+
+**Fix:** Check the response status using `if (!r.ok)` before calling `r.json()`, and handle the error appropriately, such as setting an error state or displaying a message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 14:41 UTC
+> **Triggered by change in:** `src/app/dashboard/kb-manage/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb-manage/page.tsx` |
+| **Line** | 45-46 |
+
+**Description:** The application fetches articles from an API endpoint without any authentication or authorization checks. This could allow unauthorized users to access sensitive data or perform actions they shouldn't be able to, such as creating, updating, or deleting articles.
+
+**Fix:** Implement authentication and authorization checks on the API endpoints to ensure that only authorized users can access or modify the data.
+
+---
