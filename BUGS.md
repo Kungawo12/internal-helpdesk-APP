@@ -6794,3 +6794,600 @@
 **Fix:** Implement error handling logic to update the UI or state to reflect that an error occurred, such as setting an error message state or displaying a notification.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:50 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 34-35, 61-62 |
+
+**Description:** The fetch requests in both `fetchTickets` and `wipeAll` functions do not handle errors effectively. If the fetch fails (e.g., due to network issues), the user will not receive any feedback, and the application may behave unexpectedly. This could lead to confusion for users if they are unable to see tickets or if the wipe operation fails without notification.
+
+**Fix:** Implement error handling by setting an error state and displaying an appropriate message to the user when a fetch request fails. This can be done by updating the state in the catch block and conditionally rendering an error message in the UI.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:16 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Missing error handling for notification fetching
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 35-39 |
+
+**Description:** The `fetchNotifications` function lacks proper error handling for the case when the fetch request fails (e.g., network issues). While it logs the error to the console, it does not provide any user feedback or handle the state of notifications in case of an error, which could lead to a poor user experience.
+
+**Fix:** Implement user feedback for fetch failures, such as displaying an error message in the UI or setting a state variable to indicate the error, so users are aware that notifications could not be fetched.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:16 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 36-37, 54-55, 74-75 |
+
+**Description:** The application uses the fetch API to call endpoints for resolving tickets without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data integrity issues and unauthorized access to sensitive information.
+
+**Fix:** Implement proper authentication and authorization checks on the server-side for the ticket resolution endpoints to ensure that only authorized users can perform these actions.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:16 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API endpoint usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 42-43 |
+
+**Description:** The application uses the `fetch` API to send PATCH requests to the `/api/tickets/${id}/resolve` endpoint without any authentication or authorization checks. This could allow unauthorized users to modify ticket statuses, leading to potential data integrity issues and unauthorized access to sensitive information.
+
+**Fix:** Implement authentication and authorization checks on the API endpoint to ensure that only authorized users can modify ticket statuses. Additionally, consider using a secure method for handling sensitive data.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:16 UTC
+> **Triggered by change in:** `src/components/dashboard/AiChatWidget.tsx`
+
+### 1. 🟠 Potential session data access issue
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/dashboard/AiChatWidget.tsx` |
+| **Line** | 15-16 |
+
+**Description:** The code accesses `session.user.role` without checking if `session` or `session.user` is defined. If the session is not available, this will lead to a runtime error, causing the component to crash.
+
+**Fix:** Add a check to ensure that `session` and `session.user` are defined before accessing `session.user.role`.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/analytics/page.tsx`
+
+### 1. 🟠 Potentially unsafe fetch URL
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/analytics/page.tsx` |
+| **Line** | 12 |
+
+**Description:** The fetch call to "/api/admin-portal/analytics" does not validate or sanitize the URL, which could lead to security vulnerabilities such as open redirects or exposure to malicious endpoints if the base URL is manipulated. This could allow an attacker to intercept or modify the data being fetched.
+
+**Fix:** Use a full URL with a validated base path or ensure that the endpoint is protected against unauthorized access and validate the response data structure before using it.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/components/tickets/AiCopilotPanel.tsx`
+
+### 1. 🟠 Insecure API endpoint exposure
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/tickets/AiCopilotPanel.tsx` |
+| **Line** | 24 |
+
+**Description:** The API endpoint `/api/ai/copilot?ticketId=${ticketId}` is exposed directly in the client-side code, which could lead to unauthorized access if the `ticketId` is sensitive. An attacker could potentially manipulate the `ticketId` parameter to access other tickets.
+
+**Fix:** Implement server-side validation for the `ticketId` in the API route to ensure that the user has permission to access the requested ticket. Additionally, consider using a more secure method of passing sensitive data, such as using session tokens or server-side rendering to fetch data securely.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Incomplete JSX Element
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 88 |
+
+**Description:** The JSX element is incomplete, which will lead to a syntax error when the code is compiled. The last line appears to be cut off, missing the closing tags for the `<div>` and possibly other elements. This will prevent the component from rendering correctly.
+
+**Fix:** Ensure that all JSX elements are properly closed. Complete the last line by adding the necessary closing tags for the `<div>` and any other elements that may be missing.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/page.tsx`
+
+### 1. 🟠 Unconditional redirect in RootPage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/page.tsx` |
+| **Line** | 4 |
+
+**Description:** The `RootPage` component unconditionally redirects to the "/login" route every time it is rendered. This could lead to an infinite redirect loop if the "/login" page also redirects back to the root page, resulting in a poor user experience and potential accessibility issues.
+
+**Fix:** Implement a condition to check if the user is authenticated before redirecting. Only redirect to "/login" if the user is not logged in.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/profile/page.tsx`
+
+### 1. 🟠 Incomplete input field for new password
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/profile/page.tsx` |
+| **Line** | 82 |
+
+**Description:** The input field for the new password is incorrectly defined as `<inp>` instead of `<input>`, which will cause a rendering error and prevent the user from entering a new password. This can lead to a poor user experience and hinder the functionality of the password change feature.
+
+**Fix:** Change `<inp>` to `<input>` to correctly define the input field for the new password.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/components/dashboard/AiChatWidget.tsx`
+
+### 1. 🟠 Incomplete toggle button implementation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/components/dashboard/AiChatWidget.tsx` |
+| **Line** | 81 |
+
+**Description:** The toggle button for opening and closing the chat widget is incomplete, as the `onClick` handler is not fully implemented. This will lead to a runtime error when the button is clicked, preventing users from interacting with the chat widget.
+
+**Fix:** Complete the `onClick` handler for the toggle button to properly toggle the `open` state, e.g., `onClick={() => setOpen(prev => !prev)}`.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/forgot-password/page.tsx`
+
+### 1. 🟠 Incomplete form submission handler
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/forgot-password/page.tsx` |
+| **Line** | 66 |
+
+**Description:** The `handleSubmit` function is not fully implemented in the provided code snippet, as it ends abruptly. This could lead to a runtime error when the form is submitted, as the function does not return or handle the submission correctly.
+
+**Fix:** Ensure the `handleSubmit` function is fully implemented, including the closing brackets and any necessary logic for form submission.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 21-25 |
+
+**Description:** The fetch call to the API endpoint "/api/admin-portal/stats" does not include any error handling for unauthorized access or invalid responses. This could lead to sensitive data exposure if the API is not properly secured and allows unauthorized users to access admin statistics.
+
+**Fix:** Implement proper authentication checks before making the fetch call, and handle different response statuses to ensure only authorized users can access the data.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/templates/page.tsx`
+
+### 1. 🟠 Insecure API endpoint exposure
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/templates/page.tsx` |
+| **Line** | 24-25 |
+
+**Description:** The application fetches ticket templates from the API without any authentication or authorization checks. This could allow unauthorized users to access sensitive data or manipulate ticket templates.
+
+**Fix:** Implement authentication and authorization checks on the API endpoints to ensure that only authorized users can access or modify ticket templates.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/users/page.tsx`
+
+### 1. 🟠 Incomplete Role Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/users/page.tsx` |
+| **Line** | 12-13 |
+
+**Description:** The `ROLE_BADGE` object does not include a mapping for the "manager" role, which is referenced in the `ROLE_BADGE` but not defined in the `ROLES` array. This inconsistency can lead to undefined behavior or errors when trying to render user roles that include "manager".
+
+**Fix:** Ensure that the "manager" role is either added to the `ROLES` array or removed from the `ROLE_BADGE` object to maintain consistency.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure API Fetching
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 66-70 |
+
+**Description:** The application fetches data from APIs without validating or sanitizing the `typeParam` and `title` parameters. This can lead to security vulnerabilities such as Server-Side Request Forgery (SSRF) or injection attacks if an attacker manipulates these parameters.
+
+**Fix:** Implement validation and sanitization for the `typeParam` and `title` parameters before using them in API requests. Consider using a library like `validator` to ensure they conform to expected formats.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Incomplete input handling for wipe confirmation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 81 |
+
+**Description:** The input handling for the wipe confirmation is incomplete, as the `value` prop is set to `wipeConf` instead of `wipeConfirm`. This will lead to a runtime error since `wipeConf` is not defined, causing the wipe confirmation feature to fail.
+
+**Fix:** Change `value={wipeConf}` to `value={wipeConfirm}` to ensure the input correctly reflects the state variable.
+
+---
+### 2. 🟡 Potential XSS vulnerability in ticket deletion confirmation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 50 |
+
+**Description:** The deletion confirmation message uses the ticket title directly in the `confirm` dialog, which could lead to XSS if the ticket title contains malicious scripts. This could allow an attacker to execute scripts in the user's browser.
+
+**Fix:** Sanitize the ticket title before using it in the confirmation dialog to prevent any potential XSS attacks.
+
+---
+### 3. 🟡 Missing error handling for wipeAll function
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 66 |
+
+**Description:** The `wipeAll` function does not handle errors that may occur during the fetch request to wipe tickets. If the request fails, the user will not receive any feedback about the failure, leading to confusion.
+
+**Fix:** Add error handling to check if the response is not ok and set an appropriate error message in `wipeMsg` to inform the user of the failure.
+
+---
+### 4. 🟢 No loading state for wipeAll function
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 66 |
+
+**Description:** The `wipeAll` function does not provide any loading indication while the wipe operation is in progress. Users may click the button multiple times, leading to multiple requests being sent.
+
+**Fix:** Set a loading state (e.g., `setWiping(true)`) before the fetch call and reset it after the operation completes to prevent multiple submissions and inform the user that the operation is in progress.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/reset-password/page.tsx`
+
+### 1. 🟠 Insecure Password Handling
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/reset-password/page.tsx` |
+| **Line** | 34-35 |
+
+**Description:** The application does not enforce strong password policies beyond a minimum length of 6 characters. This could allow users to set weak passwords, making accounts vulnerable to brute-force attacks. Additionally, there is no indication of password strength to the user.
+
+**Fix:** Implement a stronger password policy that includes checks for complexity (e.g., requiring uppercase letters, numbers, and special characters) and provide real-time feedback on password strength during input.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:17 UTC
+> **Triggered by change in:** `src/app/dashboard/staff/page.tsx`
+
+### 1. 🔴 Insecure API endpoint usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `CRITICAL` |
+| **File** | `src/app/dashboard/staff/page.tsx` |
+| **Line** | 36-37 |
+
+**Description:** The application directly uses the `fetch` API to call endpoints without any authentication or authorization checks. This could allow unauthorized users to manipulate ticket statuses, leading to potential data breaches or misuse of the helpdesk system.
+
+**Fix:** Implement authentication and authorization checks before allowing any API calls to modify ticket statuses. Ensure that only authorized users can access and modify ticket data.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:18 UTC
+> **Triggered by change in:** `src/app/dashboard/software-staff/page.tsx`
+
+### 1. 🟠 Insecure API Endpoint Usage
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/software-staff/page.tsx` |
+| **Line** | 30-31, 52-53, 66-67 |
+
+**Description:** The application uses the `fetch` API to send requests to endpoints without validating the response or handling potential errors appropriately. This could lead to security vulnerabilities such as exposing sensitive data or allowing unauthorized actions if the API is compromised.
+
+**Fix:** Implement error handling for the fetch requests, including checking the response status and handling any errors that may arise. Additionally, consider using authentication tokens or other security measures to protect the API endpoints.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:19 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Incomplete JSX element
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 90 |
+
+**Description:** The JSX element is incomplete, as it ends abruptly with a '<' character without a corresponding closing tag. This will lead to a syntax error and prevent the component from rendering correctly.
+
+**Fix:** Ensure that the JSX element is properly closed or completed. Review the intended structure and add the necessary closing tags or elements.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:37 UTC
+> **Triggered by change in:** `src/app/forgot-password/page.tsx`
+
+### 1. 🟠 Incomplete form submission handler
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/forgot-password/page.tsx` |
+| **Line** | 66-67 |
+
+**Description:** The `handleSubmit` function is not fully implemented as the form submission handler is cut off, which will lead to a runtime error when the form is submitted. This prevents users from being able to submit their email for a password reset.
+
+**Fix:** Ensure that the complete `handleSubmit` function is implemented and that the form is properly closed with the necessary JSX elements.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:37 UTC
+> **Triggered by change in:** `src/app/reset-password/page.tsx`
+
+### 1. 🟠 Missing token validation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/reset-password/page.tsx` |
+| **Line** | 10-11 |
+
+**Description:** The application does not validate the presence of a token before attempting to reset the password. If the token is missing or invalid, the API call will still be made, potentially leading to unexpected behavior or errors. This can also expose the application to unnecessary API calls.
+
+**Fix:** Ensure that the token is validated before making the API call in the `handleSubmit` function. If the token is invalid, return early and set an appropriate error message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:37 UTC
+> **Triggered by change in:** `src/app/register/page.tsx`
+
+### 1. 🟠 Missing Input Validation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/register/page.tsx` |
+| **Line** | 35-36 |
+
+**Description:** The registration form does not validate the email format or password strength before submission. This could lead to users entering invalid data, which may result in unnecessary API calls and poor user experience.
+
+**Fix:** Implement client-side validation for the email format using a regular expression and enforce password strength requirements before allowing form submission.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:40 UTC
+> **Triggered by change in:** `src/app/forgot-password/page.tsx`
+
+### 1. 🟠 Incomplete form submission handler
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/forgot-password/page.tsx` |
+| **Line** | 66 |
+
+**Description:** The `handleSubmit` function is incomplete as the form's `onSubmit` prop is not correctly assigned to the `handleSubmit` function due to a typo. This will prevent the form from submitting correctly, leading to a poor user experience and potential confusion.
+
+**Fix:** Correct the typo in the `onSubmit` prop by changing `handl` to `handleSubmit`.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:40 UTC
+> **Triggered by change in:** `src/app/register/page.tsx`
+
+### 1. 🟠 Missing Input Validation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/register/page.tsx` |
+| **Line** | 38-39 |
+
+**Description:** The registration form does not validate the email format or the password strength before submission. This could lead to invalid data being sent to the server, resulting in potential errors or security vulnerabilities.
+
+**Fix:** Implement client-side validation for the email format using a regular expression and enforce password strength requirements (e.g., minimum length, inclusion of special characters) before allowing form submission.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:40 UTC
+> **Triggered by change in:** `src/app/reset-password/page.tsx`
+
+### 1. 🟠 Missing token validation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/reset-password/page.tsx` |
+| **Line** | 12-13 |
+
+**Description:** The application does not validate the presence of the `token` before making the API request. If the token is missing or invalid, the request will still be sent, potentially leading to unexpected behavior or errors on the server side.
+
+**Fix:** Add a check to ensure that the `token` is valid before proceeding with the API request in the `handleSubmit` function. If the token is invalid, set an appropriate error message.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 05:41 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Incomplete input handling for wipe confirmation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 81 |
+
+**Description:** The input handling for wipe confirmation is incomplete, as the `value` attribute of the input field is set to `wipeConf`, which is not defined in the code. This will lead to a runtime error when the component tries to render the input field, preventing the wipe functionality from being used.
+
+**Fix:** Change `value={wipeConf}` to `value={wipeConfirm}` to correctly bind the input value to the existing state variable.
+
+---
+### 2. 🟡 Potential XSS vulnerability in ticket deletion confirmation
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 42 |
+
+**Description:** The deletion confirmation message uses the ticket title directly in the `confirm` dialog, which could lead to XSS if the ticket title contains malicious scripts. This could allow an attacker to execute scripts in the context of the user's browser.
+
+**Fix:** Sanitize the ticket title before using it in the confirmation dialog, or use a library that handles escaping to prevent XSS.
+
+---
+### 3. 🟡 Missing error handling for wipeAll function
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 66 |
+
+**Description:** The `wipeAll` function does not handle errors that may occur during the fetch request. If the request fails, the user will not receive any feedback about the failure, which can lead to confusion.
+
+**Fix:** Add error handling logic after the fetch call to set an appropriate error message in `wipeMsg` if the response is not ok.
+
+---

@@ -136,7 +136,7 @@ function PersonCard({
         {/* Flip button (Absolute top-right) */}
         <button 
           onClick={onFlip}
-          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900 shadow-sm transition-colors z-10"
+          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center text-slate-600 dark:text-slate-300   shadow-sm transition-colors z-10"
         >
           +
         </button>
@@ -180,7 +180,7 @@ function PersonCard({
           </div>
           <button 
             onClick={onFlip}
-            className="w-6 h-6 rounded-full bg-slate-100  flex items-center justify-center text-slate-600  hover:bg-slate-200  transition-colors"
+            className="w-6 h-6 rounded-full bg-slate-100  flex items-center justify-center text-slate-600    transition-colors"
           >
             ✕
           </button>

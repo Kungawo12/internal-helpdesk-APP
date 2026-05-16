@@ -13,7 +13,7 @@ export default function Footer() {
           </p>
           <a
             href="/register"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600  rounded-xl font-semibold text-lg transition-all  duration-300"
           >
             Create Your Account
             <span>&rarr;</span>

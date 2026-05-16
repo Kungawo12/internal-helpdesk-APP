@@ -147,7 +147,7 @@ export default function KbManagementPage() {
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all capitalize ${
                 filterType === t
                   ? "bg-red-500 text-slate-900 dark:text-white"
-                  : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60 hover:bg-white dark:bg-slate-800/10"
+                  : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60  dark:bg-slate-800/10"
               }`}
             >
               {t}
@@ -194,7 +194,7 @@ export default function KbManagementPage() {
                       className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold border transition-all capitalize ${
                         formData.type === t
                           ? "bg-red-500 text-slate-900 dark:text-white border-red-600"
-                          : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60 border-slate-200 dark:border-white/10 hover:bg-white dark:bg-slate-800/10"
+                          : "bg-slate-100 dark:bg-slate-800/5 text-slate-500 dark:text-white/60 border-slate-200 dark:border-white/10  dark:bg-slate-800/10"
                       }`}
                     >
                       {t}
@@ -244,7 +244,7 @@ export default function KbManagementPage() {
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="px-6 py-3 bg-slate-100 dark:bg-slate-800/5 hover:bg-white dark:bg-slate-800/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
+                className="px-6 py-3 bg-slate-100 dark:bg-slate-800/5  dark:bg-slate-800/10 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold text-slate-900 dark:text-white transition-all"
               >
                 Cancel
               </button>
@@ -267,7 +267,7 @@ export default function KbManagementPage() {
           </div>
         ) : (
           articles.map((article) => (
-            <div key={article.id} className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all flex flex-col justify-between">
+            <div key={article.id} className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TYPE_COLOR[article.type]}`}>
@@ -308,7 +308,7 @@ export default function KbManagementPage() {
                   </button>
                   <button
                     onClick={() => handleDeleteArticle(article.id)}
-                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition-all"
+                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30  transition-all"
                   >
                     Delete
                   </button>

@@ -231,13 +231,13 @@ export default function TemplatesPage() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="px-6 py-2 font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="px-6 py-2 font-bold text-slate-500   transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="btn-primary bg-purple-600 hover:bg-purple-700 shadow-purple-600/20"
+                className="btn-primary bg-purple-600  shadow-purple-600/20"
               >
                 Save Template
               </button>
@@ -301,7 +301,7 @@ export default function TemplatesPage() {
               <div className="flex justify-end mt-6">
                 <button
                   onClick={() => handleDelete(template.id)}
-                  className="text-slate-300 hover:text-red-500 transition-colors p-2"
+                  className="text-slate-300  transition-colors p-2"
                   aria-label="Delete template"
                 >
                   ✕

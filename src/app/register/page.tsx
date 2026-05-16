@@ -68,7 +68,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md bg-white/10 dark:bg-white/10 dark:bg-white/10 backdrop-blur-2xl border border-white/20 dark:border-white/20 dark:border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-slate-900 dark:text-white">
           <Link
             href="/"
-            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-white/60 hover:text-slate-900 dark:text-white transition-colors w-fit"
+            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-white/60  dark:text-white transition-colors w-fit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -133,7 +133,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-slate-900 font-extrabold py-3.5 rounded-xl hover:bg-slate-100 hover:scale-[1.02] active:scale-[0.98] transition-all mt-6 shadow-[0_0_20px_rgba(255,255,255,0.3)] disabled:opacity-70 disabled:hover:scale-100"
+              className="w-full bg-white text-slate-900 font-extrabold py-3.5 rounded-xl active:scale-[0.98] transition-all mt-6 shadow-[0_0_20px_rgba(255,255,255,0.3)] disabled:opacity-70"
             >
               {loading ? "Creating Account..." : "Register Now"}
             </button>
@@ -142,7 +142,7 @@ export default function RegisterPage() {
           <div className="mt-8 pt-8 border-t border-slate-200 dark:border-white/10 text-center">
             <p className="text-sm text-slate-500 dark:text-white/60 font-medium">
               Already have an account?{" "}
-              <Link href="/login" className="text-slate-900 dark:text-white font-bold hover:underline">
+              <Link href="/login" className="text-slate-900 dark:text-white font-bold ">
                 Sign In here
               </Link>
             </p>

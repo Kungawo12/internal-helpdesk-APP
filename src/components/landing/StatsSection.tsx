@@ -34,11 +34,11 @@ export default function StatsSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center group">
-              <div className="text-5xl md:text-6xl font-black text-white mb-3 tracking-tighter group-hover:scale-110 transition-transform duration-500">
+              <div className="text-5xl md:text-6xl font-black text-white mb-3 tracking-tighter  transition-transform duration-500">
                 {stat.value}
               </div>
               <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">{stat.label}</div>
-              <div className="w-8 h-1 bg-primary/20 mx-auto mt-6 rounded-full group-hover:w-16 transition-all duration-500" />
+              <div className="w-8 h-1 bg-primary/20 mx-auto mt-6 rounded-full  transition-all duration-500" />
             </div>
           ))}
         </div>
@@ -88,12 +88,12 @@ export default function StatsSection() {
 
         {/* Roles Visual */}
         <div className="relative rounded-[32px] border border-white/10 glass p-1 overflow-hidden animate-fade-in group">
-           <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+           <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none z-10 opacity-0  transition-opacity duration-1000" />
            <div className="rounded-[28px] overflow-hidden aspect-[21/9]">
               <img 
                 src="/images/roles_visuals.png" 
                 alt="Internal Roles Workflow" 
-                className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
+                className="w-full h-full object-cover grayscale-[0.2]  transition-all duration-1000"
               />
            </div>
         </div>

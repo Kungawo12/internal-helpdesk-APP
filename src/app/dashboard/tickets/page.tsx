@@ -109,7 +109,7 @@ export default function AdminTicketsPage() {
         </div>
         <button
           onClick={() => setShowWipePanel(!showWipePanel)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-sm font-bold text-red-400 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10  border border-red-500/20 rounded-xl text-sm font-bold text-red-400 transition-all"
         >
           ⚠ Danger Zone
         </button>
@@ -136,7 +136,7 @@ export default function AdminTicketsPage() {
             <button
               onClick={wipeAll}
               disabled={wipeConfirm !== "WIPE" || wiping}
-              className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-slate-900 dark:text-white text-sm font-extrabold rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_25px_rgba(239,68,68,0.5)]"
+              className="px-5 py-2.5 bg-red-600  text-slate-900 dark:text-white text-sm font-extrabold rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)]"
             >
               {wiping ? "Wiping..." : "Wipe All Tickets"}
             </button>
@@ -191,7 +191,7 @@ export default function AdminTicketsPage() {
           </thead>
           <tbody>
             {filtered.map((ticket) => (
-              <tr key={ticket.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-slate-800/5 transition-colors">
+              <tr key={ticket.id} className="border-b border-slate-100 dark:border-white/5  dark:bg-slate-800/5 transition-colors">
                  <td className="px-6 py-4">
                    <div className="flex items-center gap-2">
                      <p className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{ticket.title}</p>
@@ -226,7 +226,7 @@ export default function AdminTicketsPage() {
                   <button
                     onClick={() => deleteTicket(ticket.id, ticket.title)}
                     disabled={deleting === ticket.id}
-                    className="text-xs font-bold text-red-400/50 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-30"
+                    className="text-xs font-bold text-red-400/50   px-3 py-1.5 rounded-lg transition-colors disabled:opacity-30"
                   >
                     {deleting === ticket.id ? "..." : "Delete"}
                   </button>

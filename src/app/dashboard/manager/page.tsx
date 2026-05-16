@@ -271,7 +271,7 @@ export default function ManagerDashboard() {
             </thead>
             <tbody>
               {workload.map(s => (
-                <tr key={s.id} className="border-b border-slate-100 dark:border-slate-700  hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800  transition-colors">
+                <tr key={s.id} className="border-b border-slate-100 dark:border-slate-700    dark:bg-slate-800  transition-colors">
                   <td className="py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-black  text-slate-900 dark:text-white flex items-center justify-center text-xs font-bold">
@@ -326,7 +326,7 @@ export default function ManagerDashboard() {
                       style={{ height: `${Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2)}%`, opacity: d.count === 0 ? 0.1 : 1 }}
                     />
                     {d.count > 0 && (
-                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute -top-5 text-[10px] font-bold text-slate-500 dark:text-slate-500 opacity-0  transition-opacity">
                         {d.count}
                       </span>
                     )}
@@ -421,14 +421,14 @@ export default function ManagerDashboard() {
                   <tr 
                     key={ticket.id} 
                     onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}
-                    className="border-b border-slate-100 dark:border-slate-700  hover:bg-[#f4f4f4]  cursor-pointer transition-colors group"
+                    className="border-b border-slate-100 dark:border-slate-700 cursor-pointer transition-colors group"
                   >
                     <td className="p-6">
                       <div className="flex items-center gap-4">
                         {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
                          <div>
                             <div className="flex items-center gap-2">
-                              <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
+                              <p className="font-bold  transition-colors ">{ticket.title}</p>
                               <SlaBadge ticket={ticket} />
                             </div>
                             <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
@@ -469,7 +469,7 @@ export default function ManagerDashboard() {
                       {new Date(ticket.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-6 text-right">
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 inline-block text-black/20 group-hover:text-black   transition-colors transform group-hover:translate-x-1"><path d="M16.6075 11.8572L13.255 8.40897L14.1388 7.5L19 12.5L14.1388 17.5L13.255 16.591L16.6075 13.1428H5V11.8572H16.6075Z"></path></svg>
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 inline-block text-black/20    transition-colors transform "><path d="M16.6075 11.8572L13.255 8.40897L14.1388 7.5L19 12.5L14.1388 17.5L13.255 16.591L16.6075 13.1428H5V11.8572H16.6075Z"></path></svg>
                     </td>
                   </tr>
                 ))}

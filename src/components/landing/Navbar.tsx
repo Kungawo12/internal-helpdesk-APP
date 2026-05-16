@@ -38,7 +38,7 @@ export default function Navbar() {
               <Link 
                 key={item.label}
                 href={item.href} 
-                className="text-sm font-black text-slate-300 hover:text-white uppercase tracking-widest transition-colors"
+                className="text-sm font-black text-slate-300  uppercase tracking-widest transition-colors"
               >
                 {item.label}
               </Link>
@@ -46,7 +46,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/login" className="hidden sm:block text-sm font-black text-white px-6 py-2 rounded-xl hover:bg-white/5 transition-all">
+            <Link href="/login" className="hidden sm:block text-sm font-black text-white px-6 py-2 rounded-xl  transition-all">
               Sign In
             </Link>
             <Link href="/register" className="btn-primary px-8 h-12 text-xs">
@@ -71,7 +71,7 @@ export default function Navbar() {
                 key={item.label}
                 href={item.href} 
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-lg font-black text-slate-300 hover:text-white uppercase tracking-[0.2em] transition-colors py-2"
+                className="block text-lg font-black text-slate-300  uppercase tracking-[0.2em] transition-colors py-2"
               >
                 {item.label}
               </Link>

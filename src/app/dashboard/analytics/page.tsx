@@ -101,24 +101,24 @@ export default function AnalyticsPage() {
 
       {/* Section 1 - KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">SLA Compliance</p>
           <p className={`text-3xl font-extrabold ${complianceColor}`}>{data.sla.complianceRate}%</p>
           <p className="text-xs text-slate-500 dark:text-white/30 mt-1">target: 80%</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">SLA Breached</p>
           <p className={`text-3xl font-extrabold ${data.sla.totalBreached > 0 ? "text-red-400" : "text-slate-900 dark:text-white"}`}>
             {data.sla.totalBreached}
           </p>
           <p className="text-xs text-slate-500 dark:text-white/30 mt-1">active tickets past deadline</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">MTTR (Overall)</p>
           <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.mttr.all}h</p>
           <p className="text-xs text-slate-500 dark:text-white/30 mt-1">mean time to resolution</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 hover:bg-white dark:bg-slate-800/8 transition-all">
+        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
           <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">Resolved Tickets</p>
           <p className="text-3xl font-extrabold text-emerald-400">
             {data.byDepartment.IT.resolved + data.byDepartment.HR.resolved}
@@ -304,7 +304,7 @@ export default function AnalyticsPage() {
               </thead>
               <tbody>
                 {data.topResolvers.map((r, i) => (
-                  <tr key={r.name} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/3 transition-colors">
+                  <tr key={r.name} className="border-b border-slate-100 dark:border-white/5   dark:bg-slate-800/3 transition-colors">
                     <td className="p-4 font-bold text-slate-500 dark:text-white/40">{i + 1}.</td>
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{r.name}</td>
                     <td className="p-4">

@@ -43,7 +43,7 @@ export default function AiCopilotPanel({ ticketId, onUseReply }: AiCopilotPanelP
       </div>
 
       {!copilotData && !copilotLoading && (
-        <button onClick={runCopilot} className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
+        <button onClick={runCopilot} className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold  transition-colors">
           ✦ Get AI Summary & Draft Reply
         </button>
       )}
@@ -77,12 +77,12 @@ export default function AiCopilotPanel({ ticketId, onUseReply }: AiCopilotPanelP
             </div>
             <button
               onClick={() => onUseReply(copilotData.suggestedReply)}
-              className="mt-2 text-xs text-blue-600 font-bold hover:underline"
+              className="mt-2 text-xs text-blue-600 font-bold "
             >
               Use this reply →
             </button>
           </div>
-          <button onClick={() => setCopilotData(null)} className="text-xs text-slate-400 hover:text-slate-600">
+          <button onClick={() => setCopilotData(null)} className="text-xs text-slate-400 ">
             Regenerate
           </button>
         </div>

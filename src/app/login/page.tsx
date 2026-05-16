@@ -147,7 +147,7 @@ export default function LoginPage() {
               </p>
               <button
                 onClick={() => switchMode(false)}
-                className="border border-white/30 text-slate-900 dark:text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all text-sm"
+                className="border border-white/30 text-slate-900 dark:text-white px-8 py-2.5 rounded-full font-bold   transition-all text-sm"
               >
                 Sign In
               </button>
@@ -159,7 +159,7 @@ export default function LoginPage() {
               </p>
               <button
                 onClick={() => switchMode(true)}
-                className="border border-white/30 text-slate-900 dark:text-white px-8 py-2.5 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all text-sm"
+                className="border border-white/30 text-slate-900 dark:text-white px-8 py-2.5 rounded-full font-bold   transition-all text-sm"
               >
                 Sign Up
               </button>
@@ -191,7 +191,7 @@ function FormInner({
 
   return (
     <div className="max-w-sm mx-auto w-full">
-      <Link href="/" className="flex items-center gap-2 mb-6 text-slate-500 dark:text-slate-400 dark:text-white/40 hover:text-slate-700 dark:hover:text-slate-900 dark:text-white transition-colors w-fit">
+      <Link href="/" className="flex items-center gap-2 mb-6 text-slate-500 dark:text-slate-400 dark:text-white/40   dark:text-white transition-colors w-fit">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
@@ -232,7 +232,7 @@ function FormInner({
           <div className="flex items-center justify-between mb-1.5">
             <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 dark:text-white/50 uppercase tracking-widest">Password</label>
             {!isRegister && (
-              <Link href="/forgot-password" className="text-xs font-bold text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300 transition-colors">
+              <Link href="/forgot-password" className="text-xs font-bold text-orange-500 dark:text-orange-400   transition-colors">
                 Forgot?
               </Link>
             )}
@@ -259,7 +259,7 @@ function FormInner({
         <div style={fieldAnim(isRegister ? 5 : 4, active)}>
           <button
             type="submit" disabled={loading}
-            className="w-full bg-orange-500 text-slate-900 dark:text-white font-extrabold py-3 rounded-xl hover:bg-orange-600 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(249,115,22,0.25)] disabled:opacity-60 disabled:hover:scale-100 text-sm mt-1"
+            className="w-full bg-orange-500 text-slate-900 dark:text-white font-extrabold py-3 rounded-xl active:scale-[0.98] transition-all shadow-[0_0_24px_rgba(249,115,22,0.25)] disabled:opacity-60 text-sm mt-1"
           >
             {loading ? "Please wait..." : (isRegister ? "Create Account" : "Sign In")}
           </button>
@@ -269,7 +269,7 @@ function FormInner({
       {/* Mobile-only toggle */}
       <p className="mt-5 text-center text-xs text-slate-500 dark:text-slate-400 dark:text-white/40 font-medium md:hidden">
         {isRegister ? "Already have an account? " : "Don't have an account? "}
-        <button onClick={onSwitch} className="text-slate-900 dark:text-slate-900 dark:text-white font-bold hover:underline">
+        <button onClick={onSwitch} className="text-slate-900 dark:text-slate-900 dark:text-white font-bold ">
           {isRegister ? "Sign In" : "Sign Up"}
         </button>
       </p>

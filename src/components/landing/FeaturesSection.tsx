@@ -42,9 +42,9 @@ export default function FeaturesSection() {
           {features.map((f, i) => (
             <div 
               key={i} 
-              className="card p-8 group hover:translate-y-[-4px]"
+              className="card p-8 group"
             >
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-primary/20 transition-colors">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl mb-6  transition-colors">
                 {f.icon}
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">

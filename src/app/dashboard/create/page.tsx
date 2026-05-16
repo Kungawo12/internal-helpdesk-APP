@@ -222,49 +222,49 @@ function CreateTicketForm() {
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
           <Link
             href="/dashboard/create?type=IT"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6   dark:bg-slate-800/50  transition-colors cursor-pointer border-2  group"
           >
-            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🖥️</div>
+            <div className="text-4xl  transition-transform flex-shrink-0">🖥️</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">IT Support</h2>
               <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
                 Hardware, network, access issues, or system problems.
               </p>
             </div>
-            <div className="text-slate-500 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-500 dark:text-slate-500  font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=HR"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-blue-400 group"
+            className="card p-6 flex items-center gap-6   dark:bg-slate-800/50  transition-colors cursor-pointer border-2  group"
           >
-            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">👥</div>
+            <div className="text-4xl  transition-transform flex-shrink-0">👥</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">HR Support</h2>
               <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
                 Wages, holidays, policies, or general HR queries.
               </p>
             </div>
-            <div className="text-slate-500 dark:text-slate-500 group-hover:text-blue-600 font-bold">→</div>
+            <div className="text-slate-500 dark:text-slate-500  font-bold">→</div>
           </Link>
 
           <Link
             href="/dashboard/create?type=Software"
-            className="card p-6 flex items-center gap-6 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50  transition-colors cursor-pointer border-2 hover:border-purple-400 group"
+            className="card p-6 flex items-center gap-6   dark:bg-slate-800/50  transition-colors cursor-pointer border-2  group"
           >
-            <div className="text-4xl group-hover:scale-110 transition-transform flex-shrink-0">🐛</div>
+            <div className="text-4xl  transition-transform flex-shrink-0">🐛</div>
             <div className="flex-1 text-left">
               <h2 className="text-xl font-bold mb-1 ">Software Bug</h2>
               <p className="text-slate-600 dark:text-slate-500  font-medium text-sm">
                 Report a bug or unexpected behaviour in any application.
               </p>
             </div>
-            <div className="text-slate-500 dark:text-slate-500 group-hover:text-purple-600 font-bold">→</div>
+            <div className="text-slate-500 dark:text-slate-500  font-bold">→</div>
           </Link>
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/dashboard" className="text-slate-500 dark:text-slate-500 font-bold hover:text-slate-900 dark:text-white transition-colors">
+          <Link href="/dashboard" className="text-slate-500 dark:text-slate-500 font-bold  dark:text-white transition-colors">
             ← Back to Dashboard
           </Link>
         </div>
@@ -286,7 +286,7 @@ function CreateTicketForm() {
             Submit {typeParam} Support Ticket
           </h1>
         </div>
-        <Link href="/dashboard/create" className="text-slate-500 dark:text-slate-500 font-bold hover:text-slate-900 dark:text-white transition-colors">
+        <Link href="/dashboard/create" className="text-slate-500 dark:text-slate-500 font-bold  dark:text-white transition-colors">
           Change Type
         </Link>
       </div>
@@ -308,7 +308,7 @@ function CreateTicketForm() {
                 {templates.map(t => (
                   <button key={t.id} type="button"
                     onClick={() => applyTemplate(t)}
-                    className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all">
+                    className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800  text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 transition-all">
                     {t.name}
                   </button>
                 ))}
@@ -371,14 +371,14 @@ function CreateTicketForm() {
                 <div className="space-y-1">
                   {relatedArticles.map(article => (
                     <a key={article.id} href={`/dashboard/kb?article=${article.id}`} target="_blank"
-                       className="flex items-center justify-between p-2 rounded-lg hover:bg-blue-100 transition-colors">
+                       className="flex items-center justify-between p-2 rounded-lg  transition-colors">
                       <span className="text-sm font-medium text-blue-700">{article.title}</span>
                       <span className="text-xs text-blue-400">{article.views} views →</span>
                     </a>
                   ))}
                 </div>
                 <button onClick={() => setRelatedArticles([])}
-                  className="text-xs text-blue-400 hover:text-blue-600 mt-2 font-medium">
+                  className="text-xs text-blue-400  mt-2 font-medium">
                   None of these help — continue with my ticket
                 </button>
               </div>
@@ -474,7 +474,7 @@ function CreateTicketForm() {
               className={`relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed py-10 px-6 cursor-pointer transition-all select-none ${
                 isDragging
                   ? "border-blue-500 bg-blue-50 scale-[1.01]"
-                  : "border-slate-200 dark:border-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50"
+                  : "border-slate-200 dark:border-slate-700    dark:bg-slate-800/50"
               }`}
             >
               <div className="text-3xl">{isDragging ? "📥" : "📎"}</div>
@@ -508,11 +508,11 @@ function CreateTicketForm() {
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); removeFile(id); }}
-                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-slate-900 dark:text-white text-xs font-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-slate-900 dark:text-white text-xs font-black flex items-center justify-center opacity-0  transition-opacity "
                     >
                       ×
                     </button>
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-slate-900 dark:text-white text-[9px] font-semibold px-1.5 py-0.5 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-slate-900 dark:text-white text-[9px] font-semibold px-1.5 py-0.5 truncate opacity-0  transition-opacity">
                       {(file.size / 1024).toFixed(0)} KB
                     </div>
                   </div>
@@ -537,7 +537,7 @@ function CreateTicketForm() {
                     className={`py-3 rounded-xl border-2 text-xs font-black uppercase tracking-widest transition-all ${
                       priority === p
                         ? "bg-blue-600 border-blue-600 text-slate-900 dark:text-white shadow-lg"
-                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-500 hover:border-slate-300"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-500 "
                     }`}
                   >
                     {p}
@@ -574,7 +574,7 @@ function CreateTicketForm() {
 
             <Link
               href="/dashboard"
-              className="block text-center text-sm font-bold text-slate-500 dark:text-slate-500 hover:text-slate-600 dark:text-slate-500 transition-colors"
+              className="block text-center text-sm font-bold text-slate-500 dark:text-slate-500  dark:text-slate-500 transition-colors"
             >
               Cancel
             </Link>
@@ -588,7 +588,7 @@ function CreateTicketForm() {
             {typeParam === "IT" && (
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                 <li>• Restart your device and retry</li>
-                <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 hover:underline">known issues board</Link></li>
+                <li>• Check the <Link href="/dashboard/kb" className="text-blue-400 ">known issues board</Link></li>
                 <li>• Search the IT knowledge base</li>
               </ul>
             )}
@@ -596,7 +596,7 @@ function CreateTicketForm() {
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                 <li>• Check your employee handbook first</li>
                 <li>• Review your payslip portal for payroll queries</li>
-                <li>• Confirm your query isn&apos;t covered in <Link href="/dashboard/kb" className="text-blue-400 hover:underline">HR policies</Link></li>
+                <li>• Confirm your query isn&apos;t covered in <Link href="/dashboard/kb" className="text-blue-400 ">HR policies</Link></li>
               </ul>
             )}
             {typeParam === "Software" && (

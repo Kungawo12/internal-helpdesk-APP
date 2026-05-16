@@ -136,7 +136,7 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {filtered.map((user) => (
-              <tr key={user.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-slate-800/5 transition-colors">
+              <tr key={user.id} className="border-b border-slate-100 dark:border-white/5  dark:bg-slate-800/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800/10 text-slate-900 dark:text-white flex items-center justify-center font-black text-sm flex-shrink-0">
@@ -178,7 +178,7 @@ export default function AdminUsersPage() {
                       <button
                         onClick={() => deactivateUser(user.id)}
                         disabled={updating === user.id}
-                        className="text-xs font-bold text-red-400/60 hover:text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        className="text-xs font-bold text-red-400/60   px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                       >
                         {updating === user.id ? "..." : "Deactivate"}
                       </button>
@@ -186,7 +186,7 @@ export default function AdminUsersPage() {
                       <button
                         onClick={() => updateUser(user.id, { active: true })}
                         disabled={updating === user.id}
-                        className="text-xs font-bold text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        className="text-xs font-bold text-emerald-400/60   px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                       >
                         {updating === user.id ? "..." : "Reactivate"}
                       </button>
@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                       <button
                         onClick={() => deleteUserPermanently(user.id, user.name)}
                         disabled={updating === user.id}
-                        className="text-xs font-bold text-red-500/40 hover:text-red-500 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        className="text-xs font-bold text-red-500/40   px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                         title="Permanently delete user and all their data"
                       >
                         {updating === user.id ? "..." : "Delete"}
