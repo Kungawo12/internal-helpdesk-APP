@@ -12,13 +12,14 @@ type User = {
   _count: { tickets: number; assigned: number };
 };
 
-const ROLES = ["employee", "it_staff", "hr_staff", "admin"];
+const ROLES = ["employee", "it_staff", "hr_staff", "ai_staff", "manager", "admin"];
 
 const ROLE_BADGE: Record<string, string> = {
   admin: "bg-red-500/20 text-red-400 border-red-500/20",
   manager: "bg-purple-500/20 text-purple-400 border-purple-500/20",
   it_staff: "bg-blue-500/20 text-blue-400 border-blue-500/20",
   hr_staff: "bg-amber-500/20 text-amber-400 border-amber-500/20",
+  ai_staff: "bg-purple-500/20 text-purple-400 border-purple-500/20",
   employee: "bg-slate-500/20 text-slate-500 dark:text-slate-400 border-slate-500/20",
 };
 
