@@ -20,7 +20,7 @@ export async function PATCH(
       return Response.json({ error: "Cannot deactivate your own account" }, { status: 400 });
     }
 
-    const validRoles = ["employee", "it_staff", "hr_staff", "admin"];
+    const validRoles = ["employee", "it_staff", "hr_staff", "ai_staff", "admin"];
     const updateData: { role?: string; active?: boolean } = {};
 
     if (role !== undefined) {

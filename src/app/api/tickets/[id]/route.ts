@@ -37,6 +37,9 @@ export async function GET(
     if (role === "hr_staff" && ticket.type !== "HR") {
       return Response.json({ error: "Access denied" }, { status: 403 });
     }
+    if (role === "ai_staff" && ticket.type !== "Software") {
+      return Response.json({ error: "Access denied" }, { status: 403 });
+    }
 
     return Response.json(ticket);
   } catch (error) {

@@ -244,7 +244,7 @@ export default function DashboardLayout({
     { label: "New Ticket", path: "/dashboard/create", icon: "➕", show: role === "employee" },
     { label: "Knowledge Base", path: "/dashboard/kb", icon: "📚", show: role === "employee" },
     { label: "Ticket Queue", path: "/dashboard/staff", icon: "⚡", show: role === "it_staff" || role === "hr_staff" },
-    { label: "Software Queue", path: "/dashboard/software-staff", icon: "🐛", show: role === "it_staff" },
+    { label: "Bug Queue", path: "/dashboard/software-staff", icon: "🐛", show: role === "ai_staff" },
     { label: "Users", path: "/dashboard/users", icon: "👥", show: role === "admin" },
     { label: "All Tickets", path: "/dashboard/tickets", icon: "🎫", show: role === "admin" },
     { label: "Analytics", path: "/dashboard/analytics", icon: "📊", show: role === "admin" },

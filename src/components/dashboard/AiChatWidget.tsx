@@ -12,7 +12,7 @@ export default function AiChatWidget() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const role = session?.user?.role;
-  const greeting = (role === "it_staff" || role === "hr_staff")
+  const greeting = (role === "it_staff" || role === "hr_staff" || role === "ai_staff")
     ? "Hi! I'm your support assistant. Ask me anything while solving tickets — I can suggest solutions, look up KB articles, or help troubleshoot."
     : "Hi! I'm your IT & HR assistant. Ask me anything — I'll look it up in the Knowledge Base.";
   const [messages, setMessages] = useState<Message[]>([
@@ -31,7 +31,7 @@ export default function AiChatWidget() {
   }, [messages, open]);
 
   // Show for employees and staff (IT/HR)
-  if (!["employee", "it_staff", "hr_staff"].includes(session?.user?.role ?? "")) return null;
+  if (!["employee", "it_staff", "hr_staff", "ai_staff"].includes(session?.user?.role ?? "")) return null;
 
   const handleSend = async () => {
     if (!input.trim() || streaming) return;

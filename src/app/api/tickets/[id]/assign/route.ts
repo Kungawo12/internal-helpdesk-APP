@@ -35,7 +35,8 @@ export async function PATCH(
       }
 
       const validRole =
-        ((ticket.type === "IT" || ticket.type === "Software") && assignee.role === "it_staff") ||
+        (ticket.type === "IT" && assignee.role === "it_staff") ||
+        (ticket.type === "Software" && assignee.role === "ai_staff") ||
         (ticket.type === "HR" && assignee.role === "hr_staff");
 
       if (!validRole) {

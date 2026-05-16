@@ -45,7 +45,13 @@ export async function GET(req: Request) {
       });
     } else if (role === "it_staff") {
       tickets = await prisma.ticket.findMany({
-        where: { type: { in: ["IT", "Software"] }, ...paramFilter },
+        where: { type: "IT", ...paramFilter },
+        include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
+        orderBy: { createdAt: "desc" },
+      });
+    } else if (role === "ai_staff") {
+      tickets = await prisma.ticket.findMany({
+        where: { type: "Software", ...paramFilter },
         include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
         orderBy: { createdAt: "desc" },
       });
@@ -113,7 +119,7 @@ export async function POST(req: Request) {
     });
 
     // Notify + email all relevant department staff (non-blocking)
-    const staffRole = type === "HR" ? "hr_staff" : "it_staff"; // IT + Software both go to it_staff
+    const staffRole = type === "HR" ? "hr_staff" : type === "Software" ? "ai_staff" : "it_staff";
     prisma.user
       .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
       .then((staffMembers) => {

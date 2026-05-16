@@ -16,7 +16,7 @@ export async function PATCH(
     if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const { role, id: userId } = session.user;
-    if (role !== "it_staff" && role !== "hr_staff" && role !== "admin") {
+    if (role !== "it_staff" && role !== "hr_staff" && role !== "ai_staff" && role !== "admin") {
       return Response.json({ error: "Only staff can escalate tickets" }, { status: 403 });
     }
 

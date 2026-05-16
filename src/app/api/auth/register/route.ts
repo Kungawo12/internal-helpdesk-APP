@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { isRateLimited } from "@/lib/rateLimit";
 
-const validRoles = ["employee", "it_staff", "hr_staff", "admin"];
+const validRoles = ["employee", "it_staff", "hr_staff", "ai_staff", "admin"];
 
 export async function POST(req: Request) {
   try {

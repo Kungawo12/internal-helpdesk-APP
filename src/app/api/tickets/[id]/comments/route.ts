@@ -27,7 +27,8 @@ export async function GET(
     const { role, id: userId } = session.user;
     const canAccess =
       role === "admin" ||
-      (role === "it_staff" && ["IT", "Software"].includes(ticket.type)) ||
+      (role === "it_staff" && ticket.type === "IT") ||
+      (role === "ai_staff" && ticket.type === "Software") ||
       (role === "hr_staff" && ticket.type === "HR") ||
       ticket.creatorId === userId;
 
@@ -35,7 +36,7 @@ export async function GET(
       return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(role);
+    const isStaffOrAbove = ["it_staff", "hr_staff", "ai_staff", "admin"].includes(role);
 
     const comments = await prisma.comment.findMany({
       where: {
@@ -84,7 +85,8 @@ export async function POST(
     const postRole = session.user.role;
     const canAccessPost =
       postRole === "admin" ||
-      (postRole === "it_staff" && ["IT", "Software"].includes(ticketForPost.type)) ||
+      (postRole === "it_staff" && ticketForPost.type === "IT") ||
+      (postRole === "ai_staff" && ticketForPost.type === "Software") ||
       (postRole === "hr_staff" && ticketForPost.type === "HR") ||
       ticketForPost.creatorId === session.user.id;
 
@@ -92,7 +94,7 @@ export async function POST(
       return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const isStaffOrAbove = ["it_staff", "hr_staff", "admin"].includes(postRole);
+    const isStaffOrAbove = ["it_staff", "hr_staff", "ai_staff", "admin"].includes(postRole);
     const internal = isStaffOrAbove && isInternal === true;
 
     // Fetch creator info for notification (only when staff posts a public reply)

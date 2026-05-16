@@ -48,12 +48,13 @@ export async function sendTicketCreatedEmail(
   const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
   const priorityColor = priority === "urgent" ? "#dc2626" : priority === "high" ? "#d97706" : "#3b82f6";
-  const deptLabel = ticketType === "IT" ? "IT Support" : "HR Support";
+  const deptLabel = ticketType === "IT" ? "IT Support" : ticketType === "Software" ? "AI / Software Team" : "HR Support";
+  const accentColor = ticketType === "Software" ? "#7c3aed" : "#0f172a";
 
   const html = `
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      <div style="background:${accentColor};border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Karma Staff Helpdesk</span>
       </div>
 
       <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
@@ -223,12 +224,13 @@ export async function sendTicketAssignedEmail(
 ) {
   const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
-  const deptLabel = ticketType === "IT" ? "IT Support" : "HR Support";
+  const deptLabel = ticketType === "IT" ? "IT Support" : ticketType === "Software" ? "AI / Software Team" : "HR Support";
+  const accentColor = ticketType === "Software" ? "#7c3aed" : "#0f172a";
 
   const html = `
     <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
+      <div style="background:${accentColor};border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Karma Staff Helpdesk</span>
       </div>
       <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
         <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;">${deptLabel}</p>

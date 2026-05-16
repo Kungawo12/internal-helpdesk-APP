@@ -17,7 +17,7 @@ export async function PATCH(
     }
 
     const { role, id: userId } = session.user;
-    if (role !== "it_staff" && role !== "hr_staff" && role !== "admin") {
+    if (role !== "it_staff" && role !== "hr_staff" && role !== "ai_staff" && role !== "admin") {
       return Response.json({ error: "Only staff can resolve tickets" }, { status: 403 });
     }
 
