@@ -6679,3 +6679,118 @@
 **Fix:** Ensure that the JSX for the notification item is properly closed and completed. Add the closing tags and any necessary content to complete the structure.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:45 UTC
+> **Triggered by change in:** `src/app/dashboard/tickets/page.tsx`
+
+### 1. 🟠 Incomplete variable name in JSX
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 83 |
+
+**Description:** The variable `wipeConfi` is incomplete and should be `wipeConfirm`. This will cause a reference error when the component attempts to render the input field, leading to a failure in the UI and preventing users from confirming the wipe action.
+
+**Fix:** Change `value={wipeConfi` to `value={wipeConfirm` to ensure the correct state variable is referenced.
+
+---
+### 2. 🟡 Missing error handling for fetch requests
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 36-37, 61-62 |
+
+**Description:** The fetch requests for deleting a ticket and wiping all tickets do not handle errors properly. If the requests fail, the user will not receive any feedback, and the application may not behave as expected. This could lead to confusion and a poor user experience.
+
+**Fix:** Add error handling logic after the fetch calls to inform the user of any issues, such as displaying an error message or logging the error.
+
+---
+### 3. 🟠 Potential XSS vulnerability in user input
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 61 |
+
+**Description:** The `wipeConfirm` input value is directly used in a confirmation check without sanitization. If an attacker inputs a script or malicious content, it could lead to cross-site scripting (XSS) vulnerabilities when the value is rendered or processed.
+
+**Fix:** Sanitize the input value before using it in any logic or display, or use a library that handles input sanitization to prevent XSS attacks.
+
+---
+### 4. 🟡 Unhandled promise rejection in async functions
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/tickets/page.tsx` |
+| **Line** | 48, 66 |
+
+**Description:** The async functions `fetchTickets` and `wipeAll` do not handle promise rejections properly. If the fetch fails, it could lead to unhandled promise rejections, which may crash the application or lead to unexpected behavior.
+
+**Fix:** Wrap the fetch calls in try-catch blocks and handle any errors appropriately, such as displaying an error message to the user.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:45 UTC
+> **Triggered by change in:** `src/app/dashboard/ticket/[id]/page.tsx`
+
+### 1. 🟠 Missing error handling for ticket resolution
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/ticket/[id]/page.tsx` |
+| **Line** | 82-90 |
+
+**Description:** The `handleResolve` function does not handle errors when attempting to resolve a ticket. If the fetch request fails, the user will not receive any feedback, which can lead to confusion about whether the action was successful or not.
+
+**Fix:** Add error handling logic to notify the user if the ticket resolution fails, such as displaying an error message or logging the error to the UI.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:46 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Incomplete Article Detail View
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 69-70 |
+
+**Description:** The rendering of the selected article's detail view is incomplete, as the code snippet ends abruptly without closing the JSX elements or rendering the article content. This can lead to a runtime error or unexpected behavior when trying to display the article details.
+
+**Fix:** Ensure that the JSX for rendering the selected article is completed, including closing tags and rendering the necessary content such as title and body.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:47 UTC
+> **Triggered by change in:** `src/app/dashboard/kb/page.tsx`
+
+### 1. 🟠 Missing error handling for fetch failures
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/kb/page.tsx` |
+| **Line** | 45-46 |
+
+**Description:** The `fetchArticles` and `fetchArticleDetail` functions do not handle the case where the fetch request fails (i.e., `res.ok` is false). This could lead to the application displaying stale or no data without notifying the user of the error.
+
+**Fix:** Implement error handling logic to update the UI or state to reflect that an error occurred, such as setting an error message state or displaying a notification.
+
+---

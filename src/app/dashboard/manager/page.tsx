@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTickets } from "@/hooks/useTickets";
 import { useSession } from "next-auth/react";
+import SlaBadge from "@/components/ui/SlaBadge";
 
 type StaffWorkload = {
   id: string;
@@ -425,10 +426,13 @@ export default function ManagerDashboard() {
                     <td className="p-6">
                       <div className="flex items-center gap-4">
                         {ticket.priority === 'urgent' && <span className="text-red-500 font-extrabold">!</span>}
-                        <div>
-                           <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
-                           <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
-                        </div>
+                         <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold group-hover:text-blue-600 transition-colors ">{ticket.title}</p>
+                              <SlaBadge ticket={ticket} />
+                            </div>
+                            <p className="text-sm text-slate-500 dark:text-slate-500 ">{ticket.type}</p>
+                         </div>
                       </div>
                     </td>
                     <td className="p-6 hidden md:table-cell">

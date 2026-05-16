@@ -461,16 +461,6 @@ export default function TicketDetailPage() {
                           </div>
                         );
                       } else {
-                        const actionLabels: Record<string, string> = {
-                          CREATED: "raised this ticket",
-                          STATUS_CHANGED: `changed status from ${item.oldValue} → ${item.newValue}`,
-                          ASSIGNED: `assigned to ${item.newValue}`,
-                          UNASSIGNED: "removed assignee",
-                          RESOLVED: "resolved this ticket",
-                          COMMENT_ADDED: "left a comment",
-                          INTERNAL_NOTE: "added an internal note",
-                          SLA_BREACHED: "SLA deadline breached",
-                        };
                         const icons: Record<string, string> = {
                           CREATED: "🟢",
                           STATUS_CHANGED: "🔵",
@@ -481,15 +471,32 @@ export default function TicketDetailPage() {
                           INTERNAL_NOTE: "🔒",
                           SLA_BREACHED: "🔴",
                         };
+
+                        const renderAction = () => {
+                          const name = <span className="font-bold text-slate-900 dark:text-white">{item.user?.name}</span>;
+                          const time = <span className="text-xs text-slate-500 dark:text-slate-500 font-medium">· {timeAgo(item.createdAt)}</span>;
+                          const badge = (val: string) => <code className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">{val}</code>;
+
+                          switch(item.action) {
+                            case "CREATED": return <>{name} raised this ticket {time}</>;
+                            case "STATUS_CHANGED": return <>{name} changed status from {badge(item.oldValue)} → {badge(item.newValue)} {time}</>;
+                            case "ASSIGNED": return <>{name} assigned this ticket to {badge(item.newValue)} {time}</>;
+                            case "UNASSIGNED": return <>{name} removed the assignee {time}</>;
+                            case "RESOLVED": return <>{name} resolved this ticket {time}</>;
+                            case "COMMENT_ADDED": return <>{name} left a comment {time}</>;
+                            case "INTERNAL_NOTE": return <>{name} added an internal note {time}</>;
+                            case "SLA_BREACHED": return <span className="text-red-600 font-bold">⚠️ SLA deadline breached {time}</span>;
+                            default: return <>{name} {item.action} {time}</>;
+                          }
+                        };
+                        
                         return (
-                          <div key={item.id} className="flex gap-4 items-center text-sm text-slate-500 dark:text-slate-500 ">
+                          <div key={item.id} className="flex gap-4 items-center text-sm text-slate-500 dark:text-slate-500 py-1">
                             <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 text-lg">
                               {icons[item.action] || "ℹ️"}
                             </div>
-                            <div className="flex-1">
-                              <span className="font-bold text-slate-700 dark:text-slate-300 ">{item.user?.name}</span>{" "}
-                                {actionLabels[item.action] || item.action}{" "}
-                              <span className="text-xs text-slate-500 dark:text-slate-500 ">· {timeAgo(item.createdAt)}</span>
+                            <div className="flex-1 leading-relaxed">
+                              {renderAction()}
                             </div>
                           </div>
                         );

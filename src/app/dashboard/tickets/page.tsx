@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import SlaBadge from "@/components/ui/SlaBadge";
 
 type Ticket = {
   id: string;
@@ -12,6 +13,8 @@ type Ticket = {
   creator: { name: string; email: string } | null;
   assignee: { name: string; email: string } | null;
   feedback: { rating: number } | null;
+  slaResolutionDue: string | null;
+  slaBreached: boolean;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -189,10 +192,13 @@ export default function AdminTicketsPage() {
           <tbody>
             {filtered.map((ticket) => (
               <tr key={ticket.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:bg-slate-800/5 transition-colors">
-                <td className="px-6 py-4">
-                  <p className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{ticket.title}</p>
-                  <p className="text-xs text-white/20 font-mono mt-0.5">#{ticket.id.slice(0, 8)}</p>
-                </td>
+                 <td className="px-6 py-4">
+                   <div className="flex items-center gap-2">
+                     <p className="font-bold text-slate-900 dark:text-white text-sm line-clamp-1">{ticket.title}</p>
+                     <SlaBadge ticket={ticket} />
+                   </div>
+                   <p className="text-xs text-white/20 font-mono mt-0.5">#{ticket.id.slice(0, 8)}</p>
+                 </td>
                 <td className="px-6 py-4 hidden lg:table-cell">
                   <p className="text-sm font-semibold text-slate-500 dark:text-white/60">{ticket.creator?.name || "—"}</p>
                   <p className="text-xs text-white/20">{ticket.creator?.email || ""}</p>
