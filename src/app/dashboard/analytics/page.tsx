@@ -252,7 +252,7 @@ export default function AnalyticsPage() {
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
                   <div className="flex gap-0.5 mt-2">
                     {[1,2,3,4,5].map(s => (
-                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-slate-200 dark:text-slate-400 dark:text-white/20"}`}>★</span>
+                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-slate-200 dark:text-slate-600"}`}>★</span>
                     ))}
                   </div>
                 </div>

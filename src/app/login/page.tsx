@@ -199,7 +199,7 @@ function FormInner({
       </Link>
 
       <div className="mb-7" style={fieldAnim(0, active)}>
-        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white dark:text-white mb-1.5">
+        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-1.5">
           {isRegister ? "Create Account" : "Sign In"}
         </h2>
         <p className="text-slate-500 dark:text-slate-400 dark:text-white/50 text-sm font-medium">
@@ -267,9 +267,9 @@ function FormInner({
       </form>
 
       {/* Mobile-only toggle */}
-      <p className="mt-5 text-center text-xs text-slate-500 dark:text-slate-400 dark:text-white/40 font-medium md:hidden">
+      <p className="mt-5 text-center text-xs text-slate-500 dark:text-slate-400 font-medium md:hidden">
         {isRegister ? "Already have an account? " : "Don't have an account? "}
-        <button onClick={onSwitch} className="text-slate-900 dark:text-white dark:text-white font-bold ">
+        <button onClick={onSwitch} className="text-slate-900 dark:text-white font-bold ">
           {isRegister ? "Sign In" : "Sign Up"}
         </button>
       </p>
