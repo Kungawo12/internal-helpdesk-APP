@@ -6622,3 +6622,41 @@
 **Fix:** Complete the JSX element by properly closing the `<div>` and any other open tags before the end of the component. Ensure all elements are correctly structured.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:38 UTC
+> **Triggered by change in:** `src/app/dashboard/sla-policies/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/sla-policies/page.tsx` |
+| **Line** | 20-21 |
+
+**Description:** The fetch requests to the API do not include any authentication or authorization headers, which could expose sensitive data or allow unauthorized access to the API endpoints. This could lead to data breaches or manipulation of SLA policies by unauthorized users.
+
+**Fix:** Implement authentication mechanisms such as JWT tokens or session-based authentication and include the necessary headers in the fetch requests to secure the API calls.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:39 UTC
+> **Triggered by change in:** `src/app/dashboard/templates/page.tsx`
+
+### 1. 🟡 Incomplete TypeScript type for category
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/templates/page.tsx` |
+| **Line** | 12 |
+
+**Description:** The `category` field in the `TicketTemplate` type is defined as `string | null`, but in the `handleSubmit` function, it is being set to an empty string when no value is provided. This could lead to inconsistencies in the data model if the API expects a null value instead of an empty string.
+
+**Fix:** Update the `handleSubmit` function to set `category` to `null` instead of an empty string when no value is provided.
+
+---

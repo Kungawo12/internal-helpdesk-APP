@@ -247,7 +247,6 @@ export default function DashboardLayout({
     { label: "Users", path: "/dashboard/users", icon: "👥", show: role === "admin" },
     { label: "All Tickets", path: "/dashboard/tickets", icon: "🎫", show: role === "admin" },
     { label: "Analytics", path: "/dashboard/analytics", icon: "📊", show: role === "admin" },
-    { label: "KB Manage", path: "/dashboard/kb-manage", icon: "📖", show: role === "admin" },
   ].filter((item) => item.show === undefined || item.show);
 
   const sidebarW = collapsed ? "w-20" : "w-80";

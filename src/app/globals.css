@@ -14,8 +14,7 @@
 
 @layer base {
   body {
-    background: #f8fafc;
-    color: #374151;
+    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -132,31 +131,7 @@
   }
 
   .input-field {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 10px 16px;
-    color: #111827;
-    font-size: 14px;
-    width: 100%;
-    transition: all 0.2s ease;
-  }
-  
-  .dark .input-field {
-    background: #1e293b;
-    border-color: #334155;
-    color: #f8fafc;
-  }
-  
-  .input-field:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-  }
-  
-  .dark .input-field:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
+    @apply bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm w-full transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none;
   }
 
 /* Auth page background orb animation */
