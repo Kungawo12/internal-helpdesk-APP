@@ -35,14 +35,18 @@ const TYPE_ICON: Record<string, string> = {
 const CARDS_PER_PAGE = 9;
 
 const FAQ_ITEMS = [
-  { q: "How do I reset my password?", a: "Go to the login page and click 'Forgot Password'. Enter your work email and follow the link sent to you. If you don't receive it within 5 minutes, check your spam folder or raise an IT ticket.", type: "IT" },
-  { q: "How do I connect to the VPN?", a: "Download the VPN client from the IT portal. Use your work email and password to log in. If you're on Windows, look for the VPN icon in your system tray. Contact IT if you need the server address.", type: "IT" },
-  { q: "My computer won't turn on — what do I do?", a: "Check the power cable and ensure the outlet works. Hold the power button for 10 seconds to force a restart. If still unresponsive, raise an urgent IT ticket and use another machine in the meantime.", type: "IT" },
-  { q: "How do I request annual leave?", a: "Submit a leave request via the HR portal at least 2 weeks in advance for planned leave. Approval comes from your line manager. You'll receive an email confirmation once approved.", type: "HR" },
-  { q: "What is the sick leave policy?", a: "You are entitled to 10 paid sick days per year. For absences longer than 3 days, a medical certificate is required. Notify your manager and HR on the first day of absence.", type: "HR" },
-  { q: "How do I update my bank details for payroll?", a: "Submit a payroll change request via the HR portal under 'My Details → Banking'. Changes take effect from the next pay run. Contact HR directly for urgent updates.", type: "HR" },
-  { q: "How do I report a software bug?", a: "Click 'Software Bug' on your dashboard to create a ticket. Include the app name, steps to reproduce, and any error messages. Screenshots help the team resolve it faster.", type: "general" },
-  { q: "Who do I contact for an urgent issue?", a: "For urgent IT issues, call the IT desk directly or visit in person. For urgent HR matters, contact your HR officer directly. For critical software bugs affecting your work, use the Software Bug ticket with 'Urgent' priority.", type: "general" },
+  { q: "How do I request annual / earned leave?", a: "Submit your leave via the HRMS portal. Planning ahead is required: 1–3 days needs 2 days' notice; 3–5 days needs 1 week; more than 5 days needs 2 weeks. Your Karma Staff Manager and Client Representative must approve it. You accrue 18 Earned Leave days per year (1.5 per month). Maximum 3 leaves can be carried forward annually.", type: "HR" },
+  { q: "What is the dress code policy?", a: "Formal or semi-formal attire is required Monday to Thursday. Fridays allow a relaxed dress code. Ripped jeans, shorts, or unprofessional attire are never acceptable. For client meetings, full formal or company uniform is required. Non-compliance results in a verbal warning (₹500 fine) on the first instance, escalating to written warnings on repeat.", type: "HR" },
+  { q: "When does health insurance start?", a: "You become eligible for the company health insurance plan from Day 31 of employment. The plan covers you, your spouse, and your child, and is fully funded by Karma Staff.", type: "HR" },
+  { q: "When do I get paid and how does payroll work?", a: "Salaries are processed on or before the 7th working day of the following month, deposited directly to your approved bank account. Keep your bank details up to date. New trainees receive a stipend during their first month of training.", type: "HR" },
+  { q: "What happens if I'm late to log in?", a: "Arriving after 8:30 a.m. is counted as a half day. Logging in after your exact shift start time on Time Champ is a late login and impacts your Monthly KPI. First instance: verbal warning + ₹500 fine. Second: written warning + ₹1,000 fine. Third: final warning + ₹1,000. Fourth: termination. Unpaid fines are deducted from salary after 3 days.", type: "HR" },
+  { q: "What is the leave without pay (LOP) policy?", a: "All LOP must be supported by valid documentation. First LOP instance: HR counselling + ineligible for monthly MPR. Second: written warning + ineligible for quarterly MPR. Third: termination following due process. LOP results in proportional salary deductions and may affect performance appraisals.", type: "HR" },
+  { q: "How do I reset my password or fix a login issue?", a: "Go to the login page and click 'Forgot Password'. Enter your work email and follow the reset link. If you don't receive it within 5 minutes, check spam. For VPN or system access issues, always use company-provided secure connections. Raise an IT ticket if the problem persists.", type: "IT" },
+  { q: "Can I take company equipment home or work remotely?", a: "Office-based employees cannot remove company equipment (laptops, phones, etc.) from the workplace or work from home without explicit prior written approval from management. Unauthorised removal may result in disciplinary action including financial deductions.", type: "IT" },
+  { q: "What are the IT and data security rules?", a: "Company systems are for work use only — personal use during work hours is not acceptable. Never duplicate or distribute company software. Use company VPN for sensitive data. We adhere to SOC 2 standards. Report any security incident immediately. Negligent handling of data or assets can result in deductions from your paycheck.", type: "IT" },
+  { q: "How do I report a software bug?", a: "Click 'Software Bug' on your dashboard to create a ticket. Include the app name, steps to reproduce, any error messages, and screenshots. Mark as Urgent if it's causing data loss or blocking work. The AI/Software team will pick it up from the Software Bug Queue.", type: "general" },
+  { q: "How do I raise a grievance or report misconduct?", a: "Report the matter to your immediate Manager first. If unresolved or the Manager is involved, escalate in writing to higher-level leadership. All grievances are documented, investigated, and responded to in writing within 5 working days. Our open-door policy guarantees no retaliation. Integrity violations (fraud, data breaches, harassment) are zero-tolerance and typically result in termination.", type: "general" },
+  { q: "What are the rules around conflicts of interest and gifts?", a: "Disclose any potential conflict of interest to your Manager immediately. Outside business activities that interfere with Karma Staff work are prohibited. Gifts from vendors up to ₹1,000 are acceptable; anything above requires prior manager approval. All gifts must be disclosed to management right away.", type: "general" },
 ];
 
 const FAQ_TYPE_COLOR: Record<string, string> = {
@@ -239,8 +243,8 @@ function KbPortal() {
         <div className="flex items-center gap-5 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-700 dark:to-slate-800 rounded-2xl p-5 border border-slate-600">
           <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">📋</div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-white text-sm">Staff Handbook</p>
-            <p className="text-xs text-white/60 mt-0.5">Official policies, procedures, and guidelines for all staff</p>
+            <p className="font-bold text-white text-sm">Karma Staff Employee Handbook</p>
+            <p className="text-xs text-white/60 mt-0.5">Version 1.02 · Effective 1 July 2025 · Official policies, leave, pay & conduct guidelines</p>
           </div>
           <a
             href="/handbook.pdf"
