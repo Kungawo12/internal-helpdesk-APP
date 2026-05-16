@@ -34,6 +34,23 @@ const TYPE_ICON: Record<string, string> = {
 
 const CARDS_PER_PAGE = 9;
 
+const FAQ_ITEMS = [
+  { q: "How do I reset my password?", a: "Go to the login page and click 'Forgot Password'. Enter your work email and follow the link sent to you. If you don't receive it within 5 minutes, check your spam folder or raise an IT ticket.", type: "IT" },
+  { q: "How do I connect to the VPN?", a: "Download the VPN client from the IT portal. Use your work email and password to log in. If you're on Windows, look for the VPN icon in your system tray. Contact IT if you need the server address.", type: "IT" },
+  { q: "My computer won't turn on — what do I do?", a: "Check the power cable and ensure the outlet works. Hold the power button for 10 seconds to force a restart. If still unresponsive, raise an urgent IT ticket and use another machine in the meantime.", type: "IT" },
+  { q: "How do I request annual leave?", a: "Submit a leave request via the HR portal at least 2 weeks in advance for planned leave. Approval comes from your line manager. You'll receive an email confirmation once approved.", type: "HR" },
+  { q: "What is the sick leave policy?", a: "You are entitled to 10 paid sick days per year. For absences longer than 3 days, a medical certificate is required. Notify your manager and HR on the first day of absence.", type: "HR" },
+  { q: "How do I update my bank details for payroll?", a: "Submit a payroll change request via the HR portal under 'My Details → Banking'. Changes take effect from the next pay run. Contact HR directly for urgent updates.", type: "HR" },
+  { q: "How do I report a software bug?", a: "Click 'Software Bug' on your dashboard to create a ticket. Include the app name, steps to reproduce, and any error messages. Screenshots help the team resolve it faster.", type: "general" },
+  { q: "Who do I contact for an urgent issue?", a: "For urgent IT issues, call the IT desk directly or visit in person. For urgent HR matters, contact your HR officer directly. For critical software bugs affecting your work, use the Software Bug ticket with 'Urgent' priority.", type: "general" },
+];
+
+const FAQ_TYPE_COLOR: Record<string, string> = {
+  IT: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30",
+  HR: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30",
+  general: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30",
+};
+
 function highlight(text: string, query: string) {
   if (!query.trim()) return text;
   const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -66,6 +83,7 @@ function KbPortal() {
   const [articles, setArticles] = useState<KbArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("All");
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -127,7 +145,7 @@ function KbPortal() {
       <div className="max-w-4xl mx-auto space-y-6 pb-16 page-reveal">
         <button
           onClick={() => setSelectedArticle(null)}
-          className="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center gap-1.5"
+          className="text-sm font-semibold text-slate-500 dark:text-slate-400   transition-colors flex items-center gap-1.5"
         >
           ← Back to Knowledge Base
         </button>
@@ -204,11 +222,11 @@ function KbPortal() {
             />
             <div className="absolute right-2 top-2 flex gap-1">
               {searchInput && (
-                <button type="button" onClick={clearSearch} className="px-3 py-2 text-white/60 hover:text-white text-sm transition-colors">
+                <button type="button" onClick={clearSearch} className="px-3 py-2 text-white/60  text-sm transition-colors">
                   ✕
                 </button>
               )}
-              <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-xl transition-colors">
+              <button type="submit" className="px-4 py-2 bg-blue-600  text-white text-sm font-bold rounded-xl transition-colors">
                 Search
               </button>
             </div>
@@ -216,13 +234,65 @@ function KbPortal() {
         </div>
       </div>
 
+      {/* Handbook Resource */}
+      {!searchQuery && (
+        <div className="flex items-center gap-5 bg-gradient-to-r from-slate-800 to-slate-700 dark:from-slate-700 dark:to-slate-800 rounded-2xl p-5 border border-slate-600">
+          <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">📋</div>
+          <div className="flex-1 min-w-0">
+            <p className="font-bold text-white text-sm">Staff Handbook</p>
+            <p className="text-xs text-white/60 mt-0.5">Official policies, procedures, and guidelines for all staff</p>
+          </div>
+          <a
+            href="/handbook.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 px-4 py-2 bg-white text-slate-800 text-xs font-bold rounded-xl  transition-colors"
+          >
+            Open PDF →
+          </a>
+        </div>
+      )}
+
+      {/* FAQ Section */}
+      {!searchQuery && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">Frequently Asked Questions</h2>
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">{FAQ_ITEMS.length}</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {FAQ_ITEMS.map((item, i) => (
+              <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-start gap-3 p-4 text-left   transition-colors"
+                >
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5 flex-shrink-0 ${FAQ_TYPE_COLOR[item.type]}`}>
+                    {item.type === "general" ? "General" : item.type}
+                  </span>
+                  <span className="text-sm font-bold text-slate-800 dark:text-white flex-1 leading-snug">{item.q}</span>
+                  <svg className={`w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5 transition-transform ${openFaq === i ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {openFaq === i && (
+                  <div className="px-4 pb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-3">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Search result count */}
       {searchQuery && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
             {filtered.length} result{filtered.length !== 1 ? "s" : ""} for <span className="font-bold text-slate-900 dark:text-white">&ldquo;{searchQuery}&rdquo;</span>
           </p>
-          <button onClick={clearSearch} className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline">
+          <button onClick={clearSearch} className="text-xs text-blue-600 dark:text-blue-400 font-bold ">
             Clear search
           </button>
         </div>
@@ -240,7 +310,7 @@ function KbPortal() {
                 className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 border ${
                   filterType === t
                     ? "bg-slate-800 dark:bg-slate-700 text-white border-slate-800 dark:border-slate-600"
-                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700   "
                 }`}
               >
                 {t === "IT" ? "💻" : t === "HR" ? "👥" : t === "general" ? "📖" : "🗂️"}
@@ -273,14 +343,14 @@ function KbPortal() {
           <div className="text-6xl mb-4 opacity-20">📚</div>
           <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No articles found</h3>
           <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">Try different keywords or browse all categories.</p>
-          {searchQuery && <button onClick={clearSearch} className="text-sm text-blue-600 dark:text-blue-400 font-bold hover:underline">Clear search</button>}
+          {searchQuery && <button onClick={clearSearch} className="text-sm text-blue-600 dark:text-blue-400 font-bold ">Clear search</button>}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {visible.map((article) => (
             <div
               key={article.id}
-              className={`group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all flex flex-col ${TYPE_LEFT[article.type]}`}
+              className={`group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden    transition-all flex flex-col ${TYPE_LEFT[article.type]}`}
             >
               <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-3">
@@ -292,7 +362,7 @@ function KbPortal() {
 
                 <h3
                   onClick={() => fetchArticleDetail(article.id)}
-                  className="text-base font-bold text-slate-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors cursor-pointer"
+                  className="text-base font-bold text-slate-900 dark:text-white mb-2 leading-snug  dark: transition-colors cursor-pointer"
                   dangerouslySetInnerHTML={{ __html: highlight(article.title, searchQuery) }}
                 />
 
@@ -300,7 +370,7 @@ function KbPortal() {
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed pt-2 pb-3">
                     {article.content?.slice(0, 400)}{(article.content?.length ?? 0) > 400 ? "..." : ""}
                   </p>
-                  <button onClick={() => fetchArticleDetail(article.id)} className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors">
+                  <button onClick={() => fetchArticleDetail(article.id)} className="text-xs font-bold text-blue-600 dark:text-blue-400  transition-colors">
                     Read full article →
                   </button>
                 </div>
@@ -322,7 +392,7 @@ function KbPortal() {
                 </div>
                 <button
                   onClick={() => setExpandedId(expandedId === article.id ? null : article.id)}
-                  className="text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  className="text-[11px] font-bold text-slate-500 dark:text-slate-400   transition-colors"
                 >
                   {expandedId === article.id ? "▲ Less" : "▼ Preview"}
                 </button>
@@ -335,17 +405,17 @@ function KbPortal() {
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-8">
           <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}
-            className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed">
+            className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl   transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed">
             ← Prev
           </button>
           {Array.from({ length: totalPages }).map((_, i) => (
             <button key={i} onClick={() => setPage(i)}
-              className={`w-9 h-9 rounded-xl text-sm font-bold transition-all ${page === i ? "bg-slate-800 dark:bg-slate-600 text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+              className={`w-9 h-9 rounded-xl text-sm font-bold transition-all ${page === i ? "bg-slate-800 dark:bg-slate-600 text-white" : "text-slate-500 dark:text-slate-400  "}`}>
               {i + 1}
             </button>
           ))}
           <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1}
-            className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed">
+            className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl   transition-all text-sm font-semibold disabled:opacity-30 disabled:cursor-not-allowed">
             Next →
           </button>
         </div>
@@ -357,7 +427,7 @@ function KbPortal() {
           <p className="font-bold text-slate-800 dark:text-slate-200">Can&apos;t find what you&apos;re looking for?</p>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Our support team is ready to help. Raise a ticket and we&apos;ll get back to you.</p>
         </div>
-        <a href="/dashboard/create" className="flex-shrink-0 px-6 py-2.5 bg-slate-800 dark:bg-slate-700 text-white text-sm font-bold rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors">
+        <a href="/dashboard/create" className="flex-shrink-0 px-6 py-2.5 bg-slate-800 dark:bg-slate-700 text-white text-sm font-bold rounded-xl   transition-colors">
           Raise a Ticket →
         </a>
       </div>

@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
-import AiCopilotPanel from "@/components/tickets/AiCopilotPanel";
 import SlaBadge from "@/components/ui/SlaBadge";
 
 
@@ -228,7 +227,7 @@ export default function TicketDetailPage() {
       <div className="flex items-center justify-between">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:text-white   transition-colors"
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-500  dark:text-white   transition-colors"
         >
           <span>←</span> Back to Dashboard
         </button>
@@ -396,13 +395,13 @@ export default function TicketDetailPage() {
                <div className="space-y-2">
                  {attachments.map(a => (
                    <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
-                     className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-800  hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50  transition-colors group">
+                     className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-slate-800    dark:bg-slate-800/50  transition-colors group">
                      <span className="text-2xl">{a.filename.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? "🖼️" : a.filename.match(/\.pdf$/i) ? "📄" : "📎"}</span>
                      <div className="flex-1 min-w-0">
-                       <p className="text-sm font-semibold text-slate-900 dark:text-white  truncate group-hover:text-blue-600">{a.filename}</p>
+                       <p className="text-sm font-semibold text-slate-900 dark:text-white  truncate ">{a.filename}</p>
                        <p className="text-xs text-slate-500 dark:text-slate-500 ">{(a.size / 1024).toFixed(1)} KB · {a.uploadedBy?.name} · {new Date(a.createdAt).toLocaleDateString()}</p>
                      </div>
-                     <span className="text-slate-500 dark:text-slate-500  group-hover:text-blue-600 text-xs font-bold">↗</span>
+                     <span className="text-slate-500 dark:text-slate-500   text-xs font-bold">↗</span>
                    </a>
                  ))}
                </div>
@@ -601,7 +600,7 @@ export default function TicketDetailPage() {
                       <button
                         onClick={handleEscalate}
                         disabled={escalating}
-                        className="w-full py-2.5 px-4 rounded-xl border-2 border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100 text-sm font-bold transition-all"
+                        className="w-full py-2.5 px-4 rounded-xl border-2 border-orange-200 text-orange-600 bg-orange-50  text-sm font-bold transition-all"
                       >
                         {escalating ? "Escalating..." : "⬆ Escalate Priority"}
                       </button>
@@ -611,9 +610,6 @@ export default function TicketDetailPage() {
                     </div>
                   )}
 
-                  {(isStaff || role === 'admin') && (
-                    <AiCopilotPanel ticketId={id} onUseReply={(text) => setNewComment(text)} />
-                  )}
 
                  {ticket.slaResolutionDue && ticket.status !== "resolved" && (
                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
@@ -689,7 +685,7 @@ export default function TicketDetailPage() {
                              type="button" 
                              onClick={() => setRating(s)}
                              className={`text-2xl transition-colors ${
-                               rating >= s ? "text-amber-400" : "text-slate-200 hover:text-slate-300"
+                               rating >= s ? "text-amber-400" : "text-slate-200 "
                              }`}
                            >
                              ★

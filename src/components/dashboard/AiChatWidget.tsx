@@ -11,8 +11,12 @@ interface Message {
 export default function AiChatWidget() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const role = session?.user?.role;
+  const greeting = (role === "it_staff" || role === "hr_staff")
+    ? "Hi! I'm your support assistant. Ask me anything while solving tickets — I can suggest solutions, look up KB articles, or help troubleshoot."
+    : "Hi! I'm your IT & HR assistant. Ask me anything — I'll look it up in the Knowledge Base.";
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! I'm your IT & HR assistant. Ask me anything — I'll look it up in the Knowledge Base." },
+    { role: "assistant", content: greeting },
   ]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -26,8 +30,8 @@ export default function AiChatWidget() {
     if (open) scrollToBottom();
   }, [messages, open]);
 
-  // Only show this widget when role === 'employee'
-  if (session?.user?.role !== "employee") return null;
+  // Show for employees and staff (IT/HR)
+  if (!["employee", "it_staff", "hr_staff"].includes(session?.user?.role ?? "")) return null;
 
   const handleSend = async () => {
     if (!input.trim() || streaming) return;
@@ -78,7 +82,7 @@ export default function AiChatWidget() {
                 <p className="text-xs text-white/70">Ask me anything</p>
               </div>
             </div>
-            <button onClick={() => setOpen(false)} className="text-white/80 hover:text-white">
+            <button onClick={() => setOpen(false)} className="text-white/80 ">
               ✕
             </button>
           </div>
@@ -123,7 +127,7 @@ export default function AiChatWidget() {
       {/* Toggle Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-all"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-600  text-white rounded-full shadow-2xl flex items-center justify-center transition-all"
         aria-label="Toggle AI Chat"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

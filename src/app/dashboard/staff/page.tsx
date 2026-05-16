@@ -132,13 +132,13 @@ export default function StaffQueuePage() {
             <span className="text-sm font-bold">{selectedIds.length} selected</span>
             <button
               onClick={handleBulkClose}
-              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/20 hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900/10 dark:hover:bg-white dark:bg-slate-800 dark:hover:bg-slate-900/20 dark:bg-slate-900/20 rounded-lg transition-colors"
+              className="text-xs font-bold px-3 py-1.5 bg-white dark:bg-slate-900/20 rounded-lg transition-colors"
             >
               Close all
             </button>
             <button
               onClick={() => setSelectedIds([])}
-              className="text-xs text-slate-500 dark:text-white/50 hover:text-slate-900 dark:text-white ml-auto font-bold transition-colors"
+              className="text-xs text-slate-500 dark:text-white/50 ml-auto font-bold transition-colors"
             >
               Clear
             </button>
@@ -160,7 +160,7 @@ export default function StaffQueuePage() {
               className={`px-4 py-2 text-sm font-bold rounded-full transition-colors whitespace-nowrap flex items-center gap-2 ${
                 statusFilter === tab.value
                   ? "bg-black text-slate-900 dark:text-white"
-                  : "text-slate-500 dark:text-slate-500  hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 "
+                  : "text-slate-500 dark:text-slate-500"
               }`}
             >
               {tab.label}
@@ -180,10 +180,12 @@ export default function StaffQueuePage() {
             </div>
           ) : (
             activeTickets.map((ticket) => (
-              <div key={ticket.id} className={`card p-6 group hover:bg-[#fafafa] dark:hover:bg-slate-100 dark:bg-slate-800/50    relative border-l-4 ${
+              <div key={ticket.id} className={`card p-6 group relative border-l-4 ${
                 ticket.type === 'IT' ? 'border-l-blue-500' :
                 ticket.type === 'HR' ? 'border-l-amber-500' :
                 ticket.type === 'Software' ? 'border-l-purple-500' : 'border-l-slate-300'
+              } ${
+                ticket.status === 'in_progress' ? 'bg-amber-50 dark:bg-amber-900/20' : 'bg-white dark:bg-slate-800'
               } ${
                 ticket.priority === 'urgent' ? 'border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]' : ''
               }`}>
@@ -214,7 +216,7 @@ export default function StaffQueuePage() {
                       <span className="text-sm text-slate-500 dark:text-slate-500  font-mono font-bold uppercase">#{ticket.id.slice(0, 8)}</span>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold cursor-pointer group-hover:text-blue-600 transition-colors " onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+                      <h3 className="text-2xl font-bold cursor-pointer transition-colors " onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                         {ticket.title}
                       </h3>
                       <p className="text-lg text-slate-500 dark:text-slate-500  mt-2 line-clamp-2">
@@ -251,7 +253,7 @@ export default function StaffQueuePage() {
                     {ticket.status === 'in_progress' && resolvingId !== ticket.id && (
                       <button 
                         onClick={() => setResolvingId(ticket.id)}
-                        className="btn-primary bg-green-600 hover:bg-green-700 hover:scale-105 w-full py-3 text-sm"
+                        className="btn-primary bg-green-600 w-full py-3 text-sm"
                       >
                         Resolve Issue
                       </button>
@@ -294,7 +296,7 @@ export default function StaffQueuePage() {
           <h2 className="text-xl font-bold tracking-tight mb-6 pb-4 border-b border-slate-200 dark:border-slate-700  ">Recently Resolved</h2>
           <div className="space-y-4">
             {resolvedTickets.slice(0, 5).map((ticket) => (
-              <div key={ticket.id} className="p-4 rounded-xl bg-white dark:bg-slate-900  hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-800/50  cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
+              <div key={ticket.id} className="p-4 rounded-xl bg-white dark:bg-slate-900 cursor-pointer transition-colors shadow-sm" onClick={() => router.push(`/dashboard/ticket/${ticket.id}`)}>
                 <p className="text-sm font-bold truncate mb-2 ">{ticket.title}</p>
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="text-green-600">Resolved</span>
