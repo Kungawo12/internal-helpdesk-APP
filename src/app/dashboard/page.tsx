@@ -324,11 +324,9 @@ export default function DashboardPage() {
     if (!dismissed && role === "employee") setShowBanner(true);
   }, [role]);
 
-  // Admin gets their own full view
-  if (role === "admin") {
-    return <AdminDashboard name={session?.user?.name || "Admin"} />;
-  }
-
+  // These useMemo calls must be declared before any conditional returns to satisfy
+  // the Rules of Hooks. They are safe to call even when role === "admin" because
+  // allTickets will simply be an empty array in that branch.
   const stats = useMemo(() => ({
     total: allTickets.length,
     open: allTickets.filter(t => t.status === "open").length,
@@ -344,6 +342,11 @@ export default function DashboardPage() {
       return matchesStatus && matchesSearch;
     });
   }, [allTickets, statusFilter, search]);
+
+  // Admin gets their own full view — placed after all hooks
+  if (role === "admin") {
+    return <AdminDashboard name={session?.user?.name || "Admin"} />;
+  }
 
   if (loading) {
     return (

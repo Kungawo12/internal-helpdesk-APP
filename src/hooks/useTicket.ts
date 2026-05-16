@@ -35,9 +35,11 @@ export function useTicket(id: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTicket = useCallback(async () => {
+  const fetchTicket = useCallback(async (isInitial = false) => {
     try {
-      setLoading(true);
+      // Only show the full loading spinner on the initial fetch, not on background polls.
+      // Setting loading=true on every poll would unmount the entire detail view every 30s.
+      if (isInitial) setLoading(true);
       const res = await fetch(`/api/tickets/${id}`);
       if (!res.ok) throw new Error("Failed to fetch ticket protocols");
       const data = await res.json();
@@ -46,13 +48,13 @@ export function useTicket(id: string) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Critical protocol failure");
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
-    if (id) fetchTicket();
-    const interval = setInterval(() => { if (id) fetchTicket(); }, 30000);
+    if (id) fetchTicket(true);
+    const interval = setInterval(() => { if (id) fetchTicket(false); }, 30000);
     return () => clearInterval(interval);
   }, [id, fetchTicket]);
 
