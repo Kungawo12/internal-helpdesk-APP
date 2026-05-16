@@ -691,17 +691,17 @@ function CreateTicketForm() {
             </p>
             {typeParam === "IT" && (
               <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                Call IT support directly: <strong className="text-slate-900 dark:text-white">ext. 4357</strong> or visit <strong className="text-slate-900 dark:text-white">Desk 2B, Floor 3</strong>.
+                Call IT support directly on <strong className="text-slate-900 dark:text-white">Teams</strong> or visit the <strong className="text-slate-900 dark:text-white">IT Desk</strong>.
               </p>
             )}
             {typeParam === "HR" && (
               <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                Speak to your HR Business Partner directly: <strong className="text-slate-900 dark:text-white">ext. 5200</strong> or visit <strong className="text-slate-900 dark:text-white">HR Office, Floor 2</strong>. For sensitive matters, request a private meeting.
+                Call HR support directly on <strong className="text-slate-900 dark:text-white">Teams</strong> or visit the <strong className="text-slate-900 dark:text-white">HR office</strong>. For sensitive matters, request a private meeting.
               </p>
             )}
             {typeParam === "Software" && (
               <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                Report critical bugs to your team lead immediately. For data loss or security issues, call the IT helpdesk: <strong className="text-slate-900 dark:text-white">ext. 4357</strong> — do not wait for a ticket response.
+                Report critical bugs to the <strong className="text-slate-900 dark:text-white">AI team</strong> for data loss or security issues, contact the <strong className="text-slate-900 dark:text-white">AI manager</strong>.
               </p>
             )}
           </div>

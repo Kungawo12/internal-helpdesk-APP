@@ -118,7 +118,7 @@ function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-50">
             {notifications.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-500 text-center py-8">No notifications yet</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">No notifications yet</p>
             ) : (
               notifications.map((n) => (
                 <button
@@ -127,12 +127,12 @@ function NotificationBell() {
                     if (n.ticketId) router.push(`/dashboard/ticket/${n.ticketId}`);
                     setOpen(false);
                   }}
-                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-slate-800 transition-colors ${!n.read ? "bg-blue-50/60" : ""}`}
+                  className={`w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${!n.read ? "bg-blue-50/60 dark:bg-blue-900/20" : ""}`}
                 >
                   <span className="text-lg flex-shrink-0 mt-0.5">{typeIcon[n.type] ?? "🔔"}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-800 font-medium leading-snug">{n.message}</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-500 mt-0.5">
+                    <p className="text-sm text-slate-800 dark:text-slate-200 font-medium leading-snug">{n.message}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                       {new Date(n.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
@@ -140,6 +140,87 @@ function NotificationBell() {
                 </button>
               ))
             )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProfileDropdown({ session, role }: { session: ReturnType<typeof useSession>["data"]; role: string | undefined }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+        aria-label="Profile menu"
+      >
+        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 flex-shrink-0">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <div className="flex flex-col leading-tight text-left">
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{session?.user?.name?.split(" ")[0]}</span>
+          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{role?.replace("_", " ")}</span>
+        </div>
+        <svg className={`w-3 h-3 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-12 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden">
+          {/* User info header */}
+          <div className="px-4 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-base border border-blue-200 dark:border-slate-600">
+                {session?.user?.name?.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-black text-slate-900 dark:text-white">{session?.user?.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{session?.user?.email}</p>
+                <span className="inline-block mt-0.5 text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{role?.replace("_", " ")}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu items */}
+          <div className="py-2">
+            <Link
+              href="/dashboard/profile"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            >
+              <svg className="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              My Profile
+            </Link>
+          </div>
+
+          {/* Sign out */}
+          <div className="border-t border-slate-100 dark:border-slate-700 py-2">
+            <button
+              onClick={() => signOut({ redirect: false }).then(() => { window.location.href = "/"; })}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Sign Out
+            </button>
           </div>
         </div>
       )}
@@ -243,30 +324,8 @@ export default function DashboardLayout({
           <NotificationBell />
           {/* Divider */}
           <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1" />
-          {/* Profile */}
-          <Link
-            href="/dashboard/profile"
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
-          >
-            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-sm border border-blue-200 dark:border-slate-600 flex-shrink-0">
-              {session?.user?.name?.charAt(0)}
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-bold text-slate-900 dark:text-white">{session?.user?.name?.split(" ")[0]}</span>
-              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{role?.replace("_", " ")}</span>
-            </div>
-          </Link>
-          {/* Sign out */}
-          <button
-            onClick={() => signOut({ redirect: false }).then(() => { window.location.href = "/"; })}
-            className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-all shadow-sm"
-            aria-label="Sign out"
-            title="Sign Out"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
+          {/* Profile dropdown */}
+          <ProfileDropdown session={session} role={role} />
         </div>
 
         {/* Mobile Header */}

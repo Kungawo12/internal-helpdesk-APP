@@ -6469,3 +6469,156 @@
 **Fix:** Ensure that user input is properly sanitized and validated before being used in the URL. Consider using a library like `DOMPurify` to clean the input or validate it against a whitelist of acceptable characters.
 
 ---
+
+---
+
+## 🔍 Watchdog Scan — 15 May 2026, 15:12 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 27 |
+
+**Description:** The fetch call to "/api/admin-portal/stats" does not handle potential security issues such as CSRF attacks or unauthorized access. If the API does not have proper authentication and authorization checks, it could expose sensitive admin statistics to unauthorized users.
+
+**Fix:** Ensure that the API endpoint is protected with authentication and authorization checks, and consider implementing CSRF protection for the fetch request.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:34 UTC
+> **Triggered by change in:** `src/app/page.tsx`
+
+### 1. 🟠 Unconditional Redirect
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/page.tsx` |
+| **Line** | 4 |
+
+**Description:** The `RootPage` component unconditionally redirects to the "/login" route every time it is rendered. This can lead to an infinite redirect loop if the "/login" page also redirects back to the root page, causing a poor user experience and potential accessibility issues.
+
+**Fix:** Implement a condition to check if the user is authenticated before redirecting to the "/login" page. This can be done by checking a user authentication state or cookie.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:34 UTC
+> **Triggered by change in:** `src/app/dashboard/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/page.tsx` |
+| **Line** | 36-38 |
+
+**Description:** The fetch call to "/api/admin-portal/stats" does not validate the response or handle potential errors effectively. If the API endpoint returns sensitive information or if an attacker can manipulate the endpoint, this could lead to data exposure or unauthorized access.
+
+**Fix:** Implement proper error handling and validation of the response data. Consider using a library like Axios that can handle errors more gracefully, and ensure that the API endpoint is secured with proper authentication and authorization checks.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:34 UTC
+> **Triggered by change in:** `src/app/dashboard/create/page.tsx`
+
+### 1. 🟠 Insecure API Fetch
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/create/page.tsx` |
+| **Line** | 75-76 |
+
+**Description:** The application fetches data from an API endpoint without validating the response or handling potential errors properly. This could lead to issues such as displaying incorrect data or exposing sensitive information if the API is compromised.
+
+**Fix:** Implement error handling for the fetch requests and validate the response data before using it in the application.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:35 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Incomplete JSX element
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 92 |
+
+**Description:** The JSX element for the notification item is incomplete, which will lead to a syntax error and prevent the component from rendering correctly. This will cause the notifications feature to fail entirely.
+
+**Fix:** Complete the JSX element by adding the closing tags and ensuring that the structure is valid.
+
+---
+### 2. 🟡 Missing error handling for markAllRead
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 56 |
+
+**Description:** The `markAllRead` function does not handle errors that may occur during the fetch request. If the request fails, the user will not be notified, and the state will not be updated correctly, potentially leading to confusion about the read status of notifications.
+
+**Fix:** Add a try-catch block around the fetch call in `markAllRead` to handle errors and provide user feedback if the operation fails.
+
+---
+### 3. 🟡 Potential memory leak with setInterval
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `MEDIUM` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 43 |
+
+**Description:** The `setInterval` function in the `useEffect` hook does not have a cleanup mechanism for when the component unmounts. This can lead to a memory leak if the component is removed from the DOM while the interval is still running.
+
+**Fix:** Ensure that the interval is cleared in the cleanup function of the `useEffect` to prevent memory leaks.
+
+---
+### 4. 🟢 No loading state for notifications
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `LOW` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 31 |
+
+**Description:** There is no loading state or indication for users while notifications are being fetched. This can lead to a poor user experience, as users may not know if the app is processing their request or if there is an issue.
+
+**Fix:** Introduce a loading state that displays a spinner or message while notifications are being fetched, and update the UI accordingly.
+
+---
+
+---
+
+## 🔍 Watchdog Scan — 16 May 2026, 04:35 UTC
+> **Triggered by change in:** `src/app/dashboard/layout.tsx`
+
+### 1. 🟠 Incomplete JSX element
+
+| Field | Value |
+|-------|-------|
+| **Severity** | `HIGH` |
+| **File** | `src/app/dashboard/layout.tsx` |
+| **Line** | 102 |
+
+**Description:** The JSX element for the notification item is incomplete, which will lead to a syntax error and prevent the component from rendering properly. This will cause the notifications feature to fail, impacting user experience.
+
+**Fix:** Complete the JSX element by properly closing the `<div>` and any other open tags before the end of the component. Ensure all elements are correctly structured.
+
+---
