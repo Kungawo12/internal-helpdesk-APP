@@ -92,11 +92,11 @@ export default function StaffQueuePage() {
   );
 
   return (
-    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8 animate-fade-in pb-32">
-      <div className="lg:col-span-3 space-y-8">
-        <div className="flex items-center justify-between mb-12">
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 animate-fade-in pb-16 md:pb-24">
+      <div className="lg:col-span-3 space-y-6 md:space-y-8">
+        <div className="flex items-center justify-between mb-6 md:mb-12">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3 ">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3 ">
               Staff Operations
               {activeTickets.length > 0 && (
                 <span className="inline-flex items-center justify-center bg-red-500 text-slate-900 dark:text-white text-sm font-black rounded-full px-3 py-1 shadow-[0_0_15px_rgba(239,68,68,0.5)]">
@@ -105,7 +105,7 @@ export default function StaffQueuePage() {
               )}
             </h1>
             <div className="flex items-center gap-4">
-              <p className="text-xl text-slate-500 dark:text-slate-400  font-medium">Assigned service requests awaiting resolution</p>
+              <p className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400  font-medium">Assigned service requests awaiting resolution</p>
               {activeTickets.length > 0 && (
                 <label className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400  font-bold cursor-pointer">
                   <input
@@ -173,7 +173,7 @@ export default function StaffQueuePage() {
 
         <div className="space-y-6">
           {activeTickets.length === 0 ? (
-            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
+            <div className="card p-8 md:p-20 text-center bg-transparent border-dashed border-2 border-slate-200 dark:border-slate-700  shadow-none">
               <div className="text-6xl mb-4 opacity-30">🎉</div>
               <h3 className="text-2xl font-bold mb-2 ">All caught up!</h3>
               <p className="text-slate-500 dark:text-slate-400 ">No open tickets in your queue.</p>

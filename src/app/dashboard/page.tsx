@@ -84,7 +84,7 @@ function AdminDashboard({ name }: { name: string }) {
     ? Math.round((stats.resolvedTickets / stats.totalTickets) * 100) : 0;
 
   return (
-    <div className="space-y-8 max-w-[1400px] mx-auto pb-32">
+    <div className="space-y-6 md:space-y-8 max-w-[1400px] mx-auto pb-16 md:pb-24">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
@@ -94,7 +94,7 @@ function AdminDashboard({ name }: { name: string }) {
               {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight">
             Welcome back,<br />{name.split(" ")[0]}
           </h1>
         </div>
@@ -126,7 +126,7 @@ function AdminDashboard({ name }: { name: string }) {
         ].map((k) => (
           <div key={k.label} className="card p-6">
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">{k.label}</p>
-            <p className={`text-4xl font-extrabold mb-1 ${k.accent || "text-slate-900 dark:text-white"}`}>{k.value}</p>
+            <p className={`text-2xl sm:text-3xl md:text-4xl font-extrabold mb-1 ${k.accent || "text-slate-900 dark:text-white"}`}>{k.value}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{k.sub}</p>
           </div>
         ))}

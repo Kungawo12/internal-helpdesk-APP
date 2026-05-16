@@ -119,7 +119,7 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="space-y-12 max-w-[1400px] mx-auto pb-32">
+    <div className="space-y-8 md:space-y-12 max-w-[1400px] mx-auto pb-16 md:pb-24">
       {/* Cinematic Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 animate-fade-in">
         <div>
@@ -129,7 +129,7 @@ export default function ManagerDashboard() {
               {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Overview,<br/>{session?.user?.name || "Executive"}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight">Overview,<br/>{session?.user?.name || "Executive"}</h1>
         </div>
       </div>
 
@@ -163,37 +163,37 @@ export default function ManagerDashboard() {
       })()}
 
       {/* Massive KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in delay-100">
-        <div className="relative card p-8 bg-white dark:bg-slate-800 text-slate-900 dark:text-white overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 animate-fade-in delay-100">
+        <div className="relative card p-5 md:p-8 bg-white dark:bg-slate-800 text-slate-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-5 dark:opacity-20"
                style={{backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252728f?w=800&q=80')"}} />
           <div className="relative z-10">
-            <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Volume</p>
-            <p className="text-6xl font-extrabold mb-2 text-slate-900 dark:text-white">{stats.total}</p>
-            <p className="text-sm text-slate-600 dark:text-white/80 font-medium">Total Tickets Tracked</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 md:mb-4">Volume</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 md:mb-2 text-slate-900 dark:text-white">{stats.total}</p>
+            <p className="text-xs md:text-sm text-slate-600 dark:text-white/80 font-medium">Total Tickets</p>
           </div>
         </div>
-        
-        <div className="relative card p-8 bg-blue-50 dark:bg-blue-600 border-blue-100 dark:border-blue-500 text-blue-900 dark:text-white overflow-hidden">
+
+        <div className="relative card p-5 md:p-8 bg-blue-50 dark:bg-blue-600 border-blue-100 dark:border-blue-500 text-blue-900 dark:text-white overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center opacity-10"
                style={{backgroundImage: "url('https://images.unsplash.com/photo-1550745165-9bc0b252728f?w=800&q=80')"}} />
           <div className="relative z-10">
-            <p className="text-sm font-bold text-blue-600 dark:text-white/60 uppercase tracking-widest mb-4">Active</p>
-            <p className="text-6xl font-extrabold mb-2 text-blue-900 dark:text-white">{stats.open + stats.inProgress}</p>
-            <p className="text-sm text-blue-700 dark:text-white/80 font-medium">Require Attention</p>
+            <p className="text-xs font-bold text-blue-600 dark:text-white/60 uppercase tracking-widest mb-2 md:mb-4">Active</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 md:mb-2 text-blue-900 dark:text-white">{stats.open + stats.inProgress}</p>
+            <p className="text-xs md:text-sm text-blue-700 dark:text-white/80 font-medium">Require Attention</p>
           </div>
         </div>
 
-        <div className="card p-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Resolution</p>
-          <p className="text-6xl font-extrabold mb-2 text-slate-900 dark:text-white">{stats.avgResTime}h</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Average Time to Close</p>
+        <div className="card p-5 md:p-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 md:mb-4">Resolution</p>
+          <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 md:mb-2 text-slate-900 dark:text-white">{stats.avgResTime}h</p>
+          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Avg Time to Close</p>
         </div>
 
-        <div className="card p-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Quality</p>
-          <p className="text-6xl font-extrabold mb-2 text-slate-900 dark:text-white">{stats.avgSatisfaction}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">CSAT out of 5.0</p>
+        <div className="card p-5 md:p-8 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 md:mb-4">Quality</p>
+          <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 md:mb-2 text-slate-900 dark:text-white">{stats.avgSatisfaction}</p>
+          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">CSAT out of 5.0</p>
         </div>
       </div>
 
@@ -378,7 +378,7 @@ export default function ManagerDashboard() {
       <div className="space-y-8 animate-fade-in delay-300">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <h2 className="text-3xl font-extrabold tracking-tight ">Active Manifest</h2>
-          <div className="flex w-full md:w-auto gap-4">
+          <div className="flex flex-wrap w-full md:w-auto gap-2 md:gap-4">
             <button className="btn-secondary whitespace-nowrap !py-2 !text-sm border border-slate-200 dark:border-slate-700   ">🔄 Refresh</button>
             <a
               href="/api/tickets/export"
@@ -392,12 +392,12 @@ export default function ManagerDashboard() {
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-field max-w-[140px]   "
+              className="input-field w-24 sm:w-32 md:max-w-[140px]   "
             />
-            <select 
+            <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input-field max-w-[140px]   "
+              className="input-field w-24 sm:w-32 md:max-w-[140px]   "
             >
               <option value="all">All</option>
               <option value="open">Open</option>

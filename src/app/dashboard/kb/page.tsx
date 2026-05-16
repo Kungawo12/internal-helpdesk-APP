@@ -88,7 +88,7 @@ function KbPortal() {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask a question — e.g. How many leave days do I get per year?"
-              className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-4 pr-32 text-white placeholder:text-white/40 focus:outline-none focus:bg-white/15 focus:border-white/40 transition-all text-sm"
+              className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 sm:px-6 py-4 pr-24 sm:pr-32 text-white placeholder:text-white/40 focus:outline-none focus:bg-white/15 focus:border-white/40 transition-all text-sm"
               disabled={asking}
             />
             <div className="absolute right-2 top-2 flex gap-1">

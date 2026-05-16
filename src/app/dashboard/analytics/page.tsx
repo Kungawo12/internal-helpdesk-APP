@@ -95,11 +95,11 @@ export default function AnalyticsPage() {
       : "text-red-400";
 
   return (
-    <div className="space-y-8 max-w-6xl pb-16 page-reveal bg-white dark:bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-6 md:space-y-8 max-w-6xl pb-16 page-reveal bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 md:p-8">
       {/* Header */}
       <div>
         <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Analytics</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Analytics</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">Platform performance and metrics</p>
       </div>
 

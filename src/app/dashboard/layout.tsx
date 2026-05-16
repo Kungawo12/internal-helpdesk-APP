@@ -338,7 +338,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Mobile Header */}
-        <header className="lg:hidden h-20 bg-white dark:bg-slate-900/90 flex items-center justify-between px-8 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
+        <header className="lg:hidden h-16 bg-white dark:bg-slate-900/90 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800 transition-colors">
           <Link href="/dashboard" className="flex items-center gap-2">
             <KarmaStaffLogo size={28} className="drop-shadow-md" />
             <span className="font-extrabold text-xl text-slate-900 dark:text-white">Karma Staff</span>
@@ -357,19 +357,19 @@ export default function DashboardLayout({
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-800 pt-24 px-8 overflow-y-auto">
-            <nav className="space-y-3">
+          <div className="lg:hidden fixed inset-0 z-40 bg-white dark:bg-slate-800 pt-20 px-4 sm:px-6 overflow-y-auto">
+            <nav className="space-y-2 pb-8">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   href={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-base ${
+                    pathname === item.path ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20" : "text-slate-600 dark:text-slate-400"
                   }`}
                 >
-                  <span className="text-3xl">{item.icon}</span>
-                  <span className="text-lg">{item.label}</span>
+                  <span className="text-2xl">{item.icon}</span>
+                  <span>{item.label}</span>
                 </Link>
               ))}
               <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800">
@@ -384,8 +384,8 @@ export default function DashboardLayout({
           </div>
         )}
 
-        <main className="p-8 md:p-12 lg:p-16 relative z-10">
-          <div className="max-w-6xl mx-auto page-reveal">
+        <main className="p-4 sm:p-6 md:p-8 lg:p-10 relative z-10 overflow-x-hidden">
+          <div className="max-w-6xl mx-auto page-reveal w-full min-w-0">
             {children}
           </div>
         </main>

@@ -92,11 +92,11 @@ export default function SoftwareStaffPage() {
     );
 
   return (
-    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8 animate-fade-in pb-32">
-      <div className="lg:col-span-3 space-y-8">
-        <div className="flex items-center justify-between mb-12">
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 animate-fade-in pb-16 md:pb-24">
+      <div className="lg:col-span-3 space-y-6 md:space-y-8">
+        <div className="flex items-center justify-between mb-6 md:mb-12">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-2 flex items-center flex-wrap gap-3">
               Software Bug Queue
               {activeTickets.length > 0 && (
                 <span className="inline-flex items-center justify-center bg-purple-600 text-white text-sm font-black rounded-full px-3 py-1 shadow-[0_0_15px_rgba(147,51,234,0.4)]">
@@ -105,7 +105,7 @@ export default function SoftwareStaffPage() {
               )}
             </h1>
             <div className="flex items-center gap-4">
-              <p className="text-xl text-slate-500 dark:text-slate-400 font-medium">
+              <p className="text-sm sm:text-base md:text-lg text-slate-500 dark:text-slate-400 font-medium">
                 Software bug reports awaiting resolution
               </p>
               {activeTickets.length > 0 && (
@@ -177,7 +177,7 @@ export default function SoftwareStaffPage() {
 
         <div className="space-y-6">
           {activeTickets.length === 0 ? (
-            <div className="card p-20 text-center bg-transparent border-dashed border-2 border-purple-200 dark:border-purple-800/40 shadow-none">
+            <div className="card p-8 md:p-20 text-center bg-transparent border-dashed border-2 border-purple-200 dark:border-purple-800/40 shadow-none">
               <div className="text-6xl mb-4 opacity-30">🐛</div>
               <h3 className="text-2xl font-bold mb-2">No bugs in queue!</h3>
               <p className="text-slate-500 dark:text-slate-400">All software tickets are resolved.</p>

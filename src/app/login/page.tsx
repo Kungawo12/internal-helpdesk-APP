@@ -88,7 +88,7 @@ export default function LoginPage() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/8 dark:bg-blue-600/8 dark:bg-blue-600/8 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Card */}
-      <div className="relative w-full max-w-[860px] h-[540px] rounded-3xl overflow-hidden shadow-2xl z-10 flex">
+      <div className="relative w-full max-w-[860px] min-h-[540px] h-auto rounded-3xl overflow-hidden shadow-2xl z-10 flex">
 
         {/* ── LOGIN FORM — slides out left when switching to register ── */}
         <div

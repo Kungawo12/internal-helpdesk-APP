@@ -100,11 +100,11 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl bg-white dark:bg-slate-900 rounded-3xl p-8">
+    <div className="space-y-6 max-w-6xl bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 md:p-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
-          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">User Management</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">User Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">
             {users.length} total · {users.filter((u) => u.active).length} active
           </p>

@@ -215,8 +215,8 @@ function CreateTicketForm() {
     return (
       <div className="max-w-4xl mx-auto py-12 px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold tracking-tight mb-4">How can we help you?</h1>
-          <p className="text-xl text-slate-500 dark:text-slate-400">Select the type of support you need to get started.</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">How can we help you?</h1>
+          <p className="text-base md:text-xl text-slate-500 dark:text-slate-400">Select the type of support you need to get started.</p>
         </div>
 
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
@@ -291,7 +291,7 @@ function CreateTicketForm() {
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-8">
         {/* ── Left column ── */}
         <div className="lg:col-span-2 space-y-6">
 
