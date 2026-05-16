@@ -25,12 +25,14 @@ export default function Navbar() {
         scrolled || isMobileMenuOpen ? "bg-black/60 border border-white/10 backdrop-blur-3xl py-4 px-6 md:px-10 shadow-2xl" : "bg-transparent py-8 px-6"
       }`}>
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center font-black text-white text-xl shadow-[0_0_20px_rgba(56,189,248,0.4)]">
-              H
-            </div>
-            <span className="font-black text-2xl tracking-tighter text-white">Helpdesk</span>
-          </Link>
+          <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+            K
+          </div>
+          <span className="text-2xl font-black tracking-tighter text-white">
+            Karma<span className="text-blue-500">Staff</span>
+          </span>
+        </Link>
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-10">

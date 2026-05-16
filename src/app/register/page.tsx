@@ -68,7 +68,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md bg-white/10 dark:bg-white/10 dark:bg-white/10 backdrop-blur-2xl border border-white/20 dark:border-white/20 dark:border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-slate-900 dark:text-white">
           <Link
             href="/"
-            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-white/60  dark:text-white transition-colors w-fit"
+            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-slate-400  dark:text-white transition-colors w-fit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -78,7 +78,7 @@ export default function RegisterPage() {
 
           <div className="mb-8">
             <h2 className="text-3xl font-extrabold mb-2 text-slate-900 dark:text-white">Create Account</h2>
-            <p className="text-slate-500 dark:text-white/60 font-medium">Join Karma Staff platform</p>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Join Karma Staff platform</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -140,7 +140,7 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-8 pt-8 border-t border-slate-200 dark:border-white/10 text-center">
-            <p className="text-sm text-slate-500 dark:text-white/60 font-medium">
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Already have an account?{" "}
               <Link href="/login" className="text-slate-900 dark:text-white font-bold ">
                 Sign In here

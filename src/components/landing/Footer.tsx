@@ -23,14 +23,14 @@ export default function Footer() {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center text-xs font-bold">
-              H
+            <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center text-xs font-bold text-white">
+              K
             </div>
-            <span className="font-medium text-slate-400">
-              Internal Helpdesk
+            <span className="font-bold text-slate-300">
+              Karma Staff
             </span>
           </div>
-          <p>&copy; {new Date().getFullYear()} Internal Helpdesk. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Karma Staff. All rights reserved.</p>
         </div>
       </div>
     </footer>

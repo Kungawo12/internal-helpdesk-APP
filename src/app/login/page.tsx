@@ -199,7 +199,7 @@ function FormInner({
       </Link>
 
       <div className="mb-7" style={fieldAnim(0, active)}>
-        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-900 dark:text-white mb-1.5">
+        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white dark:text-white mb-1.5">
           {isRegister ? "Create Account" : "Sign In"}
         </h2>
         <p className="text-slate-500 dark:text-slate-400 dark:text-white/50 text-sm font-medium">
@@ -214,7 +214,7 @@ function FormInner({
             <input
               type="text" required value={name} onChange={e => setName(e.target.value)}
               placeholder="John Doe"
-              className="w-full bg-slate-50 dark:bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+              className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
             />
           </div>
         )}
@@ -224,7 +224,7 @@ function FormInner({
           <input
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className="w-full bg-slate-50 dark:bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
           />
         </div>
 
@@ -240,7 +240,7 @@ function FormInner({
           <input
             type="password" required value={password} onChange={e => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full bg-slate-50 dark:bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
+            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all text-sm"
           />
         </div>
 
@@ -269,7 +269,7 @@ function FormInner({
       {/* Mobile-only toggle */}
       <p className="mt-5 text-center text-xs text-slate-500 dark:text-slate-400 dark:text-white/40 font-medium md:hidden">
         {isRegister ? "Already have an account? " : "Don't have an account? "}
-        <button onClick={onSwitch} className="text-slate-900 dark:text-slate-900 dark:text-white font-bold ">
+        <button onClick={onSwitch} className="text-slate-900 dark:text-white dark:text-white font-bold ">
           {isRegister ? "Sign In" : "Sign Up"}
         </button>
       </p>

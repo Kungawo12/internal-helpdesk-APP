@@ -42,8 +42,10 @@ const ROLE_COLOR: Record<string, string> = {
 export default function AnalyticsPage() {
   const [data, setData] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     fetch("/api/admin-portal/analytics")
       .then((r) => r.json())
       .then((d) => {
@@ -59,14 +61,16 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-slate-200 dark:border-white/10 border-t-red-500 rounded-full animate-spin" />
+        <div className="spinner" />
       </div>
     );
   }
 
+  if (!mounted) return null;
+
   if (!data) {
     return (
-      <div className="p-6 text-center text-slate-500 dark:text-white/40">
+      <div className="p-6 text-center text-slate-500 dark:text-slate-400">
         Failed to load analytics data.
       </div>
     );
@@ -96,49 +100,49 @@ export default function AnalyticsPage() {
       <div>
         <p className="text-xs font-bold text-red-400/80 uppercase tracking-widest mb-2">Admin Portal</p>
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Analytics</h1>
-        <p className="text-slate-500 dark:text-white/30 mt-1 text-sm font-medium">Platform performance and metrics</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm font-medium">Platform performance and metrics</p>
       </div>
 
       {/* Section 1 - KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
-          <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">SLA Compliance</p>
+        <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 transition-all">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">SLA Compliance</p>
           <p className={`text-3xl font-extrabold ${complianceColor}`}>{data.sla.complianceRate}%</p>
-          <p className="text-xs text-slate-500 dark:text-white/30 mt-1">target: 80%</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">target: 80%</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
-          <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">SLA Breached</p>
+        <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 transition-all">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">SLA Breached</p>
           <p className={`text-3xl font-extrabold ${data.sla.totalBreached > 0 ? "text-red-400" : "text-slate-900 dark:text-white"}`}>
             {data.sla.totalBreached}
           </p>
-          <p className="text-xs text-slate-500 dark:text-white/30 mt-1">active tickets past deadline</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">active tickets past deadline</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
-          <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">MTTR (Overall)</p>
+        <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 transition-all">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">MTTR (Overall)</p>
           <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.mttr.all}h</p>
-          <p className="text-xs text-slate-500 dark:text-white/30 mt-1">mean time to resolution</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">mean time to resolution</p>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6  dark:bg-slate-800/8 transition-all">
-          <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-1">Resolved Tickets</p>
+        <div className="bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 transition-all">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Resolved Tickets</p>
           <p className="text-3xl font-extrabold text-emerald-400">
             {data.byDepartment.IT.resolved + data.byDepartment.HR.resolved}
           </p>
-          <p className="text-xs text-slate-500 dark:text-white/30 mt-1">total resolved across depts</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">total resolved across depts</p>
         </div>
       </div>
 
       {/* Section 2 - Weekly Volume */}
       <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
-        <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-6">Weekly Ticket Volume</h2>
+        <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-6">Weekly Ticket Volume</h2>
         <div className="flex items-end gap-2 h-40">
           {data.weeklyVolume.map((w) => (
             <div key={w.label} className="flex-1 flex flex-col items-center gap-1">
-              <span className="text-xs text-slate-500 dark:text-white/40">{w.count}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">{w.count}</span>
               <div
                 className="w-full bg-red-500/70 rounded-t-md transition-all"
                 style={{ height: `${(w.count / maxWeeklyCount) * 100}%`, minHeight: w.count > 0 ? "4px" : "0" }}
               />
-              <span className="text-[10px] text-slate-500 dark:text-white/30 text-center">{w.label}</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 text-center">{w.label}</span>
             </div>
           ))}
         </div>
@@ -148,7 +152,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column A - MTTR by Department */}
         <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-4">MTTR by Department</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">MTTR by Department</h2>
           <div className="space-y-4">
             {[
               { label: "Overall", value: data.mttr.all },
@@ -157,7 +161,7 @@ export default function AnalyticsPage() {
             ].map((r) => (
               <div key={r.label}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500 dark:text-white/60">{r.label}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.value}h</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
@@ -173,7 +177,7 @@ export default function AnalyticsPage() {
 
         {/* Column B - Open Ticket Age */}
         <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-4">Open Ticket Age</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Open Ticket Age</h2>
           <div className="space-y-4">
             {[
               { label: "< 1h", count: data.openTicketAge.under1h, color: "bg-emerald-500" },
@@ -184,7 +188,7 @@ export default function AnalyticsPage() {
             ].map((r) => (
               <div key={r.label}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500 dark:text-white/60">{r.label}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{r.label}</span>
                   <span className="text-slate-900 dark:text-white font-bold">{r.count}</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800/5 rounded-full h-2">
@@ -200,7 +204,7 @@ export default function AnalyticsPage() {
 
         {/* Column C - SLA by Department */}
         <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-4">SLA by Department</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">SLA by Department</h2>
           <div className="space-y-6">
             {([ "IT", "HR" ] as const).map((dept) => {
               const d = data.byDepartment[dept];
@@ -215,15 +219,15 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
-                      <p className="text-slate-500 dark:text-white/40 mb-0.5">Total</p>
+                      <p className="text-slate-500 dark:text-slate-400 mb-0.5">Total</p>
                       <p className="font-bold text-slate-900 dark:text-white">{d.total}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
-                      <p className="text-slate-500 dark:text-white/40 mb-0.5">Resolved</p>
+                      <p className="text-slate-500 dark:text-slate-400 mb-0.5">Resolved</p>
                       <p className="font-bold text-emerald-400">{d.resolved}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-800/3 p-2 rounded-lg">
-                      <p className="text-slate-500 dark:text-white/40 mb-0.5">Breached</p>
+                      <p className="text-slate-500 dark:text-slate-400 mb-0.5">Breached</p>
                       <p className="font-bold text-red-400">{d.breached}</p>
                     </div>
                   </div>
@@ -235,30 +239,30 @@ export default function AnalyticsPage() {
 
         {/* Column D - CSAT */}
         <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 col-span-1 lg:col-span-3">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mb-6">Customer Satisfaction</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-6">Customer Satisfaction</h2>
           
           {data.csat.totalRated === 0 ? (
-            <p className="text-slate-500 dark:text-white/40 text-sm italic">No feedback submitted yet.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm italic">No feedback submitted yet.</p>
           ) : (
             <div className="space-y-6">
               {/* KPI row */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.csat.avgRating.toFixed(1)}</p>
-                  <p className="text-xs text-slate-500 dark:text-white/40 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold uppercase tracking-widest">Avg Rating</p>
                   <div className="flex gap-0.5 mt-2">
                     {[1,2,3,4,5].map(s => (
-                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-slate-200 dark:text-white/20"}`}>★</span>
+                      <span key={s} className={`text-sm ${s <= Math.round(data.csat.avgRating) ? "text-amber-400" : "text-slate-200 dark:text-slate-400 dark:text-white/20"}`}>★</span>
                     ))}
                   </div>
                 </div>
                 <div>
                   <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.csat.totalRated}</p>
-                  <p className="text-xs text-slate-500 dark:text-white/40 mt-1 font-bold uppercase tracking-widest">Responses</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold uppercase tracking-widest">Responses</p>
                 </div>
                 <div>
                   <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{data.csat.responseRate}%</p>
-                  <p className="text-xs text-slate-500 dark:text-white/40 mt-1 font-bold uppercase tracking-widest">Response Rate</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold uppercase tracking-widest">Response Rate</p>
                 </div>
               </div>
 
@@ -268,11 +272,11 @@ export default function AnalyticsPage() {
                   const pct = data.csat.totalRated > 0 ? (count / data.csat.totalRated) * 100 : 0;
                   return (
                     <div key={star} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-slate-500 dark:text-white/60 w-4">{star}★</span>
+                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 w-4">{star}★</span>
                       <div className="flex-1 h-2 bg-white dark:bg-slate-800/10 rounded-full overflow-hidden">
                         <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
-                      <span className="text-xs text-slate-500 dark:text-white/40 w-6 text-right">{count}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 w-6 text-right">{count}</span>
                     </div>
                   );
                 })}
@@ -285,10 +289,10 @@ export default function AnalyticsPage() {
       {/* Section 4 - Top Resolvers */}
       <div className="bg-slate-100 dark:bg-slate-800/5 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/3">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest">Top Resolvers</h2>
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Top Resolvers</h2>
         </div>
         {data.topResolvers.length === 0 ? (
-          <div className="p-10 text-center text-slate-500 dark:text-white/40 italic">
+          <div className="p-10 text-center text-slate-500 dark:text-slate-400 italic">
             No resolved tickets yet.
           </div>
         ) : (
@@ -296,16 +300,16 @@ export default function AnalyticsPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/3">
-                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest w-16">Rank</th>
-                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest">Name</th>
-                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest">Role</th>
-                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest text-right">Tickets Resolved</th>
+                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest w-16">Rank</th>
+                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Name</th>
+                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Role</th>
+                  <th className="p-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right">Tickets Resolved</th>
                 </tr>
               </thead>
               <tbody>
                 {data.topResolvers.map((r, i) => (
                   <tr key={r.name} className="border-b border-slate-100 dark:border-white/5   dark:bg-slate-800/3 transition-colors">
-                    <td className="p-4 font-bold text-slate-500 dark:text-white/40">{i + 1}.</td>
+                    <td className="p-4 font-bold text-slate-500 dark:text-slate-400">{i + 1}.</td>
                     <td className="p-4 font-bold text-slate-900 dark:text-white">{r.name}</td>
                     <td className="p-4">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${ROLE_COLOR[r.role] || "bg-slate-500/20 text-slate-300"}`}>

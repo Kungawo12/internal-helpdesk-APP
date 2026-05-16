@@ -93,7 +93,7 @@ export default function StatsSection() {
               <img 
                 src="/images/roles_visuals.png" 
                 alt="Internal Roles Workflow" 
-                className="w-full h-full object-cover grayscale-[0.2]  transition-all duration-1000"
+                className="w-full h-full object-cover grayscale-[0.2] dark:invert dark:brightness-125 dark:contrast-125 transition-all duration-1000"
               />
            </div>
         </div>

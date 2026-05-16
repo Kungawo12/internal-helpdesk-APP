@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Character {
   name: string;
@@ -127,10 +127,11 @@ function PersonCard({
       {/* Character Card (Front) */}
       <div className={`absolute inset-0 flex flex-col transition-opacity duration-500 ${isFlipped ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Character illustration — takes up top 60% of card */}
-        <div className="h-52 flex items-end justify-center relative" style={{ backgroundColor: `#${character.bgColor}` }}>
-          <img src={dicebearUrl} className="w-40 h-40 object-contain pb-2" alt={character.name} />
+        <div className="h-52 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: `#${character.bgColor}` }}>
+          <div className="absolute inset-0 bg-black/5 dark:bg-black/20" />
+          <img src={dicebearUrl} className="w-44 h-44 object-contain relative z-10" alt={character.name} />
           {/* Subtle gradient overlay */}
-          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
         </div>
         
         {/* Flip button (Absolute top-right) */}
@@ -194,6 +195,13 @@ export default function PeopleMarquee() {
   // Duplicate the array once for seamless loop
   const items = [...CHARACTERS, ...CHARACTERS];
   const [flippedPerson, setFlippedPerson] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <section className="py-20 bg-white dark:bg-slate-900 overflow-hidden">

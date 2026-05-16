@@ -19,11 +19,6 @@
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  
-  .dark body {
-    background: #0f172a;
-    color: #f1f5f9;
-  }
 
   h1, h2, h3, h4, h5, h6 {
     color: inherit;
@@ -48,124 +43,38 @@
   }
 
   .card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    transition: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  }
-  
-  .dark .card {
-    background: #1e293b;
-    border-color: #334155;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    @apply bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm transition-all;
   }
 
   .btn-primary {
-    background: #0f172a;
-    color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .dark .btn-primary {
-    background: #3b82f6;
-    color: #ffffff;
+    @apply bg-slate-900 dark:bg-blue-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center hover:opacity-90 active:scale-95;
   }
 
   .btn-secondary {
-    background: transparent;
-    color: #0f172a;
-    border: 1px solid #cbd5e1;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .dark .btn-secondary {
-    color: #f1f5f9;
-    border-color: #475569;
+    @apply bg-transparent text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95;
   }
 
   .input-field {
-    @apply bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm w-full transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none;
+    @apply bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm w-full transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500;
   }
 
-/* Auth page background orb animation */
-@keyframes pulse-glow-anim {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow-anim 6s ease-in-out infinite;
-}
-
-/* Gradient text animation for auth pages */
-@keyframes gradient-shift-anim {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.animate-gradient-shift {
-  animation: gradient-shift-anim 4s ease infinite;
-  background-size: 200% auto;
-}
-
-/* Dashboard Fade Animations */
-.animate-fade-in {
-  opacity: 0;
-  animation: fade-in 0.8s ease forwards;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
   .badge {
-    padding: 4px 10px;
-    font-size: 12px;
-    border-radius: 6px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
+    @apply px-2.5 py-1 text-xs font-bold rounded-lg inline-flex items-center;
   }
-  .badge-blue { background: #eff6ff; color: #2563eb; }
-  .badge-green { background: #f0fdf4; color: #16a34a; }
-  .badge-amber { background: #fffbeb; color: #d97706; }
-  .badge-purple { background: #faf5ff; color: #7c3aed; }
-  .badge-red { background: #fef2f2; color: #dc2626; }
-  .badge-slate { background: #f8fafc; color: #475569; }
+  
+  .badge-blue { @apply bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400; }
+  .badge-green { @apply bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400; }
+  .badge-amber { @apply bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400; }
+  .badge-purple { @apply bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400; }
+  .badge-red { @apply bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400; }
+  .badge-slate { @apply bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400; }
+}
 
-  /* Dark mode badge overrides */
-  .dark .badge-blue   { background: rgba(37,99,235,0.2);   color: #93c5fd; }
-  .dark .badge-green  { background: rgba(22,163,74,0.2);   color: #86efac; }
-  .dark .badge-amber  { background: rgba(217,119,6,0.2);   color: #fcd34d; }
-  .dark .badge-purple { background: rgba(124,58,237,0.2);  color: #c4b5fd; }
-  .dark .badge-red    { background: rgba(220,38,38,0.2);   color: #fca5a5; }
-  .dark .badge-slate  { background: #334155;               color: #94a3b8; }
-
+/* Global Theme Transition */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 /* Navbar */
@@ -205,10 +114,14 @@
   100% { background-position: 400px 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  @apply bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden relative;
+  background-image: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.05) 50%, transparent 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s infinite linear;
-  border-radius: 8px;
+}
+
+.spinner {
+  @apply w-10 h-10 border-4 border-slate-200 dark:border-white/10 border-t-blue-600 dark:border-t-blue-500 rounded-full animate-spin;
 }
 
 /* Status-colored left border for ticket cards */
@@ -234,6 +147,16 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 .page-reveal { animation: page-in 0.5s ease forwards; }
+
+/* Fade-in animation (used by dashboard components) */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { opacity: 0; animation: fade-in 0.8s ease forwards; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
 
 /* Status pulse dot */
 @keyframes status-ping {

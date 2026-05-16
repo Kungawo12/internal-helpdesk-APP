@@ -5,7 +5,7 @@ export default function KarmaStaffLogo({ size = 64, className = "" }: { size?: n
       alt="Karma Staff"
       width={size}
       height={size}
-      className={className}
+      className={`${className} dark:invert dark:brightness-125 transition-all`}
       style={{ width: size, height: size, objectFit: "contain" }}
     />
   );

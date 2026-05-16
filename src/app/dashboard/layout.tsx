@@ -203,7 +203,7 @@ function ProfileDropdown({ session, role }: { session: ReturnType<typeof useSess
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors"
             >
-              <svg className="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-slate-400 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               My Profile
@@ -235,8 +235,14 @@ export default function DashboardLayout({
 }) {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const role = session?.user?.role;
   const navItems = [
@@ -253,13 +259,16 @@ export default function DashboardLayout({
   const sidebarW = collapsed ? "w-20" : "w-80";
   const mainPl = collapsed ? "lg:pl-20" : "lg:pl-80";
 
+  const currentTheme = mounted ? resolvedTheme : "light";
+  const bgImage = currentTheme === "dark" ? "/assets/premium-bg-dark.png" : "/assets/premium-bg-light.png";
+
   return (
-    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-[#f8fafc] dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen relative flex flex-col lg:flex-row overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div
-          className="w-full h-full bg-cover bg-center opacity-40 dark:opacity-10 transition-opacity"
-          style={{ backgroundImage: 'url("/assets/premium-bg-light.png")' }}
+          className="w-full h-full bg-cover bg-center opacity-40 dark:opacity-10 transition-all duration-700"
+          style={{ backgroundImage: mounted ? `url("${bgImage}")` : "none" }}
         />
       </div>
 
@@ -302,7 +311,7 @@ export default function DashboardLayout({
                 } ${
                   pathname === item.path
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-900/20"
-                    : "text-slate-500 dark:text-slate-500"
+                    : "text-slate-500 dark:text-slate-400"
                 }`}
               >
                 <span className={`text-xl flex-shrink-0 transition-transform  ${pathname === item.path ? "" : "grayscale opacity-60"}`}>
@@ -356,7 +365,7 @@ export default function DashboardLayout({
                   href={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-6 px-8 py-5 rounded-[24px] font-black ${
-                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-500"
+                    pathname === item.path ? "bg-blue-600 text-white shadow-2xl shadow-blue-900/20" : "text-slate-500 dark:text-slate-400"
                   }`}
                 >
                   <span className="text-3xl">{item.icon}</span>

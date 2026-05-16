@@ -11,6 +11,22 @@ export default function HeroSection() {
           <span className="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Enterprise Helpdesk v1.0</span>
         </div>
         
+        {/* Decorative Illustrations */}
+        <div className="absolute top-20 -left-20 w-64 h-64 opacity-20 dark:opacity-40 pointer-events-none animate-float hidden xl:block">
+          <img 
+            src="/person_at_laptop.png" 
+            alt="Person at laptop" 
+            className="w-full h-full object-contain dark:invert dark:brightness-125"
+          />
+        </div>
+        <div className="absolute bottom-40 -right-20 w-72 h-72 opacity-20 dark:opacity-40 pointer-events-none animate-float hidden xl:block" style={{ animationDelay: '1s' }}>
+          <img 
+            src="/team_collaboration.png" 
+            alt="Team collaboration" 
+            className="w-full h-full object-contain dark:invert dark:brightness-125"
+          />
+        </div>
+
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
           Support that moves as <br /> <span className="text-blue-500">fast as your team.</span>
         </h1>

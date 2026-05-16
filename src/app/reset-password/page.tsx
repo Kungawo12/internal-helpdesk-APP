@@ -61,7 +61,7 @@ function ResetPasswordForm() {
     <>
       <div className="mb-8">
         <h2 className="text-3xl font-extrabold mb-2 text-slate-900 dark:text-white">Set New Password</h2>
-        <p className="text-slate-500 dark:text-white/60 font-medium">Choose a strong password for your account</p>
+        <p className="text-slate-500 dark:text-slate-400 font-medium">Choose a strong password for your account</p>
       </div>
 
       {success ? (
@@ -152,7 +152,7 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] p-10 text-slate-900 dark:text-white">
           <Link
             href="/login"
-            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-white/60  dark:text-white transition-colors w-fit"
+            className="flex items-center gap-2 mb-8 text-slate-500 dark:text-slate-400  dark:text-white transition-colors w-fit"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
