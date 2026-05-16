@@ -68,6 +68,10 @@ function KbPortal() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("All");
   const [page, setPage] = useState(0);
+  const [handbookQuestion, setHandbookQuestion] = useState("");
+  const [handbookAnswer, setHandbookAnswer] = useState<string | null>(null);
+  const [handbookLoading, setHandbookLoading] = useState(false);
+  const [handbookError, setHandbookError] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedArticle, setSelectedArticle] = useState<KbArticle | null>(null);
@@ -116,6 +120,31 @@ function KbPortal() {
     setSearchInput("");
     setSearchQuery("");
     searchRef.current?.focus();
+  };
+
+  const handleHandbookAsk = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!handbookQuestion.trim()) return;
+    setHandbookLoading(true);
+    setHandbookAnswer(null);
+    setHandbookError(null);
+    try {
+      const res = await fetch("/api/kb/ask-handbook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: handbookQuestion }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setHandbookError(data.error ?? "Something went wrong.");
+      } else {
+        setHandbookAnswer(data.answer);
+      }
+    } catch {
+      setHandbookError("Failed to connect. Please try again.");
+    } finally {
+      setHandbookLoading(false);
+    }
   };
 
   const filtered = searchQuery ? clientSearch(articles, searchQuery) : articles;
@@ -233,6 +262,79 @@ function KbPortal() {
           >
             Open PDF →
           </a>
+        </div>
+      )}
+
+      {/* Ask the Handbook — GPT-4 powered */}
+      {!searchQuery && (
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
+          <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-sm flex-shrink-0">✦</div>
+            <div>
+              <p className="font-extrabold text-slate-900 dark:text-white text-sm">Ask the Handbook</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Powered by GPT-4 — answers come only from the official Karma Staff handbook</p>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-4">
+            <form onSubmit={handleHandbookAsk} className="flex gap-3">
+              <input
+                type="text"
+                value={handbookQuestion}
+                onChange={(e) => setHandbookQuestion(e.target.value)}
+                placeholder="e.g. How many leave days do I get per year?"
+                className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-violet-400 dark:focus:border-violet-500 transition-colors"
+                disabled={handbookLoading}
+              />
+              <button
+                type="submit"
+                disabled={handbookLoading || !handbookQuestion.trim()}
+                className="px-5 py-3 bg-violet-600 text-white text-sm font-bold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 flex-shrink-0"
+              >
+                {handbookLoading ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Asking...
+                  </>
+                ) : "Ask →"}
+              </button>
+            </form>
+
+            {handbookAnswer && (
+              <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-800/40 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wide">Answer</span>
+                </div>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">{handbookAnswer}</p>
+                <button
+                  onClick={() => { setHandbookAnswer(null); setHandbookQuestion(""); }}
+                  className="mt-3 text-xs text-violet-500 dark:text-violet-400 font-bold"
+                >
+                  Ask another question
+                </button>
+              </div>
+            )}
+
+            {handbookError && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/40 rounded-xl p-4">
+                <p className="text-sm text-red-700 dark:text-red-400">{handbookError}</p>
+              </div>
+            )}
+
+            {!handbookAnswer && !handbookError && !handbookLoading && (
+              <div className="flex flex-wrap gap-2">
+                {["How many leave days do I get?", "What is the dress code?", "When do I get paid?", "What happens if I'm late?"].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setHandbookQuestion(q)}
+                    className="text-xs px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full font-medium transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
