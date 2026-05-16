@@ -34,26 +34,6 @@ const TYPE_ICON: Record<string, string> = {
 
 const CARDS_PER_PAGE = 9;
 
-const FAQ_ITEMS = [
-  { q: "How do I request annual / earned leave?", a: "Submit your leave via the HRMS portal. Planning ahead is required: 1–3 days needs 2 days' notice; 3–5 days needs 1 week; more than 5 days needs 2 weeks. Your Karma Staff Manager and Client Representative must approve it. You accrue 18 Earned Leave days per year (1.5 per month). Maximum 3 leaves can be carried forward annually.", type: "HR" },
-  { q: "What is the dress code policy?", a: "Formal or semi-formal attire is required Monday to Thursday. Fridays allow a relaxed dress code. Ripped jeans, shorts, or unprofessional attire are never acceptable. For client meetings, full formal or company uniform is required. Non-compliance results in a verbal warning (₹500 fine) on the first instance, escalating to written warnings on repeat.", type: "HR" },
-  { q: "When does health insurance start?", a: "You become eligible for the company health insurance plan from Day 31 of employment. The plan covers you, your spouse, and your child, and is fully funded by Karma Staff.", type: "HR" },
-  { q: "When do I get paid and how does payroll work?", a: "Salaries are processed on or before the 7th working day of the following month, deposited directly to your approved bank account. Keep your bank details up to date. New trainees receive a stipend during their first month of training.", type: "HR" },
-  { q: "What happens if I'm late to log in?", a: "Arriving after 8:30 a.m. is counted as a half day. Logging in after your exact shift start time on Time Champ is a late login and impacts your Monthly KPI. First instance: verbal warning + ₹500 fine. Second: written warning + ₹1,000 fine. Third: final warning + ₹1,000. Fourth: termination. Unpaid fines are deducted from salary after 3 days.", type: "HR" },
-  { q: "What is the leave without pay (LOP) policy?", a: "All LOP must be supported by valid documentation. First LOP instance: HR counselling + ineligible for monthly MPR. Second: written warning + ineligible for quarterly MPR. Third: termination following due process. LOP results in proportional salary deductions and may affect performance appraisals.", type: "HR" },
-  { q: "How do I reset my password or fix a login issue?", a: "Go to the login page and click 'Forgot Password'. Enter your work email and follow the reset link. If you don't receive it within 5 minutes, check spam. For VPN or system access issues, always use company-provided secure connections. Raise an IT ticket if the problem persists.", type: "IT" },
-  { q: "Can I take company equipment home or work remotely?", a: "Office-based employees cannot remove company equipment (laptops, phones, etc.) from the workplace or work from home without explicit prior written approval from management. Unauthorised removal may result in disciplinary action including financial deductions.", type: "IT" },
-  { q: "What are the IT and data security rules?", a: "Company systems are for work use only — personal use during work hours is not acceptable. Never duplicate or distribute company software. Use company VPN for sensitive data. We adhere to SOC 2 standards. Report any security incident immediately. Negligent handling of data or assets can result in deductions from your paycheck.", type: "IT" },
-  { q: "How do I report a software bug?", a: "Click 'Software Bug' on your dashboard to create a ticket. Include the app name, steps to reproduce, any error messages, and screenshots. Mark as Urgent if it's causing data loss or blocking work. The AI/Software team will pick it up from the Software Bug Queue.", type: "general" },
-  { q: "How do I raise a grievance or report misconduct?", a: "Report the matter to your immediate Manager first. If unresolved or the Manager is involved, escalate in writing to higher-level leadership. All grievances are documented, investigated, and responded to in writing within 5 working days. Our open-door policy guarantees no retaliation. Integrity violations (fraud, data breaches, harassment) are zero-tolerance and typically result in termination.", type: "general" },
-  { q: "What are the rules around conflicts of interest and gifts?", a: "Disclose any potential conflict of interest to your Manager immediately. Outside business activities that interfere with Karma Staff work are prohibited. Gifts from vendors up to ₹1,000 are acceptable; anything above requires prior manager approval. All gifts must be disclosed to management right away.", type: "general" },
-];
-
-const FAQ_TYPE_COLOR: Record<string, string> = {
-  IT: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30",
-  HR: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30",
-  general: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30",
-};
 
 function highlight(text: string, query: string) {
   if (!query.trim()) return text;
@@ -87,7 +67,6 @@ function KbPortal() {
   const [articles, setArticles] = useState<KbArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>("All");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -254,39 +233,6 @@ function KbPortal() {
           >
             Open PDF →
           </a>
-        </div>
-      )}
-
-      {/* FAQ Section */}
-      {!searchQuery && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">Frequently Asked Questions</h2>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">{FAQ_ITEMS.length}</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {FAQ_ITEMS.map((item, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-start gap-3 p-4 text-left   transition-colors"
-                >
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5 flex-shrink-0 ${FAQ_TYPE_COLOR[item.type]}`}>
-                    {item.type === "general" ? "General" : item.type}
-                  </span>
-                  <span className="text-sm font-bold text-slate-800 dark:text-white flex-1 leading-snug">{item.q}</span>
-                  <svg className={`w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5 transition-transform ${openFaq === i ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {openFaq === i && (
-                  <div className="px-4 pb-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700 pt-3">
-                    {item.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
