@@ -9,8 +9,8 @@ export async function POST(req: Request) {
       return Response.json({ error: "Token and password are required" }, { status: 400 });
     }
 
-    if (password.length < 6) {
-      return Response.json({ error: "Password must be at least 6 characters" }, { status: 400 });
+    if (password.length < 10) {
+      return Response.json({ error: "Password must be at least 10 characters" }, { status: 400 });
     }
 
     const resetToken = await prisma.passwordResetToken.findUnique({ where: { token } });
@@ -26,9 +26,10 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // M-14: bump passwordChangedAt so any existing JWTs are rejected on next rotation
     await prisma.user.update({
       where: { email: resetToken.email },
-      data: { password: hashedPassword },
+      data: { password: hashedPassword, passwordChangedAt: new Date() },
     });
 
     // Delete the used token

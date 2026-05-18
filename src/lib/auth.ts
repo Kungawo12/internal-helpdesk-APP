@@ -30,6 +30,7 @@ export const authOptions: AuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
+          passwordChangedAt: user.passwordChangedAt?.getTime() ?? 0,
         };
       },
     }),
@@ -38,15 +39,31 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as unknown as { role: string }).role;
+        token.role = user.role;
+        token.passwordChangedAt = user.passwordChangedAt ?? 0;
+      } else if (token.id) {
+        // On every JWT rotation, reject stale tokens after password reset or deactivation
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { active: true, passwordChangedAt: true },
+        });
+        if (!dbUser?.active) {
+          token.error = "AccountDeactivated";
+        } else {
+          const dbChangedAt = dbUser.passwordChangedAt?.getTime() ?? 0;
+          if (dbChangedAt > (token.passwordChangedAt ?? 0)) {
+            token.error = "PasswordChanged";
+          }
+        }
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        (session.user as { id: string; role: string }).id = token.id as string;
-        (session.user as { id: string; role: string }).role = token.role as string;
+      if (token.error) {
+        return { ...session, error: token.error };
       }
+      session.user.id = token.id;
+      session.user.role = token.role;
       return session;
     },
   },

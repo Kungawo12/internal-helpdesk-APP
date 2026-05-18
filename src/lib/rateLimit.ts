@@ -1,5 +1,7 @@
 // Simple in-memory rate limiter. Resets on server restart.
-// For multi-instance deployments, replace with Redis-backed solution.
+// TODO (H-8): replace with Upstash Redis for multi-instance correctness.
+// Use x-vercel-forwarded-for as the IP key — it is set by Vercel's proxy
+// and cannot be spoofed, unlike x-forwarded-for.
 
 interface Entry {
   count: number;

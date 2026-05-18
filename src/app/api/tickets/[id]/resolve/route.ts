@@ -71,7 +71,7 @@ export async function PATCH(
         ticket.title,
         ticket.id,
         solution,
-        session.user.name
+        session.user.name ?? "Staff"
       ).catch(() => {});
     }
 

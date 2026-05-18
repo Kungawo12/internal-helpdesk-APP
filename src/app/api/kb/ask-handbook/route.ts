@@ -28,8 +28,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { question } = await req.json();
-    if (!question?.trim() || question.trim().length < 3) {
+    const body = await req.json();
+    // M-12: cap length and strip control characters to prevent prompt injection
+    const raw = typeof body?.question === "string" ? body.question : "";
+    const question = raw.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, "").slice(0, 500).trim();
+    if (question.length < 3) {
       return NextResponse.json({ error: "Please enter a question" }, { status: 400 });
     }
 

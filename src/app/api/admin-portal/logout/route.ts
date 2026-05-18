@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE_NAME } from "@/lib/adminAuth";
+
+// M-11: legacy admin_token cookie removed — session is managed by NextAuth.
+// Logout is handled by NextAuth's signOut on the client.
 
 export async function POST() {
-  const res = NextResponse.json({ success: true });
-  res.cookies.set(ADMIN_COOKIE_NAME, "", {
-    httpOnly: true,
-    maxAge: 0,
-    path: "/",
-  });
-  return res;
+  return NextResponse.json({ success: true });
 }

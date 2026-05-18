@@ -63,7 +63,7 @@ export async function PATCH(
         ticket.title,
         ticket.type,
         ticketId,
-        session.user.name
+        session.user.name ?? "Staff"
       ).catch(() => {});
 
       notify(assignee.id, "TICKET_ASSIGNED", `You have been assigned: "${ticket.title}"`, ticketId).catch(() => {});

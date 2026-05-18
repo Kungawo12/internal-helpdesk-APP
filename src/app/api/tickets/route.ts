@@ -130,7 +130,7 @@ export async function POST(req: Request) {
             ticket.title,
             ticket.type,
             ticket.id,
-            session.user.name,
+            session.user.name ?? "Employee",
             ticket.priority
           ).catch(() => {});
         }

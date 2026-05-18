@@ -1,18 +1,8 @@
 import { getToken } from "next-auth/jwt";
-import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
-const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "fallback-secret");
-
-async function isValidAdminToken(req: NextRequest): Promise<boolean> {
-  const token = req.cookies.get("admin_token")?.value;
-  if (!token) return false;
-  try {
-    await jwtVerify(token, secret);
-    return true;
-  } catch {
-    return false;
-  }
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET environment variable is not set");
 }
 
 export async function middleware(req: NextRequest) {
@@ -21,11 +11,8 @@ export async function middleware(req: NextRequest) {
   // Admin portal routes
   if (pathname.startsWith("/admin")) {
     if (pathname === "/admin/login" || pathname === "/admin/setup") return NextResponse.next();
-    // Accept NextAuth session with admin role (primary)
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (token?.role === "admin") return NextResponse.next();
-    // Fallback: legacy admin_token cookie
-    if (await isValidAdminToken(req)) return NextResponse.next();
+    if (token?.role === "admin" && !token.error) return NextResponse.next();
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -46,8 +33,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protected routes — require auth
-  if (!token) {
+  // Protected routes — require auth and valid (non-errored) token
+  if (!token || token.error) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

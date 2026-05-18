@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// H-3: explicit allow-list with default deny — unknown roles cannot fall through
+
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -28,16 +30,27 @@ export async function GET(
     }
 
     const { role, id: userId } = session.user;
-    if (role === "employee" && ticket.creatorId !== userId) {
-      return Response.json({ error: "Access denied" }, { status: 403 });
-    }
-    if (role === "it_staff" && ticket.type !== "IT") {
-      return Response.json({ error: "Access denied" }, { status: 403 });
-    }
-    if (role === "hr_staff" && ticket.type !== "HR") {
-      return Response.json({ error: "Access denied" }, { status: 403 });
-    }
-    if (role === "ai_staff" && ticket.type !== "Software") {
+
+    // Explicit allow-list — default deny for any unrecognised role
+    if (role === "admin" || role === "manager") {
+      // Full access
+    } else if (role === "employee") {
+      if (ticket.creatorId !== userId) {
+        return Response.json({ error: "Access denied" }, { status: 403 });
+      }
+    } else if (role === "it_staff") {
+      if (ticket.type !== "IT") {
+        return Response.json({ error: "Access denied" }, { status: 403 });
+      }
+    } else if (role === "hr_staff") {
+      if (ticket.type !== "HR") {
+        return Response.json({ error: "Access denied" }, { status: 403 });
+      }
+    } else if (role === "ai_staff") {
+      if (ticket.type !== "Software") {
+        return Response.json({ error: "Access denied" }, { status: 403 });
+      }
+    } else {
       return Response.json({ error: "Access denied" }, { status: 403 });
     }
 

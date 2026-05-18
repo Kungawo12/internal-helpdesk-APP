@@ -19,9 +19,10 @@ model User {
   email     String   @unique
   password  String?  // nullable — Google users won't have a password
   role      String   @default("employee") // employee, manager, it_staff, hr_staff, admin
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  active            Boolean   @default(true)
+  passwordChangedAt DateTime? // bumped on password reset — stale JWTs are rejected
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   accounts      Account[]
   tickets       Ticket[]        @relation("CreatedTickets")
