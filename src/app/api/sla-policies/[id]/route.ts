@@ -114,7 +114,7 @@ export async function PATCH(
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("SLA policy update error:", error);
+    console.error("SLA policy update error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to update SLA policy" }, { status: 500 });
   }
 }
@@ -140,7 +140,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("SLA policy delete error:", error);
+    console.error("SLA policy delete error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to delete SLA policy" }, { status: 500 });
   }
 }

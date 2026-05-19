@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(tickets);
   } catch (error) {
-    console.error("Admin portal tickets error:", error);
+    console.error("Admin portal tickets error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load tickets" }, { status: 500 });
   }
 }

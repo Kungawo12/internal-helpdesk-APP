@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
 
     return Response.json(updated);
   } catch (error) {
-    console.error("Profile update error:", error);
+    console.error("Profile update error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to update profile" }, { status: 500 });
   }
 }

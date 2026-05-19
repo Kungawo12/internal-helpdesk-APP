@@ -48,7 +48,7 @@ export async function PATCH(
 
     return Response.json(user);
   } catch (error) {
-    console.error("Admin update user error:", error);
+    console.error("Admin update user error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to update user" }, { status: 500 });
   }
 }
@@ -77,7 +77,7 @@ export async function DELETE(
 
     return Response.json({ message: "User deactivated" });
   } catch (error) {
-    console.error("Admin delete user error:", error);
+    console.error("Admin delete user error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to delete user" }, { status: 500 });
   }
 }

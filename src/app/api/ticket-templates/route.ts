@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     return Response.json(templates);
   } catch (error) {
-    console.error("Ticket templates list error:", error);
+    console.error("Ticket templates list error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load templates" }, { status: 500 });
   }
 }
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     return Response.json(template, { status: 201 });
   } catch (error) {
-    console.error("Ticket template create error:", error);
+    console.error("Ticket template create error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to create template" }, { status: 500 });
   }
 }

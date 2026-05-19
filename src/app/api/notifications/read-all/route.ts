@@ -14,7 +14,7 @@ export async function PATCH() {
 
     return Response.json({ ok: true });
   } catch (error) {
-    console.error("Mark read error:", error);
+    console.error("Mark read error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to mark notifications read" }, { status: 500 });
   }
 }

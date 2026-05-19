@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(users);
   } catch (error) {
-    console.error("Admin portal users error:", error);
+    console.error("Admin portal users error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load users" }, { status: 500 });
   }
 }

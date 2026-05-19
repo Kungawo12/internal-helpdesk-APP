@@ -30,7 +30,7 @@ export async function POST(
 
     return Response.json(feedback, { status: 201 });
   } catch (error) {
-    console.error("Feedback error:", error);
+    console.error("Feedback error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to submit feedback" }, { status: 500 });
   }
 }

@@ -172,7 +172,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Analytics error:", error);
+    console.error("Analytics error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
   }
 }

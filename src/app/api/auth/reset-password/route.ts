@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
     return Response.json({ message: "Password reset successfully. You can now sign in." });
   } catch (error) {
-    console.error("Reset password error:", error);
+    console.error("Reset password error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Server error. Please try again." }, { status: 500 });
   }
 }

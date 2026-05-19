@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     return Response.json(articles);
   } catch (error) {
-    console.error("KB related error:", error);
+    console.error("KB related error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load related articles" }, { status: 500 });
   }
 }

@@ -49,7 +49,7 @@ export async function PATCH(
 
     return Response.json(updated);
   } catch (error) {
-    console.error("Reopen ticket error:", error);
+    console.error("Reopen ticket error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to reopen ticket" }, { status: 500 });
   }
 }

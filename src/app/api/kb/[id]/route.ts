@@ -34,7 +34,7 @@ export async function GET(
 
     return Response.json(article);
   } catch (error) {
-    console.error("KB get error:", error);
+    console.error("KB get error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load article" }, { status: 500 });
   }
 }
@@ -73,7 +73,7 @@ export async function PATCH(
 
     return Response.json(article);
   } catch (error) {
-    console.error("KB update error:", error);
+    console.error("KB update error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to update article" }, { status: 500 });
   }
 }
@@ -96,7 +96,7 @@ export async function DELETE(
     await prisma.kbArticle.delete({ where: { id } });
     return Response.json({ success: true });
   } catch (error) {
-    console.error("KB delete error:", error);
+    console.error("KB delete error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to delete article" }, { status: 500 });
   }
 }

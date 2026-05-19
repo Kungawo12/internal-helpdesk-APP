@@ -80,7 +80,7 @@ export async function GET() {
       avgResolutionHours,
     });
   } catch (error) {
-    console.error("Reports error:", error);
+    console.error("Reports error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load reports" }, { status: 500 });
   }
 }

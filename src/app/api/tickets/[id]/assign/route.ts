@@ -91,7 +91,7 @@ export async function PATCH(
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Assign ticket error:", error);
+    console.error("Assign ticket error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to assign ticket" }, { status: 500 });
   }
 }

@@ -16,7 +16,7 @@ export async function DELETE(
     await prisma.ticket.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin delete ticket error:", error);
+    console.error("Admin delete ticket error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to delete ticket" }, { status: 500 });
   }
 }

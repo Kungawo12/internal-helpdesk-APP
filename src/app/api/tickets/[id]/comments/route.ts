@@ -52,7 +52,7 @@ export async function GET(
 
     return Response.json(comments);
   } catch (error) {
-    console.error("Fetch comments error:", error);
+    console.error("Fetch comments error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load comments" }, { status: 500 });
   }
 }
@@ -136,7 +136,7 @@ export async function POST(
 
     return Response.json(comment, { status: 201 });
   } catch (error) {
-    console.error("Create comment error:", error);
+    console.error("Create comment error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to post comment" }, { status: 500 });
   }
 }

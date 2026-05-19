@@ -106,7 +106,7 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error("Stats error:", error);
+    console.error("Stats error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load stats" }, { status: 500 });
   }
 }

@@ -37,7 +37,7 @@ export async function GET() {
 
     return Response.json(result);
   } catch (error) {
-    console.error("Popular KB error:", error);
+    console.error("Popular KB error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load popular questions" }, { status: 500 });
   }
 }

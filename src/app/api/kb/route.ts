@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     return Response.json(articles);
   } catch (error) {
-    console.error("KB list error:", error);
+    console.error("KB list error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load articles" }, { status: 500 });
   }
 }
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     return Response.json(article, { status: 201 });
   } catch (error) {
-    console.error("KB create error:", error);
+    console.error("KB create error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to create article" }, { status: 500 });
   }
 }

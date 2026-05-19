@@ -63,7 +63,7 @@ export async function PATCH(
     const policy = await prisma.slaPolicy.update({ where: { id }, data });
     return NextResponse.json(policy);
   } catch (error) {
-    console.error("Admin portal SLA policy update error:", error);
+    console.error("Admin portal SLA policy update error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to update SLA policy" }, { status: 500 });
   }
 }
@@ -85,7 +85,7 @@ export async function DELETE(
     await prisma.slaPolicy.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin portal SLA policy delete error:", error);
+    console.error("Admin portal SLA policy delete error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to delete SLA policy" }, { status: 500 });
   }
 }

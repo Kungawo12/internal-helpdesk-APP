@@ -56,7 +56,7 @@ export async function GET(
 
     return Response.json(ticket);
   } catch (error) {
-    console.error("Fetch ticket error:", error);
+    console.error("Fetch ticket error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load ticket" }, { status: 500 });
   }
 }

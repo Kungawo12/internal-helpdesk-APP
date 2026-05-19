@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: "Invalid target" }, { status: 400 });
   } catch (error) {
-    console.error("Admin wipe error:", error);
+    console.error("Admin wipe error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Wipe failed" }, { status: 500 });
   }
 }

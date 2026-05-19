@@ -98,7 +98,7 @@ Respond with JSON only:
     const suggestions = parsed.suggestions?.slice(0, 10) ?? staticSuggestions;
     return Response.json({ suggestions });
   } catch (error) {
-    console.error("KB suggestions error:", error);
+    console.error("KB suggestions error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load suggestions" }, { status: 500 });
   }
 }

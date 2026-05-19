@@ -108,7 +108,7 @@ export async function GET(req: NextRequest) {
       recentTickets,
     });
   } catch (error) {
-    console.error("Admin portal stats error:", error);
+    console.error("Admin portal stats error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load stats" }, { status: 500 });
   }
 }

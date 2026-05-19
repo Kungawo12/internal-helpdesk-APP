@@ -2,6 +2,7 @@ import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { isRateLimited } from "@/lib/rateLimit";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -13,6 +14,11 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        // H-8: rate-limit login attempts per email (10 attempts per 15 min)
+        if (isRateLimited(`login:${credentials.email.toLowerCase()}`, 10, 15 * 60 * 1000)) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
@@ -72,6 +78,18 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
+  },
+  // M-15: SameSite=Strict prevents cross-site requests from carrying the session cookie
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "strict" as const,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

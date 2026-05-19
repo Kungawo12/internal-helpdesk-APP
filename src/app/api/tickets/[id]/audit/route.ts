@@ -23,7 +23,7 @@ export async function GET(
 
     return NextResponse.json(logs);
   } catch (error) {
-    console.error("Fetch audit log error:", error);
+    console.error("Fetch audit log error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load audit log" }, { status: 500 });
   }
 }

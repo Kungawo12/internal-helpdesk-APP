@@ -71,7 +71,7 @@ export async function GET(req: Request) {
 
     return Response.json(tickets);
   } catch (error) {
-    console.error("Fetch tickets error:", error);
+    console.error("Fetch tickets error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load tickets" }, { status: 500 });
   }
 }
@@ -146,7 +146,7 @@ export async function POST(req: Request) {
 
     return Response.json(ticket, { status: 201 });
   } catch (error) {
-    console.error("Create ticket error:", error);
+    console.error("Create ticket error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to create ticket. Please try again." }, { status: 500 });
   }
 }

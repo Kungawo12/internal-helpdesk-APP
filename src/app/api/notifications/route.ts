@@ -15,7 +15,7 @@ export async function GET() {
 
     return Response.json(notifications);
   } catch (error) {
-    console.error("Notifications fetch error:", error);
+    console.error("Notifications fetch error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load notifications" }, { status: 500 });
   }
 }

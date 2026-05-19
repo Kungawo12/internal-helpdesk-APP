@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(staff);
   } catch (error) {
-    console.error("Staff list error:", error);
+    console.error("Staff list error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load staff" }, { status: 500 });
   }
 }

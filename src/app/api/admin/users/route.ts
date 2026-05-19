@@ -24,7 +24,7 @@ export async function GET() {
 
     return Response.json(users);
   } catch (error) {
-    console.error("Admin users error:", error);
+    console.error("Admin users error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load users" }, { status: 500 });
   }
 }

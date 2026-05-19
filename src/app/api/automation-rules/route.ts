@@ -15,7 +15,7 @@ export async function GET() {
     });
     return Response.json(rules);
   } catch (error) {
-    console.error("Automation rules list error:", error);
+    console.error("Automation rules list error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load rules" }, { status: 500 });
   }
 }
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
 
     return Response.json(rule, { status: 201 });
   } catch (error) {
-    console.error("Automation rule create error:", error);
+    console.error("Automation rule create error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to create rule" }, { status: 500 });
   }
 }

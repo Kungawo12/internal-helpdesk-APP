@@ -78,7 +78,7 @@ export async function PATCH(
 
     return Response.json(ticket);
   } catch (error) {
-    console.error("Resolve ticket error:", error);
+    console.error("Resolve ticket error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to update ticket" }, { status: 500 });
   }
 }

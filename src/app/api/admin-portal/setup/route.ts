@@ -12,7 +12,7 @@ export async function GET() {
     const exists = await adminExists();
     return NextResponse.json({ setupRequired: !exists });
   } catch (error) {
-    console.error("Setup check error:", error);
+    console.error("Setup check error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to check setup status" }, { status: 500 });
   }
 }
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin setup error:", error);
+    console.error("Admin setup error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to create admin account" }, { status: 500 });
   }
 }

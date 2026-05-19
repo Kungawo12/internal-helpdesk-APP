@@ -89,7 +89,7 @@ export async function PATCH(
 
     return Response.json(updated);
   } catch (error) {
-    console.error("Escalate error:", error);
+    console.error("Escalate error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to escalate ticket" }, { status: 500 });
   }
 }

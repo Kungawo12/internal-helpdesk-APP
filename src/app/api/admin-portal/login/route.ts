@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     // Passkey + credentials are valid. Frontend should call NextAuth signIn to create session.
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin login error:", error);
+    console.error("Admin login error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

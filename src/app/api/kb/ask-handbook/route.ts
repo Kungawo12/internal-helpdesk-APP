@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isRateLimited } from "@/lib/rateLimit";
 import fs from "fs";
 import path from "path";
 
@@ -26,6 +27,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // H-8 / M-12: per-user rate limit — 20 AI requests per hour to control spend
+    if (isRateLimited(`ask-handbook:${session.user.id}`, 20, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
     const body = await req.json();
@@ -81,8 +87,7 @@ ${handbookText}`,
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      console.error("OpenAI error:", err);
+      console.error("OpenAI error: HTTP", res.status);
       return NextResponse.json({ error: "AI service error. Please try again." }, { status: 502 });
     }
 
@@ -91,7 +96,7 @@ ${handbookText}`,
 
     return NextResponse.json({ answer });
   } catch (error) {
-    console.error("Handbook ask error:", error);
+    console.error("Handbook ask error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to process your question." }, { status: 500 });
   }
 }

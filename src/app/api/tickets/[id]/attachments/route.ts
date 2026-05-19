@@ -78,7 +78,7 @@ export async function GET(
 
     return NextResponse.json(attachments);
   } catch (error) {
-    console.error("Fetch attachments error:", error);
+    console.error("Fetch attachments error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load attachments" }, { status: 500 });
   }
 }
@@ -124,7 +124,7 @@ export async function POST(
 
     const filename = (file as File).name || "upload";
     const blob = await put(`tickets/${ticketId}/${filename}`, file, {
-      access: "public",
+      access: "private",
       addRandomSuffix: true,
     });
 
@@ -141,7 +141,7 @@ export async function POST(
 
     return NextResponse.json(attachment, { status: 201 });
   } catch (error) {
-    console.error("Upload attachment error:", error);
+    console.error("Upload attachment error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to upload attachment" }, { status: 500 });
   }
 }

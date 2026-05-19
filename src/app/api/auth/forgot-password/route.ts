@@ -5,7 +5,10 @@ import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const ip =
+      req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
     if (isRateLimited(`forgot-password:${ip}`, 5, 15 * 60 * 1000)) {
       return Response.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
@@ -40,7 +43,7 @@ export async function POST(req: Request) {
 
     return Response.json({ message: "If that email exists, a reset link has been sent." });
   } catch (error) {
-    console.error("Forgot password error:", error);
+    console.error("Forgot password error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Server error. Please try again." }, { status: 500 });
   }
 }

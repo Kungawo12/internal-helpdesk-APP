@@ -18,7 +18,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const user = await prisma.user.update({ where: { id }, data });
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Admin portal update user error:", error);
+    console.error("Admin portal update user error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
   }
 }
@@ -46,7 +46,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Admin portal delete user error:", error);
+    console.error("Admin portal delete user error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to delete user" }, { status: 500 });
   }
 }

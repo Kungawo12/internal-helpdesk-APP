@@ -28,7 +28,7 @@ export async function PATCH(
     const rule = await prisma.automationRule.update({ where: { id }, data });
     return Response.json(rule);
   } catch (error) {
-    console.error("Automation rule update error:", error);
+    console.error("Automation rule update error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to update rule" }, { status: 500 });
   }
 }
@@ -50,7 +50,7 @@ export async function DELETE(
     await prisma.automationRule.delete({ where: { id } });
     return Response.json({ success: true });
   } catch (error) {
-    console.error("Automation rule delete error:", error);
+    console.error("Automation rule delete error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to delete rule" }, { status: 500 });
   }
 }

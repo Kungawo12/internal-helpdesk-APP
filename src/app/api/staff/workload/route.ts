@@ -62,7 +62,7 @@ export async function GET() {
 
     return Response.json(workload);
   } catch (error) {
-    console.error("Workload error:", error);
+    console.error("Workload error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load workload" }, { status: 500 });
   }
 }

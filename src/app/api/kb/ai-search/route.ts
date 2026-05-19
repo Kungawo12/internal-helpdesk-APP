@@ -104,7 +104,7 @@ Respond with JSON only:
       articles,
     });
   } catch (error) {
-    console.error("KB AI search error:", error);
+    console.error("KB AI search error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Search failed" }, { status: 500 });
   }
 }

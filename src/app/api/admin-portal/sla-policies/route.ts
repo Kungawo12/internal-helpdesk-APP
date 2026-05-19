@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(policies);
   } catch (error) {
-    console.error("Admin portal SLA policies fetch error:", error);
+    console.error("Admin portal SLA policies fetch error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to load SLA policies" }, { status: 500 });
   }
 }
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(policy, { status: 201 });
   } catch (error) {
-    console.error("Admin portal SLA policy create error:", error);
+    console.error("Admin portal SLA policy create error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Failed to create SLA policy" }, { status: 500 });
   }
 }

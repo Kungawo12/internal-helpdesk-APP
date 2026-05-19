@@ -68,7 +68,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Export error:", error);
+    console.error("Export error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to export tickets" }, { status: 500 });
   }
 }

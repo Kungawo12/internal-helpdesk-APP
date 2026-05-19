@@ -141,7 +141,7 @@ Respond with JSON only:
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("KB refresh cron error:", error);
+    console.error("KB refresh cron error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "Cron failed" }, { status: 500 });
   }
 }
