@@ -1,8 +1,17 @@
 import { prisma } from "@/lib/prisma";
+import { isRateLimited } from "@/lib/rateLimit";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
+    // Rate-limit the reset endpoint itself by IP
+    // L3: only trust x-vercel-forwarded-for (Vercel-set, not spoofable)
+    const ip = req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (await isRateLimited(`reset-password:${ip}`, 10, 15 * 60 * 1000)) {
+      return Response.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const { token, password } = await req.json();
 
     if (!token || !password) {
@@ -13,14 +22,16 @@ export async function POST(req: Request) {
       return Response.json({ error: "Password must be at least 10 characters" }, { status: 400 });
     }
 
-    const resetToken = await prisma.passwordResetToken.findUnique({ where: { token } });
+    // H2: look up the stored hash, not the raw token — raw token never touches the DB
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const resetToken = await prisma.passwordResetToken.findUnique({ where: { token: tokenHash } });
 
     if (!resetToken) {
       return Response.json({ error: "Invalid or expired reset link" }, { status: 400 });
     }
 
     if (resetToken.expiresAt < new Date()) {
-      await prisma.passwordResetToken.delete({ where: { token } });
+      await prisma.passwordResetToken.delete({ where: { token: tokenHash } });
       return Response.json({ error: "Reset link has expired. Please request a new one." }, { status: 400 });
     }
 
@@ -33,7 +44,7 @@ export async function POST(req: Request) {
     });
 
     // Delete the used token
-    await prisma.passwordResetToken.delete({ where: { token } });
+    await prisma.passwordResetToken.delete({ where: { token: tokenHash } });
 
     return Response.json({ message: "Password reset successfully. You can now sign in." });
   } catch (error) {

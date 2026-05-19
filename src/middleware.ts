@@ -45,7 +45,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  if (pathname.startsWith("/dashboard/manager") && role !== "admin") {
+  // M3: managers must be able to access their own dashboard
+  if (pathname.startsWith("/dashboard/manager") && role !== "manager" && role !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

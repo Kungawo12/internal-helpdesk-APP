@@ -60,6 +60,33 @@ function extractImage(block: string): string | null {
   return null;
 }
 
+// H7: allowlist of trusted image-hosting domains from our RSS sources.
+// next/image fetches these server-side, so arbitrary URLs = SSRF surface.
+const TRUSTED_IMAGE_DOMAINS = [
+  "bbc.co.uk", "bbc.com", "bbci.co.uk",
+  "techcrunch.com",
+  "wired.com",
+  "cnbc.com",
+  "nytimes.com",
+  "marketwatch.com", "wsj.net",
+  "wordpress.com", "wp.com",
+];
+
+function sanitizeImageUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return null;
+    const hostname = parsed.hostname;
+    const trusted = TRUSTED_IMAGE_DOMAINS.some(
+      (d) => hostname === d || hostname.endsWith(`.${d}`)
+    );
+    return trusted ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]+>/g, "")
@@ -87,9 +114,9 @@ async function fetchFeed(feed: typeof FEEDS[number]): Promise<NewsItem[]> {
       const link  = extractTag(block, "link") || extractTag(block, "guid");
       const description = stripHtml(extractTag(block, "description")).slice(0, 200);
       const pubDate = extractTag(block, "pubDate");
-      const image = extractImage(block);
+      const image = sanitizeImageUrl(extractImage(block));
 
-      if (title && link && link.startsWith("http")) {
+      if (title && link && link.startsWith("https://")) {
         items.push({ title, link, description, pubDate, source: feed.source, category: feed.category, image });
       }
     }

@@ -18,14 +18,20 @@ export async function GET(req: NextRequest) {
     if (!session && !adminPortal) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type");
-    const q = searchParams.get("q");
+    const rawType = searchParams.get("type");
+    // Use a type-safe check — avoids `as any` cast
+    const type = rawType && (VALID_TYPES as readonly string[]).includes(rawType)
+      ? (rawType as typeof VALID_TYPES[number])
+      : null;
+    // Cap search length to prevent expensive unbounded ILIKE queries (M4)
+    const rawQ = searchParams.get("q");
+    const q = rawQ ? rawQ.slice(0, 100) : null;
 
     const isAdmin = adminPortal || session?.user.role === "admin";
     const articles = await prisma.kbArticle.findMany({
       where: {
         ...(isAdmin ? {} : { published: true }),
-        ...(type && VALID_TYPES.includes(type as any) ? { type } : {}),
+        ...(type ? { type } : {}),
         ...(q ? {
           OR: [
             { title: { contains: q, mode: "insensitive" } },

@@ -2,12 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { notify } from "@/lib/notify";
+import crypto from "crypto";
+
+// H4: escape every user-controlled field before embedding in HTML email
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+// M10: constant-time comparison — prevents timing-based secret leakage
+function verifyCronSecret(provided: string | null): boolean {
+  const expected = process.env.CRON_SECRET;
+  if (!provided || !expected) return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(`Bearer ${expected}`);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
 
 // Vercel Cron — runs every 5 minutes (configured in vercel.json)
-// Protected by CRON_SECRET header
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get("authorization");
-  if (secret !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!verifyCronSecret(req.headers.get("authorization"))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -45,34 +64,30 @@ export async function GET(req: NextRequest) {
   });
 
   if (breached.length > 0) {
-    // Mark all breached tickets
     await prisma.ticket.updateMany({
       where: { id: { in: breached.map((t) => t.id) } },
       data: { slaBreached: true },
     });
 
-    // Fetch managers to notify
     const managers = await prisma.user.findMany({
       where: { role: "admin", active: true },
       select: { email: true, name: true },
     });
 
-    // Log audit + send escalation emails (non-blocking)
     for (const ticket of breached) {
-      logAudit(ticket.id, "system", "SLA_BREACHED" as any, {
+      logAudit(ticket.id, "system", "SLA_BREACHED", {
         field: "slaBreached",
         oldValue: "false",
         newValue: "true",
       }).catch(() => {});
 
-      // Notify managers about each breach
       for (const manager of managers) {
         sendSlaBreachEmail(manager.email, manager.name, ticket).catch(() => {});
       }
     }
   }
 
-  // Find tickets approaching breach (within 1 hour) — send at-risk warning once per ticket
+  // Find tickets approaching breach (within 1 hour) — warn once per ticket
   const atRisk = await prisma.ticket.findMany({
     where: {
       status: { notIn: ["resolved"] },
@@ -92,13 +107,12 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  // Notify each at-risk ticket exactly once by checking audit log for SLA_AT_RISK
   for (const ticket of atRisk) {
     const alreadyNotified = await prisma.auditLog.findFirst({
       where: { ticketId: ticket.id, action: "SLA_AT_RISK" },
     });
     if (!alreadyNotified) {
-      logAudit(ticket.id, "system", "SLA_AT_RISK" as any, {
+      logAudit(ticket.id, "system", "SLA_AT_RISK", {
         field: "slaResolutionDue",
         newValue: ticket.slaResolutionDue?.toISOString(),
       }).catch(() => {});
@@ -107,7 +121,7 @@ export async function GET(req: NextRequest) {
         notify(
           ticket.assignee.id,
           "TICKET_ESCALATED",
-          `⚠️ SLA at risk: "${ticket.title}" is due within 1 hour.`,
+          `SLA at risk: "${ticket.title}" is due within 1 hour.`,
           ticket.id
         ).catch(() => {});
       }
@@ -130,23 +144,37 @@ async function sendSlaBreachEmail(
   const { SMTP_HOST, SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return;
 
+  // H3: fail-fast if NEXTAUTH_URL is missing — never fall back to localhost in email links
+  const appUrl = process.env.NEXTAUTH_URL;
+  if (!appUrl) {
+    console.error("[sla-check] NEXTAUTH_URL is not set — skipping email send");
+    return;
+  }
+
   const nodemailer = await import("nodemailer");
-  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const ticketUrl = `${appUrl}/dashboard/ticket/${ticket.id}`;
 
+  // L6: requireTLS prevents STARTTLS downgrade to plaintext
   const transporter = nodemailer.default.createTransport({
     host: SMTP_HOST,
     port: Number(process.env.SMTP_PORT) || 587,
     secure: false,
+    requireTLS: true,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
   });
+
+  // H4: escape every user-controlled field before embedding in HTML
+  const safeManagerName = escapeHtml(managerName);
+  const safeTitle = escapeHtml(ticket.title);
+  const safeCreatorName = escapeHtml(ticket.creator.name);
+  const safePriority = escapeHtml(ticket.priority.toUpperCase());
 
   const from = process.env.SMTP_FROM || SMTP_USER;
 
   await transporter.sendMail({
     from: `"Helpdesk" <${from}>`,
     to: managerEmail,
-    subject: `⚠️ SLA Breached: ${ticket.title}`,
+    subject: `SLA Breached: ${safeTitle}`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
         <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
@@ -154,17 +182,17 @@ async function sendSlaBreachEmail(
         </div>
         <div style="background:white;border-radius:12px;padding:32px;border:1px solid #fca5a5;">
           <div style="display:inline-flex;align-items:center;gap:8px;background:#fef2f2;border:1px solid #fca5a5;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
-            <span style="color:#dc2626;font-size:14px;">⚠</span>
+            <span style="color:#dc2626;font-size:14px;">&#9888;</span>
             <span style="color:#dc2626;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">SLA Breached</span>
           </div>
-          <h1 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#0f172a;">Action Required, ${managerName}</h1>
+          <h1 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#0f172a;">Action Required, ${safeManagerName}</h1>
           <p style="margin:0 0 24px;font-size:14px;color:#64748b;">The following ticket has exceeded its SLA resolution time:</p>
           <div style="background:#fef2f2;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #dc2626;">
-            <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${ticket.title}</p>
-            <p style="margin:0;font-size:12px;color:#64748b;">Raised by: ${ticket.creator.name} &nbsp;|&nbsp; Priority: <strong>${ticket.priority.toUpperCase()}</strong></p>
+            <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${safeTitle}</p>
+            <p style="margin:0;font-size:12px;color:#64748b;">Raised by: ${safeCreatorName} &nbsp;|&nbsp; Priority: <strong>${safePriority}</strong></p>
           </div>
           <a href="${ticketUrl}" style="display:inline-block;background:#dc2626;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-            View Ticket &amp; Escalate →
+            View Ticket &amp; Escalate &rarr;
           </a>
         </div>
       </div>

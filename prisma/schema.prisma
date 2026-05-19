@@ -13,23 +13,37 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum TicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum TicketPriority {
+  low
+  medium
+  high
+  urgent
+}
+
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String?  // nullable — Google users won't have a password
-  role      String   @default("employee") // employee, manager, it_staff, hr_staff, admin
+  id                String    @id @default(cuid())
+  name              String
+  email             String    @unique
+  password          String? // nullable — Google users won't have a password
+  role              String    @default("employee") // employee, manager, it_staff, hr_staff, admin
   active            Boolean   @default(true)
   passwordChangedAt DateTime? // bumped on password reset — stale JWTs are rejected
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
   accounts      Account[]
-  tickets       Ticket[]        @relation("CreatedTickets")
-  assigned      Ticket[]        @relation("AssignedTickets")
+  tickets       Ticket[]       @relation("CreatedTickets")
+  assigned      Ticket[]       @relation("AssignedTickets")
   feedbacks     Feedback[]
   comments      Comment[]
-  attachments   Attachment[]    @relation("UploadedAttachments")
+  attachments   Attachment[]   @relation("UploadedAttachments")
   auditLogs     AuditLog[]
   kbArticles    KbArticle[]
   notifications Notification[]
@@ -55,26 +69,26 @@ model Account {
 }
 
 model Ticket {
-  id              String   @id @default(cuid())
-  title           String
-  description     String
-  type            String   // "IT" | "HR" | "Software"
-  status          String   @default("open") // open, in_progress, resolved, closed
-  priority        String   @default("medium") // low, medium, high, urgent
-  solution        String?
+  id             String         @id @default(cuid())
+  title          String
+  description    String
+  type           String // "IT" | "HR" | "Software"
+  status         TicketStatus   @default(open)
+  priority       TicketPriority @default(medium)
+  solution       String?
   // IT-specific fields
-  category        String?  // "Incident" or "Service Request"
-  softwareName    String?  // e.g. "Microsoft Teams", "Chrome"
-  affectedSystem  String?  // e.g. "Windows 11", "macOS", "Web Browser"
-  errorMessage    String?  // exact error text the user sees
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  category       String? // "Incident" or "Service Request"
+  softwareName   String? // e.g. "Microsoft Teams", "Chrome"
+  affectedSystem String? // e.g. "Windows 11", "macOS", "Web Browser"
+  errorMessage   String? // exact error text the user sees
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
-  creatorId   String
-  creator     User     @relation("CreatedTickets", fields: [creatorId], references: [id])
+  creatorId String
+  creator   User   @relation("CreatedTickets", fields: [creatorId], references: [id])
 
-  assigneeId  String?
-  assignee    User?    @relation("AssignedTickets", fields: [assigneeId], references: [id])
+  assigneeId String?
+  assignee   User?   @relation("AssignedTickets", fields: [assigneeId], references: [id])
 
   // SLA
   slaPolicyId         String?
@@ -84,10 +98,10 @@ model Ticket {
   slaFirstResponseMet Boolean    @default(false)
   slaBreached         Boolean    @default(false)
 
-  feedback     Feedback?
-  comments     Comment[]
-  attachments  Attachment[]
-  auditLogs    AuditLog[]
+  feedback    Feedback?
+  comments    Comment[]
+  attachments Attachment[]
+  auditLogs   AuditLog[]
 
   @@index([creatorId])
   @@index([assigneeId])
@@ -103,97 +117,97 @@ model Comment {
   isInternal Boolean  @default(false) // true = staff-only, not visible to employee
   createdAt  DateTime @default(now())
 
-  ticketId   String
-  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
 
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model AuditLog {
   id        String   @id @default(cuid())
-  action    String   // STATUS_CHANGED | PRIORITY_CHANGED | ASSIGNED | UNASSIGNED | COMMENT_ADDED | INTERNAL_NOTE | RESOLVED | CREATED | SLA_BREACHED
-  field     String?  // which field changed
+  action    String // STATUS_CHANGED | PRIORITY_CHANGED | ASSIGNED | UNASSIGNED | COMMENT_ADDED | INTERNAL_NOTE | RESOLVED | CREATED | SLA_BREACHED
+  field     String? // which field changed
   oldValue  String?
   newValue  String?
   createdAt DateTime @default(now())
 
-  ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model TicketTemplate {
-  id          String   @id @default(cuid())
-  name        String   // e.g. "VPN Access Request"
-  description String   // shown to user before they pick it
-  type        String   // "IT" | "HR"
-  priority    String   @default("medium")
-  category    String?  // "Incident" | "Service Request"
-  titlePrefix String?  // pre-fills title e.g. "[VPN] "
-  bodyTemplate String  // pre-fills description — markdown with {{placeholders}}
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  name         String // e.g. "VPN Access Request"
+  description  String // shown to user before they pick it
+  type         String // "IT" | "HR"
+  priority     String   @default("medium")
+  category     String? // "Incident" | "Service Request"
+  titlePrefix  String? // pre-fills title e.g. "[VPN] "
+  bodyTemplate String // pre-fills description — markdown with {{placeholders}}
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
 }
 
 model SlaPolicy {
   id                   String   @id @default(cuid())
   name                 String
-  ticketType           String   // "IT" | "HR"
-  priority             String   // "low" | "medium" | "high" | "urgent"
+  ticketType           String // "IT" | "HR"
+  priority             String // "low" | "medium" | "high" | "urgent"
   firstResponseMinutes Int
   resolutionMinutes    Int
   createdAt            DateTime @default(now())
 
-  tickets              Ticket[]
+  tickets Ticket[]
 }
 
 model Attachment {
-  id           String   @id @default(cuid())
-  url          String
-  filename     String
-  size         Int
-  createdAt    DateTime @default(now())
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  size      Int
+  createdAt DateTime @default(now())
 
-  ticketId     String
-  ticket       Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
   uploadedById String
-  uploadedBy   User     @relation("UploadedAttachments", fields: [uploadedById], references: [id])
+  uploadedBy   User   @relation("UploadedAttachments", fields: [uploadedById], references: [id])
 }
 
 model KbArticle {
   id        String   @id @default(cuid())
   title     String
-  content   String   // Markdown
-  type      String   // "IT" | "HR" | "general"
+  content   String // Markdown
+  type      String // "IT" | "HR" | "general"
   tags      String   @default("") // comma-separated e.g. "vpn,password,wifi"
   views     Int      @default(0)
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 }
 
 model AutomationRule {
-  id          String   @id @default(cuid())
-  name        String
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 
   // Conditions — null means "match any"
-  condTicketType  String?  // "IT" | "HR"
-  condPriority    String?  // "low" | "medium" | "high" | "urgent"
-  condStatus      String?  // "open" | "in_progress"
-  condUnassigned  Boolean  @default(false)
+  condTicketType String? // "IT" | "HR"
+  condPriority   String? // "low" | "medium" | "high" | "urgent"
+  condStatus     String? // "open" | "in_progress"
+  condUnassigned Boolean @default(false)
 
   // Action
-  action      String   // "assign_to_role" | "escalate_priority" | "notify_admins"
-  actionValue String?  // role name or new priority
+  action      String // "assign_to_role" | "escalate_priority" | "notify_admins"
+  actionValue String? // role name or new priority
 }
 
 model PasswordResetToken {
@@ -206,27 +220,27 @@ model PasswordResetToken {
 
 model Feedback {
   id        String   @id @default(cuid())
-  rating    Int      // 1-5
+  rating    Int // 1-5
   comment   String?
   createdAt DateTime @default(now())
 
-  ticketId  String   @unique
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId String @unique
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Notification {
   id        String   @id @default(cuid())
-  type      String   // TICKET_ASSIGNED | TICKET_COMMENT | TICKET_ESCALATED | TICKET_RESOLVED | TICKET_REOPENED
+  type      String // TICKET_ASSIGNED | TICKET_COMMENT | TICKET_ESCALATED | TICKET_RESOLVED | TICKET_REOPENED
   message   String
   ticketId  String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
 }

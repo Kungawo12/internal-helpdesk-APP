@@ -17,6 +17,42 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.wp.com" },
     ],
   },
+  // M12: security response headers applied to every route
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          // Prevent the app from being embedded in iframes (clickjacking)
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          // Stop browsers from MIME-sniffing away from the declared Content-Type
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // Only send origin on same-origin requests; send nothing cross-origin
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // Restrict camera, mic, geolocation access
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Enforce HTTPS for 1 year (preload-ready)
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          // Content Security Policy — permits Next.js inline scripts + styles while
+          // blocking unexpected external script/frame sources
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "font-src 'self'",
+              "connect-src 'self' https:",
+              "frame-ancestors 'self'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

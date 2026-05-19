@@ -20,7 +20,9 @@ export async function GET(req: Request) {
     const status = searchParams.get("status") || undefined;
     const type = searchParams.get("type") || undefined;
     const priority = searchParams.get("priority") || undefined;
-    const q = searchParams.get("q") || undefined;
+    // M4: cap search string length — unbounded ILIKE %x% queries are expensive
+    const rawQ = searchParams.get("q") || undefined;
+    const q = rawQ ? rawQ.slice(0, 100) : undefined;
 
     // Build filter conditions from query params
     const paramFilter = {

@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { notify } from "@/lib/notify";
+import { canAccessTicket, isStaffOrAbove } from "@/lib/ticketAccess";
 
 export async function GET(
   _req: Request,
@@ -25,24 +26,16 @@ export async function GET(
     }
 
     const { role, id: userId } = session.user;
-    const canAccess =
-      role === "admin" ||
-      (role === "it_staff" && ticket.type === "IT") ||
-      (role === "ai_staff" && ticket.type === "Software") ||
-      (role === "hr_staff" && ticket.type === "HR") ||
-      ticket.creatorId === userId;
 
-    if (!canAccess) {
+    if (!canAccessTicket(role, userId, ticket)) {
       return Response.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    const isStaffOrAbove = ["it_staff", "hr_staff", "ai_staff", "admin"].includes(role);
 
     const comments = await prisma.comment.findMany({
       where: {
         ticketId: id,
         // Employees cannot see internal notes
-        ...(isStaffOrAbove ? {} : { isInternal: false }),
+        ...(isStaffOrAbove(role) ? {} : { isInternal: false }),
       },
       include: {
         user: { select: { name: true, email: true, role: true } },
@@ -83,19 +76,12 @@ export async function POST(
     }
 
     const postRole = session.user.role;
-    const canAccessPost =
-      postRole === "admin" ||
-      (postRole === "it_staff" && ticketForPost.type === "IT") ||
-      (postRole === "ai_staff" && ticketForPost.type === "Software") ||
-      (postRole === "hr_staff" && ticketForPost.type === "HR") ||
-      ticketForPost.creatorId === session.user.id;
 
-    if (!canAccessPost) {
+    if (!canAccessTicket(postRole, session.user.id, ticketForPost)) {
       return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const isStaffOrAbove = ["it_staff", "hr_staff", "ai_staff", "admin"].includes(postRole);
-    const internal = isStaffOrAbove && isInternal === true;
+    const internal = isStaffOrAbove(postRole) && isInternal === true;
 
     // Fetch creator info for notification (only when staff posts a public reply)
     let ticketCreator: { email: string; id: string; title: string } | null = null;
@@ -122,7 +108,7 @@ export async function POST(
     logAudit(ticketId, session.user.id, internal ? "INTERNAL_NOTE" : "COMMENT_ADDED").catch(() => {});
 
     // Mark first response SLA met when staff posts the first public reply
-    if (isStaffOrAbove && !internal) {
+    if (isStaffOrAbove(postRole) && !internal) {
       prisma.ticket.updateMany({
         where: { id: ticketId, slaFirstResponseMet: false, slaFirstResponseDue: { not: null } },
         data: { slaFirstResponseMet: true },

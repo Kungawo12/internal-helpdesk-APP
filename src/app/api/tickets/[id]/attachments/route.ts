@@ -3,9 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { put } from "@vercel/blob";
-
-// H-4: ticket ownership/role check before any attachment access
-// H-6: magic-byte verification alongside declared MIME type
+import { canAccessTicket } from "@/lib/ticketAccess";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -22,12 +20,18 @@ const ALLOWED_TYPES = [
 ];
 
 // Magic bytes for types that have reliable signatures
+// M8: extended to cover OOXML (ZIP-based) and legacy MS Office (CFB) formats
 const MAGIC: Record<string, number[][]> = {
   "image/jpeg":       [[0xff, 0xd8, 0xff]],
   "image/png":        [[0x89, 0x50, 0x4e, 0x47]],
   "image/gif":        [[0x47, 0x49, 0x46, 0x38]],
   "image/webp":       [[0x52, 0x49, 0x46, 0x46]], // RIFF header
   "application/pdf":  [[0x25, 0x50, 0x44, 0x46]], // %PDF
+  // OOXML (.docx, .xlsx) are ZIP archives
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [[0x50, 0x4b, 0x03, 0x04]],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":       [[0x50, 0x4b, 0x03, 0x04]],
+  // Legacy MS Office (.doc) uses the Compound File Binary (CFB) magic
+  "application/msword": [[0xd0, 0xcf, 0x11, 0xe0]],
 };
 
 async function verifyMagicBytes(file: Blob, mimeType: string): Promise<boolean> {
@@ -37,18 +41,12 @@ async function verifyMagicBytes(file: Blob, mimeType: string): Promise<boolean> 
   return sigs.some((sig) => sig.every((b, i) => buf[i] === b));
 }
 
-/** Returns true if the session user can access the given ticket. */
-function canAccessTicket(
-  role: string,
-  userId: string,
-  ticket: { creatorId: string; type: string }
-): boolean {
-  if (role === "admin" || role === "manager") return true;
-  if (role === "employee") return ticket.creatorId === userId;
-  if (role === "it_staff") return ticket.type === "IT";
-  if (role === "hr_staff") return ticket.type === "HR";
-  if (role === "ai_staff") return ticket.type === "Software";
-  return false;
+// M9: strip dangerous characters from filenames before using in blob paths
+function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9._-]/g, "_") // allow only safe chars
+    .replace(/\.{2,}/g, "_")           // collapse path traversal sequences
+    .slice(0, 100);                    // cap length
 }
 
 export async function GET(
@@ -122,7 +120,7 @@ export async function POST(
       return NextResponse.json({ error: "File content does not match declared type" }, { status: 400 });
     }
 
-    const filename = (file as File).name || "upload";
+    const filename = sanitizeFilename((file as File).name || "upload");
     const blob = await put(`tickets/${ticketId}/${filename}`, file, {
       access: "private",
       addRandomSuffix: true,

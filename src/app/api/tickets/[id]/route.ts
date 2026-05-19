@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-// H-3: explicit allow-list with default deny — unknown roles cannot fall through
+import { canAccessTicket } from "@/lib/ticketAccess";
 
 export async function GET(
   _req: Request,
@@ -31,26 +30,7 @@ export async function GET(
 
     const { role, id: userId } = session.user;
 
-    // Explicit allow-list — default deny for any unrecognised role
-    if (role === "admin" || role === "manager") {
-      // Full access
-    } else if (role === "employee") {
-      if (ticket.creatorId !== userId) {
-        return Response.json({ error: "Access denied" }, { status: 403 });
-      }
-    } else if (role === "it_staff") {
-      if (ticket.type !== "IT") {
-        return Response.json({ error: "Access denied" }, { status: 403 });
-      }
-    } else if (role === "hr_staff") {
-      if (ticket.type !== "HR") {
-        return Response.json({ error: "Access denied" }, { status: 403 });
-      }
-    } else if (role === "ai_staff") {
-      if (ticket.type !== "Software") {
-        return Response.json({ error: "Access denied" }, { status: 403 });
-      }
-    } else {
+    if (!canAccessTicket(role, userId, ticket)) {
       return Response.json({ error: "Access denied" }, { status: 403 });
     }
 

@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
+
+// M10: constant-time comparison prevents timing-based secret leakage
+function verifyCronSecret(provided: string | null): boolean {
+  const expected = process.env.CRON_SECRET;
+  if (!provided || !expected) return false;
+  const a = Buffer.from(provided);
+  const b = Buffer.from(`Bearer ${expected}`);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
 
 // Vercel Cron — runs daily at 6am UTC (configure in vercel.json)
-// Protected by CRON_SECRET header
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get("authorization");
-  if (secret !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!verifyCronSecret(req.headers.get("authorization"))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -85,8 +94,8 @@ Respond with JSON only:
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.error("OpenAI error:", errText);
+      // L2: don't log the full upstream response body — it may contain sensitive data
+      console.error("OpenAI request failed:", res.status, res.statusText);
       return NextResponse.json({ error: "OpenAI request failed" }, { status: 500 });
     }
 
@@ -126,7 +135,9 @@ Respond with JSON only:
               content: a.content.trim(),
               type: a.type,
               tags: (a.tags || "").toLowerCase(),
-              published: true,
+              // L8/M13: AI-generated articles require admin review before going live —
+              // prompt-injection via ticket descriptions could push attacker content into KB
+              published: false,
               authorId: adminUser.id,
             },
           })

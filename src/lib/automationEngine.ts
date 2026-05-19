@@ -1,6 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 
+// H4: escape every user-controlled string before embedding in HTML email bodies
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 export async function evaluateRules(ticketId: string): Promise<void> {
   try {
     const ticket = await prisma.ticket.findUnique({
@@ -47,7 +57,7 @@ export async function evaluateRules(ticketId: string): Promise<void> {
           where: { id: ticketId },
           data: { assigneeId: leastLoaded.id },
         });
-        logAudit(ticketId, "system", "ASSIGNED" as any, {
+        logAudit(ticketId, "system", "ASSIGNED", {
           field: "assigneeId",
           oldValue: "unassigned",
           newValue: `${leastLoaded.name} (auto)`,
@@ -63,7 +73,7 @@ export async function evaluateRules(ticketId: string): Promise<void> {
           where: { id: ticketId },
           data: { priority: rule.actionValue },
         });
-        logAudit(ticketId, "system", "PRIORITY_CHANGED" as any, {
+        logAudit(ticketId, "system", "PRIORITY_CHANGED", {
           field: "priority",
           oldValue: ticket.priority,
           newValue: rule.actionValue,
@@ -94,19 +104,33 @@ async function sendAutomationEmail(
   const { SMTP_HOST, SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return;
 
+  // H3: fail-fast if NEXTAUTH_URL is missing — never fall back to localhost in email links
+  const appUrl = process.env.NEXTAUTH_URL;
+  if (!appUrl) {
+    console.error("[automationEngine] NEXTAUTH_URL is not set — skipping email send");
+    return;
+  }
+
   const nodemailer = await import("nodemailer");
-  const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+  // L6: requireTLS prevents STARTTLS downgrade to plaintext
   const transporter = nodemailer.default.createTransport({
     host: SMTP_HOST,
     port: Number(process.env.SMTP_PORT) || 587,
     secure: false,
+    requireTLS: true,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
   });
+
+  // H4: escape every user-controlled field before embedding in HTML
+  const safeName = escapeHtml(name);
+  const safeRuleName = escapeHtml(ruleName);
+  const safeTicketTitle = escapeHtml(ticketTitle);
 
   await transporter.sendMail({
     from: `"Helpdesk" <${process.env.SMTP_FROM || SMTP_USER}>`,
     to,
-    subject: `⚡ Automation: ${ruleName}`,
+    subject: `Automation: ${safeRuleName}`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 16px;">
         <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
@@ -114,11 +138,11 @@ async function sendAutomationEmail(
         </div>
         <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
           <h1 style="margin:0 0 8px;font-size:18px;font-weight:800;color:#0f172a;">Automation rule triggered</h1>
-          <p style="color:#64748b;font-size:14px;margin:0 0 20px;">Hi ${name}, the rule <strong>"${ruleName}"</strong> fired on a ticket.</p>
+          <p style="color:#64748b;font-size:14px;margin:0 0 20px;">Hi ${safeName}, the rule <strong>&quot;${safeRuleName}&quot;</strong> fired on a ticket.</p>
           <div style="background:#f8fafc;border-radius:8px;padding:16px;margin-bottom:24px;">
-            <p style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
+            <p style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">${safeTicketTitle}</p>
           </div>
-          <a href="${appUrl}/dashboard/ticket/${ticketId}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">View Ticket →</a>
+          <a href="${appUrl}/dashboard/ticket/${ticketId}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">View Ticket &rarr;</a>
         </div>
       </div>
     `,

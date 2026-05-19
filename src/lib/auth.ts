@@ -16,7 +16,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
 
         // H-8: rate-limit login attempts per email (10 attempts per 15 min)
-        if (isRateLimited(`login:${credentials.email.toLowerCase()}`, 10, 15 * 60 * 1000)) {
+        if (await isRateLimited(`login:${credentials.email.toLowerCase()}`, 10, 15 * 60 * 1000)) {
           throw new Error("Too many login attempts. Please try again later.");
         }
 
@@ -78,6 +78,8 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
+    // M7: short-lived sessions for an internal helpdesk — forces re-auth every 8 hours
+    maxAge: 8 * 60 * 60,
   },
   // M-15: SameSite=Strict prevents cross-site requests from carrying the session cookie
   cookies: {
