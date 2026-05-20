@@ -1,11 +1,24 @@
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { isRateLimited } from "@/lib/rateLimit";
 
 export const authOptions: AuthOptions = {
   providers: [
+    // Google OAuth — allows sign-in with existing Google/Workspace accounts.
+    // Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment.
+    // New Google users are created with the default 'employee' role; an admin
+    // can promote them afterwards in the admin portal.
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -42,11 +55,25 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.passwordChangedAt = user.passwordChangedAt ?? 0;
+        if (account?.provider === "credentials") {
+          // Credentials login — role and passwordChangedAt come from authorize()
+          token.id = user.id;
+          token.role = user.role;
+          token.passwordChangedAt = user.passwordChangedAt ?? 0;
+        } else {
+          // OAuth login (e.g. Google) — fetch role from DB since NextAuth's
+          // user object only has id/name/email from the provider
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { role: true, active: true },
+          });
+          token.id = user.id;
+          token.role = dbUser?.role ?? "employee";
+          token.passwordChangedAt = 0; // OAuth users have no password
+          if (!dbUser?.active) token.error = "AccountDeactivated";
+        }
       } else if (token.id) {
         // On every JWT rotation, reject stale tokens after password reset or deactivation
         const dbUser = await prisma.user.findUnique({

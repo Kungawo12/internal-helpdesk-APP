@@ -259,3 +259,15 @@ model Notification {
 
   @@index([userId, createdAt])
 }
+
+model Webhook {
+  id          String    @id @default(cuid())
+  name        String
+  url         String
+  secret      String // HMAC-SHA256 signing secret — returned only on creation
+  events      String    @default("ticket.created,ticket.resolved,ticket.escalated")
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  lastFiredAt DateTime?
+  failCount   Int       @default(0) // consecutive failures; disable after threshold
+}

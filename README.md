@@ -64,6 +64,8 @@ All variables are documented in [`.env.example`](.env.example).
 | `SMTP_PORT` | Yes | SMTP port (default: `587`) |
 | `SMTP_USER` | Yes | SMTP username |
 | `SMTP_PASS` | Yes | SMTP password |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID — enables SSO sign-in |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
 | `OPENAI_API_KEY` | Yes | OpenAI key for the KB chat assistant |
 | `CRON_SECRET` | Yes | Shared secret for securing cron endpoints |
 | `ADMIN_PASSKEY` | Yes | Passkey for the `/admin` portal |

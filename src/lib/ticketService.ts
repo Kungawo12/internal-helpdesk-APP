@@ -24,6 +24,7 @@ import { evaluateRules } from "@/lib/automationEngine";
 import { sendTicketCreatedEmail } from "@/lib/email";
 import { ticketWhereForRole } from "@/lib/ticketAccess";
 import { ticketWithRelations } from "@/lib/prismaIncludes";
+import { dispatchWebhook } from "@/lib/webhookDispatcher";
 import type { CreateTicketInput } from "@/lib/schemas";
 import type { Prisma, TicketStatus, TicketPriority } from "@prisma/client";
 
@@ -94,6 +95,15 @@ export async function createTicket(
     logAudit(ticket.id, creatorId, "CREATED", { newValue: ticket.title }),
   ]).catch(() => {});
   evaluateRules(ticket.id).catch(() => {});
+
+  // Fire outbound webhooks for integrations (non-blocking)
+  dispatchWebhook("ticket.created", {
+    id: ticket.id,
+    title: ticket.title,
+    type: ticket.type,
+    priority: ticket.priority,
+    creatorId,
+  }).catch(() => {});
 
   return ticket;
 }
