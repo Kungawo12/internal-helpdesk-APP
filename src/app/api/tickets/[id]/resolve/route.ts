@@ -6,6 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { notify } from "@/lib/notify";
 import { evaluateRules } from "@/lib/automationEngine";
 import { isStaffOrAbove, canAccessTicket } from "@/lib/ticketAccess";
+import { ticketWithRelations } from "@/lib/prismaIncludes";
 
 import type { TicketStatus } from "@prisma/client";
 

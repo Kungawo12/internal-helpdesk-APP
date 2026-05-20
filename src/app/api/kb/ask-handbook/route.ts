@@ -9,16 +9,32 @@ export const runtime = "nodejs";
 
 let cachedText: string | null = null;
 
+// L4: 10 MB cap — prevents OOM/DoS if handbook.pdf is replaced with a malicious oversized file
+const MAX_PDF_BYTES = 10 * 1024 * 1024;
+
 async function getHandbookText(): Promise<string> {
   if (cachedText) return cachedText;
 
   const pdfPath = path.join(process.cwd(), "public", "handbook.pdf");
+
+  // L4: check size before reading into memory
+  const stat = fs.statSync(pdfPath);
+  if (stat.size > MAX_PDF_BYTES) {
+    throw new Error("Handbook PDF exceeds size limit");
+  }
+
   const buffer = fs.readFileSync(pdfPath);
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
-  const data = await pdfParse(buffer);
-  cachedText = data.text;
+  // L4: wrap pdf-parse in try/catch — malformed PDFs must not crash the route
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string }>;
+    const data = await pdfParse(buffer);
+    cachedText = data.text;
+  } catch {
+    throw new Error("Failed to parse handbook PDF");
+  }
+
   return cachedText!;
 }
 
@@ -30,7 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     // H-8 / M-12: per-user rate limit — 20 AI requests per hour to control spend
-    if (isRateLimited(`ask-handbook:${session.user.id}`, 20, 60 * 60 * 1000)) {
+    if (await isRateLimited(`ask-handbook:${session.user.id}`, 20, 60 * 60 * 1000)) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 

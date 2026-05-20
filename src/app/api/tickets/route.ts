@@ -7,6 +7,8 @@ import { logAudit } from "@/lib/audit";
 import { attachSlaToTicket } from "@/lib/sla";
 import { evaluateRules } from "@/lib/automationEngine";
 import type { Prisma, TicketStatus, TicketPriority } from "@prisma/client";
+import { CreateTicketSchema, firstZodError } from "@/lib/schemas";
+import { ticketWithRelations } from "@/lib/prismaIncludes";
 
 const PAGE_SIZE_DEFAULT = 20;
 const PAGE_SIZE_MAX = 100;
@@ -82,11 +84,7 @@ export async function GET(req: Request) {
     const [tickets, total] = await Promise.all([
       prisma.ticket.findMany({
         where,
-        include: {
-          creator: { select: { name: true, email: true } },
-          assignee: { select: { name: true, email: true } },
-          feedback: true,
-        },
+        include: ticketWithRelations,
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
@@ -114,38 +112,23 @@ export async function POST(req: Request) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, type, priority, softwareName, errorMessage } = await req.json();
-
-    if (!title || !description || !type) {
-      return Response.json({ error: "Title, description, and type are required" }, { status: 400 });
+    const body = await req.json();
+    const parsed = CreateTicketSchema.safeParse(body);
+    if (!parsed.success) {
+      return Response.json({ error: firstZodError(parsed.error) }, { status: 400 });
     }
-
-    if (!["IT", "HR", "Software"].includes(type)) {
-      return Response.json({ error: "Type must be IT, HR, or Software" }, { status: 400 });
-    }
-
-    if (title.length < 3 || title.length > 200) {
-      return Response.json({ error: "Title must be between 3 and 200 characters" }, { status: 400 });
-    }
-
-    if (description.length < 10) {
-      return Response.json({ error: "Description must be at least 10 characters" }, { status: 400 });
-    }
-
-    const ticketPriority = (VALID_PRIORITIES as readonly string[]).includes(priority)
-      ? (priority as TicketPriority)
-      : "medium" as TicketPriority;
+    const { title, description, type, priority, softwareName, errorMessage } = parsed.data;
 
     const ticket = await prisma.ticket.create({
       data: {
-        title: title.trim(),
-        description: description.trim(),
+        title,
+        description,
         type,
-        priority: ticketPriority,
+        priority,
         creatorId: session.user.id,
         ...((type === "Software") && {
-          softwareName: softwareName?.trim() || null,
-          errorMessage: errorMessage?.trim() || null,
+          softwareName: softwareName ?? null,
+          errorMessage: errorMessage ?? null,
         }),
       },
     });

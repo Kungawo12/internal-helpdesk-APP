@@ -23,13 +23,15 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 
-  const transporter = nodemailer.createTransport({ host, port, secure: false, auth: { user, pass } });
+  // L7: requireTLS ensures STARTTLS upgrade is enforced — plaintext SMTP is rejected
+  const transporter = nodemailer.createTransport({ host, port, secure: false, requireTLS: true, auth: { user, pass } });
 
   try {
     await transporter.verify();
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: "SMTP connection failed", detail: message }, { status: 500 });
+    // L7: log internally but never expose SMTP error detail to the client
+    console.error("SMTP verify failed:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "SMTP connection failed" }, { status: 500 });
   }
 
   try {
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ success: true, messageId: info.messageId });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: "Send failed", detail: message }, { status: 500 });
+    console.error("SMTP send failed:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Send failed" }, { status: 500 });
   }
 }

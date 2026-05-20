@@ -7,7 +7,9 @@
       "Bash(curl -s \"https://internal-helpdesk-app.vercel.app/login\")",
       "Bash(curl -s \"https://internal-helpdesk-app.vercel.app/_next/static/chunks/0-lshsxa113ft.css\")",
       "Bash(grep -o 'color:inherit\\\\|color:#000\\\\|h1,h2\\\\|h1{')",
-      "Bash(grep -n \"text-\\\\[#\" /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/create/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/staff/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/kb/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/ticket/[id]/page.tsx)"
+      "Bash(grep -n \"text-\\\\[#\" /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/create/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/staff/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/kb/page.tsx /Users/tenzinjangchuk/Desktop/Ticketing/src/app/dashboard/ticket/[id]/page.tsx)",
+      "Bash(npm audit:*)",
+      "Bash(node -e \"const p = require\\('./node_modules/next/package.json'\\); console.log\\(p.version\\)\")"
     ],
     "additionalDirectories": [
       "/Users/tenzinjangchuk/Desktop/Ticketing/src/app/api/tickets/[id]"

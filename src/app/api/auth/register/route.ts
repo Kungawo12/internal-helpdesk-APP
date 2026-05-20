@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { isRateLimited } from "@/lib/rateLimit";
+import { RegisterSchema, firstZodError } from "@/lib/schemas";
 
 // C-1: role is always "employee" — privilege escalation via body is not possible
 // H-7: password minimum raised to 10 characters
@@ -23,28 +24,14 @@ export async function POST(req: Request) {
       return Response.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    const { name, email, password } = await req.json();
-
-    if (!name || !email || !password) {
-      return Response.json({ error: "All fields are required" }, { status: 400 });
+    const body = await req.json();
+    const parsed = RegisterSchema.safeParse(body);
+    if (!parsed.success) {
+      return Response.json({ error: firstZodError(parsed.error) }, { status: 400 });
     }
+    const { name, email, password } = parsed.data;
 
-    if (name.trim().length < 2) {
-      return Response.json({ error: "Name must be at least 2 characters" }, { status: 400 });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return Response.json({ error: "Please enter a valid email address" }, { status: 400 });
-    }
-
-    if (password.length < 10) {
-      return Response.json({ error: "Password must be at least 10 characters" }, { status: 400 });
-    }
-
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
       // M2: run a dummy bcrypt to equalise timing — prevents enumeration via response time
@@ -59,8 +46,8 @@ export async function POST(req: Request) {
 
     await prisma.user.create({
       data: {
-        name: name.trim(),
-        email: email.toLowerCase().trim(),
+        name,
+        email,
         password: hashedPassword,
         role: "employee", // C-1: always employee, never trust client-supplied role
       },

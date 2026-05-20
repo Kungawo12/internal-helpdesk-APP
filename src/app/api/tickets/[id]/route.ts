@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { canAccessTicket } from "@/lib/ticketAccess";
+import { ticketWithRelations } from "@/lib/prismaIncludes";
 
 export async function GET(
   _req: Request,
@@ -17,11 +18,7 @@ export async function GET(
 
     const ticket = await prisma.ticket.findUnique({
       where: { id },
-      include: {
-        creator: { select: { name: true, email: true } },
-        assignee: { select: { name: true, email: true } },
-        feedback: true,
-      },
+      include: ticketWithRelations,
     });
 
     if (!ticket) {
