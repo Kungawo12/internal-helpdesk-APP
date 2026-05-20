@@ -1,6 +1,5 @@
 /**
  * Shared Prisma include/select objects.
- *
  * Why extract these?
  *  - The same `creator + assignee + feedback` block was copy-pasted across
  *    5+ route files. When a field needed adding (e.g. avatar URL) it had to
