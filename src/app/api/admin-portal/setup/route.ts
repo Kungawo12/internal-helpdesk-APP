@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+
+/**
+ * Constant-time passkey comparison.
+ * Both strings are SHA-256 hashed first so timingSafeEqual always receives
+ * equal-length buffers (the function throws on length mismatch).
+ */
+function timingSafePasskeyEqual(a: string, b: string): boolean {
+  const ha = crypto.createHash("sha256").update(a).digest();
+  const hb = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
 
 async function adminExists(): Promise<boolean> {
   const count = await prisma.user.count({ where: { role: "admin" } });
@@ -30,7 +42,7 @@ export async function POST(req: NextRequest) {
     if (!expectedPasskey) {
       return NextResponse.json({ error: "ADMIN_PASSKEY not configured on server" }, { status: 500 });
     }
-    if (!companyPasskey || companyPasskey !== expectedPasskey) {
+    if (!companyPasskey || !timingSafePasskeyEqual(companyPasskey, expectedPasskey)) {
       return NextResponse.json({ error: "Invalid company passkey" }, { status: 401 });
     }
 

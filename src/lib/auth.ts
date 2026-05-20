@@ -25,10 +25,17 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // H-8: rate-limit login attempts per email (10 attempts per 15 min)
+        // H-8: rate-limit by IP (broad) AND email (targeted).
+        // req.headers is a plain Record<string, string> in NextAuth v4 authorize callbacks.
+        const rawIp = (req?.headers as Record<string, string> | undefined)?.["x-vercel-forwarded-for"];
+        const ip = rawIp?.split(",")[0]?.trim() ?? "unknown";
+
+        if (await isRateLimited(`login:ip:${ip}`, 20, 15 * 60 * 1000)) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
         if (await isRateLimited(`login:${credentials.email.toLowerCase()}`, 10, 15 * 60 * 1000)) {
           throw new Error("Too many login attempts. Please try again later.");
         }
