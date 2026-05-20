@@ -50,10 +50,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
+  // ai_staff handles Software tickets — they belong on the staff dashboard too
   if (
     pathname.startsWith("/dashboard/staff") &&
     role !== "it_staff" &&
-    role !== "hr_staff"
+    role !== "hr_staff" &&
+    role !== "ai_staff"
   ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }

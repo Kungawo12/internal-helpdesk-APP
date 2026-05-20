@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { canAccessTicket, isStaffOrAbove } from "@/lib/ticketAccess";
+import { canAccessTicket, isStaffOrAbove, ticketWhereForRole } from "@/lib/ticketAccess";
 
 const ticket = { creatorId: "user-1", type: "IT" };
 
@@ -59,6 +59,36 @@ describe("canAccessTicket", () => {
 
   it("unknown role is denied", () => {
     expect(canAccessTicket("guest", "user-1", ticket)).toBe(false);
+  });
+});
+
+describe("ticketWhereForRole", () => {
+  it("admin gets an empty where clause (sees all)", () => {
+    expect(ticketWhereForRole("admin", "u1")).toEqual({});
+  });
+
+  it("manager gets an empty where clause (sees all)", () => {
+    expect(ticketWhereForRole("manager", "u1")).toEqual({});
+  });
+
+  it("it_staff is restricted to IT tickets", () => {
+    expect(ticketWhereForRole("it_staff", "u1")).toEqual({ type: "IT" });
+  });
+
+  it("hr_staff is restricted to HR tickets", () => {
+    expect(ticketWhereForRole("hr_staff", "u1")).toEqual({ type: "HR" });
+  });
+
+  it("ai_staff is restricted to Software tickets", () => {
+    expect(ticketWhereForRole("ai_staff", "u1")).toEqual({ type: "Software" });
+  });
+
+  it("employee is restricted to their own tickets", () => {
+    expect(ticketWhereForRole("employee", "user-42")).toEqual({ creatorId: "user-42" });
+  });
+
+  it("unknown role is restricted to their own tickets (safe default)", () => {
+    expect(ticketWhereForRole("guest", "user-42")).toEqual({ creatorId: "user-42" });
   });
 });
 
