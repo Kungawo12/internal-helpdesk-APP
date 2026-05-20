@@ -33,22 +33,8 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           // Enforce HTTPS for 1 year (preload-ready)
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
-          // Content Security Policy — permits Next.js inline scripts + styles while
-          // blocking unexpected external script/frame sources
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "font-src 'self'",
-              "connect-src 'self' https:",
-              "frame-ancestors 'self'",
-              "base-uri 'self'",
-              "form-action 'self'",
-            ].join("; "),
-          },
+          // Content-Security-Policy is set dynamically in middleware.ts
+          // with a per-request nonce, replacing 'unsafe-inline' for scripts.
         ],
       },
     ];

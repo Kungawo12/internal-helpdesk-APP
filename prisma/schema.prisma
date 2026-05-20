@@ -36,6 +36,12 @@ enum TicketPriority {
   urgent
 }
 
+enum TicketType {
+  IT
+  HR
+  Software
+}
+
 model User {
   id                String    @id @default(cuid())
   name              String
@@ -81,7 +87,7 @@ model Ticket {
   id             String         @id @default(cuid())
   title          String
   description    String
-  type           String // "IT" | "HR" | "Software"
+  type           TicketType
   status         TicketStatus   @default(open)
   priority       TicketPriority @default(medium)
   solution       String?
@@ -149,26 +155,26 @@ model AuditLog {
 }
 
 model TicketTemplate {
-  id           String   @id @default(cuid())
+  id           String         @id @default(cuid())
   name         String // e.g. "VPN Access Request"
   description  String // shown to user before they pick it
-  type         String // "IT" | "HR"
-  priority     String   @default("medium")
+  type         TicketType
+  priority     TicketPriority @default(medium)
   category     String? // "Incident" | "Service Request"
   titlePrefix  String? // pre-fills title e.g. "[VPN] "
   bodyTemplate String // pre-fills description — markdown with {{placeholders}}
-  active       Boolean  @default(true)
-  createdAt    DateTime @default(now())
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
 }
 
 model SlaPolicy {
-  id                   String   @id @default(cuid())
+  id                   String         @id @default(cuid())
   name                 String
-  ticketType           String // "IT" | "HR"
-  priority             String // "low" | "medium" | "high" | "urgent"
+  ticketType           TicketType
+  priority             TicketPriority
   firstResponseMinutes Int
   resolutionMinutes    Int
-  createdAt            DateTime @default(now())
+  createdAt            DateTime       @default(now())
 
   tickets Ticket[]
 }
@@ -209,10 +215,10 @@ model AutomationRule {
   createdAt DateTime @default(now())
 
   // Conditions — null means "match any"
-  condTicketType String? // "IT" | "HR"
-  condPriority   String? // "low" | "medium" | "high" | "urgent"
+  condTicketType TicketType?
+  condPriority   TicketPriority?
   condStatus     String? // "open" | "in_progress"
-  condUnassigned Boolean @default(false)
+  condUnassigned Boolean         @default(false)
 
   // Action
   action      String // "assign_to_role" | "escalate_priority" | "notify_admins"
