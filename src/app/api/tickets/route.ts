@@ -6,6 +6,27 @@ import { notify } from "@/lib/notify";
 import { logAudit } from "@/lib/audit";
 import { attachSlaToTicket } from "@/lib/sla";
 import { evaluateRules } from "@/lib/automationEngine";
+import type { Prisma, TicketStatus, TicketPriority } from "@prisma/client";
+
+const PAGE_SIZE_DEFAULT = 20;
+const PAGE_SIZE_MAX = 100;
+
+/**
+ * Role-based visibility filter — single source of truth.
+ * Admin/manager see all tickets; staff see their department;
+ * employees see only their own.
+ */
+function roleWhere(role: string, userId: string): Prisma.TicketWhereInput {
+  if (role === "admin" || role === "manager") return {};
+  if (role === "it_staff") return { type: "IT" };
+  if (role === "hr_staff") return { type: "HR" };
+  if (role === "ai_staff") return { type: "Software" };
+  return { creatorId: userId };
+}
+
+// Valid enum values for safe param parsing
+const VALID_STATUSES = ["open", "in_progress", "resolved", "closed"] as const;
+const VALID_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 
 export async function GET(req: Request) {
   try {
@@ -17,61 +38,69 @@ export async function GET(req: Request) {
     const { role, id } = session.user;
     const { searchParams } = new URL(req.url);
 
-    const status = searchParams.get("status") || undefined;
+    // Validate enum params — reject arbitrary strings
+    const rawStatus = searchParams.get("status");
+    const status = rawStatus && (VALID_STATUSES as readonly string[]).includes(rawStatus)
+      ? (rawStatus as TicketStatus)
+      : undefined;
+
+    const rawPriority = searchParams.get("priority");
+    const priority = rawPriority && (VALID_PRIORITIES as readonly string[]).includes(rawPriority)
+      ? (rawPriority as TicketPriority)
+      : undefined;
+
     const type = searchParams.get("type") || undefined;
-    const priority = searchParams.get("priority") || undefined;
-    // M4: cap search string length — unbounded ILIKE %x% queries are expensive
+
+    // Cap search string — unbounded ILIKE %x% queries are expensive (M4)
     const rawQ = searchParams.get("q") || undefined;
     const q = rawQ ? rawQ.slice(0, 100) : undefined;
 
-    // Build filter conditions from query params
-    const paramFilter = {
+    // Pagination — default 20 rows, max 100
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const pageSize = Math.min(
+      PAGE_SIZE_MAX,
+      Math.max(1, parseInt(searchParams.get("pageSize") || String(PAGE_SIZE_DEFAULT), 10))
+    );
+    const skip = (page - 1) * pageSize;
+
+    const paramFilter: Prisma.TicketWhereInput = {
       ...(status && { status }),
       ...(type && { type }),
       ...(priority && { priority }),
       ...(q && {
         OR: [
-          { title: { contains: q, mode: "insensitive" as const } },
-          { description: { contains: q, mode: "insensitive" as const } },
+          { title: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
         ],
       }),
     };
 
-    let tickets;
+    // One unified where object — replaces 5 near-identical findMany branches
+    const where: Prisma.TicketWhereInput = { ...roleWhere(role, id), ...paramFilter };
 
-    if (role === "admin") {
-      tickets = await prisma.ticket.findMany({
-        where: paramFilter,
-        include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
+    // Run count and data fetch in parallel — halves DB round-trips
+    const [tickets, total] = await Promise.all([
+      prisma.ticket.findMany({
+        where,
+        include: {
+          creator: { select: { name: true, email: true } },
+          assignee: { select: { name: true, email: true } },
+          feedback: true,
+        },
         orderBy: { createdAt: "desc" },
-      });
-    } else if (role === "it_staff") {
-      tickets = await prisma.ticket.findMany({
-        where: { type: "IT", ...paramFilter },
-        include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
-        orderBy: { createdAt: "desc" },
-      });
-    } else if (role === "ai_staff") {
-      tickets = await prisma.ticket.findMany({
-        where: { type: "Software", ...paramFilter },
-        include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
-        orderBy: { createdAt: "desc" },
-      });
-    } else if (role === "hr_staff") {
-      tickets = await prisma.ticket.findMany({
-        where: { type: "HR", ...paramFilter },
-        include: { creator: { select: { name: true, email: true } }, assignee: { select: { name: true, email: true } }, feedback: true },
-        orderBy: { createdAt: "desc" },
-      });
-    } else {
-      tickets = await prisma.ticket.findMany({
-        where: { creatorId: id, ...paramFilter },
-        include: { assignee: { select: { name: true, email: true } }, feedback: true },
-        orderBy: { createdAt: "desc" },
-      });
-    }
+        skip,
+        take: pageSize,
+      }),
+      prisma.ticket.count({ where }),
+    ]);
 
-    return Response.json(tickets);
+    return Response.json({
+      tickets,
+      total,
+      page,
+      pageSize,
+      hasMore: skip + tickets.length < total,
+    });
   } catch (error) {
     console.error("Fetch tickets error:", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "Failed to load tickets" }, { status: 500 });
@@ -103,8 +132,9 @@ export async function POST(req: Request) {
       return Response.json({ error: "Description must be at least 10 characters" }, { status: 400 });
     }
 
-    const validPriorities = ["low", "medium", "high", "urgent"];
-    const ticketPriority = validPriorities.includes(priority) ? priority : "medium";
+    const ticketPriority = (VALID_PRIORITIES as readonly string[]).includes(priority)
+      ? (priority as TicketPriority)
+      : "medium" as TicketPriority;
 
     const ticket = await prisma.ticket.create({
       data: {
