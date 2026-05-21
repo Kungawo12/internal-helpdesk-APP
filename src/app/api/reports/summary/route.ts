@@ -40,17 +40,35 @@ export async function GET() {
       byPriority[t.priority] = (byPriority[t.priority] ?? 0) + 1;
     }
 
-    // Tickets created per day — last 14 days
+    // Issue-7 fix: tickets created per day (last 14 days) — computed in a single
+    // pass over already-fetched allTickets instead of 14 separate .filter() calls.
+    // This is O(n) instead of O(n x 14) and requires no extra DB query.
     const today = new Date();
     today.setHours(23, 59, 59, 999);
-    const dailyCounts: { date: string; count: number }[] = [];
+    const dailyMap = new Map<string, number>();
+
+    // Pre-populate all 14 days with 0
     for (let i = 13; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().slice(0, 10);
-      const count = allTickets.filter((t) => t.createdAt.toISOString().slice(0, 10) === dateStr).length;
-      dailyCounts.push({ date: dateStr, count });
+      dailyMap.set(d.toISOString().slice(0, 10), 0);
     }
+
+    // Single pass — increment each date bucket
+    const fourteenDaysAgo = new Date(today);
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+    fourteenDaysAgo.setHours(0, 0, 0, 0);
+
+    for (const t of allTickets) {
+      if (t.createdAt >= fourteenDaysAgo) {
+        const key = t.createdAt.toISOString().slice(0, 10);
+        if (dailyMap.has(key)) {
+          dailyMap.set(key, (dailyMap.get(key) ?? 0) + 1);
+        }
+      }
+    }
+
+    const dailyCounts = Array.from(dailyMap.entries()).map(([date, count]) => ({ date, count }));
 
     // SLA compliance
     const totalResolved = resolvedTickets.length;
@@ -58,29 +76,31 @@ export async function GET() {
     const slaComplianceRate = totalResolved > 0 ? Math.round((slaCompliant / totalResolved) * 100) : null;
 
     // Average resolution time (hours)
-    let avgResolutionHours: number | null = null;
-    if (totalResolved > 0) {
-      const totalMs = resolvedTickets.reduce((sum, t) => {
-        return sum + (new Date(t.updatedAt).getTime() - new Date(t.createdAt).getTime());
-      }, 0);
-      avgResolutionHours = Math.round(totalMs / totalResolved / (1000 * 60 * 60) * 10) / 10;
-    }
+    const avgResolutionHours =
+      totalResolved > 0
+        ? Math.round(
+            (resolvedTickets.reduce(
+              (sum, t) => sum + (t.updatedAt.getTime() - t.createdAt.getTime()),
+              0
+            ) /
+              totalResolved /
+              3_600_000) *
+              10
+          ) / 10
+        : null;
 
     return Response.json({
-      totals: { total: allTickets.length, ...byStatus },
+      byStatus,
       byType,
       byPriority,
       dailyCounts,
-      sla: {
-        complianceRate: slaComplianceRate,
-        compliant: slaCompliant,
-        breached: totalResolved - slaCompliant,
-        total: totalResolved,
-      },
+      slaComplianceRate,
       avgResolutionHours,
+      totalTickets: allTickets.length,
+      totalResolved,
     });
   } catch (error) {
-    console.error("Reports error:", error instanceof Error ? error.message : "unknown");
-    return Response.json({ error: "Failed to load reports" }, { status: 500 });
+    console.error("Reports summary error:", error instanceof Error ? error.message : "unknown");
+    return Response.json({ error: "Failed to generate report" }, { status: 500 });
   }
 }
