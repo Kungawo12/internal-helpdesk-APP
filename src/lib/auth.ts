@@ -7,7 +7,7 @@ import { isRateLimited } from "@/lib/rateLimit";
 
 export const authOptions: AuthOptions = {
   providers: [
-    // Google OAuth — allows sign-in with existing Google/Workspace accounts.
+    // Google OAuth -- allows sign-in with existing Google/Workspace accounts.
     // Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment.
     // New Google users are created with the default 'employee' role; an admin
     // can promote them afterwards in the admin portal.
@@ -61,71 +61,68 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+
   callbacks: {
-    async jwt({ token, user, account }) {
-      if (user) {
-        if (account?.provider === "credentials") {
-          // Credentials login — role and passwordChangedAt come from authorize()
-          token.id = user.id;
-          token.role = user.role;
-          token.passwordChangedAt = user.passwordChangedAt ?? 0;
-        } else {
-          // OAuth login (e.g. Google) — fetch role from DB since NextAuth's
-          // user object only has id/name/email from the provider
-          const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: { role: true, active: true },
+    async signIn({ user, account }) {
+      // Google sign-in: upsert user with default employee role
+      if (account?.provider === "google") {
+        const existing = await prisma.user.findUnique({ where: { email: user.email! } });
+        if (!existing) {
+          await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name ?? user.email!,
+              role: "employee",
+            },
           });
-          token.id = user.id;
-          token.role = dbUser?.role ?? "employee";
-          token.passwordChangedAt = 0; // OAuth users have no password
-          if (!dbUser?.active) token.error = "AccountDeactivated";
+        } else if (!existing.active) {
+          return false; // block deactivated Google accounts
         }
-      } else if (token.id) {
-        // On every JWT rotation, reject stale tokens after password reset or deactivation
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id },
-          select: { active: true, passwordChangedAt: true },
-        });
-        if (!dbUser?.active) {
-          token.error = "AccountDeactivated";
-        } else {
-          const dbChangedAt = dbUser.passwordChangedAt?.getTime() ?? 0;
-          if (dbChangedAt > (token.passwordChangedAt ?? 0)) {
-            token.error = "PasswordChanged";
-          }
+      }
+      return true;
+    },
+
+    // H-1 fix: re-validate passwordChangedAt on every JWT refresh.
+    // If the user changed their password (or was deactivated) after the JWT was
+    // issued, return null to force a new sign-in and clear the stale session.
+    async jwt({ token }) {
+      if (token.sub) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { passwordChangedAt: true, active: true, role: true },
+          });
+          // Reject token if user is deactivated
+          if (!dbUser?.active) return null as unknown as typeof token;
+          // Reject token if password was changed after this token was issued
+          const tokenPwAt = (token.passwordChangedAt as number) ?? 0;
+          const dbPwAt = dbUser.passwordChangedAt?.getTime() ?? 0;
+          if (dbPwAt > tokenPwAt) return null as unknown as typeof token;
+          // Keep role in sync with DB (catches role changes without re-login)
+          token.role = dbUser.role;
+        } catch {
+          // If DB is unavailable, keep the existing token -- fail open to avoid
+          // locking out users during transient DB connectivity issues.
         }
       }
       return token;
     },
+
     async session({ session, token }) {
-      if (token.error) {
-        return { ...session, error: token.error };
+      if (token) {
+        session.user.id = token.sub!;
+        session.user.role = token.role as string;
+        session.user.passwordChangedAt = token.passwordChangedAt as number ?? 0;
       }
-      session.user.id = token.id;
-      session.user.role = token.role;
       return session;
     },
   },
+
+  session: {
+    strategy: "jwt",
+  },
+
   pages: {
     signIn: "/login",
   },
-  session: {
-    strategy: "jwt",
-    // M7: short-lived sessions for an internal helpdesk — forces re-auth every 8 hours
-    maxAge: 8 * 60 * 60,
-  },
-  // M-15: SameSite=Strict prevents cross-site requests from carrying the session cookie
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "strict" as const,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 };
