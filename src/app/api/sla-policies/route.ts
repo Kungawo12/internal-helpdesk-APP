@@ -1,4 +1,4 @@
-—import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -13,7 +13,7 @@ function validateMinutes(value: unknown, fieldName: string): string | null {
   return null;
 }
 
-// SEC-4 fix: GET was unauthenticated — anyone could read internal SLA configuration.
+// SEC-4 fix: GET was unauthenticated -- anyone could read internal SLA configuration.
 // Restricted to admin and manager roles (the only roles that act on SLA data).
 export async function GET() {
   try {
