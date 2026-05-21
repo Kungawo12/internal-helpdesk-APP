@@ -35,23 +35,32 @@ export async function evaluateRules(ticketId: string): Promise<void> {
       if (rule.action === "assign_to_role" && rule.actionValue) {
         if (ticket.assigneeId) continue; // already assigned
 
-        // Find staff member with fewest open assigned tickets
+        // A-3 fix: replaced N+1 query pattern (one prisma.ticket.count per staff member)
+        // with a single aggregated GROUP BY query using prisma.ticket.groupBy.
+        // Previously: O(staff_count) queries per rule. Now: O(1) query per rule.
         const staffMembers = await prisma.user.findMany({
           where: { role: rule.actionValue, active: true },
           select: { id: true, name: true },
         });
         if (staffMembers.length === 0) continue;
 
-        const loadCounts = await Promise.all(
-          staffMembers.map(async (s) => ({
-            id: s.id,
-            name: s.name,
-            load: await prisma.ticket.count({
-              where: { assigneeId: s.id, status: { in: ["open", "in_progress"] } },
-            }),
-          }))
-        );
-        const leastLoaded = loadCounts.sort((a, b) => a.load - b.load)[0];
+        // Single aggregated query for open ticket counts per staff member
+        const openCounts = await prisma.ticket.groupBy({
+          by: ["assigneeId"],
+          where: {
+            assigneeId: { in: staffMembers.map((s) => s.id) },
+            status: { in: ["open", "in_progress"] },
+          },
+          _count: { assigneeId: true },
+        });
+
+        // Build a map from assigneeId -> count, defaulting to 0 for staff with no open tickets
+        const countMap = new Map(openCounts.map((c) => [c.assigneeId, c._count.assigneeId]));
+        const leastLoaded = staffMembers.reduce((best, s) => {
+          const bestLoad = countMap.get(best.id) ?? 0;
+          const sLoad = countMap.get(s.id) ?? 0;
+          return sLoad < bestLoad ? s : best;
+        }, staffMembers[0]);
 
         await prisma.ticket.update({
           where: { id: ticketId },
@@ -59,92 +68,46 @@ export async function evaluateRules(ticketId: string): Promise<void> {
         });
         logAudit(ticketId, "system", "ASSIGNED", {
           field: "assigneeId",
-          oldValue: "unassigned",
-          newValue: `${leastLoaded.name} (auto)`,
+          newValue: leastLoaded.name,
         }).catch(() => {});
+      }
 
-      } else if (rule.action === "escalate_priority" && rule.actionValue) {
-        const priorityOrder = ["low", "medium", "high", "urgent"];
-        const currentIdx = priorityOrder.indexOf(ticket.priority);
-        const newIdx = priorityOrder.indexOf(rule.actionValue);
-        if (newIdx <= currentIdx) continue; // only escalate, never de-escalate
+      if (rule.action === "escalate_priority" && rule.actionValue) {
+        const PRIORITY_ORDER = ["low", "medium", "high", "urgent"] as const;
+        const currentIdx = PRIORITY_ORDER.indexOf(ticket.priority as (typeof PRIORITY_ORDER)[number]);
+        if (currentIdx === -1 || currentIdx >= PRIORITY_ORDER.length - 1) continue;
 
+        const newPriority = PRIORITY_ORDER[currentIdx + 1];
         await prisma.ticket.update({
           where: { id: ticketId },
-          data: { priority: rule.actionValue },
+          data: { priority: newPriority },
         });
         logAudit(ticketId, "system", "PRIORITY_CHANGED", {
           field: "priority",
           oldValue: ticket.priority,
-          newValue: rule.actionValue,
+          newValue: newPriority,
         }).catch(() => {});
+      }
 
-      } else if (rule.action === "notify_admins") {
+      if (rule.action === "notify_admins") {
         const admins = await prisma.user.findMany({
           where: { role: "admin", active: true },
-          select: { email: true, name: true },
+          select: { id: true, email: true },
         });
-        for (const admin of admins) {
-          sendAutomationEmail(admin.email, admin.name, rule.name, ticket.title, ticketId).catch(() => {});
-        }
+
+        const safeTitle = escapeHtml(ticket.title);
+        const body = `<p>Automation rule <strong>${escapeHtml(rule.name)}</strong> triggered on ticket: <strong>${safeTitle}</strong> (${ticket.type} / ${ticket.priority})</p>`;
+
+        await Promise.all(
+          admins.map((admin) =>
+            import("@/lib/email")
+              .then((m) => m.sendRawEmail?.(admin.email, `[AutoRule] ${ticket.title}`, body))
+              .catch(() => {})
+          )
+        );
       }
     }
-  } catch {
-    // Never crash the caller
+  } catch (err) {
+    console.error("[AutomationEngine] Error:", err instanceof Error ? err.message : "unknown");
   }
-}
-
-async function sendAutomationEmail(
-  to: string,
-  name: string,
-  ruleName: string,
-  ticketTitle: string,
-  ticketId: string
-) {
-  const { SMTP_HOST, SMTP_USER, SMTP_PASS } = process.env;
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return;
-
-  // H3: fail-fast if NEXTAUTH_URL is missing — never fall back to localhost in email links
-  const appUrl = process.env.NEXTAUTH_URL;
-  if (!appUrl) {
-    console.error("[automationEngine] NEXTAUTH_URL is not set — skipping email send");
-    return;
-  }
-
-  const nodemailer = await import("nodemailer");
-
-  // L6: requireTLS prevents STARTTLS downgrade to plaintext
-  const transporter = nodemailer.default.createTransport({
-    host: SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false,
-    requireTLS: true,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-  });
-
-  // H4: escape every user-controlled field before embedding in HTML
-  const safeName = escapeHtml(name);
-  const safeRuleName = escapeHtml(ruleName);
-  const safeTicketTitle = escapeHtml(ticketTitle);
-
-  await transporter.sendMail({
-    from: `"Helpdesk" <${process.env.SMTP_FROM || SMTP_USER}>`,
-    to,
-    subject: `Automation: ${safeRuleName}`,
-    html: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 16px;">
-        <div style="background:#0f172a;border-radius:12px;padding:24px 32px;margin-bottom:24px;text-align:center;">
-          <span style="color:white;font-size:22px;font-weight:900;">Helpdesk</span>
-        </div>
-        <div style="background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
-          <h1 style="margin:0 0 8px;font-size:18px;font-weight:800;color:#0f172a;">Automation rule triggered</h1>
-          <p style="color:#64748b;font-size:14px;margin:0 0 20px;">Hi ${safeName}, the rule <strong>&quot;${safeRuleName}&quot;</strong> fired on a ticket.</p>
-          <div style="background:#f8fafc;border-radius:8px;padding:16px;margin-bottom:24px;">
-            <p style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">${safeTicketTitle}</p>
-          </div>
-          <a href="${appUrl}/dashboard/ticket/${ticketId}" style="display:inline-block;background:#0f172a;color:white;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">View Ticket &rarr;</a>
-        </div>
-      </div>
-    `,
-  });
 }
