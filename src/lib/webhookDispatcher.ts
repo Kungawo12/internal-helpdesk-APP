@@ -20,7 +20,7 @@
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 
-// SEC-6 fix: SSRF guard — webhook URLs are admin-configurable.
+// SEC-6 fix: SSRF guard -- webhook URLs are admin-configurable.
 // A malicious or compromised admin could register an internal URL
 // (e.g. cloud metadata at 169.254.169.254) to probe internal infrastructure.
 // We reject any URL that resolves to a private/loopback/link-local address.
@@ -60,7 +60,7 @@ const MAX_FAIL_COUNT = 5;
 
 /**
  * Fire all active webhooks subscribed to this event.
- * Non-blocking — never throws. Call with .catch(() => {}) from service layer.
+ * Non-blocking -- never throws. Call with .catch(() => {}) from service layer.
  */
 export async function dispatchWebhook(
   event: WebhookEvent,
