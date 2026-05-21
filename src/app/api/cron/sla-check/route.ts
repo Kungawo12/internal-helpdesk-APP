@@ -14,14 +14,16 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#x27;");
 }
 
-// M10: constant-time comparison — prevents timing-based secret leakage
+// L-3 fix: use SHA-256 wrapping so both sides are always equal length,
+// eliminating the early return false on length mismatch which is a
+// minor timing oracle. Consistent with the pattern used for passkeys.
 function verifyCronSecret(provided: string | null): boolean {
-  const expected = process.env.CRON_SECRET;
-  if (!provided || !expected) return false;
-  const a = Buffer.from(provided);
-  const b = Buffer.from(`Bearer ${expected}`);
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
+const expected = process.env.CRON_SECRET;
+if (!provided || !expected) return false;
+// Hash both to equal-length buffers -- timingSafeEqual throws on length mismatch
+const ha = crypto.createHash("sha256").update(provided).digest();
+const hb = crypto.createHash("sha256").update(`Bearer ${expected}`).digest();
+return crypto.timingSafeEqual(ha, hb);
 }
 
 // Vercel Cron — runs every 5 minutes (configured in vercel.json)
