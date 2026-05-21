@@ -50,8 +50,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+    // Issue-6 fix: align with passwordSchema minimum (10 chars) — was inconsistently set to 8 here.
+    if (password.length < 10) {
+      return NextResponse.json({ error: "Password must be at least 10 characters" }, { status: 400 });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
