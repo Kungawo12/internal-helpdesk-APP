@@ -16,7 +16,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "admin") {
+    // A-1 fix: manager role can now assign tickets.
+    // Previously admin-only, but managers have operational authority
+    // over ticket queues (they can access reports, SLA policies, staff
+    // lists) -- assignment is a core operational action for managers.
+    if (session.user.role !== "admin" && session.user.role !== "manager") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
