@@ -457,7 +457,7 @@ export default function ManagerDashboard() {
                     </td>
                     <td className="p-6" onClick={(e) => e.stopPropagation()}>
                       <select
-                        value={(ticket.assignee as any)?.id || ""}
+                        value={(ticket.assignee as { id?: string } | null)?.id || ""}
                         onChange={(e) => assignTicket(ticket.id, e.target.value || null)}
                         className="input-field !py-1.5 !text-sm max-w-[160px]   "
                       >

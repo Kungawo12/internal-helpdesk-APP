@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const templates = await prisma.ticketTemplate.findMany({
       where: {
         active: true,
-        ...(type && VALID_TYPES.includes(type as any) ? { type } : {}),
+        ...(type && VALID_TYPES.includes(type as (typeof VALID_TYPES)[number]) ? { type } : {}),
       },
       orderBy: { name: "asc" },
     });

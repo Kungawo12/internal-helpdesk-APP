@@ -466,7 +466,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/10 pt-4 mt-4">
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const initial = ticket.assignee ? (ticket.assignee as any).name.charAt(0) : "U";
+                        const initial = ticket.assignee ? ticket.assignee.name.charAt(0) : "U";
                         return (
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${getAvatarColor(initial)}`}>
                             {initial}
