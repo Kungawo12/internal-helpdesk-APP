@@ -8,7 +8,7 @@
        *   4. CSV injection protection   (escapeCsv helper)
         *   5. Rate-limit key isolation   (ensures email and IP keys are distinct)
          *   6. Webhook secret hashing     (raw secret must not equal stored hash)
-          *
+          
            * These tests run with: npm test  (Vitest)
             */
 
@@ -62,7 +62,7 @@
                                                                                                                       });
                                                                                                                       
                                                                                                                         it("unknown role is always denied", () => {
-                                                                                                                            expect(canAccessTicket("superuser" as any, "any-id", itTicket)).toBe(false);
+                                                                                                                            expect(canAccessTicket("superuser", "any-id", itTicket)).toBe(false);
                                                                                                                                 expect(canAccessTicket("",          "any-id", itTicket)).toBe(false);
                                                                                                                                   });
                                                                                                                                   });
