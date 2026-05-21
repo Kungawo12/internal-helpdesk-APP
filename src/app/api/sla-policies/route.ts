@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+—import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -13,8 +13,18 @@ function validateMinutes(value: unknown, fieldName: string): string | null {
   return null;
 }
 
+// SEC-4 fix: GET was unauthenticated — anyone could read internal SLA configuration.
+// Restricted to admin and manager roles (the only roles that act on SLA data).
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "admin" && session.user.role !== "manager") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const policies = await prisma.slaPolicy.findMany({
       orderBy: [{ ticketType: "asc" }, { priority: "asc" }],
     });
@@ -67,18 +77,6 @@ export async function POST(req: NextRequest) {
     const resolutionError = validateMinutes(resolutionMinutes, "resolutionMinutes");
     if (resolutionError) {
       return NextResponse.json({ error: resolutionError }, { status: 400 });
-    }
-
-    // Uniqueness check — one policy per ticketType + priority combo
-    const existing = await prisma.slaPolicy.findFirst({
-      where: { ticketType, priority },
-    });
-
-    if (existing) {
-      return NextResponse.json(
-        { error: `An SLA policy already exists for ${ticketType} / ${priority}` },
-        { status: 409 }
-      );
     }
 
     const policy = await prisma.slaPolicy.create({
