@@ -20,6 +20,34 @@
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 
+// SEC-6 fix: SSRF guard — webhook URLs are admin-configurable.
+// A malicious or compromised admin could register an internal URL
+// (e.g. cloud metadata at 169.254.169.254) to probe internal infrastructure.
+// We reject any URL that resolves to a private/loopback/link-local address.
+const PRIVATE_IP_PATTERNS = [
+  /^127\./,                         // loopback
+  /^10\./,                          // RFC-1918 10.x.x.x
+  /^192\.168\./,                    // RFC-1918 192.168.x.x
+  /^172\.(1[6-9]|2\d|3[0-1])\./,  // RFC-1918 172.16-31.x.x
+  /^169\.254\./,                    // link-local (AWS metadata etc.)
+  /^fc00:/i,                         // IPv6 unique local
+  /^fe80:/i,                         // IPv6 link-local
+  /^::1$/,                           // IPv6 loopback
+  /^localhost$/i,
+];
+
+function isSafeWebhookUrl(rawUrl: string): boolean {
+  try {
+    const u = new URL(rawUrl);
+    if (u.protocol !== "https:") return false;
+    if (PRIVATE_IP_PATTERNS.some((re) => re.test(u.hostname))) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+
 export type WebhookEvent =
   | "ticket.created"
   | "ticket.resolved"
@@ -61,6 +89,13 @@ async function deliverWebhook(
   secret: string,
   body: string
 ): Promise<void> {
+  // SEC-6: reject private/internal URLs before making any network call
+  if (!isSafeWebhookUrl(url)) {
+    console.warn(`[webhook] Blocked delivery to unsafe URL: ${url}`);
+    await incrementFailCount(id);
+    return;
+  }
+
   const signature = crypto
     .createHmac("sha256", secret)
     .update(body)
