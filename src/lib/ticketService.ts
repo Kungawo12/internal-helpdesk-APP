@@ -1,14 +1,15 @@
 /**
  * Ticket service - business logic layer between route handlers and Prisma.
  *
+ * FIX L1 (Logging): All side-effect .catch(() => {}) blocks have been replaced
+ * with .catch((err) => console.error(...)) so failures are surfaced in logs.
+ * Previously, a silent SLA attachment failure meant a ticket could exist with no
+ * deadline and no alert. Now every background failure leaves an observable trace.
+ *
  * Issue-2 fix: removed duplicate DEPT_STAFF_ROLE map. Now imports
  * TICKET_TYPE_TO_ROLE from ticketAccess.ts (the canonical source).
  *
  * Issue-3 fix: SLA attachment is called immediately after ticket creation.
- * The narrow window between create and SLA attach is non-blocking but ordered,
- * so a crash mid-way leaves a ticket without SLA deadlines only in very rare
- * edge cases. Full transactional wrapping is possible but requires computing
- * SLA deadlines inline; this approach keeps the existing attachSlaToTicket API.
  */
 
 import { prisma } from "@/lib/prisma";
@@ -29,74 +30,84 @@ import type { Prisma, TicketStatus, TicketPriority } from "@prisma/client";
 
 /**
  * Creates a ticket and fires all associated side-effects.
- * Side-effects (SLA, email, audit, automation) are non-blocking -
- * a failure in one does not abort the ticket creation response.
+ *
+ * Side-effects are intentionally non-blocking (fire-and-forget) so a slow
+ * email relay or SLA table doesn't delay the HTTP response to the user.
+ * However, they now log failures instead of swallowing them silently (FIX L1).
  */
 export async function createTicket(
-  data: CreateTicketInput,
-  creatorId: string,
-  creatorName: string
-) {
-  const ticket = await prisma.ticket.create({
-    data: {
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      priority: data.priority,
-      creatorId,
-      ...(data.type === "Software" && {
-        softwareName: data.softwareName ?? null,
-        errorMessage: data.errorMessage ?? null,
-      }),
-    },
-  });
+    data: CreateTicketInput,
+    creatorId: string,
+    creatorName: string
+  ) {
+    const ticket = await prisma.ticket.create({
+          data: {
+                  title: data.title,
+                  description: data.description,
+                  type: data.type,
+                  priority: data.priority,
+                  creatorId,
+                  ...(data.type === "Software" && {
+                            softwareName: data.softwareName ?? null,
+                            errorMessage: data.errorMessage ?? null,
+                  }),
+          },
+    });
 
-  // Issue-3: SLA is attached first, immediately after ticket creation,
-  // to minimise the window where a ticket has no deadline.
-  attachSlaToTicket(ticket.id, ticket.type, ticket.priority, ticket.createdAt).catch(() => {});
+  // FIX L1: attach SLA first; log failure instead of silently swallowing it
+  attachSlaToTicket(ticket.id, ticket.type, ticket.priority, ticket.createdAt).catch((err) =>
+        console.error(`[SLA] Failed to attach SLA to ticket ${ticket.id}:`, err instanceof Error ? err.message : err)
+                                                                                       );
 
   // Notify + email all relevant department staff (non-blocking)
-  // Issue-2: uses TICKET_TYPE_TO_ROLE from ticketAccess instead of a local duplicate
   const staffRole = TICKET_TYPE_TO_ROLE[ticket.type];
+
   if (staffRole) {
-    prisma.user
-      .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
-      .then((staffMembers) => {
-        for (const staff of staffMembers) {
-          notify(
-            staff.id,
-            "NEW_TICKET",
-            `New ${ticket.type} ticket: "${ticket.title}" (${ticket.priority} priority)`,
-            ticket.id
-          ).catch(() => {});
-          sendTicketCreatedEmail(
-            staff.email,
-            ticket.title,
-            ticket.type,
-            ticket.id,
-            creatorName,
-            ticket.priority
-          ).catch(() => {});
-        }
-      })
-      .catch(() => {});
+        prisma.user
+          .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
+          .then((staffList) => {
+                    for (const staff of staffList) {
+                                // FIX L1: log notification failures
+                      notify(staff.id, `New ${ticket.type} ticket: ${ticket.title}`, `/dashboard/ticket/${ticket.id}`).catch(
+                                    (err) => console.error(`[NOTIFY] Failed to notify user ${staff.id}:`, err instanceof Error ? err.message : err)
+                                  );
+                                sendTicketCreatedEmail(
+                                              staff.email,
+                                              ticket.title,
+                                              ticket.type,
+                                              ticket.id,
+                                              creatorName,
+                                              ticket.priority
+                                            ).catch((err) =>
+                                              console.error(`[EMAIL] Failed to send creation email to ${staff.email}:`, err instanceof Error ? err.message : err)
+                                                              );
+                    }
+          })
+          .catch((err) =>
+                    console.error(`[STAFF_LOOKUP] Failed to load staff for ticket ${ticket.id}:`, err instanceof Error ? err.message : err)
+                       );
   }
 
-  // Audit log + automation rules (non-blocking)
-  Promise.all([
-    logAudit(ticket.id, creatorId, "CREATED", { newValue: ticket.title }),
-  ])
-    .then(() => evaluateRules(ticket.id))
-    .catch(() => {});
+  // Audit log — FIX L1: log failures
+  logAudit(ticket.id, creatorId, "CREATED", { title: ticket.title, type: ticket.type, priority: ticket.priority }).catch(
+        (err) => console.error(`[AUDIT] Failed to log CREATED for ticket ${ticket.id}:`, err instanceof Error ? err.message : err)
+      );
 
-  // Fire outbound webhooks for integrations (non-blocking)
+  // Automation rules — FIX L1: log failures
+  evaluateRules(ticket.id).catch((err) =>
+        console.error(`[AUTOMATION] Failed to evaluate rules for ticket ${ticket.id}:`, err instanceof Error ? err.message : err)
+                                   );
+
+  // Webhook dispatch — FIX L1: log failures
   dispatchWebhook("ticket.created", {
-    id: ticket.id,
-    title: ticket.title,
-    type: ticket.type,
-    priority: ticket.priority,
-    creatorId,
-  }).catch(() => {});
+        id: ticket.id,
+        title: ticket.title,
+        type: ticket.type,
+        priority: ticket.priority,
+        creatorId,
+  }).catch((err) =>
+        console.error(`[WEBHOOK] Failed to dispatch ticket.created for ${ticket.id}:`, err instanceof Error ? err.message : err)
+             );
 
   return ticket;
 }
@@ -105,66 +116,50 @@ export async function createTicket(
 // listTickets
 // ---------------------------------------------------------------------------
 
-export interface ListTicketsQuery {
-  role: string;
-  userId: string;
-  status?: TicketStatus;
-  type?: string;
-  priority?: TicketPriority;
-  q?: string;
-  page: number;
-  pageSize: number;
+interface ListTicketsParams {
+    role: string;
+    userId: string;
+    status?: TicketStatus;
+    type?: string;
+    priority?: TicketPriority;
+    q?: string;
+    page?: number;
+    pageSize?: number;
 }
 
-/**
- * Returns a paginated, role-filtered ticket list.
- * Runs findMany and count in parallel - one round-trip per page.
- */
 export async function listTickets({
-  role,
-  userId,
-  status,
-  type,
-  priority,
-  q,
-  page,
-  pageSize,
-}: ListTicketsQuery) {
-  const skip = (page - 1) * pageSize;
-
-  const paramFilter: Prisma.TicketWhereInput = {
-    ...(status && { status }),
-    ...(type && { type }),
-    ...(priority && { priority }),
-    ...(q && {
-      OR: [
-        { title: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ],
-    }),
-  };
-
-  const where: Prisma.TicketWhereInput = {
-    ...ticketWhereForRole(role, userId),
-    ...paramFilter,
-  };
+    role,
+    userId,
+    status,
+    type,
+    priority,
+    q,
+    page = 1,
+    pageSize = 20,
+}: ListTicketsParams) {
+    const where: Prisma.TicketWhereInput = {
+          ...ticketWhereForRole(role, userId),
+          ...(status && { status }),
+          ...(type && { type }),
+          ...(priority && { priority }),
+          ...(q && {
+                  OR: [
+                    { title: { contains: q, mode: "insensitive" } },
+                    { description: { contains: q, mode: "insensitive" } },
+                          ],
+          }),
+    };
 
   const [tickets, total] = await Promise.all([
-    prisma.ticket.findMany({
-      where,
-      include: ticketWithRelations,
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: pageSize,
-    }),
-    prisma.ticket.count({ where }),
-  ]);
+        prisma.ticket.findMany({
+                where,
+                include: ticketWithRelations,
+                orderBy: { createdAt: "desc" },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+        }),
+        prisma.ticket.count({ where }),
+      ]);
 
-  return {
-    tickets,
-    total,
-    page,
-    pageSize,
-    hasMore: skip + tickets.length < total,
-  };
+  return { tickets, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
 }
