@@ -2,20 +2,37 @@
  * Single source of truth for ticket authorization.
  *
  * Three concerns live here so they can never drift out of sync:
- *  1. canAccessTicket  — can this (role, userId) touch this ticket?
- *  2. isStaffOrAbove   — does this role have staff-level privileges?
- *  3. ticketWhereForRole — Prisma WhereInput that enforces visibility at the DB layer
+ * 1. canAccessTicket — can this (role, userId) touch this ticket?
+ * 2. isStaffOrAbove — does this role have staff-level privileges?
+ * 3. ticketWhereForRole — Prisma WhereInput that enforces visibility at the DB layer
  *
  * The middleware enforces route-level access (which /dashboard/* path a role can visit).
  * This file enforces data-level access (which rows a role can read/write).
  * They must stay consistent — both are driven off the same role strings.
+ *
+ * Issue-1 fix: function signatures now use the Prisma-generated UserRole enum instead of
+ * plain string. This makes typos like "Admin" a compile-time error rather than a
+ * silent runtime deny, and aligns with the database schema.
+ *
+ * Issue-2 fix: TICKET_TYPE_TO_ROLE is exported from here so ticketService.ts (and any
+ * future callers) can import the canonical mapping instead of maintaining a duplicate.
  */
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma, UserRole } from "@prisma/client";
+
+/**
+ * Maps each ticket type to the staff role responsible for it.
+ * Single source of truth — was previously duplicated in ticketService.ts.
+ */
+export const TICKET_TYPE_TO_ROLE: Record<string, UserRole> = {
+  IT: "it_staff",
+  HR: "hr_staff",
+  Software: "ai_staff",
+};
 
 /** Returns true when the session user is allowed to read/write the given ticket. */
 export function canAccessTicket(
-  role: string,
+  role: UserRole | string,
   userId: string,
   ticket: { creatorId: string; type: string }
 ): boolean {
@@ -28,7 +45,7 @@ export function canAccessTicket(
 }
 
 /** Returns true for roles that can read internal notes and perform staff actions. */
-export function isStaffOrAbove(role: string): boolean {
+export function isStaffOrAbove(role: UserRole | string): boolean {
   return ["it_staff", "hr_staff", "ai_staff", "admin", "manager"].includes(role);
 }
 
@@ -40,12 +57,12 @@ export function isStaffOrAbove(role: string): boolean {
  * Mirrors canAccessTicket exactly — if you change one, change the other.
  */
 export function ticketWhereForRole(
-  role: string,
+  role: UserRole | string,
   userId: string
 ): Prisma.TicketWhereInput {
   if (role === "admin" || role === "manager") return {};
   if (role === "it_staff") return { type: "IT" };
   if (role === "hr_staff") return { type: "HR" };
   if (role === "ai_staff") return { type: "Software" };
-  return { creatorId: userId }; // employee — own tickets only
+  return { creatorId: userId }; // employee - own tickets only
 }
