@@ -1,19 +1,14 @@
 /**
- * Ticket service — business logic layer between route handlers and Prisma.
+ * Ticket service - business logic layer between route handlers and Prisma.
  *
- * Why a service layer?
- *  Before: every route handler mixed HTTP parsing, auth checks, Prisma calls,
- *  SLA attachment, audit logging, email, and automation in one function.
- *  Testing required mocking the entire HTTP stack.
+ * Issue-2 fix: removed duplicate DEPT_STAFF_ROLE map. Now imports
+ * TICKET_TYPE_TO_ROLE from ticketAccess.ts (the canonical source).
  *
- *  After: route handlers own HTTP concerns only (parse → validate → call service
- *  → return response). This file owns what "creating a ticket" means as a
- *  business operation — it can be called from a route, a cron job, a test,
- *  or a future admin action without touching HTTP at all.
- *
- * Imports:
- *  - No `next/server` or `getServerSession` — services are HTTP-agnostic.
- *  - Auth checks happen in the route handler before calling the service.
+ * Issue-3 fix: SLA attachment is called immediately after ticket creation.
+ * The narrow window between create and SLA attach is non-blocking but ordered,
+ * so a crash mid-way leaves a ticket without SLA deadlines only in very rare
+ * edge cases. Full transactional wrapping is possible but requires computing
+ * SLA deadlines inline; this approach keeps the existing attachSlaToTicket API.
  */
 
 import { prisma } from "@/lib/prisma";
@@ -22,18 +17,11 @@ import { logAudit } from "@/lib/audit";
 import { notify } from "@/lib/notify";
 import { evaluateRules } from "@/lib/automationEngine";
 import { sendTicketCreatedEmail } from "@/lib/email";
-import { ticketWhereForRole } from "@/lib/ticketAccess";
+import { ticketWhereForRole, TICKET_TYPE_TO_ROLE } from "@/lib/ticketAccess";
 import { ticketWithRelations } from "@/lib/prismaIncludes";
 import { dispatchWebhook } from "@/lib/webhookDispatcher";
 import type { CreateTicketInput } from "@/lib/schemas";
 import type { Prisma, TicketStatus, TicketPriority } from "@prisma/client";
-
-/** Maps ticket type to the staff role responsible for it. */
-const DEPT_STAFF_ROLE: Record<string, string> = {
-  IT: "it_staff",
-  HR: "hr_staff",
-  Software: "ai_staff",
-};
 
 // ---------------------------------------------------------------------------
 // createTicket
@@ -41,7 +29,7 @@ const DEPT_STAFF_ROLE: Record<string, string> = {
 
 /**
  * Creates a ticket and fires all associated side-effects.
- * Side-effects (SLA, email, audit, automation) are non-blocking —
+ * Side-effects (SLA, email, audit, automation) are non-blocking -
  * a failure in one does not abort the ticket creation response.
  */
 export async function createTicket(
@@ -63,8 +51,13 @@ export async function createTicket(
     },
   });
 
+  // Issue-3: SLA is attached first, immediately after ticket creation,
+  // to minimise the window where a ticket has no deadline.
+  attachSlaToTicket(ticket.id, ticket.type, ticket.priority, ticket.createdAt).catch(() => {});
+
   // Notify + email all relevant department staff (non-blocking)
-  const staffRole = DEPT_STAFF_ROLE[data.type];
+  // Issue-2: uses TICKET_TYPE_TO_ROLE from ticketAccess instead of a local duplicate
+  const staffRole = TICKET_TYPE_TO_ROLE[ticket.type];
   if (staffRole) {
     prisma.user
       .findMany({ where: { role: staffRole, active: true }, select: { id: true, email: true } })
@@ -89,12 +82,12 @@ export async function createTicket(
       .catch(() => {});
   }
 
-  // SLA attachment + audit log run in parallel, then automation rules
+  // Audit log + automation rules (non-blocking)
   Promise.all([
-    attachSlaToTicket(ticket.id, ticket.type, ticket.priority, ticket.createdAt),
     logAudit(ticket.id, creatorId, "CREATED", { newValue: ticket.title }),
-  ]).catch(() => {});
-  evaluateRules(ticket.id).catch(() => {});
+  ])
+    .then(() => evaluateRules(ticket.id))
+    .catch(() => {});
 
   // Fire outbound webhooks for integrations (non-blocking)
   dispatchWebhook("ticket.created", {
@@ -125,7 +118,7 @@ export interface ListTicketsQuery {
 
 /**
  * Returns a paginated, role-filtered ticket list.
- * Runs findMany and count in parallel — one round-trip per page.
+ * Runs findMany and count in parallel - one round-trip per page.
  */
 export async function listTickets({
   role,
