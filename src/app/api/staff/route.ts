@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// M-1 fix: added "Software" type mapping to ai_staff, and ai_staff to the
+// default (no-type) query. Previously, /api/staff?type=Software returned an
+// empty list because ai_staff was never included, causing empty assignee
+// dropdowns in the admin UI for Software tickets.
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,10 +22,19 @@ export async function GET(req: NextRequest) {
 
     const where =
       type === "IT"
-        ? { role: "it_staff", active: true }
+        ? { role: "it_staff" as const, active: true }
         : type === "HR"
-        ? { role: "hr_staff", active: true }
-        : { active: true, OR: [{ role: "it_staff" }, { role: "hr_staff" }] };
+        ? { role: "hr_staff" as const, active: true }
+        : type === "Software"
+        ? { role: "ai_staff" as const, active: true }
+        : {
+            active: true,
+            OR: [
+              { role: "it_staff" as const },
+              { role: "hr_staff" as const },
+              { role: "ai_staff" as const },
+            ],
+          };
 
     const staff = await prisma.user.findMany({
       where,
