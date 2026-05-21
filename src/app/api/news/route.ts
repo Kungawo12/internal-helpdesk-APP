@@ -97,10 +97,20 @@ function stripHtml(html: string): string {
 
 async function fetchFeed(feed: typeof FEEDS[number]): Promise<NewsItem[]> {
   try {
-    const res = await fetch(feed.url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; HelpdeskNewsBot/1.0)" },
-      next: { revalidate: 3600 },
-    });
+    // SEC-5 fix: add a 5-second timeout so a slow/unresponsive feed
+    // does not hang the serverless function indefinitely.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    let res;
+    try {
+      res = await fetch(feed.url, {
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; HelpdeskNewsBot/1.0)" },
+        signal: controller.signal,
+        next: { revalidate: 3600 },
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
     if (!res.ok) return [];
 
     const xml = await res.text();
