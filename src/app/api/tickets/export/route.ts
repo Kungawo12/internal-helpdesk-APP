@@ -2,9 +2,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// L-1 fix: added CSV formula injection (CSV injection) protection.
+// A ticket title like "=cmd|' /C calc'!A0" would execute as a formula in
+// Microsoft Excel / LibreOffice Calc when opened directly from the CSV file.
+// We prefix any cell that starts with =, +, -, @, tab, or CR with a single
+// quote, which Excel treats as a string literal prefix and strips from display.
 function escapeCsv(value: string | null | undefined): string {
   if (value == null) return "";
-  const str = String(value);
+  let str = String(value);
+  // Neutralize formula injection prefixes (OWASP recommendation)
+  if (/^[=+\-@\t\r]/.test(str)) str = `'${str}`;
   if (str.includes(",") || str.includes('"') || str.includes("\n")) {
     return `"${str.replace(/"/g, '""')}"`;
   }
@@ -64,7 +71,7 @@ export async function GET() {
     return new Response(csv, {
       headers: {
         "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="tickets-${new Date().toISOString().slice(0, 10)}.csv"`,
+        "Content-Disposition": 'attachment; filename="tickets.csv"',
       },
     });
   } catch (error) {
