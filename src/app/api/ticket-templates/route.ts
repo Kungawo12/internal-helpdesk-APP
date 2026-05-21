@@ -3,7 +3,10 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
-const VALID_TYPES = ["IT", "HR"] as const;
+// M-2 fix: added "Software" to VALID_TYPES. Previously, admins could not
+// create ticket templates for Software tickets even though Software is a
+// fully supported ticket type with its own queue and staff role.
+const VALID_TYPES = ["IT", "HR", "Software"] as const;
 const VALID_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 const VALID_CATEGORIES = ["Incident", "Service Request"] as const;
 
@@ -43,7 +46,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "name, description, type, and bodyTemplate are required" }, { status: 400 });
     }
     if (!VALID_TYPES.includes(type)) {
-      return Response.json({ error: "type must be IT or HR" }, { status: 400 });
+      return Response.json({ error: "type must be IT, HR, or Software" }, { status: 400 });
     }
     if (priority && !VALID_PRIORITIES.includes(priority)) {
       return Response.json({ error: "Invalid priority" }, { status: 400 });
@@ -58,7 +61,7 @@ export async function POST(req: NextRequest) {
         description: description.trim(),
         type,
         priority: priority || "medium",
-        category: category || null,
+        category: category || "Incident",
         titlePrefix: titlePrefix?.trim() || null,
         bodyTemplate: bodyTemplate.trim(),
         active: active !== false,
