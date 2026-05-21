@@ -124,6 +124,10 @@ model Ticket {
   @@index([type])
   @@index([assigneeId, status])
   @@index([type, status])
+  // P-4: additional composite indexes for high-frequency queries
+  @@index([status, createdAt]) // listTickets filtered by status + date range
+  @@index([creatorId, status]) // employee own-ticket filtered list
+  @@index([slaResolutionDue, status, slaBreached]) // cron SLA breach detection
 }
 
 model Comment {
