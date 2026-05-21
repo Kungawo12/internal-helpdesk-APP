@@ -58,6 +58,9 @@ const getCachedArticles = unstable_cache(
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+    // L-4 fix: require authentication -- unauthenticated callers could enumerate
+    // all published KB articles, which may contain internal IT/HR procedures.
+    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const adminPortal = await isAdminServerSide();
     if (!session && !adminPortal) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
