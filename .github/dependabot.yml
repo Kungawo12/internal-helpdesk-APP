@@ -1,0 +1,57 @@
+# Dependabot configuration
+# Automatically opens PRs to keep npm dependencies up to date.
+# PRs are grouped by type (production vs dev) to reduce noise.
+# Security updates are always raised immediately regardless of schedule.
+
+version: 2
+updates:
+  # --- npm / Node.js dependencies ---
+    - package-ecosystem: "npm"
+        directory: "/"
+            schedule:
+                  interval: "weekly"
+                        day: "monday"
+                              time: "09:00"
+                                    timezone: "Europe/London"
+
+                                        # Keep PRs small — one group for runtime deps, one for dev/tooling
+                                            groups:
+                                                  production-dependencies:
+                                                          dependency-type: "production"
+                                                                development-dependencies:
+                                                                        dependency-type: "development"
+
+                                                                            # Open at most 10 PRs at once so the queue doesn't become overwhelming
+                                                                                open-pull-requests-limit: 10
+
+                                                                                    # Label every Dependabot PR for easy filtering
+                                                                                        labels:
+                                                                                              - "dependencies"
+                                                                                                    - "automated"
+                                                                                                    
+                                                                                                        # Allow auto-merge for patch and minor updates (major = manual review)
+                                                                                                            versioning-strategy: auto
+                                                                                                            
+                                                                                                                # Ignore major version bumps for these packages until manually reviewed
+                                                                                                                    ignore:
+                                                                                                                          - dependency-name: "next"
+                                                                                                                                  update-types: ["version-update:semver-major"]
+                                                                                                                                        - dependency-name: "@prisma/client"
+                                                                                                                                                update-types: ["version-update:semver-major"]
+                                                                                                                                                      - dependency-name: "prisma"
+                                                                                                                                                              update-types: ["version-update:semver-major"]
+                                                                                                                                                                    - dependency-name: "next-auth"
+                                                                                                                                                                            update-types: ["version-update:semver-major"]
+                                                                                                                                                                            
+                                                                                                                                                                              # --- GitHub Actions versions ---
+                                                                                                                                                                                - package-ecosystem: "github-actions"
+                                                                                                                                                                                    directory: "/"
+                                                                                                                                                                                        schedule:
+                                                                                                                                                                                              interval: "weekly"
+                                                                                                                                                                                                    day: "monday"
+                                                                                                                                                                                                          time: "09:00"
+                                                                                                                                                                                                                timezone: "Europe/London"
+                                                                                                                                                                                                                    labels:
+                                                                                                                                                                                                                          - "dependencies"
+                                                                                                                                                                                                                                - "github-actions"
+                                                                                                                                                                                                                                    open-pull-requests-limit: 5
