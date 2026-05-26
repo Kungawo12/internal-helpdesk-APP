@@ -1,15 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
-
-// H4: escape every user-controlled string before embedding in HTML email bodies
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
+import { escapeHtml } from "@/lib/utils";
 
 export async function evaluateRules(ticketId: string): Promise<void> {
   try {

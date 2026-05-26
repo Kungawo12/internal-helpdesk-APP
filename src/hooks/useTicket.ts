@@ -41,12 +41,12 @@ export function useTicket(id: string) {
       // Setting loading=true on every poll would unmount the entire detail view every 30s.
       if (isInitial) setLoading(true);
       const res = await fetch(`/api/tickets/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch ticket protocols");
+      if (!res.ok) throw new Error("Failed to load ticket");
       const data = await res.json();
       setTicket(data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Critical protocol failure");
+      setError(err instanceof Error ? err.message : "Failed to load ticket");
     } finally {
       if (isInitial) setLoading(false);
     }

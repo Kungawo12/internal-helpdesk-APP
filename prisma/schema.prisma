@@ -188,6 +188,7 @@ model Attachment {
   url       String
   filename  String
   size      Int
+  mimeType  String   @default("application/octet-stream")
   createdAt DateTime @default(now())
 
   ticketId String
@@ -221,8 +222,8 @@ model AutomationRule {
   // Conditions — null means "match any"
   condTicketType TicketType?
   condPriority   TicketPriority?
-  condStatus     String? // "open" | "in_progress"
-  condUnassigned Boolean         @default(false)
+  condStatus     TicketStatus?
+  condUnassigned Boolean        @default(false)
 
   // Action
   action      String // "assign_to_role" | "escalate_priority" | "notify_admins"

@@ -163,3 +163,82 @@ export async function listTickets({
 
   return { tickets, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
 }
+
+// ---------------------------------------------------------------------------
+// updateTicketStatus
+// ---------------------------------------------------------------------------
+
+interface UpdateTicketStatusInput {
+  ticketId: string;
+  actorId: string;
+  actorName: string;
+  status: TicketStatus;
+  solution?: string;
+}
+
+/**
+ * Updates a ticket's status and fires all associated side-effects.
+ * Centralises logic that was previously duplicated across the resolve,
+ * reopen, and status-change route handlers.
+ */
+export async function updateTicketStatus({
+  ticketId,
+  actorId,
+  actorName,
+  status,
+  solution,
+}: UpdateTicketStatusInput) {
+  const existing = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+    select: { status: true, creatorId: true, title: true, type: true },
+  });
+  if (!existing) throw new Error("Ticket not found");
+
+  const ticket = await prisma.ticket.update({
+    where: { id: ticketId },
+    data: {
+      status,
+      ...(solution !== undefined && { solution: solution.trim() || null }),
+      ...(status !== "open" && { assigneeId: actorId }),
+    },
+    include: { creator: { select: { id: true, email: true, name: true } } },
+  });
+
+  if (existing.status !== status) {
+    const action = status === "resolved" ? "RESOLVED" : "STATUS_CHANGED";
+    logAudit(ticketId, actorId, action, {
+      field: "status",
+      oldValue: existing.status,
+      newValue: status,
+    }).catch((err) =>
+      console.error(`[AUDIT] updateTicketStatus failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+    );
+  }
+
+  if (status === "resolved") {
+    const { sendTicketResolvedEmail } = await import("@/lib/email");
+    notify(existing.creatorId, "TICKET_RESOLVED", `Your ticket "${existing.title}" has been resolved.`, ticketId).catch(
+      (err) => console.error(`[NOTIFY] resolve notify failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+    );
+    if (ticket.creator.email) {
+      sendTicketResolvedEmail(ticket.creator.email, existing.title, ticketId, solution ?? "", actorName).catch(
+        (err) => console.error(`[EMAIL] resolve email failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+      );
+    }
+    dispatchWebhook("ticket.resolved", { id: ticketId, title: existing.title, resolvedBy: actorId }).catch(
+      (err) => console.error(`[WEBHOOK] ticket.resolved failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+    );
+  }
+
+  if (status === "in_progress") {
+    notify(existing.creatorId, "TICKET_IN_PROGRESS", `Your ticket "${existing.title}" is now being worked on.`, ticketId).catch(
+      (err) => console.error(`[NOTIFY] in_progress notify failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+    );
+  }
+
+  evaluateRules(ticketId).catch((err) =>
+    console.error(`[AUTOMATION] updateTicketStatus rules failed for ${ticketId}:`, err instanceof Error ? err.message : err)
+  );
+
+  return ticket;
+}

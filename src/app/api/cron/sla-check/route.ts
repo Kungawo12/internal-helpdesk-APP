@@ -2,17 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import { notify } from "@/lib/notify";
+import { escapeHtml } from "@/lib/utils";
 import crypto from "crypto";
-
-// H4: escape every user-controlled field before embedding in HTML email
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-}
 
 // L-3 fix: use SHA-256 wrapping so both sides are always equal length,
 // eliminating the early return false on length mismatch which is a
@@ -81,10 +72,12 @@ export async function GET(req: NextRequest) {
         field: "slaBreached",
         oldValue: "false",
         newValue: "true",
-      }).catch(() => {});
+      }).catch((err) => console.error(`[SLA] logAudit SLA_BREACHED failed for ${ticket.id}:`, err instanceof Error ? err.message : err));
 
       for (const manager of managers) {
-        sendSlaBreachEmail(manager.email, manager.name, ticket).catch(() => {});
+        sendSlaBreachEmail(manager.email, manager.name, ticket).catch((err) =>
+          console.error(`[SLA] breach email to ${manager.email} failed:`, err instanceof Error ? err.message : err)
+        );
       }
     }
   }
@@ -117,7 +110,7 @@ export async function GET(req: NextRequest) {
       logAudit(ticket.id, "system", "SLA_AT_RISK", {
         field: "slaResolutionDue",
         newValue: ticket.slaResolutionDue?.toISOString(),
-      }).catch(() => {});
+      }).catch((err) => console.error(`[SLA] logAudit SLA_AT_RISK failed for ${ticket.id}:`, err instanceof Error ? err.message : err));
 
       if (ticket.assignee?.id) {
         notify(
@@ -125,7 +118,7 @@ export async function GET(req: NextRequest) {
           "TICKET_ESCALATED",
           `SLA at risk: "${ticket.title}" is due within 1 hour.`,
           ticket.id
-        ).catch(() => {});
+        ).catch((err) => console.error(`[SLA] notify for at-risk ticket ${ticket.id} failed:`, err instanceof Error ? err.message : err));
       }
     }
   }

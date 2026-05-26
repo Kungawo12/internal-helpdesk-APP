@@ -59,7 +59,7 @@ export async function PATCH(
         field: "assigneeId",
         oldValue: ticket.assigneeId ?? "unassigned",
         newValue: assignee.name,
-      }).catch(() => {});
+      }).catch((err) => console.error("[ASSIGN]", err instanceof Error ? err.message : err));
 
       sendTicketAssignedEmail(
         assignee.email,
@@ -68,9 +68,9 @@ export async function PATCH(
         ticket.type,
         ticketId,
         session.user.name ?? "Staff"
-      ).catch(() => {});
+      ).catch((err) => console.error("[ASSIGN]", err instanceof Error ? err.message : err));
 
-      notify(assignee.id, "TICKET_ASSIGNED", `You have been assigned: "${ticket.title}"`, ticketId).catch(() => {});
+      notify(assignee.id, "TICKET_ASSIGNED", `You have been assigned: "${ticket.title}"`, ticketId).catch((err) => console.error("[ASSIGN]", err instanceof Error ? err.message : err));
     } else {
       await prisma.ticket.update({
         where: { id: ticketId },
@@ -81,7 +81,7 @@ export async function PATCH(
         field: "assigneeId",
         oldValue: ticket.assigneeId ?? "unassigned",
         newValue: "unassigned",
-      }).catch(() => {});
+      }).catch((err) => console.error("[ASSIGN]", err instanceof Error ? err.message : err));
     }
 
     const updated = await prisma.ticket.findUnique({

@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+// Validate required environment variables at build/start time.
+// Fails loudly instead of silently breaking at first use.
+import "./src/lib/env";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pdf-parse"],

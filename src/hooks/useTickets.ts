@@ -28,12 +28,12 @@ export function useTickets(filters?: {
       }
 
       const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch operational manifest");
+      if (!res.ok) throw new Error("Failed to load tickets");
       const data = await res.json();
-      setTickets(data);
+      setTickets(data.tickets ?? data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Critical protocol failure");
+      setError(err instanceof Error ? err.message : "Failed to load tickets");
     } finally {
       setInitialLoading(false);
     }

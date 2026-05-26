@@ -51,7 +51,7 @@ export async function PATCH(
       field: "priority",
       oldValue: ticket.priority,
       newValue: newPriority,
-    }).catch(() => {});
+    }).catch((err) => console.error("[ESCALATE]", err instanceof Error ? err.message : err));
 
     // Fetch admins once — use for both in-app notifications and emails
     prisma.user.findMany({
@@ -66,7 +66,7 @@ export async function PATCH(
           sendTicketEscalatedEmail(a.email, ticket.title, id, ticket.priority, newPriority)
         ),
       ]);
-    }).catch(() => {});
+    }).catch((err) => console.error("[ESCALATE]", err instanceof Error ? err.message : err));
 
     return Response.json(updated);
   } catch (error) {

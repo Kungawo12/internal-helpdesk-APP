@@ -37,3 +37,12 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Coverage
+        run: npx vitest run --coverage
+        env:
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
+          DIRECT_URL: "postgresql://ci:ci@localhost:5432/ci"
+          NEXTAUTH_SECRET: "ci-secret"
+          NEXTAUTH_URL: "http://localhost:3000"
+          ADMIN_PASSKEY: "ci-passkey"
