@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
 import { prisma } from "@/lib/prisma";
+import type { TicketType, TicketPriority } from "@prisma/client";
 
 const VALID_TYPES = ["IT", "HR"] as const;
 const VALID_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
@@ -50,8 +51,8 @@ export async function PATCH(
       const current = await prisma.slaPolicy.findUnique({ where: { id } });
       if (!current) return NextResponse.json({ error: "Policy not found" }, { status: 404 });
 
-      const conflictType = (data.ticketType as string) ?? current.ticketType;
-      const conflictPriority = (data.priority as string) ?? current.priority;
+      const conflictType = (data.ticketType as TicketType) ?? current.ticketType;
+      const conflictPriority = (data.priority as TicketPriority) ?? current.priority;
       const conflict = await prisma.slaPolicy.findFirst({
         where: { ticketType: conflictType, priority: conflictPriority, id: { not: id } },
       });
